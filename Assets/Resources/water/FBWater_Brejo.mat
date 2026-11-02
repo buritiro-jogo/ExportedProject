@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: FBWater_Brejo
+  m_Shader: {fileID: 4800000, guid: 062b99c61abbbf542a3138dd5d3b2bad, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties:
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+      _FoamTex:
+        m_Texture: {fileID: 2800000, guid: 6e05045e7ee7fe247a82e5c2ecb7df35, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+      _NormalMap:
+        m_Texture: {fileID: 2800000, guid: 0481e653a61c2c24b9ab68fc109b07f5, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: {}
+    m_Floats:
+      _Agitation: 0
+      _DepthRange: 1.2
+      _FoamAmount: 0.25
+      _FoamDist: 0.3
+      _Murk: 0.85
+      _NormalScale: 0.35
+      _ReflStrength: 0.65
+      _Smoothness: 0.88
+      _SpecBoost: 1.6
+    m_Colors:
+      _DeepColor: {r: 0.13, g: 0.19, b: 0.11, a: 0.97}
+      _Flow: {r: 0, g: 1, b: 0, a: 0}
+      _FoamColor: {r: 0.93, g: 0.95, b: 0.95, a: 1}
+      _ShallowColor: {r: 0.36, g: 0.44, b: 0.26, a: 0.75}
+      _SkyTint: {r: 0.62, g: 0.7, b: 0.7, a: 1}
+      _Speed: {r: 0.015, g: 0.01, b: 0, a: 0}
+      _Tiling: {r: 4, g: 11, b: 0, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 0

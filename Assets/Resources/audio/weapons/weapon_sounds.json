@@ -1,0 +1,700 @@
+{
+ "origem": "tools/re/weapon_audio.py — IE (tools/ie/audio), 171 (Betagames, uso condicionado à autorização), pacotes wsnd/sfx do projeto",
+ "armas": {
+  "38": {
+   "fire": [
+    "w_38_f0",
+    "w_38_f1",
+    "w_38_f2"
+   ],
+   "far": [
+    "w_38_far"
+   ]
+  },
+  "rpk": {
+   "fire": [
+    "w_rpk_f0",
+    "w_rpk_f1",
+    "w_rpk_f2",
+    "w_rpk_f3",
+    "w_rpk_f4",
+    "w_rpk_f5"
+   ],
+   "far": [
+    "w_rpk_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "fal_prime": {
+   "fire": [
+    "w_fal_prime_f0",
+    "w_fal_prime_f1",
+    "w_fal_prime_f2"
+   ],
+   "far": [
+    "w_fal_prime_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "rc425": {
+   "fire": [
+    "w_rc425_f0",
+    "w_rc425_f1",
+    "w_rc425_f2"
+   ],
+   "far": [
+    "w_rc425_far"
+   ]
+  },
+  "asval": {
+   "fire": [
+    "w_asval_f0",
+    "w_asval_f1",
+    "w_asval_f2"
+   ],
+   "far": [
+    "w_asval_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "ar15_prime": {
+   "fire": [
+    "w_ar15_prime_f0",
+    "w_ar15_prime_f1",
+    "w_ar15_prime_f2",
+    "w_ar15_prime_f3",
+    "w_ar15_prime_f4"
+   ],
+   "far": [
+    "w_ar15_prime_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "ar15_new": {
+   "fire": [
+    "w_ar15_new_f0",
+    "w_ar15_new_f1",
+    "w_ar15_new_f2",
+    "w_ar15_new_f3"
+   ],
+   "far": [
+    "w_ar15_new_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "aks74": {
+   "fire": [
+    "w_aks74_f0",
+    "w_aks74_f1",
+    "w_aks74_f2",
+    "w_aks74_f3",
+    "w_aks74_f4"
+   ],
+   "far": [
+    "w_aks74_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "p90": {
+   "fire": [
+    "w_p90_f0",
+    "w_p90_f1",
+    "w_p90_f2",
+    "w_p90_f3",
+    "w_p90_f4"
+   ],
+   "far": [
+    "w_p90_far"
+   ],
+   "draw": "w_draw_smg",
+   "holster": "w_holster_smg"
+  },
+  "ar10": {
+   "fire": [
+    "w_ar10_f0",
+    "w_ar10_f1",
+    "w_ar10_f2"
+   ],
+   "far": [
+    "w_ar10_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "brs_74": {
+   "fire": [
+    "w_brs_74_f0",
+    "w_brs_74_f1",
+    "w_brs_74_f2",
+    "w_brs_74_f3",
+    "w_brs_74_f4"
+   ],
+   "far": [
+    "w_brs_74_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "ag14w": {
+   "fire": [
+    "w_ag14w_f0",
+    "w_ag14w_f1",
+    "w_ag14w_f2"
+   ],
+   "far": [
+    "w_ag14w_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "submetralhadora_caseira": {
+   "fire": [
+    "w_submetralhadora_caseira_f0",
+    "w_submetralhadora_caseira_f1",
+    "w_submetralhadora_caseira_f2"
+   ],
+   "far": [
+    "w_submetralhadora_caseira_far"
+   ],
+   "draw": "w_draw_smg",
+   "holster": "w_holster_smg"
+  },
+  "pistola_308": {
+   "fire": [
+    "w_pistola_308_f0",
+    "w_pistola_308_f1",
+    "w_pistola_308_f2",
+    "w_pistola_308_f3",
+    "w_pistola_308_f4"
+   ],
+   "far": [
+    "w_pistola_308_far"
+   ],
+   "draw": "w_draw_pistol",
+   "holster": "w_holster_pistol"
+  },
+  "garruncha_12": {
+   "fire": [
+    "w_garruncha_12_f0",
+    "w_garruncha_12_f1",
+    "w_garruncha_12_f2"
+   ],
+   "far": [
+    "w_garruncha_12_far"
+   ],
+   "draw": "w_draw_shotgun",
+   "holster": "w_holster_shotgun",
+   "insert": [
+    "w_insert_shell0",
+    "w_insert_shell1"
+   ],
+   "close": "w_pump"
+  },
+  "galil_ace": {
+   "fire": [
+    "w_galil_ace_f0",
+    "w_galil_ace_f1",
+    "w_galil_ace_f2",
+    "w_galil_ace_f3",
+    "w_galil_ace_f4"
+   ],
+   "far": [
+    "w_galil_ace_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "rpg_7": {
+   "fire": [
+    "w_rpg_7_f0",
+    "w_rpg_7_f1"
+   ],
+   "far": [
+    "w_rpg_7_far"
+   ],
+   "draw": "w_draw_launcher",
+   "holster": "w_holster_launcher"
+  },
+  "m79": {
+   "fire": [
+    "w_m79_f0",
+    "w_m79_f1"
+   ],
+   "far": [
+    "w_m79_far"
+   ],
+   "draw": "w_draw_launcher",
+   "holster": "w_holster_launcher"
+  },
+  "1911_gold": {
+   "fire": [
+    "w_1911_gold_f0",
+    "w_1911_gold_f1",
+    "w_1911_gold_f2",
+    "w_1911_gold_f3"
+   ],
+   "far": [
+    "w_1911_gold_far"
+   ],
+   "draw": "w_draw_pistol",
+   "holster": "w_holster_pistol"
+  },
+  "g18": {
+   "fire": [
+    "w_g18_f0",
+    "w_g18_f1",
+    "w_g18_f2"
+   ],
+   "far": [
+    "w_g18_far"
+   ],
+   "draw": "w_draw_pistol",
+   "holster": "w_holster_pistol"
+  },
+  "beretta_gold": {
+   "fire": [
+    "w_beretta_gold_f0",
+    "w_beretta_gold_f1",
+    "w_beretta_gold_f2"
+   ],
+   "far": [
+    "w_beretta_gold_far"
+   ],
+   "draw": "w_draw_pistol",
+   "holster": "w_holster_pistol"
+  },
+  "desert_eagle": {
+   "fire": [
+    "w_desert_eagle_f0",
+    "w_desert_eagle_f1",
+    "w_desert_eagle_f2"
+   ],
+   "far": [
+    "w_desert_eagle_far"
+   ],
+   "draw": "w_draw_pistol",
+   "holster": "w_holster_pistol"
+  },
+  "desert_eagle_gold": {
+   "fire": [
+    "w_desert_eagle_gold_f0",
+    "w_desert_eagle_gold_f1",
+    "w_desert_eagle_gold_f2"
+   ],
+   "far": [
+    "w_desert_eagle_gold_far"
+   ],
+   "draw": "w_draw_pistol",
+   "holster": "w_holster_pistol"
+  },
+  "m16": {
+   "fire": [
+    "w_m16_f0",
+    "w_m16_f1",
+    "w_m16_f2",
+    "w_m16_f3",
+    "w_m16_f4",
+    "w_m16_f5"
+   ],
+   "far": [
+    "w_m16_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "lr_300": {
+   "fire": [
+    "w_lr_300_f0",
+    "w_lr_300_f1",
+    "w_lr_300_f2"
+   ],
+   "far": [
+    "w_lr_300_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "ia2": {
+   "fire": [
+    "w_ia2_f0",
+    "w_ia2_f1",
+    "w_ia2_f2",
+    "w_ia2_f3",
+    "w_ia2_f4",
+    "w_ia2_f5"
+   ],
+   "far": [
+    "w_ia2_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "g36": {
+   "fire": [
+    "w_g36_f0",
+    "w_g36_f1",
+    "w_g36_f2"
+   ],
+   "far": [
+    "w_g36_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "gold_aks": {
+   "fire": [
+    "w_gold_aks_f0",
+    "w_gold_aks_f1",
+    "w_gold_aks_f2"
+   ],
+   "far": [
+    "w_gold_aks_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "g3_1": {
+   "fire": [
+    "w_g3_1_f0",
+    "w_g3_1_f1",
+    "w_g3_1_f2"
+   ],
+   "far": [
+    "w_g3_1_far"
+   ],
+   "draw": "w_draw_smg",
+   "holster": "w_holster_smg"
+  },
+  "parafal_1": {
+   "fire": [
+    "w_parafal_1_f0",
+    "w_parafal_1_f1",
+    "w_parafal_1_f2"
+   ],
+   "far": [
+    "w_parafal_1_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "sa58_para": {
+   "fire": [
+    "w_sa58_para_f0",
+    "w_sa58_para_f1",
+    "w_sa58_para_f2"
+   ],
+   "far": [
+    "w_sa58_para_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "sig": {
+   "fire": [
+    "w_sig_f0",
+    "w_sig_f1",
+    "w_sig_f2"
+   ],
+   "far": [
+    "w_sig_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "fal": {
+   "fire": [
+    "w_fal_f0",
+    "w_fal_f1",
+    "w_fal_f2"
+   ],
+   "far": [
+    "w_fal_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "ar15_mini": {
+   "fire": [
+    "w_ar15_mini_f0",
+    "w_ar15_mini_f1",
+    "w_ar15_mini_f2"
+   ],
+   "far": [
+    "w_ar15_mini_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "ar15": {
+   "fire": [
+    "w_ar15_f0",
+    "w_ar15_f1",
+    "w_ar15_f2"
+   ],
+   "far": [
+    "w_ar15_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "ak12": {
+   "fire": [
+    "w_ak12_f0",
+    "w_ak12_f1",
+    "w_ak12_f2"
+   ],
+   "far": [
+    "w_ak12_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "acr": {
+   "fire": [
+    "w_acr_f0",
+    "w_acr_f1",
+    "w_acr_f2"
+   ],
+   "far": [
+    "w_acr_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "parafal": {
+   "fire": [
+    "w_parafal_f0",
+    "w_parafal_f1",
+    "w_parafal_f2"
+   ],
+   "far": [
+    "w_parafal_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "ak12_1": {
+   "fire": [
+    "w_ak12_1_f0",
+    "w_ak12_1_f1",
+    "w_ak12_1_f2"
+   ],
+   "far": [
+    "w_ak12_1_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "g3": {
+   "fire": [
+    "w_g3_f0",
+    "w_g3_f1",
+    "w_g3_f2"
+   ],
+   "far": [
+    "w_g3_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "scar": {
+   "fire": [
+    "w_scar_f0",
+    "w_scar_f1",
+    "w_scar_f2",
+    "w_scar_f3",
+    "w_scar_f4"
+   ],
+   "far": [
+    "w_scar_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "ak": {
+   "fire": [
+    "w_ak_f0",
+    "w_ak_f1",
+    "w_ak_f2"
+   ],
+   "far": [
+    "w_ak_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "ar15_compact": {
+   "fire": [
+    "w_ar15_compact_f0",
+    "w_ar15_compact_f1",
+    "w_ar15_compact_f2"
+   ],
+   "far": [
+    "w_ar15_compact_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "ar15_9mm": {
+   "fire": [
+    "w_ar15_9mm_f0",
+    "w_ar15_9mm_f1",
+    "w_ar15_9mm_f2"
+   ],
+   "far": [
+    "w_ar15_9mm_far"
+   ],
+   "draw": "w_draw_smg",
+   "holster": "w_holster_smg"
+  },
+  "remington_870": {
+   "fire": [
+    "w_remington_870_f0",
+    "w_remington_870_f1",
+    "w_remington_870_f2"
+   ],
+   "far": [
+    "w_remington_870_far"
+   ],
+   "draw": "w_draw_shotgun",
+   "holster": "w_holster_shotgun",
+   "insert": [
+    "w_insert_shell0",
+    "w_insert_shell1"
+   ],
+   "close": "w_pump"
+  },
+  "m31": {
+   "fire": [
+    "w_m31_f0",
+    "w_m31_f1",
+    "w_m31_f2"
+   ],
+   "far": [
+    "w_m31_far"
+   ],
+   "draw": "w_draw_shotgun",
+   "holster": "w_holster_shotgun",
+   "insert": [
+    "w_insert_shell0",
+    "w_insert_shell1"
+   ],
+   "close": "w_pump"
+  },
+  "mp5": {
+   "fire": [
+    "w_mp5_f0",
+    "w_mp5_f1",
+    "w_mp5_f2",
+    "w_mp5_f3",
+    "w_mp5_f4",
+    "w_mp5_f5",
+    "w_mp5_f6"
+   ],
+   "far": [
+    "w_mp5_far"
+   ],
+   "draw": "w_draw_smg",
+   "holster": "w_holster_smg"
+  },
+  "ump": {
+   "fire": [
+    "w_ump_f0",
+    "w_ump_f1",
+    "w_ump_f2",
+    "w_ump_f3"
+   ],
+   "far": [
+    "w_ump_far"
+   ],
+   "draw": "w_draw_smg",
+   "holster": "w_holster_smg"
+  },
+  "uzi": {
+   "fire": [
+    "w_uzi_f0",
+    "w_uzi_f1",
+    "w_uzi_f2",
+    "w_uzi_f3"
+   ],
+   "far": [
+    "w_uzi_far"
+   ],
+   "draw": "w_draw_smg",
+   "holster": "w_holster_smg"
+  },
+  "barret_50": {
+   "fire": [
+    "w_barret_50_f0",
+    "w_barret_50_f1",
+    "w_barret_50_f2",
+    "w_barret_50_f3",
+    "w_barret_50_f4",
+    "w_barret_50_f5"
+   ],
+   "far": [
+    "w_barret_50_far"
+   ],
+   "draw": "w_draw_sniper",
+   "holster": "w_holster_sniper"
+  },
+  "sniper_hunting": {
+   "fire": [
+    "w_sniper_hunting_f0",
+    "w_sniper_hunting_f1",
+    "w_sniper_hunting_f2",
+    "w_sniper_hunting_f3",
+    "w_sniper_hunting_f4",
+    "w_sniper_hunting_f5"
+   ],
+   "far": [
+    "w_sniper_hunting_far"
+   ],
+   "draw": "w_draw_sniper",
+   "holster": "w_holster_sniper",
+   "reload": "w_reload_sniper"
+  },
+  "czskorpion": {
+   "fire": [
+    "w_czskorpion_f0",
+    "w_czskorpion_f1",
+    "w_czskorpion_f2"
+   ],
+   "far": [
+    "w_czskorpion_far"
+   ],
+   "draw": "w_draw_smg",
+   "holster": "w_holster_smg"
+  },
+  "m4": {
+   "fire": [
+    "w_m4_f0",
+    "w_m4_f1",
+    "w_m4_f2"
+   ],
+   "far": [
+    "w_m4_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  },
+  "ar_15_campeao": {
+   "fire": [
+    "w_ar_15_campeao_f0",
+    "w_ar_15_campeao_f1",
+    "w_ar_15_campeao_f2"
+   ],
+   "far": [
+    "w_ar_15_campeao_far"
+   ],
+   "draw": "w_draw_rifle",
+   "holster": "w_holster_rifle"
+  }
+ }
+}

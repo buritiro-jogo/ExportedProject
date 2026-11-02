@@ -1,0 +1,46 @@
+# Pastas que o Unity recria sozinho (nunca versionar)
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+
+# Arquivos gerados por IDE (Visual Studio / Rider)
+.vs/
+.idea/
+*.csproj
+*.sln
+*.slnx
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Builds compilados e pacotes
+*.apk
+*.aab
+*.exe
+*.unitypackage
+*_BurstDebugInformation_DoNotShip/
+
+# Lixo do sistema e backups
+.DS_Store
+Thumbs.db
+desktop.ini
+*.bak
+*.bak.meta
+*.tmp
+
+# Crash reports
+sysinfo.txt
+crashlytics-build.properties

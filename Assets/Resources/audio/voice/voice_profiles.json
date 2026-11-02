@@ -1,0 +1,757 @@
+{
+ "_doc": "Perfis de voz de dano (FBVoiceProfiles). profiles.<sexo>.pitch = faixa do timbre base (cada personagem recebe um ponto fixo da faixa pelo hash do id, ou chars.<id>.pitch); banks = clipes de Resources/Audio/Voice por banco. rules = prioridade/cooldown/volume por banco (sobrepõe o padrão do código). chars = sexo/timbre por personagem (gerado de fb_data.skins + regex FEM_IDS do web + prefabs; edite à mão para dar identidade).",
+ "profiles": {
+  "m": {
+   "pitch": [
+    0.93,
+    1.07
+   ],
+   "banks": {
+    "DorLeve": [
+     "m_dano",
+     "m_dano_a",
+     "m_dano_curto",
+     "m_ie_hit1",
+     "m_ie_hit2"
+    ],
+    "DorMedia": [
+     "m_dano",
+     "m_dano_a",
+     "m_dano_b",
+     "m_ie_hit2"
+    ],
+    "DorGrave": [
+     "m_dano_longo",
+     "m_dano_b",
+     "m_ie_hit0"
+    ],
+    "Cabeca": [
+     "m_dano_curto",
+     "m_dano_a"
+    ],
+    "Membro": [
+     "m_dano",
+     "m_dano_curto",
+     "m_dano_b"
+    ],
+    "PoucaVida": [
+     "m_dano_longo",
+     "m_ie_injured0",
+     "m_ie_injured1"
+    ],
+    "Caido": [
+     "m_dano_longo",
+     "m_ie_injured0",
+     "m_ie_injured1"
+    ],
+    "Sangrando": [
+     "m_gas_fraca0",
+     "m_gas_fraca1"
+    ],
+    "Morte": [
+     "m_dano_longo",
+     "m_ie_hit0"
+    ],
+    "GasTosse": [
+     "m_gas_tosse0",
+     "m_gas_tosse1",
+     "m_gas_tosse2",
+     "m_gas_tosse3",
+     "m_gas_tosse4",
+     "m_gas_tosse5",
+     "m_gas_tosse6"
+    ],
+    "GasIrrita": [
+     "m_gas_irrita0",
+     "m_gas_irrita1"
+    ],
+    "GasResp": [
+     "m_gas_resp0",
+     "m_gas_resp1",
+     "m_gas_resp2",
+     "m_gas_resp3"
+    ],
+    "GasEsforco": [
+     "m_esforco0",
+     "m_esforco1"
+    ],
+    "GasFraca": [
+     "m_gas_fraca0",
+     "m_gas_fraca1"
+    ],
+    "GasMorte": [
+     "m_gas_morte0",
+     "m_gas_morte1"
+    ],
+    "Queda": [
+     "m_esforco0",
+     "m_esforco1"
+    ],
+    "QuedaGrave": [
+     "m_dano_longo",
+     "m_dano_b"
+    ],
+    "Explosao": [
+     "m_dano_longo",
+     "m_dano_b",
+     "m_ie_hit0"
+    ],
+    "Atropelo": [
+     "m_dano_longo",
+     "m_dano_b"
+    ],
+    "Fogo": [
+     "m_gas_tosse2",
+     "m_gas_tosse3"
+    ],
+    "Ambiente": [
+     "m_dano",
+     "m_dano_a"
+    ],
+    "Esforco": [
+     "m_esforco0",
+     "m_esforco1"
+    ],
+    "Pulo": [
+     "m_pulo"
+    ]
+   }
+  },
+  "f": {
+   "pitch": [
+    0.95,
+    1.08
+   ],
+   "banks": {
+    "DorLeve": [
+     "f_dano",
+     "f_dano_a",
+     "f_dano_curto"
+    ],
+    "DorMedia": [
+     "f_dano",
+     "f_dano_a",
+     "f_dano_b"
+    ],
+    "DorGrave": [
+     "f_dano_longo",
+     "f_dano_b"
+    ],
+    "Cabeca": [
+     "f_dano_curto",
+     "f_dano_a"
+    ],
+    "Membro": [
+     "f_dano",
+     "f_dano_curto",
+     "f_dano_b"
+    ],
+    "PoucaVida": [
+     "f_dano_longo",
+     "f_dano_b"
+    ],
+    "Caido": [
+     "f_dano_longo",
+     "f_dano_b"
+    ],
+    "Sangrando": [
+     "f_gas_fraca0",
+     "f_gas_fraca1"
+    ],
+    "Morte": [
+     "f_dano_longo",
+     "f_dano_b"
+    ],
+    "GasTosse": [
+     "f_gas_tosse0",
+     "f_gas_tosse1",
+     "f_gas_tosse2",
+     "f_gas_tosse3",
+     "f_gas_tosse4",
+     "f_gas_tosse5",
+     "f_gas_tosse6"
+    ],
+    "GasIrrita": [
+     "f_gas_irrita0",
+     "f_gas_irrita1"
+    ],
+    "GasResp": [
+     "f_gas_resp0",
+     "f_gas_resp1",
+     "f_gas_resp2",
+     "f_gas_resp3"
+    ],
+    "GasEsforco": [
+     "f_esforco0",
+     "f_esforco1"
+    ],
+    "GasFraca": [
+     "f_gas_fraca0",
+     "f_gas_fraca1"
+    ],
+    "GasMorte": [
+     "f_gas_morte0",
+     "f_gas_morte1"
+    ],
+    "Queda": [
+     "f_esforco0",
+     "f_esforco1"
+    ],
+    "QuedaGrave": [
+     "f_dano_longo",
+     "f_dano_b"
+    ],
+    "Explosao": [
+     "f_dano_longo",
+     "f_dano_b"
+    ],
+    "Atropelo": [
+     "f_dano_longo",
+     "f_dano_b"
+    ],
+    "Fogo": [
+     "f_gas_tosse2",
+     "f_gas_tosse3"
+    ],
+    "Ambiente": [
+     "f_dano",
+     "f_dano_a"
+    ],
+    "Esforco": [
+     "f_esforco0",
+     "f_esforco1"
+    ],
+    "Pulo": [
+     "f_pulo"
+    ]
+   }
+  }
+ },
+ "rules": {},
+ "chars": {
+  "c_09": {
+   "sex": "m"
+  },
+  "c_762": {
+   "sex": "m"
+  },
+  "c_7622": {
+   "sex": "m"
+  },
+  "c_adoida": {
+   "sex": "f"
+  },
+  "c_alegria": {
+   "sex": "m"
+  },
+  "c_alegria2": {
+   "sex": "m"
+  },
+  "c_almeida": {
+   "sex": "m"
+  },
+  "c_americano": {
+   "sex": "m"
+  },
+  "c_americano2": {
+   "sex": "m"
+  },
+  "c_anderson": {
+   "sex": "m"
+  },
+  "c_anderson2": {
+   "sex": "m"
+  },
+  "c_andreia": {
+   "sex": "f"
+  },
+  "c_andreia2": {
+   "sex": "f"
+  },
+  "c_baianogm": {
+   "sex": "m"
+  },
+  "c_baixada": {
+   "sex": "m"
+  },
+  "c_bruno": {
+   "sex": "m"
+  },
+  "c_bucha": {
+   "sex": "m"
+  },
+  "c_ca_ador": {
+   "sex": "m"
+  },
+  "c_ch": {
+   "sex": "m"
+  },
+  "c_charlie": {
+   "sex": "m"
+  },
+  "c_chatubinha": {
+   "sex": "m"
+  },
+  "c_cipe": {
+   "sex": "m"
+  },
+  "c_clara": {
+   "sex": "f"
+  },
+  "c_cobrador": {
+   "sex": "m"
+  },
+  "c_colosso": {
+   "sex": "m",
+   "pitch": 0.9
+  },
+  "c_costa": {
+   "sex": "m"
+  },
+  "c_cristian": {
+   "sex": "m"
+  },
+  "c_curva": {
+   "sex": "m"
+  },
+  "c_dalton": {
+   "sex": "m"
+  },
+  "c_daniel": {
+   "sex": "m"
+  },
+  "c_darajada": {
+   "sex": "m"
+  },
+  "c_darajada2": {
+   "sex": "m"
+  },
+  "c_dezenove": {
+   "sex": "f"
+  },
+  "c_dimas": {
+   "sex": "m"
+  },
+  "c_domal": {
+   "sex": "m"
+  },
+  "c_domenor": {
+   "sex": "m"
+  },
+  "c_domenor2": {
+   "sex": "m"
+  },
+  "c_elias": {
+   "sex": "m"
+  },
+  "c_escolinha": {
+   "sex": "m",
+   "pitch": 1.1
+  },
+  "c_espec": {
+   "sex": "m"
+  },
+  "c_fantasma": {
+   "sex": "m"
+  },
+  "c_felipe": {
+   "sex": "m"
+  },
+  "c_felipe2": {
+   "sex": "m"
+  },
+  "c_felipe3": {
+   "sex": "m"
+  },
+  "c_fernando": {
+   "sex": "m"
+  },
+  "c_ficha": {
+   "sex": "m"
+  },
+  "c_flavin": {
+   "sex": "m"
+  },
+  "c_fzera": {
+   "sex": "f"
+  },
+  "c_fzera2": {
+   "sex": "f"
+  },
+  "c_gzin": {
+   "sex": "m"
+  },
+  "c_helena": {
+   "sex": "f"
+  },
+  "c_helena2": {
+   "sex": "f"
+  },
+  "c_henrique": {
+   "sex": "m"
+  },
+  "c_jogador": {
+   "sex": "m"
+  },
+  "c_jonatas": {
+   "sex": "m"
+  },
+  "c_juliopistoladar10": {
+   "sex": "m"
+  },
+  "c_kaio2": {
+   "sex": "m"
+  },
+  "c_kaiob": {
+   "sex": "m"
+  },
+  "c_kaiob2": {
+   "sex": "m"
+  },
+  "c_koecivil": {
+   "sex": "m"
+  },
+  "c_luiz": {
+   "sex": "m"
+  },
+  "c_maluco": {
+   "sex": "m"
+  },
+  "c_mandrake": {
+   "sex": "m"
+  },
+  "c_mandrake2": {
+   "sex": "m"
+  },
+  "c_marco": {
+   "sex": "m"
+  },
+  "c_marco2": {
+   "sex": "m"
+  },
+  "c_meia": {
+   "sex": "m"
+  },
+  "c_menork": {
+   "sex": "m",
+   "pitch": 1.1
+  },
+  "c_mia": {
+   "sex": "f"
+  },
+  "c_mia2": {
+   "sex": "f"
+  },
+  "c_monstro": {
+   "sex": "m",
+   "pitch": 0.89
+  },
+  "c_murilo": {
+   "sex": "m"
+  },
+  "c_murilo2": {
+   "sex": "m"
+  },
+  "c_mv": {
+   "sex": "m"
+  },
+  "c_neblina": {
+   "sex": "m"
+  },
+  "c_oliver": {
+   "sex": "m"
+  },
+  "c_oliver_unico_cria": {
+   "sex": "m"
+  },
+  "c_oliver_unico_cria2": {
+   "sex": "m"
+  },
+  "c_oliverunicobope1": {
+   "sex": "m"
+  },
+  "c_orelha": {
+   "sex": "m"
+  },
+  "c_pedro": {
+   "sex": "m"
+  },
+  "c_perdido": {
+   "sex": "m"
+  },
+  "c_perdido2": {
+   "sex": "m"
+  },
+  "c_pesado": {
+   "sex": "m",
+   "pitch": 0.9
+  },
+  "c_pinguim": {
+   "sex": "m"
+  },
+  "c_pinguim2": {
+   "sex": "m"
+  },
+  "c_pontinha": {
+   "sex": "m",
+   "pitch": 1.08
+  },
+  "c_prata": {
+   "sex": "m"
+  },
+  "c_quartel": {
+   "sex": "m"
+  },
+  "c_reliquia": {
+   "sex": "m"
+  },
+  "c_renata": {
+   "sex": "f"
+  },
+  "c_renata2": {
+   "sex": "f"
+  },
+  "c_renegado": {
+   "sex": "m"
+  },
+  "c_roberto": {
+   "sex": "m"
+  },
+  "c_sargentopistolada": {
+   "sex": "m"
+  },
+  "c_sarjeta": {
+   "sex": "m"
+  },
+  "c_soldado": {
+   "sex": "m"
+  },
+  "c_souza": {
+   "sex": "m"
+  },
+  "c_spec": {
+   "sex": "f"
+  },
+  "c_stlcria": {
+   "sex": "m"
+  },
+  "c_stlpm": {
+   "sex": "m"
+  },
+  "c_terror": {
+   "sex": "m"
+  },
+  "c_toco": {
+   "sex": "m"
+  },
+  "c_tonelada": {
+   "sex": "m",
+   "pitch": 0.9
+  },
+  "c_tonelada2": {
+   "sex": "m",
+   "pitch": 0.9
+  },
+  "c_toquinho": {
+   "sex": "m",
+   "pitch": 1.1
+  },
+  "c_toquinho2": {
+   "sex": "m",
+   "pitch": 1.1
+  },
+  "c_tornados": {
+   "sex": "m"
+  },
+  "c_velho": {
+   "sex": "m",
+   "pitch": 0.92
+  },
+  "c_vidaloka": {
+   "sex": "m"
+  },
+  "c_vidaloka2": {
+   "sex": "m"
+  },
+  "c_vince": {
+   "sex": "m"
+  },
+  "c_vs": {
+   "sex": "m"
+  },
+  "c_vs2": {
+   "sex": "m"
+  },
+  "c_x9": {
+   "sex": "m"
+  },
+  "ie_allblack": {
+   "sex": "m"
+  },
+  "ie_bandido": {
+   "sex": "m"
+  },
+  "ie_bope": {
+   "sex": "m"
+  },
+  "ie_camuflado": {
+   "sex": "m"
+  },
+  "ie_delegado": {
+   "sex": "m"
+  },
+  "ie_espantalho": {
+   "sex": "m"
+  },
+  "ie_fie": {
+   "sex": "m"
+  },
+  "ie_ghillie": {
+   "sex": "m"
+  },
+  "ie_gordao": {
+   "sex": "m",
+   "pitch": 0.88
+  },
+  "ie_joker": {
+   "sex": "m"
+  },
+  "ie_mafioso": {
+   "sex": "m"
+  },
+  "ie_mandela": {
+   "sex": "m"
+  },
+  "ie_pm": {
+   "sex": "m"
+  },
+  "ie_policial": {
+   "sex": "m"
+  },
+  "ie_presidiario": {
+   "sex": "m"
+  },
+  "ie_soldado": {
+   "sex": "m"
+  },
+  "n_055": {
+   "sex": "f"
+  },
+  "n_adam": {
+   "sex": "m"
+  },
+  "n_alexander": {
+   "sex": "m"
+  },
+  "n_alicia": {
+   "sex": "f"
+  },
+  "n_anna": {
+   "sex": "f"
+  },
+  "n_baran": {
+   "sex": "m"
+  },
+  "n_brittney": {
+   "sex": "f"
+  },
+  "n_cat": {
+   "sex": "f"
+  },
+  "n_chad": {
+   "sex": "m"
+  },
+  "n_chris": {
+   "sex": "m"
+  },
+  "n_friday": {
+   "sex": "f"
+  },
+  "n_ivy": {
+   "sex": "f"
+  },
+  "n_jennifer": {
+   "sex": "f"
+  },
+  "n_kaden": {
+   "sex": "m"
+  },
+  "n_kay": {
+   "sex": "m"
+  },
+  "n_latoya": {
+   "sex": "f"
+  },
+  "n_maggy": {
+   "sex": "f"
+  },
+  "n_margie": {
+   "sex": "f"
+  },
+  "n_mark": {
+   "sex": "m"
+  },
+  "n_micah": {
+   "sex": "m"
+  },
+  "n_mike": {
+   "sex": "m"
+  },
+  "n_mona": {
+   "sex": "f"
+  },
+  "n_sophie": {
+   "sex": "f"
+  },
+  "n_tess": {
+   "sex": "f"
+  },
+  "n_tiffany": {
+   "sex": "f"
+  },
+  "n_torrance": {
+   "sex": "f"
+  },
+  "n_yasmine": {
+   "sex": "f"
+  },
+  "p_bento": {
+   "sex": "m"
+  },
+  "p_bianca": {
+   "sex": "f"
+  },
+  "p_brenda": {
+   "sex": "f"
+  },
+  "p_bruna": {
+   "sex": "f"
+  },
+  "p_bruno": {
+   "sex": "m"
+  },
+  "p_clara": {
+   "sex": "f"
+  },
+  "p_claudia": {
+   "sex": "f"
+  },
+  "p_cleber": {
+   "sex": "m"
+  },
+  "p_cleberson": {
+   "sex": "m"
+  },
+  "p_cristiana": {
+   "sex": "f"
+  },
+  "p_motoqueiro": {
+   "sex": "m"
+  },
+  "p_tiozin": {
+   "sex": "m",
+   "pitch": 0.92
+  }
+ },
+ "_fontes": "Dano e pulo: gravações próprias do usuário (F:/CRIAÇÃO DE GAMES ASSETS/sound effect/NOVOS, 18/10/2026) + variações de tom/duração (tools/re/voice_variants.py, 27/10) + gemidos do Invasão Elite no masculino (ie_hit*, ie_injured*). Sigma removido."
+}
