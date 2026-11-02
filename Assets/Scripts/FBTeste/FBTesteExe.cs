@@ -8,6 +8,9 @@
 // objetos pequenos, e tudo junto), 3 vezes cada, e mede a diferença.
 // Uso: BURITIRO.exe -fbtesteexe [arma|10x10|tudo|perf|medir|deslize] [mapa] [rodadas] [time1] [camalta] [semculling] [9x9]
 // "medir" (v12c): também mede a GPU olhando de cada base para a outra.
+// "paredes" [mapa] (v19, 02/11): procura NavMesh passando por dentro de parede ou por baixo de teto baixo (onde bot e
+// jogador travam) em todas as arestas do NavMesh do 10x10 do mapa, e examina os pontos onde alguém já travou (PONTOS).
+// "mirabot" (v19, só com "piloto"): o piloto mira com o mesmo erro dos bots (FBBotSense.AimErrorDeg), para equilíbrio.
 // "videoarma" [mapa] [arma] [sembur]: vídeo bruto de antes/depois da pegada (quadros JPG a 30 por segundo, vertical 1080x1920 e câmera do jogo).
 // "deslize": mede se o pé apoiado no chão escorrega nos bots (antes/depois da correção) e grava vídeos de lado.
 // "time1" põe o jogador (parado e sem arma) no time 1, para ver se a vantagem é do lado do mapa ou do time do jogador.
@@ -61,7 +64,7 @@ public class FBTesteExe : MonoBehaviour
 	string mapa = "vila_jardim";
 	int rodadas = 3;
 	int timeJog = 0;
-	bool camAltaOpt, semCulling, opt9x9, optPiloto;
+	bool camAltaOpt, semCulling, opt9x9, optPiloto, optMiraBot;
 	string dir;
 	Camera fotoCam;
 	FBInputState? entrada;
@@ -93,6 +96,7 @@ public class FBTesteExe : MonoBehaviour
 			if (a[k] == "semculling") t.semCulling = true;
 			if (a[k] == "9x9") t.opt9x9 = true;
 			if (a[k] == "piloto") t.optPiloto = true;
+			if (a[k] == "mirabot") t.optMiraBot = true;
 			if (a[k] == "sembur") t.videoSemBur = true;
 		}
 	}
@@ -131,7 +135,7 @@ public class FBTesteExe : MonoBehaviour
 			string l = c.Split('\n')[0];
 			if (errosTxt.Count < 8 && !errosTxt.Contains(l)) errosTxt.Add(l);
 		};
-		Log($"início · parte {parte} · mapa {mapa} · rodadas {rodadas} · jogador no time {timeJog}{(camAltaOpt ? " · câmera no alto" : "")}{(semCulling ? " · sem culling" : "")}{(opt9x9 ? " · 9x9" : "")}{(optPiloto ? " · piloto (bot jogando com o nosso jogador)" : "")} · tela {Screen.width}x{Screen.height} · {SystemInfo.graphicsDeviceName} · {SystemInfo.processorType} ({SystemInfo.processorCount} núcleos)");
+		Log($"início · parte {parte} · mapa {mapa} · rodadas {rodadas} · jogador no time {timeJog}{(camAltaOpt ? " · câmera no alto" : "")}{(semCulling ? " · sem culling" : "")}{(opt9x9 ? " · 9x9" : "")}{(optPiloto ? " · piloto (bot jogando com o nosso jogador)" + (optMiraBot ? " com a mira dos bots" : "") : "")} · tela {Screen.width}x{Screen.height} · {SystemInfo.graphicsDeviceName} · {SystemInfo.processorType} ({SystemInfo.processorCount} núcleos)");
 		yield return Wait(4f);
 		yield return Tela("0_menu");
 		GameData.Load();
@@ -146,6 +150,7 @@ public class FBTesteExe : MonoBehaviour
 		if (parte == "10x10" || parte == "tudo") yield return Modo10x10();
 		if (parte == "perf") yield return PerfAjustes();
 		if (parte == "medir") yield return Medir();
+		if (parte == "paredes") yield return Paredes();
 		if (parte == "deslize") yield return Deslize();
 		if (parte == "videoarma") yield return VideoArma();
 		FBPlayer.TestInput = null;
@@ -818,8 +823,9 @@ public class FBTesteExe : MonoBehaviour
 			piloto.Log = Log;
 			piloto.Fase = Fase;
 			piloto.NavEstado = NavEstado;
+			piloto.MiraBot = optMiraBot;
 			piloto.Liga();
-			Log($"piloto ligado: o jogador compra na loja (cliques e tecla B), segue o destino do modo como os bots do time e joga com WASD/mouse · mira assistida \"{FBSession.aimAssist}\" · segurar para correr {(FBSession.holdRun ? "sim" : "não")}");
+			Log($"piloto ligado: o jogador compra na loja (cliques e tecla B), segue o destino do modo como os bots do time e joga com WASD/mouse{(optMiraBot ? " · mira com o erro dos bots (mirabot)" : "")} · mira assistida \"{FBSession.aimAssist}\" · segurar para correr {(FBSession.holdRun ? "sim" : "não")}");
 		}
 		for (float w = 0f; w < 10f && Fase() != "buy"; w += Time.unscaledDeltaTime) yield return null;
 		yield return Wait(1.5f);
@@ -1071,6 +1077,8 @@ public class FBTesteExe : MonoBehaviour
 								fotoCam.transform.position = c.Pos + new Vector3(0f, 6f, -10f);
 								fotoCam.transform.LookAt(c.Pos + Vector3.up);
 								Render($"10x10_rodada{rodada}_parado_perto", 1280, 720);
+								pulaQuadros = 3; // v19: as 2 fotos custam ~100 ms no quadro seguinte; não entram no "pior" da fase
+								perf.Sincronizar();
 							}
 						}
 						catch (Exception e) { Log($"      parado: {c.name} erro no diagnóstico: {e.Message}"); }
@@ -1232,6 +1240,9 @@ public class FBTesteExe : MonoBehaviour
 				Log("   censo (" + f + "): " + Censo());
 				// o que passou durante as fotos e esperas não entra na conta da fase seguinte
 				perf.Sincronizar();
+				// v19 (02/11): as 2 fotos de cima das bases (Render + PNG) e o censo rodam neste quadro e o custo deles caía no
+				// primeiro quadro da fase de compra: era o "pior 130-170 ms" de toda compra a partir da rodada 2 (não era o jogo)
+				pulaQuadros = 2;
 				FBTempo.Zera();
 				FBRig.TorsoMs = 0.0; FBRig.TorsoCalls = 0; torsoSeg = 0.0;
 				fase = f;
@@ -1273,6 +1284,180 @@ public class FBTesteExe : MonoBehaviour
 		try { csv?.Dispose(); } catch { }
 		if (camAltaOpt) CamAltaDesfaz();
 		if (semCulling) SetFootIkVisibilidade(false);
+	}
+
+	// ---------- parte "paredes" (v19, 02/11): NavMesh passando por dentro de parede ----------
+	// O piloto ficou preso num muro comprido da PT em (-240,7; 45,8) com caminho completo no NavMesh. Esta parte carrega o
+	// 10x10 do mapa (arena, paredes invisíveis e recorte do NavMesh), pega a malha do NavMesh e, para cada aresta dos
+	// triângulos (sem repetir), passa duas retas a 0,6 m e 1,5 m acima do NavMesh contra tudo que o jogador bate (camadas que
+	// colidem com a camada do jogador, sem gatilhos e sem personagens). Batida de frente (normal quase deitada) = o NavMesh
+	// atravessa um sólido; batida por baixo (normal para baixo) = teto baixo em cima do NavMesh; normal para cima = chão
+	// (morrinho entre os vértices), ignorada. Agrupa por objeto e diz se o ClearLine dos bots (FBWorld.SolidMask) vê aquele
+	// objeto. Também examina pontos onde alguém já travou (PONTOS): o que há em volta e o caminho dali até o destino.
+	static readonly (string mapa, Vector3 p, Vector3 dest, string nota)[] PONTOS =
+	{
+		("praca_pt", new Vector3(-240.7f, 0.17f, 45.8f), new Vector3(-150f, 0.2f, 175f), "piloto preso em 02/11, rodada 1, 126 s"),
+	};
+
+	class GrupoParede { public Collider col; public int n, nParede, nTeto; public Vector3 ex; public float alturaEx; }
+
+	static string Camadas(int m)
+	{
+		var l = new List<string>();
+		for (int i = 0; i < 32; i++) if ((m & (1 << i)) != 0) { string nm = LayerMask.LayerToName(i); l.Add(string.IsNullOrEmpty(nm) ? i.ToString() : $"{i} {nm}"); }
+		return l.Count > 0 ? string.Join(", ", l) : "nenhuma";
+	}
+
+	static string Caminho(Transform t)
+	{
+		var l = new List<string>();
+		for (int k = 0; t && k < 4; k++, t = t.parent) l.Add(t.name);
+		l.Reverse();
+		return string.Join("/", l);
+	}
+
+	static readonly RaycastHit[] bufParede = new RaycastHit[24];
+
+	static float DistCol(Collider c, Vector3 p) => (c is MeshCollider mc && !mc.convex) || c is TerrainCollider ? Mathf.Sqrt(c.bounds.SqrDistance(p)) : Vector3.Distance(c.ClosestPoint(p), p);
+
+	// primeira batida válida (sem gatilho, sem personagem) entre o e o+dir*len
+	static bool BateSolido(Vector3 o, Vector3 dir, float len, int mask, out RaycastHit h)
+	{
+		h = default;
+		int n = Physics.RaycastNonAlloc(o, dir, bufParede, len, mask, QueryTriggerInteraction.Ignore);
+		float melhor = float.MaxValue;
+		bool achou = false;
+		for (int i = 0; i < n; i++)
+		{
+			var x = bufParede[i];
+			if (!x.collider || x.distance >= melhor) continue;
+			if (x.collider.GetComponentInParent<FBCharacter>()) continue;
+			melhor = x.distance; h = x; achou = true;
+		}
+		return achou;
+	}
+
+	IEnumerator Paredes()
+	{
+		FBSession.team = 0;
+		yield return Carregar("10x10");
+		var g = FBMatch.I;
+		var me = FBMatch.Player;
+		if (!g || !me) { Log("paredes: a partida não montou"); yield break; }
+		// espera o recorte do NavMesh nas paredes da arena (o modo loga "recorte do NavMesh ... feito"), até 12 s
+		for (float w = 0f; w < 12f && !linhasModo.Any(q => q.Contains("recorte do NavMesh")); w += Time.unscaledDeltaTime) yield return null;
+		yield return Wait(1f);
+		foreach (var lm in linhasModo.Where(q => q.Contains("arena 10x10")).ToList()) Log("   modo: " + lm);
+		linhasModo.Clear();
+		FBMatch.God = true;
+		int camJog = me.gameObject.layer;
+		int mascJog = 0;
+		for (int L = 0; L < 32; L++) if (!Physics.GetIgnoreLayerCollision(camJog, L)) mascJog |= 1 << L;
+		int solid = FBWorld.SolidMask;
+		Log($"paredes: camada do jogador {camJog} ({LayerMask.LayerToName(camJog)}) · o jogador bate em: {Camadas(mascJog)} · o ClearLine dos bots (SolidMask) vê: {Camadas(solid)} · o jogador bate e o ClearLine não vê: {Camadas(mascJog & ~solid)}");
+
+		// 1) pontos onde alguém já travou
+		foreach (var pt in PONTOS)
+		{
+			if (pt.mapa != mapa) continue;
+			Log($"paredes: ponto ({pt.p.x:0.0}, {pt.p.y:0.00}, {pt.p.z:0.0}) · {pt.nota}");
+			bool noNav = NavMesh.SamplePosition(pt.p, out var hs, 3f, -1);
+			Log($"   NavMesh mais perto: {(noNav ? $"({hs.position.x:0.0}, {hs.position.y:0.00}, {hs.position.z:0.0}) a {Vector3.Distance(hs.position, pt.p):0.00} m" : "nenhum a 3 m")} · caminho até o destino ({pt.dest.x:0}, {pt.dest.z:0}): {NavEstado(pt.p, pt.dest)}");
+			var cols = Physics.OverlapSphere(pt.p + Vector3.up * 1f, 3f, mascJog, QueryTriggerInteraction.Ignore);
+			foreach (var c in cols.Where(q => q && !q.GetComponentInParent<FBCharacter>()).OrderBy(q => DistCol(q, pt.p + Vector3.up)).Take(10))
+			{
+				var b = c.bounds;
+				Log($"   perto: {Caminho(c.transform)} · {c.GetType().Name} · camada {c.gameObject.layer} {LayerMask.LayerToName(c.gameObject.layer)} · ClearLine {(((solid >> c.gameObject.layer) & 1) != 0 ? "vê" : "NÃO vê")} · a {DistCol(c, pt.p + Vector3.up):0.00} m · caixa centro ({b.center.x:0.0}, {b.center.y:0.0}, {b.center.z:0.0}) tamanho ({b.size.x:0.0}, {b.size.y:0.0}, {b.size.z:0.0})");
+			}
+			if (noNav && NavMesh.SamplePosition(pt.dest, out var hd, 8f, -1) && NavMesh.CalculatePath(hs.position, hd.position, -1, navDiag))
+			{
+				var cs = navDiag.corners;
+				for (int i = 0; i + 1 < cs.Length && i < 6; i++)
+				{
+					string r = "";
+					foreach (float h in new[] { 0.6f, 1.5f })
+					{
+						Vector3 o = cs[i] + Vector3.up * h, d = cs[i + 1] + Vector3.up * h - o;
+						float len = d.magnitude;
+						if (len < 0.05f) continue;
+						r += BateSolido(o, d / len, len, mascJog, out var hh) ? $" · a {h:0.0} m bate em {Caminho(hh.collider.transform)} (camada {hh.collider.gameObject.layer}) em ({hh.point.x:0.0}, {hh.point.y:0.00}, {hh.point.z:0.0})" : $" · a {h:0.0} m livre";
+					}
+					Log($"   trecho {i + 1} do caminho: ({cs[i].x:0.0}, {cs[i].z:0.0}) → ({cs[i + 1].x:0.0}, {cs[i + 1].z:0.0}), {Vector3.Distance(cs[i], cs[i + 1]):0.0} m · ClearLine {(FBWorld.ClearLine(cs[i], cs[i + 1]) ? "livre" : "bloqueado")}{r}");
+				}
+				if (cs.Length > 2) Log($"   atalho do piloto/bots do ponto até o canto 2: ClearLine {(FBWorld.ClearLine(pt.p, cs[2]) ? "LIVRE (corta o canto)" : "bloqueado")}");
+			}
+			fotoCam.transform.position = pt.p + new Vector3(0f, 22f, -9f);
+			fotoCam.transform.LookAt(pt.p);
+			Render($"paredes_ponto_{(int)pt.p.x}_{(int)pt.p.z}_cima", 1280, 720);
+			fotoCam.transform.position = pt.p + new Vector3(-4f, 2.5f, -6f);
+			fotoCam.transform.LookAt(pt.p + Vector3.up);
+			Render($"paredes_ponto_{(int)pt.p.x}_{(int)pt.p.z}_perto", 1280, 720);
+			yield return null;
+		}
+
+		// 2) todas as arestas do NavMesh
+		var tri = NavMesh.CalculateTriangulation();
+		var v = tri.vertices;
+		var idx = tri.indices;
+		Log($"paredes: NavMesh com {v.Length} vértices e {idx.Length / 3} triângulos");
+		var vistas = new HashSet<(int, int, int, int, int, int)>();
+		var grupos = new Dictionary<Collider, GrupoParede>();
+		int arestas = 0, nParede = 0, nTeto = 0, nChao = 0;
+		float t0 = Time.realtimeSinceStartup;
+		(int, int, int) Q(Vector3 a) => (Mathf.RoundToInt(a.x * 20f), Mathf.RoundToInt(a.y * 20f), Mathf.RoundToInt(a.z * 20f));
+		for (int k = 0; k + 2 < idx.Length; k += 3)
+		{
+			for (int e = 0; e < 3; e++)
+			{
+				Vector3 a = v[idx[k + e]], b = v[idx[k + (e + 1) % 3]];
+				var qa = Q(a); var qb = Q(b);
+				var chave = qa.CompareTo(qb) <= 0 ? (qa.Item1, qa.Item2, qa.Item3, qb.Item1, qb.Item2, qb.Item3) : (qb.Item1, qb.Item2, qb.Item3, qa.Item1, qa.Item2, qa.Item3);
+				if (!vistas.Add(chave)) continue;
+				arestas++;
+				foreach (float h in new[] { 0.6f, 1.5f })
+				{
+					Vector3 o = a + Vector3.up * h, d = b + Vector3.up * h - o;
+					float len = d.magnitude;
+					if (len < 0.05f) continue;
+					if (!BateSolido(o, d / len, len, mascJog, out var hh) && !BateSolido(o + d, -d / len, len, mascJog, out hh)) continue;
+					float ny = hh.normal.y;
+					if (ny > 0.7f) { nChao++; continue; }
+					bool teto = ny < -0.5f;
+					if (teto) nTeto++; else nParede++;
+					if (!grupos.TryGetValue(hh.collider, out var gp)) grupos[hh.collider] = gp = new GrupoParede { col = hh.collider, ex = hh.point, alturaEx = h };
+					gp.n++;
+					if (teto) gp.nTeto++; else gp.nParede++;
+					break; // uma batida por aresta basta
+				}
+				Vector3 meio = (a + b) * 0.5f + Vector3.up * 0.1f;
+				if (BateSolido(meio, Vector3.up, 1.7f, mascJog, out var hu) && hu.normal.y < -0.5f)
+				{
+					nTeto++;
+					if (!grupos.TryGetValue(hu.collider, out var gt)) grupos[hu.collider] = gt = new GrupoParede { col = hu.collider, ex = hu.point, alturaEx = 0.1f + hu.distance };
+					gt.n++; gt.nTeto++;
+				}
+			}
+			if (k % 6000 == 0) yield return null;
+		}
+		Log($"paredes: {arestas} arestas do NavMesh testadas em {Time.realtimeSinceStartup - t0:0.0} s · {nParede} atravessam parede · {nTeto} passam embaixo de teto baixo · {nChao} batidas no chão ignoradas · {grupos.Count} objetos envolvidos · {grupos.Values.Count(x => x.col && ((solid >> x.col.gameObject.layer) & 1) == 0)} deles o ClearLine não vê");
+		var lista = grupos.Values.OrderByDescending(x => x.n).ToList();
+		int iFoto = 0;
+		foreach (var gp in lista.Take(30))
+		{
+			var c = gp.col;
+			if (!c) { Log($"   {gp.n} arestas · objeto destruído durante o teste"); continue; }
+			var bb = c.bounds;
+			Log($"   {gp.n} arestas ({gp.nParede} parede, {gp.nTeto} teto) · {Caminho(c.transform)} · {c.GetType().Name} · camada {c.gameObject.layer} {LayerMask.LayerToName(c.gameObject.layer)} · ClearLine {(((solid >> c.gameObject.layer) & 1) != 0 ? "vê" : "NÃO vê")} · exemplo em ({gp.ex.x:0.0}, {gp.ex.y:0.00}, {gp.ex.z:0.0}) a {gp.alturaEx:0.0} m do NavMesh · caixa ({bb.size.x:0.0} x {bb.size.y:0.0} x {bb.size.z:0.0}) m");
+			if (iFoto < 6)
+			{
+				fotoCam.transform.position = gp.ex + new Vector3(0f, 16f, -8f);
+				fotoCam.transform.LookAt(gp.ex);
+				Render($"paredes_{++iFoto}_{gp.n}_arestas", 960, 540);
+				yield return null;
+			}
+		}
+		if (lista.Count > 30) Log($"   ... e mais {lista.Count - 30} objetos com {lista.Skip(30).Sum(x => x.n)} arestas");
+		FBMatch.God = false;
 	}
 
 	// ---------- parte 4 "medir": tamanho, triângulos, bases e cobertura do mapa (regras das arenas 10x10) ----------

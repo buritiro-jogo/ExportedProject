@@ -75,6 +75,8 @@ public class FBPiloto : MonoBehaviour
 	// ---- combate ----
 	readonly Vector3[] pts = new Vector3[3];
 	FBCharacter alvo, atacante;
+	float sigMira;
+	public bool MiraBot; // v19: erro de mira igual ao dos bots (opção "mirabot" do FBTesteExe), para teste de equilíbrio
 	bool alvoVisto;
 	int parteVista = 1;
 	float thinkT, viuT = -99f, ultimoVistoT = -99f, atacadoT = -99f, reacao;
@@ -534,13 +536,28 @@ public class FBPiloto : MonoBehaviour
 		{
 			FBBotSense.TargetPoints(alvo, pts);
 			ruidoT -= dt;
-			if (ruidoT <= 0f) { ruidoT = R(0.3f, 0.5f); ruido = new Vector3(R(-0.12f, 0.12f), R(-0.1f, 0.12f), R(-0.12f, 0.12f)); }
+			if (ruidoT <= 0f)
+			{
+				if (MiraBot && alvo)
+				{
+					// v19 "mirabot": o ponto mirado leva o mesmo erro de mira dos bots (FBBotSense.AimErrorDeg com o tempo desde
+					// que viu o alvo e se está andando), sorteado de novo a cada 0,12-0,2 s, quase a cada tiro como nos bots.
+					ruidoT = R(0.12f, 0.2f);
+					Vector3 co = me.MuzzlePos, alvoPt = pts[parteVista];
+					float dd = Mathf.Max(0.5f, (alvoPt - co).magnitude);
+					float sig = FBBotSense.AimErrorDeg(me, alvo, now - viuT, me.velocity.Flat().magnitude > 1f);
+					sigMira = sig;
+					ruido = co + FBBotSense.Scatter((alvoPt - co) / dd, sig) * dd - alvoPt;
+				}
+				else { ruidoT = R(0.3f, 0.5f); ruido = new Vector3(R(-0.12f, 0.12f), R(-0.1f, 0.12f), R(-0.12f, 0.12f)); }
+			}
 			Vector3 ponto = pts[parteVista] + ruido;
 			float dist = (ponto - cam.transform.position).magnitude;
 			mirandoAds = dist > 12.5f || (mirandoAds && dist > 11.5f);
 			sai.aim = wu.Cur != null && wu.reloadT <= 0f && wu.switching <= 0f && (mirandoAds || wu.Cur.IsSniper);
 			Mira(cam, ponto, 13f, 720f, dt);
 			float erro = Vector3.Angle(cam.transform.forward, ponto - cam.transform.position);
+			if (MiraBot) erro = Mathf.Max(0f, Vector3.Angle(cam.transform.forward, pts[parteVista] - cam.transform.position) - 3.3f * sigMira);
 			float tol = Mathf.Max(0.7f, Mathf.Atan2(0.28f, Mathf.Max(1f, dist)) * Mathf.Rad2Deg);
 			Atira(wu, now, dist, erro, tol, r);
 			// movimento: de lado (strafe), chega perto se estiver longe do alcance da arma, recua se muito perto

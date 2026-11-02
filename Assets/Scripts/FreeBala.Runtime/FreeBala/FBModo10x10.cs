@@ -850,7 +850,8 @@ public class FBModo10x10 : FBMode
 	// v6: o time decide junto, como nos jogos de rodada.
 	// COMPLETA: a mediana do time paga fuzil + colete.
 	// FORCADA: não paga, mas o time já perdeu 2 seguidas, ou o inimigo está a
-	//          1 rodada de fechar, ou é a rodada 1 (todo mundo com $1000).
+	//          1 rodada de fechar, ou é a rodada 1 (todo mundo com $1000) ou a 2 (v14: quem
+	//          perdeu a pistola compra SMG em vez de ECO).
 	// ECO: guarda o dinheiro (só pistola) para comprar fuzil na rodada seguinte.
 	// Antes cada bot gastava tudo em SMG toda rodada, morria, perdia a arma e
 	// nunca juntava para o fuzil: quem ganhava a rodada 1 ganhava quase todas.
@@ -877,7 +878,9 @@ public class FBModo10x10 : FBMode
 		{
 			m = "COMPLETA";
 		}
-		else if (round <= 1 || lossStreak[t] >= 2 || wins[1 - t] >= WIN - 1)
+		// v14 (02/11): o perdedor da rodada 1 faz compra FORCADA na rodada 2 (SMG/colete) em vez de ECO; antes quem ganhava
+		// a rodada 1 ganhou a rodada 2 em 11 de 11 partidas (fuzil contra pistola).
+		else if (round <= 2 || lossStreak[t] >= 2 || wins[1 - t] >= WIN - 1)
 		{
 			m = "FORCADA";
 		}
@@ -1177,7 +1180,9 @@ public class FBModo10x10 : FBMode
 		// Fim de rodada: vai atrás do inimigo vivo mais perto.
 		// v10: se ninguém morreu até 50 s, começa a caçada mais cedo (exe F, R2: 135 s sem
 		// nenhum bot ver inimigo).
-		if (liveT > HUNT_T || vivos.Count <= 3 || (liveT > 50f && mortesRodada == 0))
+		// v14 (02/11, pedido da thread do 10x10): na rodada de pistola todo mundo caça o inimigo mais perto a partir de 35 s
+		// (antes 11 de 11 partidas tiveram a rodada 1 decidida no tempo, com contato só aos ~24-34 s).
+		if (liveT > HUNT_T || vivos.Count <= 3 || (liveT > 50f && mortesRodada == 0) || (round <= 1 && liveT > 35f))
 		{
 			FBCharacter alvo = vivos.OrderBy((FBCharacter a) => (a.Pos - b.Pos).sqrMagnitude).First();
 			return alvo.Pos + new Vector3(FBUtil.Rnd(-8f, 8f), 0f, FBUtil.Rnd(-8f, 8f));

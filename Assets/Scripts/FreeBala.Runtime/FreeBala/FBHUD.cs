@@ -582,8 +582,11 @@ public class FBHUD : MonoBehaviour
 		wipeRT.gameObject.SetActive(value: false);
 		countT = Lbl(root, "", 120, C, C, new Vector2(0f, 60f), new Vector2(900f, 160f), TextAnchor.MiddleCenter, title: true, Color.white);
 		killcamT = Lbl(root, "", 22, C, C, new Vector2(0f, -60f), new Vector2(900f, 40f), TextAnchor.MiddleCenter, title: true, FBUI.Red);
-		cashT = Lbl(root, "", 26, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(150f, -30f), new Vector2(260f, 34f), TextAnchor.MiddleLeft, title: true, new Color(0.4f, 0.95f, 0.5f));
-		cashPlus = Lbl(root, "", 16, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(150f, -58f), new Vector2(300f, 22f), TextAnchor.MiddleLeft, title: false, new Color(0.4f, 0.95f, 0.5f));
+		// física 02/11: o dinheiro ficava em (150, -30), embaixo do minimapa (R: centro 141,-139, 237x237, até y -258) e ele
+		// cobria o texto. Agora fica logo abaixo da escala "20 m" do minimapa (y -276), alinhado à borda esquerda dele (x 22),
+		// sem passar da coluna do esquadrão (começa em x 272).
+		cashT = Lbl(root, "", 26, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(142f, -302f), new Vector2(240f, 34f), TextAnchor.MiddleLeft, title: true, new Color(0.4f, 0.95f, 0.5f));
+		cashPlus = Lbl(root, "", 16, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(142f, -330f), new Vector2(240f, 22f), TextAnchor.MiddleLeft, title: false, new Color(0.4f, 0.95f, 0.5f));
 		promptRT = Img("prompt", new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 200f), new Vector2(420f, 56f), new Color(0f, 0f, 0f, 0.55f)).rectTransform;
 		Image image5 = FBUI.Panel(promptRT, "k", new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(30f, 0f), new Vector2(36f, 36f), FBUI.Gold);
 		promptK = Lbl(image5.transform, "X", 20, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, TextAnchor.MiddleCenter, title: true, Color.black);
