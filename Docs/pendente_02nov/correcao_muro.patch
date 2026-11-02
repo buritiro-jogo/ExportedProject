@@ -1,0 +1,127 @@
+diff --git a/Assets/Scripts/FBTeste/FBPiloto.cs b/Assets/Scripts/FBTeste/FBPiloto.cs
+index 2247c01..b17f59b 100644
+--- a/Assets/Scripts/FBTeste/FBPiloto.cs
++++ b/Assets/Scripts/FBTeste/FBPiloto.cs
+@@ -713,7 +713,8 @@ public class FBPiloto : MonoBehaviour
+ 		if (FBNav.TemLimite && !FBNav.DentroLimite(dest, 1f)) dest = FBNav.PraDentro(dest, 1.5f);
+ 		Vector3 alvoP;
+ 		bool estrito = Time.time < estritoAte; // depois de travar: segue os cantos do NavMesh sem atalho por 8 s
+-		if (!estrito && (dest - me.Pos).Flat().magnitude <= 12f && FBWorld.ClearLine(me.Pos, dest)) alvoP = dest;
++		// física 02/11: como os bots (FBBot.Steer), atalho e corte de canto testam a largura do corpo (ClearLineLarga)
++		if (!estrito && (dest - me.Pos).Flat().magnitude <= 12f && FBWorld.ClearLineLarga(me.Pos, dest)) alvoP = dest;
+ 		else
+ 		{
+ 			navT -= dt;
+@@ -723,8 +724,13 @@ public class FBPiloto : MonoBehaviour
+ 				if (path.Count == 0) path.Add(dest);
+ 				pathDest = dest; navT = R(2f, 3f);
+ 			}
+-			while (path.Count > 1 && (path[0] - me.Pos).Flat().magnitude < 1.3f) path.RemoveAt(0);
+-			if (!estrito && path.Count > 1 && FBWorld.ClearLine(me.Pos, path[1])) path.RemoveAt(0);
++			while (path.Count > 1)
++			{
++				float dCanto = (path[0] - me.Pos).Flat().magnitude;
++				if (dCanto >= 1.3f || (dCanto >= 0.6f && !FBWorld.ClearLineLarga(me.Pos, path[1]))) break;
++				path.RemoveAt(0);
++			}
++			if (!estrito && path.Count > 1 && FBWorld.ClearLineLarga(me.Pos, path[1])) path.RemoveAt(0);
+ 			alvoP = path[0];
+ 		}
+ 		Vector3 d = (alvoP - me.Pos).Flat();
+diff --git a/Assets/Scripts/FBTeste/FBTesteExe.cs b/Assets/Scripts/FBTeste/FBTesteExe.cs
+index 6430338..8aac183 100644
+--- a/Assets/Scripts/FBTeste/FBTesteExe.cs
++++ b/Assets/Scripts/FBTeste/FBTesteExe.cs
+@@ -97,6 +97,8 @@ public class FBTesteExe : MonoBehaviour
+ 			if (a[k] == "9x9") t.opt9x9 = true;
+ 			if (a[k] == "piloto") t.optPiloto = true;
+ 			if (a[k] == "mirabot") t.optMiraBot = true;
++			// física 02/11: "cantofino" volta ao corte de canto antigo (raio fino) para comparar com o novo (FBWorld.CorpoLargo)
++			if (a[k] == "cantofino") FBWorld.CorpoLargo = false;
+ 			if (a[k] == "sembur") t.videoSemBur = true;
+ 		}
+ 	}
+@@ -135,7 +137,7 @@ public class FBTesteExe : MonoBehaviour
+ 			string l = c.Split('\n')[0];
+ 			if (errosTxt.Count < 8 && !errosTxt.Contains(l)) errosTxt.Add(l);
+ 		};
+-		Log($"início · parte {parte} · mapa {mapa} · rodadas {rodadas} · jogador no time {timeJog}{(camAltaOpt ? " · câmera no alto" : "")}{(semCulling ? " · sem culling" : "")}{(opt9x9 ? " · 9x9" : "")}{(optPiloto ? " · piloto (bot jogando com o nosso jogador)" + (optMiraBot ? " com a mira dos bots" : "") : "")} · tela {Screen.width}x{Screen.height} · {SystemInfo.graphicsDeviceName} · {SystemInfo.processorType} ({SystemInfo.processorCount} núcleos)");
++		Log($"início · parte {parte} · mapa {mapa} · rodadas {rodadas} · jogador no time {timeJog}{(camAltaOpt ? " · câmera no alto" : "")}{(semCulling ? " · sem culling" : "")}{(opt9x9 ? " · 9x9" : "")}{(optPiloto ? " · piloto (bot jogando com o nosso jogador)" + (optMiraBot ? " com a mira dos bots" : "") : "")}{(FBWorld.CorpoLargo ? "" : " · corte de canto antigo (cantofino)")} · tela {Screen.width}x{Screen.height} · {SystemInfo.graphicsDeviceName} · {SystemInfo.processorType} ({SystemInfo.processorCount} núcleos)");
+ 		yield return Wait(4f);
+ 		yield return Tela("0_menu");
+ 		GameData.Load();
+diff --git a/Assets/Scripts/FreeBala.Runtime/FreeBala/FBBot.cs b/Assets/Scripts/FreeBala.Runtime/FreeBala/FBBot.cs
+index 23d4ee6..2f7599a 100644
+--- a/Assets/Scripts/FreeBala.Runtime/FreeBala/FBBot.cs
++++ b/Assets/Scripts/FreeBala.Runtime/FreeBala/FBBot.cs
+@@ -661,12 +661,21 @@ public class FBBot : MonoBehaviour
+ 				pathGoal = valueOrDefault;
+ 				path = FBNav.Path(ch.Pos, valueOrDefault) ?? new List<Vector3> { valueOrDefault };
+ 			}
+-			while (path.Count > 1 && (path[0] - ch.Pos).Flat().magnitude < 1.3f)
++			// física 02/11: o canto só é dado como alcançado a 1,3 m se dali o corpo inteiro passa reto até o próximo
++			// (ClearLineLarga); senão o bot vai até 0,6 m dele. Antes, na ponta de um muro, ele largava o canto a 1,3 m e
++			// mirava o canto seguinte, do outro lado da ponta, e ficava empurrando o muro.
++			while (path.Count > 1)
+ 			{
++				float dCanto = (path[0] - ch.Pos).Flat().magnitude;
++				if (dCanto >= 1.3f || (dCanto >= 0.6f && !FBWorld.ClearLineLarga(ch.Pos, path[1])))
++				{
++					break;
++				}
+ 				path.RemoveAt(0);
+ 			}
+ 			// presos 01/11: no modo estrito (bot que travou há pouco, ver Estrito) não corta canto pelo ClearLine
+-			if (!Estrito && path.Count > 1 && FBWorld.ClearLine(ch.Pos, path[1]))
++			// física 02/11: o corte de canto testa a largura do corpo (ClearLineLarga), não só um raio fino
++			if (!Estrito && path.Count > 1 && FBWorld.ClearLineLarga(ch.Pos, path[1]))
+ 			{
+ 				path.RemoveAt(0);
+ 			}
+@@ -2214,7 +2223,8 @@ public class FBBot : MonoBehaviour
+ 		if (vector2.HasValue)
+ 		{
+ 			Vector3 valueOrDefault3 = vector2.GetValueOrDefault();
+-			if (Estrito || destPendente || !FBWorld.ClearLine(ch.Pos, valueOrDefault3) || (ch.Pos - valueOrDefault3).magnitude > 12f)
++			// física 02/11: ir reto até o destino (sem o caminho do NavMesh) só com o corpo inteiro livre (ClearLineLarga)
++			if (Estrito || destPendente || (ch.Pos - valueOrDefault3).magnitude > 12f || !FBWorld.ClearLineLarga(ch.Pos, valueOrDefault3))
+ 			{
+ 				vector2 = Steer(vector2, deltaTime);
+ 			}
+diff --git a/Assets/Scripts/FreeBala.Runtime/FreeBala/FBWorld.cs b/Assets/Scripts/FreeBala.Runtime/FreeBala/FBWorld.cs
+index 2f0c0df..617efed 100644
+--- a/Assets/Scripts/FreeBala.Runtime/FreeBala/FBWorld.cs
++++ b/Assets/Scripts/FreeBala.Runtime/FreeBala/FBWorld.cs
+@@ -113,6 +113,32 @@ public static class FBWorld
+ 		return true;
+ 	}
+ 
++	// física 02/11: o ClearLine usa raios finos (0,6 m e 1,5 m de altura). Para cortar canto do caminho do NavMesh isso
++	// não basta: na ponta de um muro o raio passa a poucos centímetros e a cápsula do personagem (raio 0,3 + pele 0,08)
++	// bate e fica empurrando o muro (o piloto travou assim no muro grafitado da R. Carmelo, Praça do PT). Este teste
++	// exige também linha livre 0,4 m para cada lado. Só é mais rígido que o ClearLine (nunca libera o que ele bloqueia).
++	// CorpoLargo = false volta ao corte de canto antigo (para teste A/B).
++	public static bool CorpoLargo = true;
++
++	public static bool ClearLineLarga(Vector3 a, Vector3 b, float meia = 0.4f)
++	{
++		if (!ClearLine(a, b))
++		{
++			return false;
++		}
++		if (!CorpoLargo)
++		{
++			return true;
++		}
++		Vector3 d = (b - a).Flat();
++		if (d.sqrMagnitude < 0.0001f)
++		{
++			return true;
++		}
++		Vector3 lado = Vector3.Cross(Vector3.up, d.normalized) * meia;
++		return ClearLine(a + lado, b + lado) && ClearLine(a - lado, b - lado);
++	}
++
+ 	public static int SurfaceAt(RaycastHit h)
+ 	{
+ 		if (!h.collider)

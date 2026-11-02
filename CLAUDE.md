@@ -1,5 +1,7 @@
 # BURITIRO: guia para o Claude Code
 
+> **Tarefas pendentes para o terminal:** veja `PENDENTE.md` (correção pronta do travamento na ponta de muro, NavMesh passando por dentro de objetos, plano de CPU).
+
 Jogo de tiro em terceira pessoa que se passa em Boa Vista (RR). Os donos são o Ruan e um amigo.
 Este projeto Unity foi reconstruído a partir da build do jogo com o AssetRipper, mais o código C# recuperado com o ILSpy.
 
@@ -129,24 +131,24 @@ Modo principal: **10x10 por rodadas** com compra, primeiro a 7 vitórias, nos 5 
 
 **Bugs conhecidos e situação:**
 
-1. **Dinheiro escondido atrás do minimapa:** corrigido em 02/11. Falta conferir no print do teste `piloto_hud`.
+1. **Dinheiro escondido atrás do minimapa:** corrigido em 02/11 e confirmado no print do teste `piloto_hud`.
 2. **Jogador (e o piloto) preso no muro da Praça do PT**, em (-240,7, 0,17, 45,8), na ponta do `COL_G_PT_Muro_Grafitado_R_Carmelo`.
-   - O teste `paredes` mostrou que o caminho do NavMesh é completo, mas contorna a ponta do muro a só 0,2 a 0,5 m dele.
-   - Os raios finos passam livres, mas a cápsula do personagem raspa no muro.
-   - Em investigação.
+   - O muro e o NavMesh estão certos.
+   - O problema é como os bots e o piloto seguem o caminho: cortam a ponta do muro com raio fino e o corpo bate.
+   - A correção está pronta, mas não foi aplicada: tarefa 1 do `PENDENTE.md`.
 3. **O NavMesh passa por dentro de objetos que não abriram buraco nele**, e os bots podem prender ali:
    - pontos de ônibus, orelhões e lixeiras da `FB_Rua171`;
    - o food truck e as mesas da Praça das Águas;
    - o parquinho `PA_parquinho_166`.
    - Lista completa: `..\..\_diag\paredes_<mapa>\relatorio.txt`.
-4. **Rodada de pistola acabando no tempo** (11 de 11 partidas) e **quem ganha a rodada 1 levando a 2 e a 3.**
-   - A v14 faz os bots caçarem o inimigo aos 35 s da rodada 1.
-   - Na rodada 2, o time que perdeu a pistola faz compra forçada.
-   - Resultado do teste em análise: `..\..\_diag\v14_*`.
-   - Risco já apontado na revisão: se o time perder a R2 também, pode ficar sem dinheiro para fuzil na R3.
+   - Tarefa 2 do `PENDENTE.md`.
+4. **Rodada de pistola e efeito bola de neve (v14):**
+   - O perdedor da R1 compra arma na R2 e ganhou 2 de 6 partidas (antes, 0 de 11).
+   - A R1 ainda acaba no tempo em 5 de 6, porque a pistola mata pouco (10% de acerto).
+   - A thread do 10x10 decidiu manter a v14 como está. A letalidade da pistola fica para depois.
+   - Resumo em `Docs/pendente_02nov/v14_RESUMO.md`.
 5. **Não existe vantagem do time do jogador.** O time dele ganhou 42 de 86 rodadas nos testes. O piloto vence por mirar melhor (acerta 40% contra 8% dos bots).
 
-**Pendente:**
-- Economia de CPU para chegar a 120 FPS: o código está pronto e revisado pelos agentes da nuvem, mas ainda não foi aplicado aqui.
+**Pendente:** veja `PENDENTE.md`.
+- Economia de CPU para chegar a 120 FPS: só o plano (`Docs/pendente_02nov/cpu_plan.md`).
 - Depois dela: teste A/B do GPU Resident Drawer (`metodo BuritiroResidentDrawer.Liga`), sombras, Graphics Jobs e GPU skinning.
-- Push para o GitHub: espera o Ruan liberar o login da conta Buritiro.
