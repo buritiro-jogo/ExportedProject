@@ -59,7 +59,7 @@ public static class FBWater
 		public float sndT;
 	}
 
-	private static readonly Regex rxNot = new Regex("tank|caixa|carmetal|espelhos?(\\.|$|_[^d])|retrovis|glass|vidro|grama|grass|lawn", RegexOptions.IgnoreCase);
+	private static readonly Regex rxNot = new Regex("tank|caixa|carmetal|(?<!agua_)espelhos?(\\.|$|_[^d])|retrovis|glass|vidro|grama|grass|lawn", RegexOptions.IgnoreCase);
 
 	// BURITIRO: nomes que têm "agua", "rio" ou "piscina" mas não são água (cor verde-água, areia do rio, azulejo e tinta azul-piscina, mural, reboco, fibra, piso de borracha).
 	// Sem isto a areia da praia da Orla (A2_areia_rio_branco) e as paredes verde-água do Centro viravam água no jogo.

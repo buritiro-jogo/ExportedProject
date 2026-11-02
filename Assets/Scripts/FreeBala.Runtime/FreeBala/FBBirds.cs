@@ -618,7 +618,7 @@ public class FBBirds : MonoBehaviour
 		zero /= (float)f.b.Count;
 		f.center = zero;
 		// BURITIRO: pombo de 15 cm a mais de 80 m vira 1 ou 2 pixels; pousado assim ele some (menos draw calls e sombras) e volta a menos de 70 m
-		bool longe = (f.st == St.Ground || f.st == St.Roost) && cAm(zero) > (f.oculto ? 70f : 80f);
+		bool longe = (f.st == St.Ground || f.st == St.Roost) && cAmTela(zero) > (f.oculto ? 70f : 80f);
 		if (longe != f.oculto)
 		{
 			f.oculto = longe;
@@ -736,6 +736,18 @@ public class FBBirds : MonoBehaviour
 			return 999f;
 		}
 		return Vector3.Distance(main.transform.position, p);
+	}
+
+	// BURITIRO 01/11: distância equivalente na tela (FOV 55); com luneta o pombo aparece bem maior e não pode sumir
+	private float cAmTela(Vector3 p)
+	{
+		Camera main = Camera.main;
+		if (!main)
+		{
+			return 999f;
+		}
+		float d = Vector3.Distance(main.transform.position, p);
+		return d * Mathf.Min(1f, Mathf.Tan(main.fieldOfView * 0.5f * Mathf.Deg2Rad) / 0.5206f);
 	}
 
 	private void TakeOff(Flock f, Vector3 from)

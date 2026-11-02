@@ -270,6 +270,21 @@ public static class FBInput
 			result.freeLookPressed |= i.freeLookPressed;
 			i.EndFrame();
 		}
+		// fisica 01/11: com a loja aberta na fase de compra o teclado e o controle eram ignorados, entao o B (e o D-pad
+		// direito) nao fechava a loja apesar do botao "FECHAR [B]". Agora so o B passa, para fechar (FBPlayer: Show(!Open)).
+		if (FBShop.Open && FBEconomy.buying && !FBMatch.Paused && !FBBag.Open && !FBMultimidia.Open && !FBOficina.on)
+		{
+			if (K != null)
+			{
+				result.buy |= Down(Key.B);
+				result.buyReleased |= Up(Key.B);
+			}
+			if (Gp != null)
+			{
+				result.buy |= Gp.dpad.right.wasPressedThisFrame;
+				result.buyReleased |= Gp.dpad.right.wasReleasedThisFrame;
+			}
+		}
 		Vector2? testMove = TestMove;
 		if (testMove.HasValue)
 		{

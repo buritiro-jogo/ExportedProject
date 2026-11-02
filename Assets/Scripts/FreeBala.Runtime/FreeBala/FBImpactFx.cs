@@ -44,7 +44,7 @@ public static class FBImpactFx
 
 	private static readonly Regex rxVeg = new Regex("folha|leaf|leaves|arvore|árvore|tree|palm|palmeira|bush|arbust|planta|plant|hedge|foliage|vegeta|capim", RegexOptions.IgnoreCase);
 
-	private static readonly Regex rxWater = new Regex("agua|água|water|(^|[_\\s.\\-])(rio|lago)|igarap|mar\\b|ocean", RegexOptions.IgnoreCase);
+	private static readonly Regex rxWater = new Regex("agua|água|water|(^|[_\\s.\\-])(rio|lago)|mar\\b|ocean", RegexOptions.IgnoreCase);
 
 	private static readonly Regex rxPlaster = new Regex("reboco|plaster|pintura|paint|tinta|azulejo|tile|ceram", RegexOptions.IgnoreCase);
 
@@ -199,7 +199,8 @@ public static class FBImpactFx
 		{
 			return Surf.Vegetation;
 		}
-		if (rxWater.IsMatch(n) && !FBWater.NaoEAgua(n))
+		// fisica 01/11: colisor COL_* do mapa nunca é água (a água não tem colisor); vale a palavra do tipo no fim (terra, concreto...)
+		if (rxWater.IsMatch(n) && !FBWater.NaoEAgua(n) && !n.StartsWith("COL_", System.StringComparison.OrdinalIgnoreCase))
 		{
 			return Surf.Water;
 		}

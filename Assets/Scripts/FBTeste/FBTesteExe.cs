@@ -14,6 +14,9 @@
 // "camalta": a câmera do jogo fica parada no alto do meio do mapa (olhando para baixo) em vez de atrás do jogador.
 // "semculling": todos os Animator animam mesmo fora da tela, FootIK ignora a tela e a correção da arma no peito desliga.
 // "9x9": no começo de cada rodada morre um bot do time contrário ao do jogador (o jogador parado não conta como um a mais).
+// "piloto" (v18, 01/11): um bot (FBPiloto) joga com o NOSSO jogador pela entrada normal (WASD, mouse, tiro, mira, recarga,
+// troca de arma, B da loja e cliques nos botões da loja) e anota preso, sem arma, compra que falhou, morte/queda e câmera
+// na parede, com fotos da tela do jogador. Com piloto o 9x9 e a câmera no alto ficam desligados (fica 10 x 10).
 // No 10x10 também mede o desempenho (CPU principal, render, GPU, tempo de cada parte do quadro) e grava desempenho.csv.
 // v13: o 10x10 vai até um time chegar a WIN vitórias (lido do FBModo10x10, padrão 7) e fotografa a tela final; em cada
 // rodada: foto da compra sem a loja, foto de cima das duas bases, foto do combate e do primeiro tiroteio (de trás de
@@ -58,7 +61,7 @@ public class FBTesteExe : MonoBehaviour
 	string mapa = "vila_jardim";
 	int rodadas = 3;
 	int timeJog = 0;
-	bool camAltaOpt, semCulling, opt9x9;
+	bool camAltaOpt, semCulling, opt9x9, optPiloto;
 	string dir;
 	Camera fotoCam;
 	FBInputState? entrada;
@@ -89,6 +92,7 @@ public class FBTesteExe : MonoBehaviour
 			if (a[k] == "camalta") t.camAltaOpt = true;
 			if (a[k] == "semculling") t.semCulling = true;
 			if (a[k] == "9x9") t.opt9x9 = true;
+			if (a[k] == "piloto") t.optPiloto = true;
 			if (a[k] == "sembur") t.videoSemBur = true;
 		}
 	}
@@ -127,7 +131,7 @@ public class FBTesteExe : MonoBehaviour
 			string l = c.Split('\n')[0];
 			if (errosTxt.Count < 8 && !errosTxt.Contains(l)) errosTxt.Add(l);
 		};
-		Log($"início · parte {parte} · mapa {mapa} · rodadas {rodadas} · jogador no time {timeJog}{(camAltaOpt ? " · câmera no alto" : "")}{(semCulling ? " · sem culling" : "")}{(opt9x9 ? " · 9x9" : "")} · tela {Screen.width}x{Screen.height} · {SystemInfo.graphicsDeviceName} · {SystemInfo.processorType} ({SystemInfo.processorCount} núcleos)");
+		Log($"início · parte {parte} · mapa {mapa} · rodadas {rodadas} · jogador no time {timeJog}{(camAltaOpt ? " · câmera no alto" : "")}{(semCulling ? " · sem culling" : "")}{(opt9x9 ? " · 9x9" : "")}{(optPiloto ? " · piloto (bot jogando com o nosso jogador)" : "")} · tela {Screen.width}x{Screen.height} · {SystemInfo.graphicsDeviceName} · {SystemInfo.processorType} ({SystemInfo.processorCount} núcleos)");
 		yield return Wait(4f);
 		yield return Tela("0_menu");
 		GameData.Load();
@@ -804,6 +808,19 @@ public class FBTesteExe : MonoBehaviour
 		void LinhasModo() { if (linhasModo.Count == 0) return; var l = linhasModo.ToList(); linhasModo.Clear(); foreach (var x in l) Log("   modo: " + x); }
 		Log($"10x10: a partida termina quando um time chega a {win} vitórias (WIN do modo)" + (rodadas < 2 * win - 1 ? $"; este teste para antes, com {rodadas} rodadas" : ""));
 		string Fase() => fPhase?.GetValue(g.mode) as string ?? "?";
+		// v18: piloto = bot que joga com o nosso jogador (FBPiloto), ligado antes da primeira compra
+		FBPiloto piloto = null;
+		if (optPiloto)
+		{
+			if (opt9x9) { opt9x9 = false; Log("piloto: a opção 9x9 ficou desligada (o jogador joga, então é 10 x 10)"); }
+			if (camAltaOpt) { camAltaOpt = false; Log("piloto: a câmera no alto ficou desligada (as fotos são da tela do jogador)"); }
+			piloto = gameObject.AddComponent<FBPiloto>();
+			piloto.Log = Log;
+			piloto.Fase = Fase;
+			piloto.NavEstado = NavEstado;
+			piloto.Liga();
+			Log($"piloto ligado: o jogador compra na loja (cliques e tecla B), segue o destino do modo como os bots do time e joga com WASD/mouse · mira assistida \"{FBSession.aimAssist}\" · segurar para correr {(FBSession.holdRun ? "sim" : "não")}");
+		}
 		for (float w = 0f; w < 10f && Fase() != "buy"; w += Time.unscaledDeltaTime) yield return null;
 		yield return Wait(1.5f);
 
@@ -816,10 +833,10 @@ public class FBTesteExe : MonoBehaviour
 		bool lojaSozinha = FBShop.Open;
 		Log($"10x10: loja aberta sozinha na fase de compra: {(lojaSozinha ? "sim" : "não")}");
 		if (lojaSozinha) yield return Tela("10x10_2_loja_aberta");
-		FBShop.Show(false);
+		if (!piloto) FBShop.Show(false); // v18: com piloto a loja é dele, o teste não abre nem fecha
 		yield return Wait(0.4f);
 		yield return Tela("10x10_1_fase_de_compra");
-		if (!lojaSozinha)
+		if (!lojaSozinha && !piloto)
 		{
 			FBShop.Show(true);
 			yield return Wait(0.6f);
@@ -918,7 +935,7 @@ public class FBTesteExe : MonoBehaviour
 			foreach (var ch in FBMatch.All.Where(x => x && x.alive && x.team <= 1)) { inicio[ch] = ch.Pos; Seg(ch); if (!ch.isPlayer) placar[ch.team].bots++; }
 			for (int t = 0; t < 2; t++)
 			{
-				var armas = FBMatch.All.Where(c => c && c.alive && c.team == t).Select(c => (c.weapon?.id ?? "sem arma") + (c.isPlayer ? " (jogador parado)" : ""))
+				var armas = FBMatch.All.Where(c => c && c.alive && c.team == t).Select(c => (c.weapon?.id ?? "sem arma") + (c.isPlayer ? (piloto ? " (jogador piloto)" : " (jogador parado)") : ""))
 					.GroupBy(x => x).OrderByDescending(x => x.Count()).Select(x => $"{x.Key} x{x.Count()}");
 				Log($"   armas do time {t} no começo da rodada {g.mode.Round}: {string.Join(", ", armas)}");
 				var vt = FBMatch.All.Where(c => c && c.alive && c.team == t).ToList();
@@ -972,6 +989,15 @@ public class FBTesteExe : MonoBehaviour
 			perf.Quadro(dt);
 			if (camAltaOpt) CamAltaManter();
 			LinhasModo();
+			if (piloto && piloto.FotoPedida != null)
+			{
+				// v18: foto da tela do jogador pedida pelo piloto (mirando, preso, câmera na parede, 20 s de rodada)
+				string nf = piloto.FotoPedida;
+				piloto.FotoPedida = null;
+				yield return Tela(nf);
+				pulaQuadros = 2;
+				perf.Sincronizar();
+			}
 			int[] vivosT = new int[2], telaT = new int[2];
 			var camTela = Camera.main;
 			if (camTela) GeometryUtility.CalculateFrustumPlanes(camTela, planos);
@@ -1123,7 +1149,7 @@ public class FBTesteExe : MonoBehaviour
 					// v13b: o jogador parado e sem arma segura a rodada até o tempo quando os bots do time dele já morreram
 					bool soJogador = !elim && (b0 == 0 || b1 == 0);
 					if (elim) porElim++; else if (soJogador) porSoJogador++; else porTempo++;
-					string como = elim ? "eliminação" : soJogador ? "tempo, mas só o jogador parado estava vivo (bots do time eliminados)" : "tempo";
+					string como = elim ? "eliminação" : soJogador ? (piloto ? "tempo, com só o jogador (piloto) vivo do time dele" : "tempo, mas só o jogador parado estava vivo (bots do time eliminados)") : "tempo";
 					int venc = wn[0] > w0[0] ? 0 : wn[1] > w0[1] ? 1 : -1;
 					string fim = $"rodada {rodada}: venceu o time {venc} por {como} com {tLive:0} s de combate · vivos {v0} x {v1} (bots {b0} x {b1}) · placar {wn[0]} x {wn[1]}" + (armasRodada.TryGetValue(rodada, out var ar) ? $" · armas no começo: {ar}" : "");
 					fins.Add(fim);
@@ -1180,9 +1206,9 @@ public class FBTesteExe : MonoBehaviour
 				if (f == "buy" && g.mode.Round != rodada)
 				{
 					rodada = g.mode.Round;
+					bool lojaAberta = FBShop.Open; // v18: 1º quadro da compra, antes de o piloto mexer
 					yield return Wait(1f);
-					bool lojaAberta = FBShop.Open;
-					FBShop.Show(false);
+					if (!piloto) FBShop.Show(false);
 					yield return Wait(0.4f);
 					yield return Tela($"10x10_compra_rodada{rodada}");
 					LinhasModo();
@@ -1200,7 +1226,7 @@ public class FBTesteExe : MonoBehaviour
 							fotoCam.transform.LookAt(cb[t] + Vector3.up * 0.8f);
 							Render($"10x10_rodada{rodada}_base_time{t}", 1280, 720);
 						}
-						Log($"10x10 rodada {rodada} compra: base do time 0 em ({cb[0].x:0}, {cb[0].z:0}), do time 1 em ({cb[1].x:0}, {cb[1].z:0}), a {(cb[0] - cb[1]).Flat().magnitude:0} m · loja estava {(lojaAberta ? "aberta (fechada para a foto)" : "fechada")}");
+						Log($"10x10 rodada {rodada} compra: base do time 0 em ({cb[0].x:0}, {cb[0].z:0}), do time 1 em ({cb[1].x:0}, {cb[1].z:0}), a {(cb[0] - cb[1]).Flat().magnitude:0} m · loja {(lojaAberta ? (piloto ? "abriu sozinha (o piloto compra e fecha)" : "estava aberta (fechada para a foto)") : "NÃO abriu sozinha")}");
 					}
 				}
 				Log("   censo (" + f + "): " + Censo());
@@ -1236,6 +1262,12 @@ public class FBTesteExe : MonoBehaviour
 		LinhasModo();
 		Log($"10x10 como as rodadas acabaram: {porElim} por eliminação, {porTempo} por tempo, {porSoJogador} por tempo com só o jogador parado vivo · partida {(fimPartida ? $"terminou com um time em {win}" : "não chegou ao fim")}");
 		foreach (var x in fins) Log("   " + x);
+		if (piloto)
+		{
+			piloto.Resumo();
+			piloto.Desliga();
+			Destroy(piloto);
+		}
 		perf.Dispose();
 		FBTempo.On = false;
 		try { csv?.Dispose(); } catch { }
