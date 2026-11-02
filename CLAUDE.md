@@ -1,6 +1,8 @@
 # BURITIRO: guia para o Claude Code
 
 > **Tarefas pendentes para o terminal:** veja `PENDENTE.md` (correção pronta do travamento na ponta de muro, NavMesh passando por dentro de objetos, plano de CPU).
+>
+> **Resumo completo do projeto:** veja `RESUMO_PROJETO_BURITIRO.md` (decisões do Ruan, o que cada agente já fez, estado atual, bugs e o que falta). Leia antes de começar, para não refazer trabalho.
 
 Jogo de tiro em terceira pessoa que se passa em Boa Vista (RR). Os donos são o Ruan e um amigo.
 Este projeto Unity foi reconstruído a partir da build do jogo com o AssetRipper, mais o código C# recuperado com o ILSpy.
