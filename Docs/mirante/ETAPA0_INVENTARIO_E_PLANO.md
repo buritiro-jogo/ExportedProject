@@ -114,6 +114,40 @@ Fazer um blockout do mapa inteiro em ProBuilder descartaria a arena v7: o modelo
 
 **Recomendo a C**, com o observatório (opção A) bonito de ver. A B dá o momento mais "uau", mas vai exigir horizonte de 8 km, bots que usam elevador e muito teste de equilíbrio.
 
+### 6.3.1 DECIDIDO (03/11/2026): opção C
+
+O Ruan escolheu a **C: varanda média jogável, topo fechado**.
+
+**Medidas da torre que está no GLB da arena.** Coordenadas do glTF; no Unity, o x troca de sinal.
+
+| Peça | Altura (m) | Planta (x / z) |
+|---|---|---|
+| 6 varandas (`A1_grade_aco_varanda`) | 12,6 · 25,0 · 37,4 · 49,8 · 62,2 · 74,6 (uma a cada 12,4 m) | x 25,2–33,9 / z 62,9–73,1 (8,7 x 10,2 m) |
+| Porta em cada varanda (`A1_porta_aco_cinza`) | as mesmas 6 alturas | face z 68,4–69,3 |
+| Elevador de vidro (`A1_vidro_elevador`) | 0,2 até 80,7 | face z ≈ 73,6 |
+| Forro e LED do observatório | 80,1 a 90,8 | x 21,5–38,6 / z 61,3–83,4 |
+| Piso do observatório (`A1_porcelanato_observatorio`) | **86,8** | |
+| Cúpula | 91,0 a 93,6 | |
+| Antena | 101,9 a 113,5 | |
+
+**Atenção:** no modelo, o piso do observatório está a 86,8 m, e não nos 93 m do dado real. A causa provável é o modelo usar 93 m como o topo da cúpula. Só corrijo isso se as fotos ou a medida oficial confirmarem.
+
+**Proposta para a C** (detalhes finais depois das fotos):
+- **Varanda jogável:** a 2ª, a **25,0 m**, mais ou menos a altura de um prédio de 8 andares. Ela enxerga por cima das árvores da Selvinha, sem dominar a arena inteira.
+  - Se no teste ficar forte demais, troco pela 1ª, a 12,6 m.
+- **Acesso:** escada interna no núcleo, saindo do hall térreo e chegando à porta da varanda.
+  - Ela não aparece de fora, então não muda o visual da torre. Mesmo assim, o formato dessa escada é ficção de jogo até chegarem as fotos do interior.
+  - Subida de 25 m, com uns 140 degraus de 0,18 m: cerca de 15 a 20 s correndo.
+- **O elevador fica só como cenário.** Ele não funciona no 10x10, então os bots não precisam aprender a usá-lo.
+- **As outras 5 varandas e o observatório continuam fechados.** O `COL_Bloqueio_Torre_Mirante` vira um bloqueio com recorte só no hall, na escada e na varanda 2.
+- **Equilíbrio:**
+  - parapeito de grade, com guarda-corpo de 1,10 m que só cobre quem estiver agachado;
+  - o núcleo de concreto quebra a visão de 360°, então quem está na varanda cobre uma face por vez;
+  - a porta é a única saída, o que expõe o atirador a quem vem pela escada;
+  - nenhuma base nasce com linha de visão direta para a varanda (vou conferir com `visao_base_a_base`).
+- **Bots:** NavMesh com a escada (rampa em zigue-zague no núcleo), mais 1 ponto de cobertura no hall e 1 na varanda.
+- **Teste:** `-fbtesteexe paredes orla` e `10x10 orla 3 9x9`, comparando com a v7 (as vitórias por time não podem pender para quem nasce perto da torre).
+
 ### 6.4 Spawns, rotas, cobertura e veículos
 
 - Os spawns e os `basePairs` da v7 ficam como estão. Eles já foram validados com caminho completo nos dois sentidos.
@@ -147,7 +181,7 @@ Antes de mexer no Ultra, vou medir o desempenho atual da Orla no PC Alto, para t
 
 1. **Fotos de referência** na pasta `Assets/BURITIRO_Mapas/mirante/_referencias/`, cobrindo os ângulos da seção 5, de preferência fotos próprias ou com licença.
    - Ou então autorização para usar o Street View só como consulta, fora do repositório.
-2. **Escolher A, B ou C** para a plataforma (seção 6.3).
+2. ~~Escolher A, B ou C~~: **escolhida a C** em 03/11 (seção 6.3.1).
 3. **Confirmar** que posso tirar a torre das células e transformá-la num objeto próprio (6.1), em vez de fazer o blockout do mapa inteiro.
 4. **Abrir o Blender** com o add-on do MCP ligado, para a estrutura da torre e os guarda-corpos.
 5. **Combinar a vez no Unity:** a thread "Ajustar física" está pausada, mas só um pode editar o Unity por vez.
