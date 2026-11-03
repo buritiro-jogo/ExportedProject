@@ -1,17 +1,38 @@
-# Pastas que o Unity recria sozinho (nunca versionar)
+# =====================================================================
+# BURITIRO (Unity 6) - .gitignore do projeto unificado
+# Versiona: Assets/ (cenas, scripts, prefabs, materiais, texturas, modelos,
+# animacoes, .meta), Packages/ e ProjectSettings/. Binarios grandes vao pelo
+# Git LFS (ver .gitattributes).
+# =====================================================================
+
+# --- Pastas que o Unity recria sozinho (nunca versionar) ---
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 /[Mm]emoryCaptures/
 /[Rr]ecordings/
 
-# Arquivos gerados por IDE (Visual Studio / Rider)
+# --- Builds locais, executaveis e artefatos de compilacao ---
+/[Bb]uild/
+/[Bb]uilds/
+/Data/
+/.utmp/
+*.apk
+*.aab
+*.ipa
+*.exe
+*.unitypackage
+*_BurstDebugInformation_DoNotShip/
+*_BackUpThisFolder_ButDontShipItWithYourGame/
+crashlytics-build.properties
+sysinfo.txt
+
+# --- Arquivos gerados por IDE (Visual Studio / Rider / VS Code) ---
 .vs/
 .idea/
+.vscode/
 *.csproj
 *.sln
 *.slnx
@@ -26,21 +47,53 @@
 *.opendb
 *.VC.db
 
-# Builds compilados e pacotes
-*.apk
-*.aab
-*.exe
-*.unitypackage
-*_BurstDebugInformation_DoNotShip/
+# --- Logs e relatorios de teste locais ---
+*.log
+test_results.xml
+TestResults*.xml
 
-# Lixo do sistema e backups
-.DS_Store
-Thumbs.db
-desktop.ini
+# --- Cena de recuperacao que o Unity cria depois de travar ---
+Assets/_Recovery/
+Assets/_Recovery.meta
+
+# --- Pastas terminadas em ~ (o Unity nao importa; ficam so no PC) ---
+Assets/**/*~/
+Assets/**/*~.meta
+
+# --- Backups temporarios e arquivos descartaveis ---
 *.bak
 *.bak.meta
 *.tmp
+*.orig
+*.rej
+~$*
+*.swp
 
-# Crash reports
-sysinfo.txt
-crashlytics-build.properties
+# --- Lixo do sistema ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Arquivo solto fora de Assets (nao compila; copia local de trabalho) ---
+/FBHolsterManualCalibrationEditor.cs
+/FBHolsterManualCalibrationEditor.cs.meta
+
+# --- Pastas de trabalho do time que ficam FORA do repositorio ---
+_diag/
+_patches/
+_backup/
+_backup_projeto/
+
+# --- Credenciais, tokens e configuracao local sensivel ---
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+*.p12
+*.keystore
+*.jks
+**/secrets/
+**/*token*.txt
+**/*_token.json
+**/credenciais*

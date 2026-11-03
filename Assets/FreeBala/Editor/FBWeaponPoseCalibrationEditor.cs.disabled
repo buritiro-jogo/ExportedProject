@@ -1,0 +1,102 @@
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEngine;
+
+namespace FreeBala.EditorTools
+{
+    /// <summary>
+    /// Play -> Pause -> selecionar a arma NA MAO -> W/E -> Salvar.
+    /// Calcula o delta contra a pose capturada ANTES da calibracao, para
+    /// nao somar duas vezes os offsets durante mira / disparo / IK.
+    /// </summary>
+    public sealed class FBWeaponPoseCalibrationEditor : EditorWindow
+    {
+        const string AssetPath = "Assets/FreeBala/Resources/FBWeaponPoseCalibrations.asset";
+        FBWeaponPoseCalibrations.Pose pose = FBWeaponPoseCalibrations.Pose.Hold;
+        bool globalPreset;
+
+        [MenuItem("Tools/FreeBala/Armas na mao/Calibrar segurando, mira e disparo")]
+        public static void Open() => GetWindow<FBWeaponPoseCalibrationEditor>("Armas na mao");
+
+        void OnGUI()
+        {
+            EditorGUILayout.LabelField("Calibrador visual — arma empunhada (TPS)", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox("Play > reproduza a animacao > Pause > selecione a arma NA MAO (nao um Coldre_) > mova/gire com W/E > Salvar.", MessageType.Info);
+            pose = (FBWeaponPoseCalibrations.Pose)EditorGUILayout.EnumPopup("Pose para salvar", pose);
+            globalPreset = EditorGUILayout.ToggleLeft("Usar como padrao para todas as skins", globalPreset);
+
+            var c = SelectedCharacter();
+            if (!c)
+            {
+                EditorGUILayout.HelpBox("Selecione a arma equipada na Hierarchy ou qualquer um dos objetos filhos dela.", MessageType.Warning);
+                return;
+            }
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Personagem", c.skinId ?? "(sem skinId)");
+            EditorGUILayout.LabelField("Arma", c.weapon != null ? c.weapon.id : "(nao equipada)");
+            EditorGUILayout.LabelField("Pose atual", c.CurrentWeaponPose.ToString());
+            EditorGUILayout.LabelField("Captura de base", c.WeaponPoseCaptureReady ? "Disponivel" : "Nao disponivel");
+            if (c.CurrentWeaponPose != pose)
+                EditorGUILayout.HelpBox("A pose selecionada para salvar e diferente da pose atual. Execute a animacao correspondente e pause durante ela para obter um ajuste fiel.", MessageType.Warning);
+            if (!globalPreset && string.IsNullOrEmpty(c.skinId))
+                EditorGUILayout.HelpBox("O skinId esta vazio. Use o padrao global ou configure o identificador do personagem.", MessageType.Warning);
+
+            bool ready = EditorApplication.isPlaying && EditorApplication.isPaused &&
+                c.weapon != null && c.weaponGO && c.WeaponPoseCaptureReady &&
+                (globalPreset || !string.IsNullOrEmpty(c.skinId)) && c.CurrentWeaponPose == pose;
+            using (new EditorGUI.DisabledScope(!ready))
+            {
+                if (GUILayout.Button("Salvar posicao e rotacao desta pose", GUILayout.Height(34))) Save(c);
+            }
+            if (GUILayout.Button("Selecionar banco de perfis"))
+            {
+                var db = GetOrCreate(); Selection.activeObject = db; EditorGUIUtility.PingObject(db);
+            }
+            EditorGUILayout.Space();
+            EditorGUILayout.HelpBox("Ajusta o Transform local do modelo na mao direita. O IK do FBRig continua responsavel pelas maos e nao tem suas animacoes regravadas por esta ferramenta.", MessageType.None);
+        }
+
+        void Update() { if (EditorApplication.isPlaying) Repaint(); }
+
+        static FBCharacter SelectedCharacter()
+        {
+            var t = Selection.activeTransform;
+            if (!t) return null;
+            var c = t.GetComponentInParent<FBCharacter>();
+            if (!c || !c.weaponGO) return null;
+            var w = c.weaponGO.transform;
+            if (t != w && !t.IsChildOf(w)) return null;
+            return c;
+        }
+
+        void Save(FBCharacter c)
+        {
+            var t = c.weaponGO.transform;
+            // Equivalente inverso da composicao feita em FBCharacter:
+            // localPosition = basePosition + posDelta
+            // localRotation = baseRotation * rotDelta
+            var posDelta = t.localPosition - c.WeaponPoseBaseLocalPosition;
+            var rotDelta = Quaternion.Inverse(c.WeaponPoseBaseLocalRotation) * t.localRotation;
+            var db = GetOrCreate();
+            Undo.RecordObject(db, "Calibracao de arma empunhada");
+            db.Save(globalPreset ? "*" : c.skinId, c.weapon.id, pose, posDelta, rotDelta);
+            EditorUtility.SetDirty(db);
+            AssetDatabase.SaveAssets();
+            Debug.Log($"[FBWeaponPose] Salvo: {c.weapon.id} / {pose} / skin={(globalPreset ? "*" : c.skinId)} / pos={posDelta} / rot={rotDelta.eulerAngles}");
+            EditorUtility.DisplayDialog("Calibracao salva", "Salvo no banco permanente de calibracoes. Despause, teste e reinicie o Play Mode para confirmar.", "OK");
+        }
+
+        static FBWeaponPoseCalibrations GetOrCreate()
+        {
+            var db = AssetDatabase.LoadAssetAtPath<FBWeaponPoseCalibrations>(AssetPath);
+            if (db) return db;
+            if (!AssetDatabase.IsValidFolder("Assets/FreeBala")) AssetDatabase.CreateFolder("Assets", "FreeBala");
+            if (!AssetDatabase.IsValidFolder("Assets/FreeBala/Resources")) AssetDatabase.CreateFolder("Assets/FreeBala", "Resources");
+            db = ScriptableObject.CreateInstance<FBWeaponPoseCalibrations>();
+            AssetDatabase.CreateAsset(db, AssetPath);
+            AssetDatabase.SaveAssets();
+            return db;
+        }
+    }
+}
+#endif

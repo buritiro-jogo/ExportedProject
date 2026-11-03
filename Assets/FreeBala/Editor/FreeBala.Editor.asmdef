@@ -1,0 +1,23 @@
+{
+  "name": "FreeBala.Editor",
+  "rootNamespace": "FreeBala.EditorTools",
+  "references": [
+    "FreeBala.Runtime",
+    "Unity.RenderPipelines.Universal.Runtime",
+    "Unity.RenderPipelines.Universal.Editor",
+    "Unity.RenderPipelines.Core.Runtime",
+    "Unity.RenderPipelines.GPUDriven.Runtime",
+    "Unity.AI.Navigation",
+    "Unity.AI.Navigation.Editor",
+    "glTFast",
+    "glTFast.Editor",
+    "Unity.Animation.Rigging",
+    "com.cqf.urpvolumetricfog.runtime"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "autoReferenced": true
+}

@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6224d67acd1f434d97211c6ac5f8514, type: 3}
+  m_Name: FBHolsterManualCalibrations
+  m_EditorClassIdentifier: FreeBala.Runtime::FreeBala.FBHolsterManualCalibrations
+  presets:
+  - skinId: r_caboco
+    weaponId: p90
+    localPosition: {x: -0.018128281, y: -0.12596115, z: 0.099501826}
+    localRotation: {x: 0.17545621, y: -0.51483953, z: 0.21088128, w: 0.8122096}
+    localScale: {x: 0.61750025, y: 0.61750025, z: 0.61750025}
+    preventClipping: 0
+  - skinId: r_caboco
+    weaponId: ia2
+    localPosition: {x: -0.005, y: 0.016, z: -0.088}
+    localRotation: {x: -0.6518661, y: -0.27497745, z: 0.65085316, w: -0.27540547}
+    localScale: {x: 0.6175004, y: 0.6175004, z: 0.6175004}
+    preventClipping: 0
+  - skinId: r_caboco
+    weaponId: 38
+    localPosition: {x: -0.0689, y: 0.0182, z: -0.0074}
+    localRotation: {x: -0.01728089, y: 0.70688695, z: 0.7069041, w: 0.017288452}
+    localScale: {x: 0.6175, y: 0.6175, z: 0.6175}
+    preventClipping: 0
+  - skinId: r_aka_junin
+    weaponId: ia2
+    localPosition: {x: 0.0284, y: 0.0055, z: -0.1122}
+    localRotation: {x: -0.65081537, y: -0.27542135, z: 0.65190375, w: -0.2749616}
+    localScale: {x: 0.61750007, y: 0.61750007, z: 0.61750007}
+    preventClipping: 0
+  - skinId: r_aka_junin
+    weaponId: 38
+    localPosition: {x: -0.0784, y: -0.0082, z: 0.0065}
+    localRotation: {x: 0.032981332, y: -0.7063287, z: -0.70634586, w: -0.03297975}
+    localScale: {x: 0.5, y: 0.5, z: 0.5}
+    preventClipping: 0
+  - skinId: r_aka_junin
+    weaponId: p90
+    localPosition: {x: 0.0111, y: -0.1339, z: 0.1369}
+    localRotation: {x: 0.19282009, y: -0.5992304, z: 0.29588613, w: 0.718467}
+    localScale: {x: 0.5, y: 0.5, z: 0.5}
+    preventClipping: 0
+  revision: 10

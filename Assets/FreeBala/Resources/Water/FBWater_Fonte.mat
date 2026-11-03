@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: FBWater_Fonte
+  m_Shader: {fileID: 4800000, guid: c893afe242337165ff68aa0160eda5e6, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties:
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _NormalMap:
+        m_Texture: {fileID: 2800000, guid: 08e3e4e051d6faf181809a741a737723, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FoamTex:
+        m_Texture: {fileID: 2800000, guid: 2e7fb45fbfa37e148ceb62832b5b20d4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _NormalScale: 0.7
+    - _Agitation: 0.8
+    - _DepthRange: 0.9
+    - _Murk: 0.15
+    - _FoamDist: 0.25
+    - _FoamAmount: 0.55
+    - _Smoothness: 0.94
+    - _SpecBoost: 3
+    - _ReflStrength: 0.8
+    m_Colors:
+    - _ShallowColor: {r: 0.3, g: 0.62, b: 0.7, a: 0.42}
+    - _DeepColor: {r: 0.04, g: 0.22, b: 0.36, a: 0.9}
+    - _SkyTint: {r: 0.58, g: 0.72, b: 0.85, a: 1}
+    - _Tiling: {r: 2.6, g: 7, b: 0, a: 0}
+    - _Speed: {r: 0.07, g: 0.045, b: 0, a: 0}
+    - _Flow: {r: 0, g: 1, b: 0, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

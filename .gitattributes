@@ -1,42 +1,58 @@
 # Arquivos de texto do Unity: fim de linha consistente
 * text=auto
-*.cs       text diff=csharp
-*.shader   text
-*.hlsl     text
-*.json     text
-*.md       text
-*.meta     text eol=lf
-*.unity    text eol=lf merge=unityyamlmerge
-*.prefab   text eol=lf merge=unityyamlmerge
-*.asset    text eol=lf merge=unityyamlmerge
-*.mat      text eol=lf merge=unityyamlmerge
-*.anim     text eol=lf merge=unityyamlmerge
+*.cs         text diff=csharp
+*.shader     text
+*.hlsl       text
+*.cginc      text
+*.compute    text
+*.json       text
+*.md         text
+*.meta       text eol=lf
+*.unity      text eol=lf merge=unityyamlmerge
+*.prefab     text eol=lf merge=unityyamlmerge
+*.asset      text eol=lf merge=unityyamlmerge
+*.mat        text eol=lf merge=unityyamlmerge
+*.anim       text eol=lf merge=unityyamlmerge
 *.controller text eol=lf merge=unityyamlmerge
+*.mask       text eol=lf merge=unityyamlmerge
 
 # Binarios grandes vao para o Git LFS
-*.glb   filter=lfs diff=lfs merge=lfs -text
-*.gltf  filter=lfs diff=lfs merge=lfs -text
-*.fbx   filter=lfs diff=lfs merge=lfs -text
-*.obj   filter=lfs diff=lfs merge=lfs -text
-*.blend filter=lfs diff=lfs merge=lfs -text
-*.png   filter=lfs diff=lfs merge=lfs -text
-*.jpg   filter=lfs diff=lfs merge=lfs -text
-*.jpeg  filter=lfs diff=lfs merge=lfs -text
-*.tga   filter=lfs diff=lfs merge=lfs -text
-*.psd   filter=lfs diff=lfs merge=lfs -text
-*.exr   filter=lfs diff=lfs merge=lfs -text
-*.hdr   filter=lfs diff=lfs merge=lfs -text
-*.ogg   filter=lfs diff=lfs merge=lfs -text
-*.wav   filter=lfs diff=lfs merge=lfs -text
-*.mp3   filter=lfs diff=lfs merge=lfs -text
-*.mp4   filter=lfs diff=lfs merge=lfs -text
-*.ttf   filter=lfs diff=lfs merge=lfs -text
-*.otf   filter=lfs diff=lfs merge=lfs -text
-*.bytes filter=lfs diff=lfs merge=lfs -text
-*.dll   filter=lfs diff=lfs merge=lfs -text
+*.glb    filter=lfs diff=lfs merge=lfs -text
+*.bin    filter=lfs diff=lfs merge=lfs -text
+*.fbx    filter=lfs diff=lfs merge=lfs -text
+*.FBX    filter=lfs diff=lfs merge=lfs -text
+*.obj    filter=lfs diff=lfs merge=lfs -text
+*.blend  filter=lfs diff=lfs merge=lfs -text
+*.png    filter=lfs diff=lfs merge=lfs -text
+*.jpg    filter=lfs diff=lfs merge=lfs -text
+*.jpeg   filter=lfs diff=lfs merge=lfs -text
+*.tga    filter=lfs diff=lfs merge=lfs -text
+*.tif    filter=lfs diff=lfs merge=lfs -text
+*.psd    filter=lfs diff=lfs merge=lfs -text
+*.exr    filter=lfs diff=lfs merge=lfs -text
+*.hdr    filter=lfs diff=lfs merge=lfs -text
+*.ogg    filter=lfs diff=lfs merge=lfs -text
+*.wav    filter=lfs diff=lfs merge=lfs -text
+*.mp3    filter=lfs diff=lfs merge=lfs -text
+*.mp4    filter=lfs diff=lfs merge=lfs -text
+*.ttf    filter=lfs diff=lfs merge=lfs -text
+*.otf    filter=lfs diff=lfs merge=lfs -text
+*.bytes  filter=lfs diff=lfs merge=lfs -text
+*.dll    filter=lfs diff=lfs merge=lfs -text
+*.so     filter=lfs diff=lfs merge=lfs -text
+*.a      filter=lfs diff=lfs merge=lfs -text
+*.aar    filter=lfs diff=lfs merge=lfs -text
+*.jar    filter=lfs diff=lfs merge=lfs -text
+*.zip    filter=lfs diff=lfs merge=lfs -text
+*.wasm   filter=lfs diff=lfs merge=lfs -text
 
-# Malhas e dados enormes extraidos do jogo (texto, mas pesados demais)
-Assets/Mesh/**/*.asset           filter=lfs diff=lfs merge=lfs -text
-Assets/NavMeshData/**/*.asset    filter=lfs diff=lfs merge=lfs -text
-Assets/Resources/fbimported/**/*.asset filter=lfs diff=lfs merge=lfs -text
-Assets/AnimationClip/**/*.anim   filter=lfs diff=lfs merge=lfs -text
+# Malhas, animacoes e dados enormes em YAML (texto, mas pesados demais para o git normal)
+Assets/**/*.anim                                 filter=lfs diff=lfs merge=lfs -text
+Assets/FreeBala/Optimized/**/*.asset             filter=lfs diff=lfs merge=lfs -text
+Assets/FreeBala/Art/**/*.asset                   filter=lfs diff=lfs merge=lfs -text
+Assets/FreeBala/Scenes/**/*.asset                filter=lfs diff=lfs merge=lfs -text
+Assets/FreeBala/Resources/FBImported/**/*.asset  filter=lfs diff=lfs merge=lfs -text
+# Assets/BuritiroVJ, Assets/BURITIRO_Mapas e Assets/BURITIRO: os .asset do time do Ruan ficam no git normal, como já
+# estavam no repositório (cada um tem no máximo ~4 MB); passar para o LFS regravaria ~3.700 arquivos sem mudança.
+# NavMesh assado em serialização binária do Unity: nunca converter fim de linha (o "*.asset text" acima corrompia o da PT)
+Assets/BURITIRO_Mapas/**/NavMesh*.asset          binary

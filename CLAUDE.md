@@ -5,9 +5,9 @@
 > **Resumo completo do projeto:** veja `RESUMO_PROJETO_BURITIRO.md` (decisões do Ruan, o que cada agente já fez, estado atual, bugs e o que falta). Leia antes de começar, para não refazer trabalho.
 
 Jogo de tiro em terceira pessoa que se passa em Boa Vista (RR). Os donos são o Ruan e um amigo.
-Este projeto Unity foi reconstruído a partir da build do jogo com o AssetRipper, mais o código C# recuperado com o ILSpy.
+Desde 02/11/2026 este repositório guarda o **projeto-fonte original** do jogo (o `unity/FreeBala` do amigo, rodada r53), com todas as mudanças que o time do Ruan fez entre 29/10 e 02/11 no projeto reconstruído pelo AssetRipper/ILSpy portadas para ele. Veja `Docs/unificacao/UNIFICACAO.md` antes de mexer: lá está o que mudou de lugar e o que ficou pendente.
 
-- Unity **6000.6.7f1**, URP, Windows 64 bits. Build de teste em Mono, build de entrega em IL2CPP.
+- Unity **6000.6.6f1** (o 6000.6.7f1 abre igual; é só uma versão de correção acima), URP, Windows 64 bits. Build de teste em Mono, build de entrega em IL2CPP. Android e iOS também compilam (mesmo projeto).
 - Responda sempre em português simples. O Ruan está em Boa Vista (UTC-4); o relógio do PC está em UTC-3, uma hora na frente.
 
 ## Regras do GitHub (obrigatórias)
@@ -19,7 +19,7 @@ Este projeto Unity foi reconstruído a partir da build do jogo com o AssetRipper
 - Se der conflito com uma mudança do amigo, pare e pergunte ao Ruan antes de resolver.
 - Adicione arquivos por caminho (`git add caminho/arquivo`), nunca `git add -A` ou `git add .`.
 - Não faça commit de `Assets/_Recovery/` nem de `Assets/_Recovery.meta`. Essa é a cena de recuperação que o Unity cria depois de travar.
-- **Conta:** o repositório usa a conta GitHub **Buritiro**. A configuração local deste repo já aponta para ela (`credential.https://github.com.helper` = `manager`, `credential.https://github.com.username` = `Buritiro`).
+- **Conta:** no PC do Ruan o repositório usa a conta GitHub **Buritiro**; no PC do amigo, a conta **castrorodrrig**. A configuração local de cada clone aponta para a conta daquele PC (`credential.https://github.com.helper` = `manager`, `credential.https://github.com.username` = `Buritiro` ou `castrorodrrig`).
   - O `gh` do PC está logado em outra conta (ecoart-rr), que não enxerga este repositório.
   - Se o Git pedir login, quem faz é o Ruan: ele digita o código em github.com/login/device com a conta Buritiro.
   - Nunca digite senha nem mostre token.
@@ -34,35 +34,31 @@ Este projeto Unity foi reconstruído a partir da build do jogo com o AssetRipper
 
 ## Pastas
 
-Dentro do repositório (`C:\Users\User\Documents\Buritiro_Unity\Export\ExportedProject`):
+Dentro do repositório (projeto Unity `FreeBala`):
 
-- `Assets/Scripts/FreeBala.Runtime/FreeBala/`: código do jogo. Os principais arquivos são:
-  - jogador: `FBPlayer`, `FBCharacter`, `FBRig`, `FBWeaponUser`;
-  - bots: `FBBot`, `FBBotSense`, `FBBotBrain`, `FBNav`, `FBWorld`;
-  - modo 10x10 e interface: `FBModo10x10`, `FBShop`, `FBEconomy`, `FBHUD`;
-  - veículos e dados: `FBDrive`, `FBMxBike`, `FBCarPhys`, `GameData`.
-- `Assets/Scripts/FBTeste/`: testes automáticos.
-  - `FBTesteExe`: o teste do .exe.
-  - `FBPiloto`: o bot que joga no lugar do jogador.
-  - `FBVitrine`: fotos 4K.
-  - `FBLabFisica` e `FBVigiaSom`.
-- `Assets/Scripts/com.cqf.urpvolumetricfog.runtime/`: névoa volumétrica.
-- `Assets/Editor/`: ferramentas do Editor.
-  - `FBLabRunner`: o laboratório que atende os pedidos do terminal.
-  - `BuritiroMontaMapa`: monta os mapas PT, Orla e Centro Cívico.
-  - `BuritiroPlantarArvores`, `BuritiroEsculturasPT`, `BuritiroVilaJardim`, `BuritiroResidentDrawer`, `BuritiroMascaraCorpo` e outras.
-- `Assets/FreeBala/Scenes/`: cenas do jogo.
+- `Assets/FreeBala/Runtime/`: código do jogo (asmdef `FreeBala.Runtime`, namespace `FreeBala`). Os principais arquivos são:
+  - jogador (`Player/`): `FBPlayer`, `FBCharacter`, `FBRig`, `FBFpRig`, `FBDeath`, `FBFall`;
+  - bots (`AI/`): `FBBot`, `FBBotSense`, `FBBotBrain`, `FBNav`;
+  - modos e interface: `Modes/FBModo10x10`, `Modes/FBModes`, `Modes/FBMatch`, `UI/FBShop`, `UI/FBHUD`, `UI/FBMenu`;
+  - veículos e dados: `Vehicles/FBDrive`, `Vehicles/FBMxBike`, `Core/GameData`, `Core/FBSession`, `Core/FBTempo` (medidor de CPU).
+- `Assets/FreeBala/Runtime/Teste/`: testes automáticos (`FBTesteExe`, `FBPiloto`, `FBVitrine`, `FBLabFisica`, `FBVigiaSom`).
+- `Assets/FreeBala/Editor/` (asmdef `FreeBala.Editor`): ferramentas do Editor. As que vieram do time do Ruan ficam em `Editor/Parceiro/`:
+  - `FBLabRunner`: o laboratório que atende os pedidos do terminal;
+  - `BuritiroMontaMapa`: monta os mapas PT, Orla e Centro Cívico;
+  - `BuritiroPlantarArvores`, `BuritiroEsculturasPT`, `BuritiroVilaJardim`, `BuritiroResidentDrawer`, `BuritiroMascaraCorpo`, `BuritiroAnimBUR` e outras;
+  - `FBUnificacao`: refaz as cenas do time do Ruan na ordem certa (`-executeMethod FBUnificacao.Rodar`).
+- `Packages/com.cqf.urpvolumetricfog/`: névoa volumétrica (pacote local).
+- `Assets/FreeBala/Scenes/`: cenas do jogo. `Map_praca_pt_antiga` e `Map_orla_antiga` são os mapas antigos do amigo (fora do build, desligados no fb_data).
 - `Assets/BURITIRO_Mapas/` (`praca_pt`, `orla`, `centro_civico`), `Assets/BuritiroVJ/` e `Assets/BURITIRO/`: mapas e recursos de Boa Vista feitos pelo time.
 - `Assets/BURITIRO_Animacoes/` e `Assets/BuritiroMascaras/`: animações novas e máscaras de corpo.
-- `Assets/StreamingAssets/fb_data.json`: dados do jogo, que o jogo lê toda vez que abre.
+- `Assets/StreamingAssets/fb_data.json`: dados do jogo, que o jogo lê toda vez que abre (cópia em `Assets/FreeBala/Resources/fb_data.json`).
   - Contém armas, movimento, veículos, mapas, pontos de nascer e bases do 10x10.
-  - Se ele faltar, o jogo usa a cópia de `Assets/Resources/fb_data.json`.
+  - **Cuidado:** `node tools/unity/export_data.mjs` (do jogo web do amigo) regrava esse arquivo sem os mapas novos. Depois dele, refaça o merge com `Docs/unificacao/merge3.py`.
   - Faça backup antes de editar.
-- `Assets/Resources/`: prefabs, materiais, áudio e registros (`FBRegistry.asset`), carregados pelo nome.
-- `Assets/AnimationClip`, `Material`, `Mesh`, `Texture2D`, `Shader`, `NavMeshData` e afins: o que o AssetRipper extraiu da build original.
+- `Assets/FreeBala/Resources/`: prefabs, materiais, áudio, `FBImported/` (modelos e texturas importados do jogo web) e registros (`FBRegistry.asset`), carregados pelo nome.
 - `autoteste/`: prints antigos de teste de moto e carro.
-- `Packages/manifest.json`: pacotes (URP, Input System, Animation Rigging, Newtonsoft Json etc.).
-- `Library/`, `Temp/`, `Logs/`, `UserSettings/`, `*.csproj`, `*.sln*`: gerados pelo Unity, não vão para o Git.
+- `Packages/manifest.json`: pacotes (URP, Input System, Animation Rigging, glTFast, AI Navigation etc.).
+- `Library/`, `Temp/`, `Logs/`, `UserSettings/`, `*.csproj`, `*.sln*`: gerados pelo Unity, não vão para o Git (ver `.gitignore`).
 
 Fora do repositório, em `C:\Users\User\Documents\Buritiro_Unity\` (não vão para o GitHub):
 
@@ -75,7 +71,7 @@ A pasta `C:\Users\User\Documents\Buritiro_Dev` é a build antiga original. Não 
 
 ## Compilar, gerar build e testar
 
-**No Unity:** abra o projeto pelo Unity Hub com a versão 6000.6.7f1. Os erros de compilação aparecem no Console.
+**No Unity:** abra o projeto pelo Unity Hub com a versão 6000.6.6f1 (ou 6000.6.7f1). Os erros de compilação aparecem no Console.
 
 **Pelo terminal, com o Unity aberto**, um script do Editor lê pedidos de `..\..\_diag\lab_pedido.txt`:
 

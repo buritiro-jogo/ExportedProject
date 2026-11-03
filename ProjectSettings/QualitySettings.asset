@@ -48,7 +48,7 @@ QualitySettings:
     asyncUploadBufferSize: 16
     asyncUploadPersistentBuffer: 1
     resolutionScalingFixedDPIFactor: 1
-    customRenderPipeline: {fileID: 11400000, guid: 6d7145c3303d93549824b59db0a06c88, type: 2}
+    customRenderPipeline: {fileID: 11400000, guid: 24ad006a50a56dd4294921da29c8d6f8, type: 2}
     terrainQualityOverrides: 0
     terrainPixelError: 1
     terrainDetailDensityScale: 1
@@ -101,7 +101,7 @@ QualitySettings:
     asyncUploadBufferSize: 16
     asyncUploadPersistentBuffer: 1
     resolutionScalingFixedDPIFactor: 1
-    customRenderPipeline: {fileID: 11400000, guid: ead62c0a893633d45a1faad707137518, type: 2}
+    customRenderPipeline: {fileID: 11400000, guid: 17845b4a6aa3af34d932b87e09bb0eab, type: 2}
     terrainQualityOverrides: 0
     terrainPixelError: 1
     terrainDetailDensityScale: 1
@@ -154,7 +154,7 @@ QualitySettings:
     asyncUploadBufferSize: 16
     asyncUploadPersistentBuffer: 1
     resolutionScalingFixedDPIFactor: 1
-    customRenderPipeline: {fileID: 11400000, guid: 009cea559e55a2c44ae00dd0ce2d8758, type: 2}
+    customRenderPipeline: {fileID: 11400000, guid: 03fb4278800c3304d8f967bdd817cb8c, type: 2}
     terrainQualityOverrides: 0
     terrainPixelError: 1
     terrainDetailDensityScale: 1
@@ -207,7 +207,7 @@ QualitySettings:
     asyncUploadBufferSize: 16
     asyncUploadPersistentBuffer: 1
     resolutionScalingFixedDPIFactor: 1
-    customRenderPipeline: {fileID: 11400000, guid: a588ab78f22cc624b86e99dfe6db42e5, type: 2}
+    customRenderPipeline: {fileID: 11400000, guid: e0742becbaf2db04197e587bb05dd6bb, type: 2}
     terrainQualityOverrides: 0
     terrainPixelError: 1
     terrainDetailDensityScale: 1
@@ -220,18 +220,22 @@ QualitySettings:
     excludedTargetPlatforms: []
   m_TextureMipmapLimitGroupNames: []
   m_PerPlatformDefaultQuality:
-    Android: 2
-    Nintendo 3DS: 5
-    Nintendo Switch: 5
-    Nintendo Switch 2: 5
-    PS4: 5
-    PSM: 5
-    PSP2: 2
-    Standalone: 5
-    Tizen: 2
+    Android: 0
+    EmbeddedLinux: 2
+    GameCoreScarlett: 2
+    GameCoreXboxOne: 2
+    Kepler: 2
+    LinuxHeadlessSimulation: 2
+    Nintendo Switch: 2
+    Nintendo Switch 2: 2
+    PS4: 2
+    PS5: 2
+    QNX: 2
+    Server: 2
+    Standalone: 2
+    VisionOS: 2
     WebGL: 3
-    WiiU: 5
-    Windows Store Apps: 5
-    XboxOne: 5
-    iPhone: 2
+    Windows Store Apps: 2
+    XboxOne: 2
+    iPhone: 0
     tvOS: 2
