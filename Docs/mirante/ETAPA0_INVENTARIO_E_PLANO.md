@@ -135,24 +135,30 @@ O Ruan escolheu a **C: varanda média jogável, topo fechado**.
 **Proposta para a C** (detalhes finais depois das fotos):
 - **Varanda jogável:** a 2ª, a **25,0 m**, mais ou menos a altura de um prédio de 8 andares. Ela enxerga por cima das árvores da Selvinha, sem dominar a arena inteira.
   - Se no teste ficar forte demais, troco pela 1ª, a 12,6 m.
-- **Acesso:** escada interna no núcleo, saindo do hall térreo e chegando à porta da varanda.
-  - Ela não aparece de fora, então não muda o visual da torre. Mesmo assim, o formato dessa escada é ficção de jogo até chegarem as fotos do interior.
-  - Subida de 25 m, com uns 140 degraus de 0,18 m: cerca de 15 a 20 s correndo.
-- **O elevador fica só como cenário.** Ele não funciona no 10x10, então os bots não precisam aprender a usá-lo.
-- **As outras 5 varandas e o observatório continuam fechados.** O `COL_Bloqueio_Torre_Mirante` vira um bloqueio com recorte só no hall, na escada e na varanda 2.
+- **Acesso (decidido em 03/11): pelo elevador panorâmico,** sem escada.
+  - É o elevador de vidro que já está no modelo, na face z ≈ 73,6 (sul no Blender).
+  - Ele para só em 2 andares: o hall térreo e a varanda 2.
+  - Leva uns **10 s** de subida (2,5 m/s), com 1,5 s de porta abrindo e fechando.
+  - Tem botão de chamada nos dois andares e cabe até 3 pessoas.
+  - A cabine é de vidro e fica **visível e atirável de fora durante a subida**. Esse é o risco de quem sobe. O vidro não quebra, mas as balas atravessam.
+  - Tem som de motor e campainha, para quem está perto saber que alguém está subindo.
+  - Se a cabine estiver lá em cima, quem chama embaixo espera ela descer. Isso cria disputa pela torre.
+- **Bots:** também usam o elevador. Uma ligação no NavMesh liga o hall à varanda; o bot chama a cabine, espera, entra e sai.
+  - Se os bots travarem no teste, o plano B é deixar só o jogador usar o elevador e tirar a varanda das rotas dos bots.
+- **As outras 5 varandas e o observatório continuam fechados.** O `COL_Bloqueio_Torre_Mirante` vira um bloqueio com recorte só no hall, no poço do elevador e na varanda 2.
 - **Equilíbrio:**
   - parapeito de grade, com guarda-corpo de 1,10 m que só cobre quem estiver agachado;
   - o núcleo de concreto quebra a visão de 360°, então quem está na varanda cobre uma face por vez;
-  - a porta é a única saída, o que expõe o atirador a quem vem pela escada;
+  - o elevador é a única entrada e saída: quem está na varanda ouve a cabine chegando, e quem sobe fica exposto no vidro;
   - nenhuma base nasce com linha de visão direta para a varanda (vou conferir com `visao_base_a_base`).
-- **Bots:** NavMesh com a escada (rampa em zigue-zague no núcleo), mais 1 ponto de cobertura no hall e 1 na varanda.
+- **Cobertura:** 1 ponto no hall e 1 na varanda.
 - **Teste:** `-fbtesteexe paredes orla` e `10x10 orla 3 9x9`, comparando com a v7 (as vitórias por time não podem pender para quem nasce perto da torre).
 
 ### 6.4 Spawns, rotas, cobertura e veículos
 
 - Os spawns e os `basePairs` da v7 ficam como estão. Eles já foram validados com caminho completo nos dois sentidos.
 - Na opção C:
-  - entra uma rota nova `lane` até a escada;
+  - entra uma rota nova `lane` até o hall do elevador;
   - entram 2 pontos de cobertura na base da torre;
   - refaço o NavMesh e rodo `-fbtesteexe paredes orla` e `10x10 orla 3 9x9` para conferir que nenhum time ganhou vantagem.
 - Os veículos continuam nas vagas `parked` da v7.
