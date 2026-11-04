@@ -167,6 +167,17 @@ namespace FreeBala
                 Choice("QUALIDADE GRÁFICA", System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Concat(new[] { "AUTOMÁTICA" }, FBQuality.Names)), FBQuality.Choice + 1, i => FBQuality.Set(i - 1),
                     new[] { "detectado neste aparelho: " + FBQuality.Names[(int)FBQuality.Detected], "sombras e efeitos mínimos", "equilíbrio", "sombras, reflexos e névoa", "tudo no máximo" });
                 Choice("SANGUE", new[] { "LIGADO", "DESLIGADO" }, FBSession.blood ? 0 : 1, i => FBSession.blood = i == 0);
+                // [mirante-ultra] opções avançadas do ULTRA (só PC; valem quando a qualidade está em ULTRA)
+                if (FBQuality.Device.plat == FBPlat.PC && !FBQuality.Mobile && FBUltra.TierIndex >= 0)
+                {
+                    string dlss = FBUltra.TemDLSS ? "" : " · sem RTX: usa STP";
+                    Choice("ANTISSERRILHADO (ULTRA)", FBUltra.AANomes, (int)FBUltra.Modo, i => FBUltra.Modo = (FBUltra.AA)i, System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(FBUltra.AADicas, d => d + dlss)));
+                    Choice("ESCALA DE RENDER (ULTRA)", FBUltra.EscalaNomes, FBUltra.Escala, i => FBUltra.Escala = i, new[] { "resolução da tela", "supersampling 1,5x (só com TAA ou MSAA)", "supersampling 2x (muito pesado; só com TAA ou MSAA)" });
+                    Choice("SOMBRAS (ULTRA)", new[] { "ALTA", "ULTRA" }, FBUltra.SombraUltra ? 1 : 0, i => FBUltra.SombraUltra = i == 1, new[] { "4096 · até 200 m", "8192 · até 300 m" });
+                    Choice("OCLUSÃO SSAO (ULTRA)", new[] { "DESLIGADA", "LIGADA" }, FBUltra.SSAO ? 1 : 0, i => FBUltra.SSAO = i == 1);
+                    Choice("NÉVOA VOLUMÉTRICA (ULTRA)", new[] { "DESLIGADA", "LIGADA" }, FBUltra.NevoaVol ? 1 : 0, i => FBUltra.NevoaVol = i == 1, new[] { "sem raios de luz na névoa", "raios de sol entre as árvores e na torre" });
+                    Choice("VEGETAÇÃO (ULTRA)", FBUltra.VegNomes, FBUltra.Vegetacao, i => FBUltra.Vegetacao = i);
+                }
             }
             FBKit.Box(o, "fio2", 32, H - 80, W - 64, 1, FBKit.Line, false);
             FBKit.TextTile(o, "CRÉDITOS", 32, H - 64, 170, 44, false, () => Credits(bg.transform), 13);

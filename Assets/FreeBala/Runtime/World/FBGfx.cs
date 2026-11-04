@@ -14,7 +14,7 @@ using UnityEngine.SceneManagement;
 
 namespace FreeBala
 {
-    public enum FBGfxTier { Mobile = 0, Web = 1, PCMedio = 2, PCAlto = 3 }
+    public enum FBGfxTier { Mobile = 0, Web = 1, PCMedio = 2, PCAlto = 3, PCUltra = 4 }   // PCUltra: [mirante-ultra] tier "Ultra" (FBUltra)
     public struct FBGfxFlags
     {
         public bool ssao, heightFog, volClouds, skyLite, detailMaps, wind, cloudSprites;
@@ -41,7 +41,11 @@ namespace FreeBala
                 grass = true, grassNear = 8, grassFar = 18, grassNearSpacing = .36f, grassFarSpacing = .7f, grassDensity = .85f },
             FBGfxTier.PCMedio => new FBGfxFlags { ssao = true, heightFog = true, detailMaps = true, wind = true, cloudSprites = true, volumetric = true, volSteps = 14, volScale = .4f, lampInsects = 6, dustMotes = 90, smokePlumes = 3, camAA = AntialiasingMode.None,
                 grass = true, grassNear = 11, grassFar = 26, grassNearSpacing = .3f, grassFarSpacing = .6f, grassDensity = 1 },
-            _ => new FBGfxFlags { ssao = true, heightFog = true, volClouds = false, detailMaps = true,   // volClouds: a variante só passou a compilar em 20/10 (dt dentro de comentário) e sai em 'panquecas' cinza — fica desligada até ser refeita; céu 2D aprovado
+            // [mirante-ultra] tudo do PC Alto com mais amostras na névoa volumétrica, grama mais longe e o AA escolhido no menu (FBUltra)
+            FBGfxTier.PCUltra => new FBGfxFlags { ssao = FBUltra.SSAO, heightFog = true, volClouds = false, detailMaps = true,
+                       wind = true, volumetric = FBUltra.NevoaVol, volSteps = 40, volScale = .75f, ssr = true, lampInsects = 10, dustMotes = 200, smokePlumes = 5, camAA = FBUltra.CamAA,
+                       grass = true, grassNear = 18, grassFar = 48, grassNearSpacing = .25f, grassFarSpacing = .5f, grassDensity = 1 },
+            _ =>new FBGfxFlags { ssao = true, heightFog = true, volClouds = false, detailMaps = true,   // volClouds: a variante só passou a compilar em 20/10 (dt dentro de comentário) e sai em 'panquecas' cinza — fica desligada até ser refeita; céu 2D aprovado
                        wind = true, volumetric = true, volSteps = 26, volScale = .5f, ssr = true, lampInsects = 8, dustMotes = 140, smokePlumes = 4, camAA = AntialiasingMode.SubpixelMorphologicalAntiAliasing,
                        grass = true, grassNear = 14, grassFar = 34, grassNearSpacing = .27f, grassFarSpacing = .55f, grassDensity = 1 },
         };
@@ -52,6 +56,7 @@ namespace FreeBala
             if (Application.platform == RuntimePlatform.WebGLPlayer) return FBGfxTier.Web;      // WebGL2: nunca SSAO/volumétrico
             int q = QualitySettings.GetQualityLevel(); var names = QualitySettings.names; string n = q >= 0 && q < names.Length ? names[q].ToLowerInvariant() : "";
             if (n.Contains("web")) return FBGfxTier.Web;
+            if (n.Contains("ultra")) return FBGfxTier.PCUltra;
             if (n.Contains("mobile") || n.Contains("baixo")) return FBGfxTier.Mobile;
             if (n.Contains("médio") || n.Contains("medio")) return FBGfxTier.PCMedio;
             if (n.Contains("alto")) return FBGfxTier.PCAlto;

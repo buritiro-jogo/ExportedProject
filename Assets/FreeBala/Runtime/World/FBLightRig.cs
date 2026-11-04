@@ -84,7 +84,7 @@ namespace FreeBala
         static void DriveCQ(int nLights)
         {
             if (!cq) return; bool on = Active && InScene; cq.enabled.Override(on); if (!on) return;
-            bool hi = FBGfx.Tier == FBGfxTier.PCAlto;
+            bool hi = FBGfx.Tier >= FBGfxTier.PCAlto;   // [mirante-ultra] Ultra também
             cq.density.Override(CQDensity); cq.attenuationDistance.Override(Mathf.Max(.05f, CQDensity / Mathf.Max(1e-4f, Density) * 1.4f));   // menos leitoso (retorno da rodada 31)
             cq.distance.Override(Mathf.Min(MaxDist, hi ? 90 : 70)); cq.baseHeight.Override(GroundY); cq.maximumHeight.Override(GroundY + 2.5f / Mathf.Max(.01f, Falloff));
             cq.enableMainLightContribution.Override(true); cq.anisotropy.Override(Mathf.Clamp(G, -.95f, .95f));

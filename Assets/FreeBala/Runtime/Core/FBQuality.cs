@@ -214,10 +214,13 @@ namespace FreeBala
         {
             if (!booted) { booted = true; Device = FBDeviceInfo.Current(); Detected = Detect(Device); }
             P = Build(L, Device); applying = true;
+            // [mirante-ultra] ULTRA no PC: tier próprio "Ultra" (FB_URP_Ultra) e flags do menu avançado (FBUltra)
+            bool ultra = L == FBQLevel.Ultra && !P.mobile && Device.plat == FBPlat.PC && FBUltra.TierIndex >= 0;
+            if (ultra) FBUltra.AjustaPerfil(P);
             try
             {
-                // nível do Unity que carrega o asset URP certo (Mobile / PC Médio / PC Alto do FBProjectSetup)
-                int n = QualitySettings.names.Length, web = System.Array.IndexOf(QualitySettings.names, "Web"), q = Device.plat == FBPlat.WebGL && web >= 0 ? web : P.mobile ? 0 : Mathf.Clamp((int)L - 1, 0, 2);
+                // nível do Unity que carrega o asset URP certo (Mobile / PC Médio / PC Alto do FBProjectSetup; Ultra do FBUltraSetup)
+                int n = QualitySettings.names.Length, web = System.Array.IndexOf(QualitySettings.names, "Web"), q = ultra ? FBUltra.TierIndex : Device.plat == FBPlat.WebGL && web >= 0 ? web : P.mobile ? 0 : Mathf.Clamp((int)L - 1, 0, 2);
                 if (n > 0 && QualitySettings.GetQualityLevel() != Mathf.Min(q, n - 1)) QualitySettings.SetQualityLevel(Mathf.Min(q, n - 1), true);
                 QualitySettings.vSyncCount = 0; QualitySettings.lodBias = P.lodBias; QualitySettings.maximumLODLevel = P.maxLodLevel;
                 // r43: LOD em 3 níveis (Mesh LOD, Editor/FBLod3): quanto MAIOR o limiar, mais cedo cai para o nível médio/baixo. Inverso do
@@ -236,6 +239,7 @@ namespace FreeBala
                     a.renderScale = P.renderScale; a.shadowDistance = P.shadows ? P.shadowDistance : 0; a.shadowCascadeCount = P.shadowCascades;
                     a.mainLightShadowmapResolution = P.shadowRes; a.maxAdditionalLightsCount = P.maxPixelLights;
                     a.cascadeBorder = .3f;                                                         // a sombra some esmaecendo nos últimos 30 % (sem linha)
+                    if (ultra) FBUltra.AplicaAsset(a);
                 }
                 FBDynRes.Setup();
             }
@@ -342,9 +346,15 @@ namespace FreeBala
 
         class Snapshot
         {
-            readonly UniversalRenderPipelineAsset a; readonly float rs, sd; readonly int sc, res, lights;
-            public Snapshot(UniversalRenderPipelineAsset a) { this.a = a; rs = a.renderScale; sd = a.shadowDistance; sc = a.shadowCascadeCount; res = a.mainLightShadowmapResolution; lights = a.maxAdditionalLightsCount; }
-            public void Restore() { if (!a) return; a.renderScale = rs; a.shadowDistance = sd; a.shadowCascadeCount = sc; a.mainLightShadowmapResolution = res; a.maxAdditionalLightsCount = lights; }
+            readonly UniversalRenderPipelineAsset a; readonly float rs, sd; readonly int sc, res, lights, msaa; readonly string up;
+            public Snapshot(UniversalRenderPipelineAsset a) { this.a = a; rs = a.renderScale; sd = a.shadowDistance; sc = a.shadowCascadeCount; res = a.mainLightShadowmapResolution; lights = a.maxAdditionalLightsCount; msaa = a.msaaSampleCount; up = a.upscalerName; }
+            public void Restore()
+            {
+                if (!a) return; a.renderScale = rs; a.shadowDistance = sd; a.shadowCascadeCount = sc; a.mainLightShadowmapResolution = res; a.maxAdditionalLightsCount = lights; a.msaaSampleCount = msaa;
+#if ENABLE_UPSCALER_FRAMEWORK
+                if (!string.IsNullOrEmpty(up)) a.upscalerName = up;
+#endif
+            }
         }
     }
 
