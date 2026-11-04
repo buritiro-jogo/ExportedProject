@@ -113,6 +113,10 @@ public static class FBUltraSetup
         // divisões das 4 cascatas para 300 m: 12 m · 36 m · 105 m · 300 m (o personagem e a mira ficam na 1ª, a torre inteira na 3ª/4ª)
         a.cascade4Split = new Vector3(.04f, .12f, .35f); a.cascadeBorder = .2f;
 #if ENABLE_UPSCALER_FRAMEWORK
+        // cria as opções (DLSSOptions, FSR2Options…) dos upscalers registrados, como o inspetor do URP faz ao abrir o asset
+        L("upscalers registrados: " + string.Join(", ", UpscalerRegistry.s_RegisteredUpscalers.Values.Select(v => v.ID)));
+        var so2 = new SerializedObject(a); var op = so2.FindProperty("m_UpscalerOptions");
+        if (op != null && UpscalerOptions.ValidateSerializedUpscalerOptionReferencesWithinRPAsset(a, op)) so2.ApplyModifiedPropertiesWithoutUndo();
         a.upscalerName = "Deep Learning Super Sampling 4";
         L("upscaler padrão: " + a.upscalerName + " · opções registradas: " + string.Join(", ", a.upscalerOptions.Where(o => o != null).Select(o => o.GetType().Name)));
 #else
