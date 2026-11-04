@@ -87,6 +87,7 @@ namespace FreeBala
                 "vila_jardim" => new Bounds(new Vector3(4f, 0, 19f), new Vector3(300f, 60f, 320f)),
                 "praca_pt" => new Bounds(new Vector3(-32f, 0, 14f), new Vector3(790f, 60f, 600f)),
                 "orla" => new Bounds(new Vector3(31f, 0, -83f), new Vector3(430f, 60f, 410f)),
+                "morro_sacola" => new Bounds(Vector3.zero, new Vector3(612f, 80f, 612f)),   // arena 600 x 600 (paredes em ±300)
                 "estande" => new Bounds(new Vector3(2f, 0, 30f), new Vector3(64f, 40f, 70f)),
                 "bermuda" => new Bounds(new Vector3(42f, 0, 225f), new Vector3(1550f, 150f, 1520f)),
                 _ => new Bounds(Vector3.zero, new Vector3(500f, 60f, 500f))

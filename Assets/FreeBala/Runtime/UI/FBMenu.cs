@@ -44,7 +44,7 @@ namespace FreeBala
 
         };
 
-        static readonly Dictionary<string, string> MAP_INFO = new() { ["vila_jardim"] = "Favela · becos, lajes e telhados · combate de perto", ["praca_aguas"] = "Centro de Boa Vista · praça aberta e prédios · longa distância", ["praca_pt"] = "Parque Germano Sampaio · lagoa, mata, quadras · média distância", ["orla"] = "Parque do Rio Branco · Mirante, praia, calçadão · média/longa", ["estande"] = "Estande de tiro · alvos de 10 a 100 m" };
+        static readonly Dictionary<string, string> MAP_INFO = new() { ["vila_jardim"] = "Favela · becos, lajes e telhados · combate de perto", ["praca_aguas"] = "Centro de Boa Vista · praça aberta e prédios · longa distância", ["praca_pt"] = "Parque Germano Sampaio · lagoa, mata, quadras · média distância", ["orla"] = "Parque do Rio Branco · Mirante, praia, calçadão · média/longa", ["morro_sacola"] = "Boa Vista · ruas de terra, muro pré-moldado, quintais · média distância", ["estande"] = "Estande de tiro · alvos de 10 a 100 m" };
 
         static readonly string[] DIFFS = { "FÁCIL", "NORMAL", "REALISTA" };
 

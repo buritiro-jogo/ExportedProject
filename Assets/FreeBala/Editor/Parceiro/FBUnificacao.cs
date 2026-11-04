@@ -49,6 +49,8 @@ public static class FBUnificacao
         Etapa("esculturas Tripo na PT (+ pisos PBR + NavMesh)", BuritiroEsculturasPT.PorSemTirar);
         Etapa("montar Map_orla", BuritiroEditor.BuritiroMontaMapa.MontaOrlaAuto);
         Etapa("montar Map_centro_civico", BuritiroEditor.BuritiroMontaMapa.MontaCentroCivicoAuto);
+        if (File.Exists("Assets/BURITIRO_Mapas/morro_sacola/morro_sacola_unity.glb"))
+            Etapa("montar Map_morro_sacola", BuritiroEditor.BuritiroMontaMapa.MontaMorroSacolaAuto);
         foreach (var id in new[] { "praca_pt", "orla", "centro_civico" })
             L($"cena Map_{id}: " + (File.Exists($"{CENAS}/Map_{id}.unity") ? "existe" : "NÃO EXISTE"));
     }
@@ -97,6 +99,7 @@ public static class FBUnificacao
             Add("Map_praca_pt", true);
             Add("Map_orla", true);
             Add("Map_centro_civico", true);
+            Add("Map_morro_sacola", true);
             Add("Map_estande", false);
             EditorBuildSettings.scenes = lista.ToArray();
             foreach (var s in lista) L($"  {(s.enabled ? "on " : "off")} {s.path} {s.guid}");

@@ -37,6 +37,7 @@ namespace BuritiroEditor
             { "centro_civico", ("Centro Cívico", "{\"color\":\"#b4c6d4\",\"near\":100,\"far\":450}") },
             { "praca_pt", ("Praça do PT", "{\"color\":\"#b4c6d4\",\"near\":80,\"far\":360}") },
             { "orla", ("Orla do Rio Branco", "{\"color\":\"#b4c6d4\",\"near\":120,\"far\":520}") },
+            { "morro_sacola", ("Morro da Sacola", "{\"color\":\"#b4c6d4\",\"near\":90,\"far\":440}") },
         };
 
         // v3b (thread de física): sem janelas, para rodar pelo lab runner ("metodo BuritiroMontaMapa.MontaPTAuto").
@@ -58,6 +59,18 @@ namespace BuritiroEditor
         public static void MontaPTAuto() => MontaAuto("praca_pt");
         public static void MontaOrlaAuto() => MontaAuto("orla");
         public static void MontaCentroCivicoAuto() => MontaAuto("centro_civico");
+        // Morro da Sacola (tools/morro_sacola): monta e já grava o trecho no fb_data (StreamingAssets + cópia em Resources)
+        public static void MontaMorroSacolaAuto() { MontaAuto("morro_sacola"); AplicaTrechoAuto("morro_sacola"); }
+
+        // lote: aplica o trecho exportado pelo Monta sem perguntar e deixa Resources/fb_data.json igual ao do StreamingAssets
+        public static void AplicaTrechoAuto(string id)
+        {
+            string trecho = $"{PASTA}/{id}/{id}_fb_data_trecho.json";
+            if (!File.Exists(trecho)) { Debug.LogError("[BURITIRO] sem " + trecho + " (a montagem falhou?)"); return; }
+            AplicaNoFbData(id, File.ReadAllText(trecho));
+            string res = "Assets/FreeBala/Resources/fb_data.json";
+            if (File.Exists(res)) { File.Copy(Path.Combine(Application.streamingAssetsPath, "fb_data.json"), res, true); AssetDatabase.ImportAsset(res); }
+        }
 
         [MenuItem("BURITIRO/Mapas/Montar Map_praca_pt (Praça do PT)")]
         static void MontaPT() => Monta("praca_pt");
@@ -67,6 +80,9 @@ namespace BuritiroEditor
 
         [MenuItem("BURITIRO/Mapas/Montar Map_centro_civico (Centro Cívico e Garimpeiro)")]
         public static void MontaCentroCivico() => Monta("centro_civico");
+
+        [MenuItem("BURITIRO/Mapas/Montar Map_morro_sacola (Morro da Sacola)")]
+        static void MontaMorroSacola() => Monta("morro_sacola");
 
         [MenuItem("BURITIRO/Mapas/Refazer NavMesh da cena aberta")]
         static void RefazNav()

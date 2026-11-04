@@ -57,7 +57,7 @@ namespace FreeBala
 
         public static readonly HashSet<string> BannedWeapons = new(System.StringComparer.OrdinalIgnoreCase) { "m79", "garruncha_12", "submetralhadora_caseira" };
         // [parceiro 31/10] Praça do PT, Orla e Centro Cívico liberados junto com Vila Jardim e Praça das Águas
-        public static readonly HashSet<string> AllowedMaps = new(System.StringComparer.OrdinalIgnoreCase) { "vila_jardim", "praca_aguas", "praca_pt", "orla", "centro_civico" };
+        public static readonly HashSet<string> AllowedMaps = new(System.StringComparer.OrdinalIgnoreCase) { "vila_jardim", "praca_aguas", "praca_pt", "orla", "centro_civico", "morro_sacola" };
 
         public static void Load()
         {

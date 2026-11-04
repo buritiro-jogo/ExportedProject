@@ -32,7 +32,7 @@ namespace FreeBala
     [DefaultExecutionOrder(32000)]
     public class FBVitrine : MonoBehaviour
     {
-        static readonly string[] TodosMapas = { "praca_pt", "orla", "centro_civico", "praca_aguas", "vila_jardim" };
+        static readonly string[] TodosMapas = { "praca_pt", "orla", "centro_civico", "praca_aguas", "vila_jardim", "morro_sacola" };
         static readonly CultureInfo IC = CultureInfo.InvariantCulture;
         static readonly FieldInfo fHudSquad = typeof(FBHUD).GetField("squadRT", BindingFlags.NonPublic | BindingFlags.Instance);
         static readonly FieldInfo fHudCanvas = typeof(FBHUD).GetField("canvas", BindingFlags.NonPublic | BindingFlags.Instance);
