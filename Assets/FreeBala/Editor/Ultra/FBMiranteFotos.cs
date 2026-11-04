@@ -57,7 +57,7 @@ public static class FBMiranteFotos
                 {
                     if (sol)
                     {
-                        if (a.porDoSol) { sol.transform.rotation = Quaternion.LookRotation(new Vector3(paraRio.x, -.09f, paraRio.z));   // sol baixo atrás da torre, vindo na direção da câmera sol.intensity = int0 * .55f; sol.color = new Color(1f, .62f, .38f); }
+                        if (a.porDoSol) { sol.transform.rotation = Quaternion.LookRotation(new Vector3(paraRio.x, -.09f, paraRio.z));  /* sol baixo atrás da torre, vindo para a câmera */ sol.intensity = int0 * .55f; sol.color = new Color(1f, .62f, .38f); }
                         else { sol.transform.rotation = sol0; sol.intensity = int0; sol.color = cor0; }
                     }
                     cam.transform.position = a.pos; cam.transform.LookAt(a.alvo); cam.targetTexture = rt;
