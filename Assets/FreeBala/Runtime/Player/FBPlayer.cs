@@ -68,7 +68,7 @@ namespace FreeBala
             // Visibilidade = frustum + LODs com transição pontilhada (FBQuality.SmoothLods); a Vila Jardim reconstruída nem tem dados assados
             cam.useOcclusionCulling = false;
             FBQuality.SmoothLods(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
-            var ucd = cam.GetComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>(); if (!ucd) ucd = cam.gameObject.AddComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>(); ucd.renderPostProcessing = true; ucd.antialiasing = UnityEngine.Rendering.Universal.AntialiasingMode.FastApproximateAntialiasing;
+            var ucd = cam.GetComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>(); if (!ucd) ucd = cam.gameObject.AddComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>(); ucd.renderPostProcessing = true; ucd.antialiasing = FBGfx.Tier == FBGfxTier.PCUltra ? FBUltra.CamAA : UnityEngine.Rendering.Universal.AntialiasingMode.FastApproximateAntialiasing;   // [mirante-ultra] no Ultra o AA vem do DLSS/STP/TAA (sem FXAA por cima)
             firstPerson = false;                                                               /* r45b: sem 1ª pessoa (pedido); só os laboratórios usam ForceFirstPerson */
             // [parceiro] v18 (thread de física): uma exceção aqui (ex.: falta de memória ao ler as animações de primeira pessoa) parava o
             // Awake no meio e o jogador ficava sem controle. Agora o jogo segue em terceira pessoa.
