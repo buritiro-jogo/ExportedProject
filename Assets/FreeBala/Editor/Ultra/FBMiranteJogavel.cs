@@ -129,6 +129,7 @@ public static class FBMiranteJogavel
         ("A1_aco_cinza_claro",     new Color(.80f, .81f, .80f), .08f, .55f),   // painéis do fuste: tinta acetinada cinza muito claro
         ("A1_aco_pintado_branco",  new Color(.88f, .88f, .86f), .05f, .45f),   // guarda-corpos e frisos pintados de branco
         ("A1_aco_grafite",         new Color(.20f, .21f, .22f), .55f, .45f),   // caixilho do elevador
+        ("A1_concreto_pintado_branco", new Color(.92f, .92f, .90f), 0f, .7f),  // fuste: concreto pintado de branco (a textura do GLB é de piso: "__chao")
     };
     [MenuItem("FreeBala/Mapas/Mirante: corrigir materiais da torre")]
     public static void MateriaisTorre() => MateriaisTorre(EditorSceneManager.GetActiveScene());
@@ -144,6 +145,7 @@ public static class FBMiranteJogavel
             foreach (var (k, v) in new[] { ("_BaseColor", cor), ("baseColorFactor", cor), ("_Color", cor) }) if (dst.HasProperty(k)) dst.SetColor(k, v);
             foreach (var k in new[] { "_Metallic", "metallicFactor" }) if (dst.HasProperty(k)) dst.SetFloat(k, metal);
             if (dst.HasProperty("roughnessFactor")) dst.SetFloat("roughnessFactor", rough); if (dst.HasProperty("_Smoothness")) dst.SetFloat("_Smoothness", 1 - rough);
+            if (orig == "A1_concreto_pintado_branco") foreach (var k in new[] { "baseColorTexture", "_BaseMap", "_MainTex" }) if (dst.HasProperty(k)) dst.SetTexture(k, null);
             EditorUtility.SetDirty(dst);
             foreach (var r in rends)
             {
