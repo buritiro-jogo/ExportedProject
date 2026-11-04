@@ -27,9 +27,11 @@ public static class FBMiranteFotos
         log.Clear(); Directory.CreateDirectory(Dir);
         var sc = EditorSceneManager.GetActiveScene(); if (sc.path != Cena) sc = EditorSceneManager.OpenScene(Cena, OpenSceneMode.Single);
         // rio: maior renderer com material de água do rio (para o ângulo da orla)
-        var agua = sc.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<Renderer>(true)).Where(r => r.sharedMaterials.Any(m => m && m.name.ToLower().Contains("agua_rio"))).OrderByDescending(r => r.bounds.size.sqrMagnitude).FirstOrDefault();
-        Vector3 rio = agua ? agua.bounds.center : Torre + new Vector3(60, 0, 0); rio.y = agua ? agua.bounds.max.y : 0;
-        Vector3 paraRio = (rio - Torre); paraRio.y = 0; paraRio = paraRio.sqrMagnitude > 1 ? paraRio.normalized : Vector3.right;
+        // rio: renderers só com o material de água do Rio Branco (os pedaços de terreno também usam esse material junto com outros)
+        var aguas = sc.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<Renderer>(true)).Where(r => r.sharedMaterials.Length > 0 && r.sharedMaterials.All(m => m && m.name.StartsWith("A2_agua_rio"))).ToList();
+        var agua = aguas.OrderBy(r => (r.bounds.center - Torre).sqrMagnitude).FirstOrDefault();
+        Vector3 rio = agua ? agua.bounds.ClosestPoint(Torre) : Torre + new Vector3(-150, 0, 0); rio.y = agua ? agua.bounds.max.y : 0;
+        Vector3 paraRio = (rio - Torre); paraRio.y = 0; paraRio = paraRio.sqrMagnitude > 1 ? paraRio.normalized : Vector3.left;
         L($"rio {rio} ({(agua ? agua.name : "não achado")}) · direção torre→rio {paraRio}");
         var angulos = new[]
         {
@@ -38,7 +40,7 @@ public static class FBMiranteFotos
             new Angulo { nome = "3_elevador", pos = Torre + new Vector3(4, 14, 18), alvo = Torre + new Vector3(0, 12, 4.8f) },
             new Angulo { nome = "4_varanda_25m", pos = Torre + new Vector3(4.05f, 26.6f, -2.5f), alvo = Torre + new Vector3(40, 12, 10) },
             new Angulo { nome = "5_plataforma_87m_cidade", pos = Torre + new Vector3(0, 88.5f, 0) - paraRio * 8, alvo = Torre - paraRio * 400 + Vector3.up * 20 },
-            new Angulo { nome = "6_orla_rio", pos = Vector3.Lerp(Torre, rio, .8f) + Vector3.up * 16, alvo = rio + Vector3.Cross(Vector3.up, paraRio) * 160 },
+            new Angulo { nome = "6_orla_rio", pos = rio - paraRio * 25 + Vector3.up * 6, alvo = rio + paraRio * 120 + Vector3.Cross(Vector3.up, paraRio) * 140 },
             // pôr do sol do jogo (FBWeather "anoitecer"): sol a 8° de elevação, rumo fixo -35°; câmera do lado oposto, sol atrás da torre
             new Angulo { nome = "7_por_do_sol", pos = Torre + Quaternion.Euler(0, -35, 0) * Vector3.forward * 95 + Vector3.up * 3, alvo = Torre + Vector3.up * 50, porDoSol = true },
         };
