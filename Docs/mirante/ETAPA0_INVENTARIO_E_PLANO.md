@@ -191,3 +191,16 @@ Antes de mexer no Ultra, vou medir o desempenho atual da Orla no PC Alto, para t
 3. **Confirmar** que posso tirar a torre das células e transformá-la num objeto próprio (6.1), em vez de fazer o blockout do mapa inteiro.
 4. **Abrir o Blender** com o add-on do MCP ligado, para a estrutura da torre e os guarda-corpos.
 5. **Combinar a vez no Unity:** a thread "Ajustar física" está pausada, mas só um pode editar o Unity por vez.
+
+## 9. Etapa 2: correção do visual (03/11/2026)
+
+Fotos em `Docs/mirante/screens/etapa2_*` (antes = PC Alto, depois = Ultra; mesmos 7 ângulos). As fotos são de editor (`FBMiranteFotos`), com a névoa e a luz ambiente que o `FBWeather` monta no jogo.
+
+- **Torre escura → branca.** O fuste usava `A1_concreto_pintado_branco` com uma textura de **piso** (`TX_PBR_A1_concreto_pintado_branco__chao`), e os guarda-corpos e frisos (`A1_aco_cinza_claro`) tinham metal 0,7. Com os reflection probes assados sem textura, a torre refletia o chão marrom. As cópias corrigidas ficam em `BURITIRO_Mapas/mirante/materiais/MIR_*_corrigido` e só trocam os materiais na `Map_orla` (`FBMiranteJogavel.MateriaisTorre`). O GLB não muda. Se a Orla for remontada, rode `Montar` de novo.
+- **Névoa "sopa cinza" do alto da torre.** A névoa linear da arena ia de 70 a 512 m, e no jogo o fim fica em 85% disso, uns 435 m. No **Ultra**, o `FBWeather` estende a névoa para ~150 m até ~1,1 km. Os outros níveis não mudam.
+- **Pôr do sol.** As fotos agora usam o sol do "anoitecer" do `FBWeather` e o céu (`_SunDir`/`_Dusk` do `FBSky`).
+
+**Pendências que apareceram:**
+1. Com a névoa mais longe no Ultra, os **blocos simples do horizonte** (caixas sem detalhe) aparecem ao fundo. Isso pede impostores e cartões do horizonte de 3 a 8 km (item 6.2).
+2. O **reflection probe** da arena continua sendo assado sem textura (problema antigo). Para o Ultra: probes com box projection e um probe na plataforma.
+3. As fotos do .exe e a medição de FPS ainda não foram feitas.
