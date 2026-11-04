@@ -115,8 +115,46 @@ public static class FBMiranteJogavel
             new GameObject("hall").transform.SetParent(cv, false); cv.GetChild(0).position = W(29.55f, TerreoY, ElevFaceZ + 3f);
             new GameObject("varanda").transform.SetParent(cv, false); cv.GetChild(1).position = W((VarX0 + NucX0) * .5f, VarY, (NucZ0 + NucZ1) * .5f);
         }
+        MateriaisTorre(sc);
         EditorSceneManager.MarkSceneDirty(sc);
         Debug.Log("[FreeBala][mirante] varanda a 25 m e elevador montados (salve a cena e refaça o NavMesh da Orla)");
+    }
+
+    // Fuste da torre: no GLB ele é "A1_aco_cinza_claro" com metal 0,7. Com os reflection probes da arena assados sem textura,
+    // o metal reflete o chão marrom e a torre sai escura. Nas fotos (visitantes 0003, 0066, 0097) o fuste é pintado de branco
+    // com faixas cinza-claro. Cópias corrigidas em BURITIRO_Mapas/mirante/materiais trocam o material só nos renderers desta cena
+    // (o GLB de 470 MB não muda). Remontar a Orla desfaz: rode Montar de novo.
+    static readonly (string orig, Color cor, float metal, float rough)[] Correcoes =
+    {
+        ("A1_aco_cinza_claro",     new Color(.80f, .81f, .80f), .08f, .55f),   // painéis do fuste: tinta acetinada cinza muito claro
+        ("A1_aco_pintado_branco",  new Color(.88f, .88f, .86f), .05f, .45f),   // guarda-corpos e frisos pintados de branco
+        ("A1_aco_grafite",         new Color(.20f, .21f, .22f), .55f, .45f),   // caixilho do elevador
+    };
+    [MenuItem("FreeBala/Mapas/Mirante: corrigir materiais da torre")]
+    public static void MateriaisTorre() => MateriaisTorre(EditorSceneManager.GetActiveScene());
+    static void MateriaisTorre(UnityEngine.SceneManagement.Scene sc)
+    {
+        var rends = sc.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<Renderer>(true)).ToArray(); int trocas = 0;
+        foreach (var (orig, cor, metal, rough) in Correcoes)
+        {
+            var src = rends.SelectMany(r => r.sharedMaterials).FirstOrDefault(m => m && m.name == orig); if (!src) { Debug.LogWarning("[FreeBala][mirante] material não achado: " + orig); continue; }
+            var nome = "MIR_" + orig.Substring(3) + "_corrigido"; var dst = Mat(nome, cor, metal, rough);
+            // mesmo shader e texturas do original, com cor/metal/rugosidade corrigidos
+            dst.shader = src.shader; dst.CopyPropertiesFromMaterial(src);
+            foreach (var (k, v) in new[] { ("_BaseColor", cor), ("baseColorFactor", cor), ("_Color", cor) }) if (dst.HasProperty(k)) dst.SetColor(k, v);
+            foreach (var k in new[] { "_Metallic", "metallicFactor" }) if (dst.HasProperty(k)) dst.SetFloat(k, metal);
+            if (dst.HasProperty("roughnessFactor")) dst.SetFloat("roughnessFactor", rough); if (dst.HasProperty("_Smoothness")) dst.SetFloat("_Smoothness", 1 - rough);
+            EditorUtility.SetDirty(dst);
+            foreach (var r in rends)
+            {
+                var ms = r.sharedMaterials; bool mud = false;
+                for (int i = 0; i < ms.Length; i++) if (ms[i] && ms[i].name == orig) { ms[i] = dst; mud = true; trocas++; }
+                if (mud) r.sharedMaterials = ms;
+            }
+            Debug.Log($"[FreeBala][mirante] {orig} → {nome} (shader {src.shader.name})");
+        }
+        AssetDatabase.SaveAssets(); EditorSceneManager.MarkSceneDirty(sc);
+        Debug.Log($"[FreeBala][mirante] materiais da torre: {trocas} trocas");
     }
 
     static void SceneManager_Move(GameObject g, UnityEngine.SceneManagement.Scene sc) { UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(g, sc); }

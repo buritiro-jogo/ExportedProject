@@ -31,6 +31,9 @@ namespace FreeBala
             sun = RenderSettings.sun ? RenderSettings.sun : Object.FindObjectsByType<Light>(FindObjectsSortMode.None).FirstOrDefault(l => l.type == LightType.Directional);
             if (!sun) return; sunCol = sun.color; sunI = sun.intensity; ambSky = RenderSettings.ambientSkyColor; ambEq = RenderSettings.ambientEquatorColor; ambGr = RenderSettings.ambientGroundColor;
             fogCol = RenderSettings.fogColor; fogNear = RenderSettings.fogStartDistance; fogFar = RenderSettings.fogEndDistance;
+            // [mirante-ultra] ULTRA no PC: a névoa linear das arenas (70–512 m) cobria a cidade vista do alto do Mirante ("sopa cinza").
+            // O horizonte das arenas tem 3 km: no Ultra a névoa começa a 150 m e fecha em ~1,1 km (o resto do clima segue igual)
+            if (FBUltra.Ativo) { fogNear = Mathf.Max(fogNear, 70) * 2.2f; fogFar = Mathf.Max(fogFar, 512) * 2.6f; }
             probes = Object.FindObjectsByType<ReflectionProbe>(FindObjectsSortMode.None); probeI = probes.Select(p => p.intensity).ToArray();
             cover = Random.Range(.3f, .62f); float wa = Random.Range(0, Mathf.PI * 2); wind = new Vector2(Mathf.Cos(wa), Mathf.Sin(wa));
             var go = new GameObject("FB_Clima"); go.AddComponent<FBWeatherTicker>();
