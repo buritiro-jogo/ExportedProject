@@ -31,7 +31,8 @@ public static class FBMiranteFotos
         var aguas = sc.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<Renderer>(true)).Where(r => r.sharedMaterials.Length > 0 && r.sharedMaterials.All(m => m && m.name.StartsWith("A2_agua_rio"))).ToList();
         var agua = aguas.OrderBy(r => (r.bounds.center - Torre).sqrMagnitude).FirstOrDefault();
         Vector3 rio = agua ? agua.bounds.ClosestPoint(Torre) : Torre + new Vector3(-150, 0, 0); rio.y = agua ? agua.bounds.max.y : 0;
-        Vector3 paraRio = (rio - Torre); paraRio.y = 0; paraRio = paraRio.sqrMagnitude > 1 ? paraRio.normalized : Vector3.left;
+        Vector3 paraRio = (rio - Torre); paraRio.y = 0; paraRio = paraRio.sqrMagnitude > 1 ? paraRio.normalized : Vector3.left;   // a malha do rio passa por baixo da torre: lado do rio = -x (foto 3_elevador)
+        if ((rio - Torre).sqrMagnitude < 400 + rio.y * rio.y) rio = new Vector3(Torre.x, rio.y, Torre.z) + paraRio * 90;          // margem a ~90 m da torre
         L($"rio {rio} ({(agua ? agua.name : "não achado")}) · direção torre→rio {paraRio}");
         var angulos = new[]
         {
