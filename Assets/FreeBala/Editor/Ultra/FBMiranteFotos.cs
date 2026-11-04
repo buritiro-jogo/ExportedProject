@@ -44,6 +44,11 @@ public static class FBMiranteFotos
         };
         var sol = RenderSettings.sun; Quaternion sol0 = sol ? sol.transform.rotation : Quaternion.identity; float int0 = sol ? sol.intensity : 1; Color cor0 = sol ? sol.color : Color.white;
         int q0 = QualitySettings.GetQualityLevel();
+        // luz ambiente como o FBWeather monta no jogo (sonda a partir das cores céu/horizonte/chão; no editor a sonda é a assada da cena)
+        var amb0 = RenderSettings.ambientProbe;
+        { var k = RenderSettings.ambientIntensity; var sh = new SphericalHarmonicsL2(); var eq = RenderSettings.ambientEquatorColor * k;
+          sh.AddAmbientLight(eq); sh.AddDirectionalLight(Vector3.up, (RenderSettings.ambientSkyColor * k - eq) * .9f, 1); sh.AddDirectionalLight(Vector3.down, (RenderSettings.ambientGroundColor * k - eq) * .9f, 1);
+          L($"sonda de ambiente: assada {amb0[0, 0]:0.00}/{amb0[1, 0]:0.00}/{amb0[2, 0]:0.00} → do jogo {sh[0, 0]:0.00}/{sh[1, 0]:0.00}/{sh[2, 0]:0.00}"); RenderSettings.ambientProbe = sh; }
         float fs0 = RenderSettings.fogStartDistance, fe0 = RenderSettings.fogEndDistance; Color fc0 = RenderSettings.fogColor;
         var sky = RenderSettings.skybox; Vector4 skySun0 = sky && sky.HasProperty("_SunDir") ? sky.GetVector("_SunDir") : Vector4.zero; float skyDusk0 = sky && sky.HasProperty("_Dusk") ? sky.GetFloat("_Dusk") : 0;
         var go = new GameObject("FB_FotoCam") { hideFlags = HideFlags.HideAndDontSave }; var cam = go.AddComponent<Camera>(); cam.fieldOfView = 60; cam.nearClipPlane = .1f; cam.farClipPlane = 3000;
@@ -80,7 +85,7 @@ public static class FBMiranteFotos
         {
             if (sol) { sol.transform.rotation = sol0; sol.intensity = int0; sol.color = cor0; }
             QualitySettings.SetQualityLevel(q0, true);
-            RenderSettings.fogStartDistance = fs0; RenderSettings.fogEndDistance = fe0; RenderSettings.fogColor = fc0;
+            RenderSettings.fogStartDistance = fs0; RenderSettings.fogEndDistance = fe0; RenderSettings.fogColor = fc0; RenderSettings.ambientProbe = amb0;
             if (sky && sky.HasProperty("_SunDir")) { sky.SetVector("_SunDir", skySun0); if (sky.HasProperty("_Dusk")) sky.SetFloat("_Dusk", skyDusk0); }
             cam.targetTexture = null; UnityEngine.Object.DestroyImmediate(rt); UnityEngine.Object.DestroyImmediate(tex); UnityEngine.Object.DestroyImmediate(go);
             File.WriteAllText(Path.Combine(Dir, "relatorio.txt"), log.ToString());
