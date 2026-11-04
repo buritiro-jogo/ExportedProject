@@ -38,7 +38,7 @@ public static class FBMiranteFotos
             new Angulo { nome = "3_elevador", pos = Torre + new Vector3(4, 14, 18), alvo = Torre + new Vector3(0, 12, 4.8f) },
             new Angulo { nome = "4_varanda_25m", pos = Torre + new Vector3(4.05f, 26.6f, -2.5f), alvo = Torre + new Vector3(40, 12, 10) },
             new Angulo { nome = "5_plataforma_87m_cidade", pos = Torre + new Vector3(0, 88.5f, 0) - paraRio * 8, alvo = Torre - paraRio * 400 + Vector3.up * 20 },
-            new Angulo { nome = "6_orla_rio", pos = Vector3.Lerp(Torre, rio, .45f) + Vector3.up * 9, alvo = rio + Vector3.Cross(Vector3.up, paraRio) * 120 },
+            new Angulo { nome = "6_orla_rio", pos = Vector3.Lerp(Torre, rio, .8f) + Vector3.up * 16, alvo = rio + Vector3.Cross(Vector3.up, paraRio) * 160 },
             // pôr do sol do jogo (FBWeather "anoitecer"): sol a 8° de elevação, rumo fixo -35°; câmera do lado oposto, sol atrás da torre
             new Angulo { nome = "7_por_do_sol", pos = Torre + Quaternion.Euler(0, -35, 0) * Vector3.forward * 95 + Vector3.up * 3, alvo = Torre + Vector3.up * 50, porDoSol = true },
         };
