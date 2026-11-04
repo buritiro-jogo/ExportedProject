@@ -18,7 +18,10 @@ namespace FreeBala.Tests
             FBSession.Load(); FBSession.map = map; FBSession.mode = mode; FBSession.online = false; FBSession.view = view; FBSession.diff = 1;
             if (FBRegistry.I && FBRegistry.I.HasChar("r_tutu")) FBSession.skin = "r_tutu"; FBSession.Save();
             var op = SceneManager.LoadSceneAsync("Map_" + map); Assert.IsNotNull(op, $"cena Map_{map} não está no build"); while (!op.isDone) yield return null;
-            for (float t = 0; t < settle; t += Time.unscaledDeltaTime) yield return null;
+            // assentamento em tempo de JOGO, com teto de 60 s reais: no editor em lote um quadro de vários segundos logo depois da carga
+            // (16,8 s no Morro em 04/11) esgotava a espera em tempo real com 0 s de jogo, antes da física pôr o jogador no chão
+            var rel = System.Diagnostics.Stopwatch.StartNew();
+            for (float t = 0; t < settle && rel.Elapsed.TotalSeconds < 60; t += Time.deltaTime) yield return null;
         }
         static float Ground(Vector3 p, Transform ignore)
         {
@@ -58,6 +61,7 @@ namespace FreeBala.Tests
         [UnityTest, Timeout(120000)] public IEnumerator Regressao_Personagem_PracaAguas() { yield return Personagem("praca_aguas"); }
         [UnityTest, Timeout(120000)] public IEnumerator Regressao_Personagem_PracaPT() { yield return Personagem("praca_pt"); }
         [UnityTest, Timeout(120000)] public IEnumerator Regressao_Personagem_Orla() { yield return Personagem("orla"); }
+        [UnityTest, Timeout(240000)] public IEnumerator Regressao_Personagem_MorroSacola() { yield return Personagem("morro_sacola"); }   // carga fria do Morro no editor: 80–140 s
 
         // ---- carros no chão (pneu encostando, nem enterrado nem flutuando) ----
         [UnityTest, Timeout(120000)] public IEnumerator Regressao_CarrosNoChao()
@@ -100,7 +104,7 @@ namespace FreeBala.Tests
             if (!System.IO.File.Exists(path)) csv.AppendLine(BenchHead);
             try
             {
-                foreach (var map in new[] { "praca_aguas", "vila_jardim", "praca_pt", "orla" })
+                foreach (var map in new[] { "praca_aguas", "vila_jardim", "praca_pt", "orla", "morro_sacola" })
                     foreach (var plat in new FBPlat?[] { null, FBPlat.Android })
                     {
                         if (plat != null && map != "praca_aguas" && map != "vila_jardim") continue;   // perfil Android só nos mapas com vegetação nova

@@ -24,13 +24,17 @@ namespace FreeBala.Tests
 
         {
 
-            string[] maps = { "praca_aguas", "vila_jardim", "praca_pt", "orla", "estande", "bermuda" };
+            string[] maps = { "praca_aguas", "vila_jardim", "praca_pt", "orla", "estande", "bermuda", "morro_sacola" };
+
+            var padrao = FBWorld.GetPlayableBounds("__mapa_inexistente__");
 
             foreach (var m in maps)
 
             {
 
                 var b = FBWorld.GetPlayableBounds(m);
+
+                Assert.AreNotEqual(padrao, b, $"{m}: não registrado no FBWorld (caiu no padrão 500x60x500)");
 
                 Assert.Greater(b.size.x, 20f, $"{m}: bounds x");
 
@@ -50,37 +54,51 @@ namespace FreeBala.Tests
 
         {
 
-            string[] maps = { "praca_aguas", "vila_jardim", "praca_pt", "orla" };
+            string[] maps = { "praca_aguas", "vila_jardim", "praca_pt", "orla", "morro_sacola" };
 
             string[] modes = { "squad", "classico" };
 
 
 
-            foreach (var map in maps)
+            // com partida viva o RadiusFor lê o mapa do FBMatch.I, não o FBSession.map: rodando depois de um teste de partida ele media o
+
+            // mapa da partida anterior (04/11: "praca_aguas/squad: arena radius 145 exceeds allowable limit 42,24" depois das partidas do Morro)
+
+            var partida = FBMatch.I; FBMatch.I = null;
+
+            try
 
             {
 
-                var pb = FBWorld.GetPlayableBounds(map);
-
-                float maxAllowableRadius = Mathf.Min(pb.extents.x, pb.extents.z) * 0.88f;
-
-
-
-                foreach (var mode in modes)
+                foreach (var map in maps)
 
                 {
 
-                    FBSession.map = map;
+                    var pb = FBWorld.GetPlayableBounds(map);
 
-                    float r = FBArena.RadiusFor(mode);
+                    float maxAllowableRadius = Mathf.Min(pb.extents.x, pb.extents.z) * 0.88f;
 
-                    Assert.LessOrEqual(r, maxAllowableRadius + 0.01f, $"{map}/{mode}: arena radius {r} exceeds allowable limit {maxAllowableRadius}");
 
-                    Assert.GreaterOrEqual(r, 25f, $"{map}/{mode}: arena radius too small");
+
+                    foreach (var mode in modes)
+
+                    {
+
+                        FBSession.map = map;
+
+                        float r = FBArena.RadiusFor(mode);
+
+                        Assert.LessOrEqual(r, maxAllowableRadius + 0.01f, $"{map}/{mode}: arena radius {r} exceeds allowable limit {maxAllowableRadius}");
+
+                        Assert.GreaterOrEqual(r, 25f, $"{map}/{mode}: arena radius too small");
+
+                    }
 
                 }
 
             }
+
+            finally { FBMatch.I = partida; }
 
         }
 

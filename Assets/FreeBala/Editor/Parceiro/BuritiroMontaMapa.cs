@@ -510,11 +510,14 @@ namespace BuritiroEditor
                 int ini = txt.IndexOf('{', k); int fim = Casa(txt, ini);
                 novo = txt.Substring(0, ini) + trecho + txt.Substring(fim + 1);
             }
-            else novo = txt.Substring(0, abre + 1) + "\"" + id + "\":" + trecho + "," + txt.Substring(abre + 1);
-            File.Copy(path, path + "." + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".bak", true);
+            // mapa novo entra no FIM de "maps" (a ordem das chaves é a ordem dos cartões no menu, e maps[0] é o padrão do Go())
+            else novo = txt.Substring(0, fechaMaps) + (txt.Substring(abre + 1, fechaMaps - abre - 1).Trim().Length > 0 ? "," : "") + "\"" + id + "\":" + trecho + txt.Substring(fechaMaps);
+            // .bak fora do StreamingAssets (tudo lá dentro vai para o build): game/_backup/fb_data_bak
+            string bk = Path.GetFullPath(Path.Combine(Application.dataPath, "../../../_backup/fb_data_bak")); Directory.CreateDirectory(bk);
+            File.Copy(path, Path.Combine(bk, "fb_data.json." + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".bak"), true);
             File.WriteAllText(path, novo, new UTF8Encoding(false));
             AssetDatabase.Refresh();
-            Debug.Log("[BURITIRO] fb_data.json atualizado (maps." + id + "); cópia .bak ao lado.");
+            Debug.Log("[BURITIRO] fb_data.json atualizado (maps." + id + "); cópia .bak em " + bk);
         }
 
         // posicao do ':' depois de "chave" no nivel de objeto (ignora textos)

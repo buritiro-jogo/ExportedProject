@@ -15,9 +15,9 @@ na lista abaixo e no próprio `tools/morro_sacola/locais.py` (cada ajuste tem `f
 | Montagem | 248 grupos de LOD (3 níveis), 344 colisores, NavMesh 630 × 630 m (341 colisores entram no cálculo) |
 | fb_data | `maps.morro_sacola` em `StreamingAssets/fb_data.json` e na cópia `Resources/fb_data.json` |
 | Teste automático (editor) | todos os spawns, bots, waypoints e pontos em cima do NavMesh; base A → base B completo (264 m a pé); 3 rotas e 6 pares de bases sem trecho quebrado |
-| Menu | aparece na escolha de mapa ("Boa Vista · ruas de terra, muro pré-moldado, quintais · média distância") e na vitrine (`-fbvitrine`) |
+| Menu | último cartão da escolha de mapa ("Boa Vista · ruas de terra, muro pré-moldado, quintais · média distância") e na vitrine (`-fbvitrine`) |
 | Personagens/veículos fixos | nenhum (`parked` vazio), como pedido |
-| **Não testado** | Play no editor e .exe (`-fbtesteexe 10x10 morro_sacola`, `paredes morro_sacola`): falta gerar a build |
+| No .exe (04/11) | partida 10x10 com piloto até o fim, testes `paredes` e `medir`, 0 erros no log. Detalhes em **No jogo** |
 
 ## Regiões (coordenadas no referencial dos vídeos: x leste, y norte, em metros; no jogo, mapa = vídeo − (70, 60))
 
@@ -96,7 +96,109 @@ O que mais ajudaria:
 - Chão em blocos com 2 níveis; colisão separada e simplificada (342 peças, ~1 milhão de triângulos no total).
 - Horizonte em setores de 300 m, um nível só, sem sombra. Do chão a névoa esconde a emenda; do alto (aéreas sem névoa)
   dá para ver onde o chão detalhado acaba e o campo liso do horizonte começa.
-- **Pesado**: o chão perto (LOD0) tem ~2,3 milhões de triângulos no total, mas só as células perto da câmera ficam no LOD0. Falta medir FPS no .exe.
+- **Pesado**: o chão perto (LOD0) tem ~2,3 milhões de triângulos no total, mas só as células perto da câmera ficam no LOD0.
+- Medido no .exe em 04/11 (i5-7400 + RTX 3060, perfil PC Médio, 1920 × 1080): quadro de 9,7 ms parado na base, com 6,2 ms de GPU,
+  ~2500 draw calls, ~280 SetPass, 2,5 milhões de triângulos e 640 objetos com sombra. Na partida 10x10, o FPS médio no combate de cada
+  rodada ficou entre 65 e 93 (ver **No jogo**).
+
+## No jogo (04/11)
+
+**Onde o mapa entra:**
+- Menu: último cartão da escolha de mapa. A ordem dos cartões é a ordem das chaves de `maps` no fb_data, e `maps[0]`
+  continua a Vila Jardim, que é o padrão. O `AplicaNoFbData` agora põe mapa novo no fim, e a cópia `.bak` vai para
+  `game/_backup/fb_data_bak/`, fora do StreamingAssets, que inteiro vai para o build.
+- Modos: 10x10, clássico e os outros que leem `GameData.AllowedMaps`.
+- Grafites do usuário: cache assado (`Resources/Graffiti/cache_morro_sacola.txt`, 4 artes). O `FBGraffitiBake.Batch` já
+  inclui o Morro na lista padrão.
+- Caveirão e helicóptero de enfeite (`FBAmbientScenery`): entram como nos outros mapas.
+- **Online**: o `server.mjs` (repositório de fora, `game/`) só aceitava os 4 mapas do jogo web. Agora o jogo do PC se
+  apresenta com `unity: true` no `hello` (`FBNet`) e pode criar sala na Orla, no Centro Cívico e no Morro (`MAPS_UNITY`).
+  O jogo web não vê essas salas e não pode entrar nelas. Para valer, é preciso reiniciar o `INICIAR_FREE_BALA.bat`.
+  - A Praça do PT tem o mesmo id nos dois jogos, mas é outro mapa: no PC é a arena nova, no web a PT antiga. Antes, um
+    jogador do PC e um do web podiam cair na mesma sala, cada um vendo um mapa. Agora a sala da PT só aparece, e só
+    aceita entrada, para quem é do mesmo jogo de quem a criou.
+  - Quem tenta entrar pelo código numa sala do outro jogo recebe o motivo: mapa que só existe no PC, ou outra versão
+    do mapa no outro jogo.
+  - Testado com um script de 23 casos (porta 8199), todos ok. Ele cobre também o jogo cruzado nos mapas comuns (o web
+    vê e entra na sala da Vila Jardim criada pelo PC) e cliente que nunca manda `hello`, que conta como web.
+    Script e saída: `F:/FreeBala_backups/ms_video/jogo_r1/teste_server.mjs` e `teste_server.txt`.
+  - O app antigo do Electron (`game/desktop/app/server.mjs`) tem uma cópia velha do servidor, sem essa mudança.
+
+**O que o Morro não tem, como o Centro Cívico:**
+- Sem `FBRoads`: não há trânsito, eventos de rua (açaí, baculejo) nem a decoração do 171.
+- Sem bancos e sem carros parados (pedido: nada fixo).
+- Rua molhada e poças de chuva não funcionam em mapa de glTF (vale para todos).
+
+**Testes no .exe de laboratório** (`F:/FreeBala_builds/WindowsLab54m/Buritiro.exe`, Mono, build de 13 min 41 s com 0 erros;
+resultados em `F:/FreeBala_backups/ms_video/jogo_r1/exe_*`):
+- `10x10 morro_sacola 13 piloto`: a partida foi até o fim (7 × 1 em 8 rodadas, 0 erros e exceções no log).
+  - Piloto: 2725 m andados, 457 tiros com 25 % de acerto, 36 abates e 1 morte.
+  - FPS médio no combate de cada rodada entre 65 e 93. Nas compras das rodadas 3 e 7 ficou em 61 e 53.
+  - A maioria dos quadros acima de 130 ms cai nos segundos das fotos e do censo do próprio teste.
+  - Exceção: rodada 6, aos ~105 s de combate, quando o time do jogador morreu inteiro.
+    - Um quadro de 568 ms do próprio jogo, sem foto nem censo por perto.
+    - No `desempenho.csv`, segundo 606,2: 5,7 FPS, física de 83 ms por quadro, Update de 66 ms e GPU de 63 ms.
+    - Entre 599 e 601 s, a CPU chegou a 108 ms.
+    - A causa não foi investigada.
+  - Presos: o piloto ficou preso 4 vezes, de 5 a 12 s cada, e saiu sozinho. Três desses pontos, e os de 2 bots, ficam a
+    cerca de 0,5 m (de 0,44 a 0,53 m) de um poste encostado no muro: o poste fica a 0,45 m da beira da rua, e a cápsula do personagem não
+    passa entre ele e o muro. É a falha da tarefa 1 do `PENDENTE.md` (o caminho corta o canto com raio fino), e lá
+    a correção está pronta, mas ainda não foi aplicada.
+- `paredes morro_sacola`: 36 arestas do NavMesh atravessam algo, em 11 objetos.
+  - 9 delas são no Caveirão de enfeite, que entra em tempo de jogo e não abre buraco no NavMesh.
+  - As outras 27 são em colisores do mapa (muros finos de lote).
+  - O `ClearLine` dos bots enxerga todos os 11 objetos.
+  - O recorte das paredes da arena funcionou: 36 pontos com NavMesh antes, 0 depois.
+- `medir morro_sacola`: ver **Desempenho**.
+- Horizonte: testei deixar os setores do horizonte com o próprio corte (hoje o `FBQuality` desliga esse LODGroup e o
+  horizonte é desenhado até o fim).
+  - No Morro, o resultado foi o mesmo tempo de quadro e as mesmas draw calls, com uns 7 % menos SetPass e triângulos.
+  - Na Orla e na Praça do PT, porém, os setores têm de 550 m a 1,3 km. Cortados pela distância até o centro, abririam
+    buraco a menos de 200 m da câmera.
+  - Ficou como era.
+
+**Testes PlayMode** (editor, em lote; logs e xml em `F:/FreeBala_backups/ms_video/jogo_r1/`):
+- Testes novos para o Morro:
+  - `Classico_MorroSacola` e `Modo10x10_MorroSacola`: partida de 15 s e de 40 s de jogo, e algum bot tem de andar.
+  - `Regressao_Personagem_MorroSacola`.
+  - O Morro entrou também em `Test_PlayableBounds_DefinedForAllMaps`, `Test_ArenaRadius_NeverExceedsPlayableBounds` e
+    `Benchmark_Mapas`. Este último é da categoria Benchmark e não foi rodado.
+- Rodadas (`status3.txt` a `status6.txt`): a R1 travou antes de começar (ver abaixo). R2 = `playmode2`, R3 =
+  `playmode_sem_partida` + `playmode_partidas`, R4 = `r4_*`, R5 = `r5`.
+- Resultado final, em 04/11:
+  - R4 (12:47–12:52): passaram os 2 testes de limites e as 3 partidas. As partidas foram o clássico do Morro, o 10x10
+    do Morro e o clássico da Praça do PT, que entrou para comparar.
+  - R5 (13:30–13:34), com os testes já corrigidos: passaram o de personagem do Morro (carga fria, 92 s), o de
+    personagem da PT e os 2 de limites.
+  - A R5 rodou na ordem que contaminava: o teste do raio veio depois de uma partida ainda carregada.
+- **Clássico do Morro, "bots parados"** (falhou na R2 e na R3): a causa era o teste, não o mapa.
+  - A janela do teste contava tempo de relógio.
+  - No editor em lote, logo depois da carga, vem um quadro longo antes de o tempo de jogo começar a contar:
+    16,8 s no clássico do Morro e 14,8 s no da PT (R4). A janela de 15 s acabava com 0,0 s de jogo, antes de os bots
+    poderem andar.
+  - No 10x10 do Morro, o pior quadro foi de 5,6 s. Com 33,7 s de jogo dentro da janela de 40 s, ele passava mesmo assim.
+  - Agora a janela conta tempo de jogo (`Time.deltaTime`), com teto de 120 s reais, e o teste registra os dois tempos.
+  - A espera de assentamento do teste de personagem (`FBRegressionTests.Load`) tinha a mesma falha e foi corrigida
+    igual, com teto de 60 s.
+  - O Timeout do teste de personagem do Morro subiu para 240 s, porque a carga fria leva de 80 a 140 s no editor.
+  - No .exe isso não aparece: a montagem acontece embaixo da tela de carregamento.
+- `Test_PlayableBounds_DefinedForAllMaps` agora também falha quando o mapa cai no limite padrão (500 × 60 × 500) do
+  `FBWorld`, ou seja, quando ninguém o registrou.
+- `Test_ArenaRadius_NeverExceedsPlayableBounds` falhou na R2 porque rodou depois das partidas do Morro.
+  - A mensagem foi `praca_aguas/squad: arena radius 145 exceeds allowable limit 42,24`.
+  - O `FBArena.RadiusFor` usa o mapa do `FBMatch.I` que sobrou da partida anterior, não o `FBSession.map` do teste.
+  - A falha é antiga, do próprio teste. Agora ele zera o `FBMatch.I` durante a conta e devolve no fim.
+  - Esse teste só confere o teto do raio de cada mapa, não o raio de verdade de uma partida. No clássico do Morro, o
+    log da partida mostra raio de 160 m: 80 % do chão andável fica a até 338 m do centro, e o teto do clássico é 160 m.
+- Na R2, o 10x10 também pegou uma leitura travada do cache do editor ("Wait handle timed out", seguido de "Assertion
+  failed on expression: res"). Foi o ambiente, não o jogo: ele passou na R3 e na R4. O clássico falhou na R2 só por
+  "bots parados".
+- `FBPropCollisionTests` ficou sem o Morro. Ele testa postes, árvores e grades com colisor `FBCol_`, e o Morro não tem
+  nenhum.
+
+Os testes PlayMode em lote travavam antes de começar. O `FBEditorBoot` forçava o Menu como cena inicial do Play, e o Test
+Framework perdia a cena de teste. Agora, com `-runTests`, ele não mexe na cena inicial. Pela janela Test Runner do
+editor aberto (sem `-runTests`), isso não foi conferido.
 
 ## Arquivos
 

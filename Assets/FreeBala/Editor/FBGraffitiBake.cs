@@ -17,7 +17,7 @@ namespace FreeBala.EditorTools
             try
             {
                 var a = System.Environment.GetCommandLineArgs(); int i = System.Array.IndexOf(a, "-fbmap");
-                var maps = (i >= 0 && i + 1 < a.Length ? a[i + 1] : "vila_jardim,praca_pt,praca_aguas,orla").Split(',');
+                var maps = (i >= 0 && i + 1 < a.Length ? a[i + 1] : "vila_jardim,praca_pt,praca_aguas,orla,morro_sacola").Split(',');
                 GameData.Load(); Directory.CreateDirectory("Assets/FreeBala/Resources/Graffiti");
                 foreach (var id in maps)
                 {

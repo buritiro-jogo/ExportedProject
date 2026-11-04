@@ -12,6 +12,9 @@ namespace FreeBala.EditorTools
         static FBEditorBoot()
         {
             Unity.Jobs.LowLevel.Unsafe.JobsUtility.JobDebuggerEnabled = false;
+            // testes PlayMode em lote (-runTests): o Play tem de abrir a cena de teste do Test Framework. Com o Menu forçado aqui, a cena
+            // de teste era trocada pelo Menu, nenhum teste começava e o editor ficava no menu para sempre (o Timeout nunca dispara).
+            if (System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-runTests") >= 0) { EditorSceneManager.playModeStartScene = null; return; }
             var menuScene = AssetDatabase.LoadAssetAtPath<SceneAsset>("Assets/FreeBala/Scenes/Menu.unity");
             if (menuScene != null && EditorSceneManager.playModeStartScene != menuScene)
             {

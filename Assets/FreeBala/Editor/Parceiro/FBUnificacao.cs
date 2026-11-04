@@ -51,7 +51,7 @@ public static class FBUnificacao
         Etapa("montar Map_centro_civico", BuritiroEditor.BuritiroMontaMapa.MontaCentroCivicoAuto);
         if (File.Exists("Assets/BURITIRO_Mapas/morro_sacola/morro_sacola_unity.glb"))
             Etapa("montar Map_morro_sacola", BuritiroEditor.BuritiroMontaMapa.MontaMorroSacolaAuto);
-        foreach (var id in new[] { "praca_pt", "orla", "centro_civico" })
+        foreach (var id in new[] { "praca_pt", "orla", "centro_civico", "morro_sacola" })
             L($"cena Map_{id}: " + (File.Exists($"{CENAS}/Map_{id}.unity") ? "existe" : "NÃO EXISTE"));
     }
 

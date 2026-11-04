@@ -76,7 +76,9 @@ namespace FreeBala
         void Start() { Connect(FBSession.server); }
         void OnOpen()
         {
-            Send(new Dictionary<string, object> { ["t"] = "hello", ["name"] = FBSession.name, ["skin"] = FBSession.FullSkin, ["team"] = FBSession.team, ["code"] = "" });
+            // "unity": o server.mjs aceita os mapas que só o Unity tem (orla, centro_civico, morro_sacola) e esconde essas salas do jogo web;
+            // a praca_pt é outro mapa em cada jogo, então a sala dela só aparece para quem é do mesmo jogo de quem a criou
+            Send(new Dictionary<string, object> { ["t"] = "hello", ["name"] = FBSession.name, ["skin"] = FBSession.FullSkin, ["team"] = FBSession.team, ["code"] = "", ["unity"] = true });
             Send(new Dictionary<string, object> { ["t"] = "list" });
         }
         public void Send(Dictionary<string, object> o) => SendRaw(ToJson(o));

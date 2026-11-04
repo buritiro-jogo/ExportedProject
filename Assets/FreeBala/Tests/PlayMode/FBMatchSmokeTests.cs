@@ -17,13 +17,18 @@ namespace FreeBala.Tests
             if (FBRegistry.I) { if (FBRegistry.I.HasChar("r_tutu")) FBSession.skin = "r_tutu"; }
             FBSession.Save();
             var op = SceneManager.LoadSceneAsync("Map_" + map); while (!op.isDone) yield return null;
-            float t = 0; var p0 = new System.Collections.Generic.Dictionary<FBCharacter, Vector3>(); bool moved = false;
-            while (t < seconds)
+            float t = 0, tj = 0, pior = 0; int quadros = 0; string aos = null; var rel = System.Diagnostics.Stopwatch.StartNew();
+            var p0 = new System.Collections.Generic.Dictionary<FBCharacter, Vector3>(); bool moved = false;
+            // a janela conta tempo de JOGO (Time.deltaTime, limitado por quadro): no editor em lote um quadro de vários segundos (montagem
+            // da partida, compilação de shader) esgotava a janela em tempo real antes de os bots andarem; teto de 120 s reais
+            while (tj < seconds && rel.Elapsed.TotalSeconds < 120)
             {
-                yield return null; t += Time.unscaledDeltaTime;
-                if (t < 1) continue;
+                yield return null; t += Time.unscaledDeltaTime; tj += Time.deltaTime; quadros++; pior = Mathf.Max(pior, Time.unscaledDeltaTime);
+                if (aos == null && t >= seconds) aos = $"{tj:0.0} s de jogo quando a janela antiga ({seconds:0} s reais) acabava, bots {(moved ? "já tinham andado" : "ainda parados")}";
+                if (tj < 1) continue;
                 foreach (var b in FBMatch.Bots) { if (!b) continue; if (!p0.TryGetValue(b, out var q)) p0[b] = b.Pos; else if ((b.Pos - q).magnitude > 1) moved = true; }   // algum bot andou (defensor parado é legítimo)
             }
+            Debug.Log($"[FreeBala][teste] {map}/{mode}: janela {rel.Elapsed.TotalSeconds:0.0} s reais · {tj:0.0} s de jogo · {quadros} quadros (pior {pior:0.00} s){(aos != null ? " · " + aos : "")}");
             Assert.IsNotNull(FBMatch.I, "partida não montou"); Assert.IsNotNull(FBMatch.Player, "sem jogador");
             Assert.Greater(FBMatch.Player.Pos.y, -50, "jogador caiu do mapa");
             if (mode != "role" && mode != "treino") { Assert.Greater(FBMatch.Bots.Count, 0, "sem bots"); Assert.IsTrue(moved, "bots parados"); }
@@ -40,6 +45,8 @@ namespace FreeBala.Tests
         [UnityTest, Timeout(180000)] public IEnumerator Pvl_VilaJardim() { yield return Run("vila_jardim", "pvl", 34); }
         [UnityTest, Timeout(180000)] public IEnumerator Role_VilaJardim() { yield return Run("vila_jardim", "role", 10); }
         [UnityTest, Timeout(180000)] public IEnumerator BR_PracaPT() { yield return Run("praca_pt", "br", 20); }
+        [UnityTest, Timeout(180000)] public IEnumerator Modo10x10_MorroSacola() { yield return Run("morro_sacola", "10x10", 40); }   // passa da fase de compra
+        [UnityTest, Timeout(180000)] public IEnumerator Classico_MorroSacola() { yield return Run("morro_sacola", "classico", 15); }
         [UnityTest, Timeout(120000)] public IEnumerator Menu_Lobby()
         {
             var op = SceneManager.LoadSceneAsync("Menu"); while (!op.isDone) yield return null;

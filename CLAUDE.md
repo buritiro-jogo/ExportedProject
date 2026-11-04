@@ -49,7 +49,7 @@ Dentro do repositório (projeto Unity `FreeBala`):
   - `FBUnificacao`: refaz as cenas do time do Ruan na ordem certa (`-executeMethod FBUnificacao.Rodar`).
 - `Packages/com.cqf.urpvolumetricfog/`: névoa volumétrica (pacote local).
 - `Assets/FreeBala/Scenes/`: cenas do jogo. `Map_praca_pt_antiga` e `Map_orla_antiga` são os mapas antigos do amigo (fora do build, desligados no fb_data).
-- `Assets/BURITIRO_Mapas/` (`praca_pt`, `orla`, `centro_civico`), `Assets/BuritiroVJ/` e `Assets/BURITIRO/`: mapas e recursos de Boa Vista feitos pelo time.
+- `Assets/BURITIRO_Mapas/` (`praca_pt`, `orla`, `centro_civico`, `morro_sacola`), `Assets/BuritiroVJ/` e `Assets/BURITIRO/`: mapas e recursos de Boa Vista feitos pelo time. O Morro da Sacola vem de 13 vídeos (gerador fora do repositório); relatório em `Docs/morro_sacola/`.
 - `Assets/BURITIRO_Animacoes/` e `Assets/BuritiroMascaras/`: animações novas e máscaras de corpo.
 - `Assets/StreamingAssets/fb_data.json`: dados do jogo, que o jogo lê toda vez que abre (cópia em `Assets/FreeBala/Resources/fb_data.json`).
   - Contém armas, movimento, veículos, mapas, pontos de nascer e bases do 10x10.
@@ -92,7 +92,7 @@ BURITIRO.exe -screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -logFil
 BURITIRO.exe ... -fbtesteexe paredes <mapa>
 ```
 
-- Mapas: `praca_pt`, `orla`, `centro_civico`, `praca_aguas`, `vila_jardim`.
+- Mapas: `praca_pt`, `orla`, `centro_civico`, `praca_aguas`, `vila_jardim`, `morro_sacola`.
 - Opções do teste:
   - `9x9`: o jogador fica parado, para medir o equilíbrio entre os times.
   - `time1`: troca o time do jogador.
@@ -119,7 +119,7 @@ BURITIRO.exe ... -fbtesteexe paredes <mapa>
 
 ## Estado atual (02/11/2026)
 
-Modo principal: **10x10 por rodadas** com compra, primeiro a 7 vitórias, nos 5 mapas competitivos: Praça do PT, Orla do Rio Branco, Centro Cívico com o Garimpeiro, Praça das Águas e Vila Jardim. Os mapas são arenas de 600 x 600 m recortadas da cidade.
+Modo principal: **10x10 por rodadas** com compra, primeiro a 7 vitórias, nos 6 mapas competitivos: Praça do PT, Orla do Rio Branco, Centro Cívico com o Garimpeiro, Praça das Águas, Vila Jardim e Morro da Sacola (04/11). Os mapas são arenas de 600 x 600 m recortadas da cidade.
 
 **Último pacote aplicado:** `fisica_02nov_a`, com backup em `..\..\_backup\fisica_02nov_a_20261102_164122`. Ele traz:
 - o dinheiro mudou para logo abaixo do minimapa (`FBHUD`, `cashT`);
