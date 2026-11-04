@@ -39,6 +39,7 @@ public static class FBUltraSetup
         Pos(pos);
         Quality(a);
         BrgKeepAll();
+        LigaUpscalers();
         AssetDatabase.SaveAssets();
         var diag = Path.GetFullPath(Path.Combine(Application.dataPath, "../../../_diag"));
         try { if (Directory.Exists(diag)) File.WriteAllText(Path.Combine(diag, "ultra_setup.txt"), log.ToString()); } catch { }
@@ -173,6 +174,17 @@ public static class FBUltraSetup
             }
         so.ApplyModifiedPropertiesWithoutUndo();
         L("níveis: " + string.Join(" · ", QualitySettings.names));
+    }
+
+    // DLSS/STP/FSR2 pelo "upscaler framework" do URP 17.6: só existe com o define ENABLE_UPSCALER_FRAMEWORK. Ligado apenas no
+    // Standalone (PC); Android/iOS/WebGL não mudam. Trocar define recompila os scripts (rodar Criar de novo depois para gravar o DLSS no asset).
+    [MenuItem("FreeBala/Gráficos/Ligar DLSS (define do PC)")]
+    public static void LigaUpscalers()
+    {
+        var alvo = UnityEditor.Build.NamedBuildTarget.Standalone; var defs = PlayerSettings.GetScriptingDefineSymbols(alvo);
+        if (defs.Split(';').Contains("ENABLE_UPSCALER_FRAMEWORK")) { L("define ENABLE_UPSCALER_FRAMEWORK já ligado no PC"); return; }
+        PlayerSettings.SetScriptingDefineSymbols(alvo, string.IsNullOrEmpty(defs) ? "ENABLE_UPSCALER_FRAMEWORK" : defs + ";ENABLE_UPSCALER_FRAMEWORK");
+        L("define ENABLE_UPSCALER_FRAMEWORK ligado no PC (recompilando)");
     }
 
     // GPU Resident Drawer precisa das variantes BatchRendererGroup no build
