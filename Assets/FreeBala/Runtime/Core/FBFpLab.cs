@@ -3,8 +3,12 @@
 // seguindo o rig LPSP). Aqui, no estande, para cada personagem e cada classe de arma (fuzil, SMG, pistola, escopeta, sniper):
 //   parado · mirando · recarregando · correndo — print da câmera do jogo + VISTA DE LADO só da camada da 1ª pessoa (o braço de fora,
 //   onde cotovelo/punho/ombro torcidos aparecem) em autoteste/fplab/<skin>_<arma>_<estado>_{cam,lado}.png
-// e mede por braço a TORÇÃO do braço/antebraço em relação ao plano do cotovelo (graus; o anatômico é 0 no braço e até ~90 no
-// antebraço, que divide a pronação com o punho) -> [FreeBala][fplab].
+// e mede por braço, em graus, QUANTO A VERSÃO ANTIGA DO FBCharArms TORCIA cada osso em relação à atual
+// (FBCharArms.Step: Quaternion.Angle(qUold, qU) e (qFold, qF)) -> [FreeBala][fplab].
+// ATENÇÃO (r60): isto NÃO é a torção anatômica do braço, e o cabeçalho antigo dizia que era ("o anatômico é 0 no braço e até
+// ~90 no antebraço"). Número ALTO aqui significa que a correção da r42 está trabalhando MUITO naquele caso — não que o braço
+// esteja torto. Para julgar se o braço está certo, olhe a VISTA DE LADO (*_lado.png); foi assim que se viu, em 07/11, que os
+// "piores casos" (r_mikele/barret_50 102°, r_pm_silva/38 175°) estão anatomicamente corretos.
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
