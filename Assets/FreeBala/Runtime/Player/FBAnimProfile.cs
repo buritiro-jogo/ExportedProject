@@ -125,10 +125,13 @@ namespace FreeBala
         // de 1.000 a 2.000 °/s a mais que os do jogo. Andar, correr, agachar e pular continuam os aprovados.
         public static readonly Dictionary<string, string> NovoRifle = new()
         {
-            // r60b: a MIRA saiu daqui (era "POL_PR_idle_aiming", do Mixamo da r55). Pedido do Ruan, 07/11: "a animação de mirar com a
-            // arma em terceira pessoa também deve ser puxada do complexo favela". Sem esta linha a vaga Rifle_Idle não é sobrescrita
-            // e volta a tocar o clipe do próprio Animator, que é o do Complexo Favela (LPSP) — o mesmo que a build de navegador usa,
-            // já que o AR_OVR do src/actor.js não mexe em mira. Recarga, granada e reação a tiro seguem com os clipes da r58.
+            // r60b: a MIRA VOLTOU para ca, e o motivo esta medido. Tirei esta linha para a vaga Rifle_Idle cair no clipe do proprio
+            // Animator (o do Complexo Favela), como o Ruan pediu e como a build de navegador faz. Resultado em jogo: o corpo passou a
+            // INCLINAR ao mirar sem luneta. A causa esta no aviso que ja existia no FBRig (linha ~142): o clipe para onde ela cai e de
+            // ARMA BAIXA, e para por o cano no alvo a partir dali o rig deita a coluna ate 22 graus para tras e levanta os bracos ate
+            // 46 graus. Os clipes de mira DE VERDADE do Complexo Favela ("Aiming" e "Idle Aiming") NAO estao importados no projeto:
+            // so veio o "Rifle Idle", que e o de arma baixa. Para fazer como o web e preciso importar aqueles dois primeiro.
+            ["Rifle_Idle"] = "POL_PR_idle_aiming",                       // parado de mira (pose de mira de verdade, nao arma baixa)
             ["Rifle_Reload_2"] = "POL_BS_reloading_fit",                 // recarga
             ["Rifle_Grenade_Throw_Single"] = "POL_BS_toss_grenade_fit",  // granada
             ["Rifle_Hit_C_1"] = "POL_BS_hit_reaction",                   // levou tiro
