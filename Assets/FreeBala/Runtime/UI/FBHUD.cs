@@ -54,7 +54,7 @@ namespace FreeBala
 
         readonly List<(RectTransform rt, Image em, Text num, Text nm, RectTransform barBg, Image bar)> tagW = new(); readonly List<Image> miniArrows = new();
 
-        Text blockX; Image impX; bool impOn; Vector2 impPx; float hpLagV = 100; int magN; string wId; Text nT; Image zoneRing, zoneNext, heliScanRing;
+        Text blockX; bool impOn; Vector2 impPx; Vector2 crossOff; float crossGap; bool crossVis; float hpLagV = 100; int magN; string wId; Text nT; Image zoneRing, zoneNext, heliScanRing;
 
         static readonly Dictionary<FBCharacter, int> squadNo = new(); static FBMatch squadMatch;
 
@@ -209,7 +209,9 @@ namespace FreeBala
             // dinheiro (economia)
 
             // [parceiro] física 02/11: o dinheiro ficava em (150, -30), embaixo do minimapa (R: centro 141,-139, 237x237, até y -258) e ele
+
             // cobria o texto. Agora fica logo abaixo da escala "20 m" do minimapa (y -276), alinhado à borda esquerda dele (x 22),
+
             // sem passar da coluna do esquadrão (começa em x 272).
 
             cashT = Lbl(root, "", 26, new Vector2(0, 1), new Vector2(0, 1), new Vector2(142, -302), new Vector2(240, 34), TextAnchor.MiddleLeft, true, new Color(.4f, .95f, .5f));
@@ -255,6 +257,7 @@ namespace FreeBala
             zoneRing = Box(miniClip, "zona", C, C, 0, 0, 10, 10, new Color(80 / 255f, 220 / 255f, 1, .95f)); zoneRing.sprite = RingSprite; zoneRing.gameObject.SetActive(false);
 
             zoneNext = Box(miniClip, "zonaProx", C, C, 0, 0, 10, 10, new Color(1, 1, 1, .8f)); zoneNext.sprite = RingSprite; zoneNext.gameObject.SetActive(false);
+
             heliScanRing = Box(miniClip, "heliScan", C, C, 0, 0, 10, 10, new Color(1f, 0.5f, 0.1f, .85f)); heliScanRing.sprite = RingSprite; heliScanRing.gameObject.SetActive(false);
 
             var vig = Box(miniClip, "vinheta", C, C, 0, 0, 178, 178, new Color(.02f, .03f, .04f, 1)); vig.sprite = VignetteSprite;   // escurece as bordas
@@ -499,23 +502,53 @@ namespace FreeBala
 
         public void ScopeKick() { scopeKick = 1; }
 
-        // r52: o X vermelho e branco vai para onde o tiro realmente para (cano sem linha: quina do carro, parede) — FBPlayer chama no fim do
+        // r60 MIRA ÚNICA. Antes havia DOIS retículos na tela, em lugares diferentes: a mira da arma no centro e, por cima, um ✕ no ponto real
 
-        // LateUpdate com a câmera final do quadro (sem um quadro de atraso)
+        // do impacto (r52). Lia como imprecisão, e nenhum dos dois dizia sozinho onde a bala ia bater. Agora é um só: quando o cano não
+
+        // alcança o ponto sob o retículo (quina de carro, muro, batente), a PRÓPRIA mira vai até onde a bala para, em vermelho. Um retículo,
+
+        // sempre no ponto de impacto verdadeiro. O FBPlayer chama isto no fim do LateUpdate, com a câmera final do quadro, para a mira não
+
+        // ficar um quadro atrás do que a tela mostra.
 
         public void PlaceImpact(bool on, Vector3 screen)
 
         {
 
-            impOn = on && screen.z > 0; impPx = new Vector2(screen.x, screen.y); if (!impX) return;
+            impOn = on && screen.z > 0; impPx = new Vector2(screen.x, screen.y);
 
-            bool vis = impOn && impX.enabled; impX.gameObject.SetActive(vis);
+            float k = canvas ? Mathf.Max(1e-4f, canvas.scaleFactor) : 1;
 
-            if (vis) { float k = canvas ? Mathf.Max(1e-4f, canvas.scaleFactor) : 1; impX.rectTransform.anchoredPosition = new Vector2(impPx.x - Screen.width * .5f, impPx.y - Screen.height * .5f) / k; }
+            crossOff = impOn ? new Vector2(impPx.x - Screen.width * .5f, impPx.y - Screen.height * .5f) / k : Vector2.zero;
+
+            CrossLayout();
 
         }
 
-        public bool ImpactShown => impX && impX.gameObject.activeSelf;   // teste no exe
+        // o retículo único: os 4 traços em volta do centro mais o ponto, todos deslocados por crossOff (zero = centro da tela)
+
+        void CrossLayout()
+
+        {
+
+            for (int i = 0; i < 4; i++)
+
+            {
+
+                if (!cross[i]) continue;
+
+                var b = i == 0 ? new Vector2(0, crossGap) : i == 1 ? new Vector2(0, -crossGap) : i == 2 ? new Vector2(crossGap, 0) : new Vector2(-crossGap, 0);
+
+                cross[i].anchoredPosition = b + crossOff;
+
+            }
+
+            if (crossDot) crossDot.rectTransform.anchoredPosition = crossOff;
+
+        }
+
+        public bool ImpactShown => impOn && crossVis;                    // teste no exe: a mira saiu do centro
 
         public Vector2 ImpactPx => impPx;
 
@@ -554,16 +587,27 @@ namespace FreeBala
         // renascer, placar dos times com barras, destaques da partida (MVP) e recompensas. Teclado: ESPAÇO renasce, R pede revanche.
 
         class CardFx : MonoBehaviour
+
         {
+
             public System.Action<float> tick; float t;
+
             // [parceiro 01/11] medidor de tempo por sistema (FBTempo): com FBTempo.On soma o custo das animações das telas
+
             static readonly int __fbt_Update = FBTempo.Id("FBHUD.CardFx.Update");
+
             void Update()
+
             {
+
                 if (!FBTempo.On) { Update__fbt(); return; }
+
                 long t0 = FBTempo.T0(); Update__fbt(); FBTempo.Soma(__fbt_Update, t0);
+
             }
+
             void Update__fbt() { t += Time.unscaledDeltaTime; tick?.Invoke(t); }
+
         }
 
         static Sprite sideGrad, topGrad;
@@ -907,6 +951,7 @@ namespace FreeBala
 
 
         // [parceiro 01/11] medidor de tempo por sistema (FBTempo): com FBTempo.On soma o custo do Update do HUD
+
         static readonly int __fbt_Update = FBTempo.Id("FBHUD.Update");
 
         void Update()
@@ -953,17 +998,19 @@ namespace FreeBala
 
                 for (int i = 0; i < 4; i++) { var im = cross[i].GetComponent<Image>(); im.color = cc; cross[i].sizeDelta = i < 2 ? new Vector2(2 * K, 9 * K) : new Vector2(9 * K, 2 * K); }
 
-                if (!impX) { impX = Img("impacto", C, C, Vector2.zero, new Vector2(18, 18), Color.white); impX.sprite = FBOptic.ImpactSprite; impX.gameObject.SetActive(false); }
+                crossDot.color = cc;
 
-                // r52: o ✕ fixo no centro saiu — o X vai para o ponto real do impacto (PlaceImpact); com a mira escondida (luneta/1ª pessoa mirando) também
+                // r60: o ✕ separado saiu de vez. Quem mostra o ponto real do impacto é esta mesma mira, deslocada no PlaceImpact (fim do
 
-                impX.enabled = blk || (pl.AimBlocked && w != null && ch.alive && !pl.Driving && !CardOpen && !pl.FreeLooking && !FBScopes.Scoped);
+                // LateUpdate do FBPlayer). Aqui ficam só cor, tamanho e visibilidade; a posição é toda do CrossLayout.
 
-                if (!impX.enabled) impX.gameObject.SetActive(false); crossDot.color = cc;
+                crossGap = gap; crossVis = show;
 
-                for (int i = 0; i < 4; i++) { cross[i].gameObject.SetActive(show); cross[i].anchoredPosition = i == 0 ? new Vector2(0, gap) : i == 1 ? new Vector2(0, -gap) : i == 2 ? new Vector2(gap, 0) : new Vector2(-gap, 0); }
+                for (int i = 0; i < 4; i++) cross[i].gameObject.SetActive(show);
 
                 crossDot.gameObject.SetActive(show || (w == null && ch.alive && !pl.firstPerson));
+
+                CrossLayout();
 
                 Minimap(pl, cam);
 
@@ -1336,16 +1383,27 @@ namespace FreeBala
             }
 
             if (heliScanRing != null)
+
             {
+
                 bool scanning = FBHeliRecon.IsScanning;
+
                 heliScanRing.gameObject.SetActive(scanning);
+
                 if (scanning)
+
                 {
+
                     heliScanRing.rectTransform.anchoredPosition = P(FBHeliRecon.ScanPosition);
+
                     heliScanRing.rectTransform.sizeDelta = Vector2.one * Mathf.Max(.2f, FBHeliRecon.ScanRadius * 2 * sc);
+
                     float pulse = Mathf.PingPong(Time.time * 2.5f, 0.4f) + 0.6f;
+
                     heliScanRing.color = new Color(1f, 0.5f, 0.1f, pulse * 0.9f);
+
                 }
+
             }
 
             var pts = FBMatch.I?.mode?.Points; if (pts != null) foreach (var p in pts) Dot(P(p), p.w < .5f ? Hex(0xd8d8d8) : p.w < 1.5f ? Hex(0x2e7aff) : p.w < 2.5f ? Hex(0xf23a45) : Hex(0xf5aa17), 10, true);   // Tático: neutro / nosso / deles / disputado
@@ -1369,17 +1427,27 @@ namespace FreeBala
                 if (FBMatch.Civs.Contains(a)) continue;
 
                 bool tagged = FBHeliRecon.IsTagged(a);
+
                 if (a.lastShot >= 3 && !tagged) continue;
 
                 var v = P(a.Pos); bool outE = Mathf.Abs(v.x) > (95 - 14) * K || Mathf.Abs(v.y) > (95 - 14) * K;
+
                 if (tagged)
+
                 {
+
                     float pulse = Mathf.PingPong(Time.time * 3f, 0.3f) + 0.7f;
+
                     Dot(Edge(v, 7), new Color(1f, 0.15f, 0.15f, pulse), outE ? 9 : 12, true);
+
                 }
+
                 else
+
                 {
+
                     Dot(Edge(v, 7), new Color(1, .23f, .19f, 1 - a.lastShot / 3), outE ? 8 : 10);
+
                 }
 
             }

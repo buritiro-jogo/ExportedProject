@@ -69,7 +69,11 @@ namespace FreeBala
             cam.useOcclusionCulling = false;
             FBQuality.SmoothLods(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
             var ucd = cam.GetComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>(); if (!ucd) ucd = cam.gameObject.AddComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>(); ucd.renderPostProcessing = true; ucd.antialiasing = UnityEngine.Rendering.Universal.AntialiasingMode.FastApproximateAntialiasing;
-            firstPerson = false;                                                               /* r45b: sem 1ª pessoa (pedido); só os laboratórios usam ForceFirstPerson */
+            // r60: a 1ª pessoa VOLTOU. Na r45b ela foi tirada do jogo (firstPerson = false fixo, tecla V só nos laboratórios) a pedido, mas
+            // a máquina toda ficou de pé: o FBFpRig logo abaixo, a câmera da arma (vmCam), o cano de 1ª pessoa do tiro (FpBore/FpShotOrigin)
+            // e a lente PIP das lunetas. Agora a vista sai da preferência salva do jogador (FBSession.view, "fp" ou "tps"), que os
+            // laboratórios já escreviam sem ninguém ler. O padrão continua 3ª pessoa: o jogo é um TPS.
+            firstPerson = FBSession.view == "fp";
             // [parceiro] v18 (thread de física): uma exceção aqui (ex.: falta de memória ao ler as animações de primeira pessoa) parava o
             // Awake no meio e o jogador ficava sem controle. Agora o jogo segue em terceira pessoa.
             try { fp = FBFpRig.Create(null); }
@@ -224,7 +228,13 @@ namespace FreeBala
                 }
                 else if (inp.heal) FBHUD.I?.Center("MUDANDO DE POSIÇÃO", .8f);
                 if (inp.pickup) FBLoot.Pickup(ch);
-                if (inp.toggleView && !ch.special && FBSession.Lab) { firstPerson = !firstPerson; ApplyView(); }   /* r45b: 1ª pessoa removida do jogo — a tecla V só alterna nos laboratórios */
+                // r60: a tecla V alterna 1ª/3ª pessoa no JOGO outra vez (na r45b só valia nos laboratórios). A escolha vai para a
+                // preferência salva, senão voltaria para a 3ª a cada renascimento. Dirigindo não alterna: o FP do volante é outro caminho.
+                if (inp.toggleView && !ch.special && !Driving)
+                {
+                    viewBlendOff = cam.transform.position - ch.Pos; viewBlendRot = cam.transform.rotation; viewBlendT = ViewBlendTime;   // r60: de onde a câmera sai
+                    firstPerson = !firstPerson; FBSession.view = firstPerson ? "fp" : "tps"; FBSession.Save(); ApplyView();
+                }
                 if (inp.interact && !reviveCand && !ch.knocked && !FBFall.Busy(ch) && proneSt == 0)   // r49: deitado não entra em veículo (o corpo saltava da pose)
                 {
                     FBVehicles.Toggle(ch);
@@ -392,6 +402,9 @@ namespace FreeBala
         }
         public static bool Diag;                                                                   // FBJogoTest: monta o OpticGate (motivo da mira óptica negada)
         float healEnd, fpHideT2; bool fpHidden;
+        // r60: transição 1ª↔3ª pessoa. Guarda a pose da câmera do quadro da troca (como deslocamento do corpo, para acompanhar quem anda)
+        // e sai dela até a pose do ramo novo em ViewBlendTime segundos. Só a câmera: tiro, rig e HUD trocam na hora, como já era.
+        const float ViewBlendTime = .18f; float viewBlendT; Vector3 viewBlendOff; Quaternion viewBlendRot;
         float adsW; public float OpticE => adsW * adsW * (3 - 2 * adsW); public string OpticGate { get; private set; }                      // r51: transição da mira óptica (0 = 3ª pessoa, 1 = na mira)
         // cura do Sigma: em pé = Stand_Self_Rescue (FF_SYS_Heal_*), agachado = Crouch_Self_Rescue_Loop (FF_SYS_KO_Revive); alterna a qualquer momento com agachar
         string HealPose()
@@ -751,6 +764,9 @@ namespace FreeBala
             float fk = 1 - Mathf.Exp(-dt * (flOn ? 30 : 9));                                    // entra colado no mouse, volta suave (~0,3 s)
             flYawS = Mathf.Lerp(flYawS, flYaw, fk); flPitchS = Mathf.Lerp(flPitchS, flPitch, fk); if (!flOn && !FlBlend) flYawS = flPitchS = 0;
             tpsKick *= Mathf.Exp(-dt * 9); tpsPunch *= Mathf.Exp(-dt * 11); vmKick = Mathf.Max(0, vmKick - dt * 6);
+            // r60: drena aqui, antes dos retornos da oficina/garagem/BR/veículo — senão o contador ficaria preso e o corpo continuaria
+            // visível na 1ª pessoa para sempre
+            if (viewBlendT > 0) viewBlendT = Mathf.Max(0, viewBlendT - dt);
             ImpactOn = false; AimBlocked = false; FBHUD.I?.PlaceImpact(false, default);
             if (FBOficina.Camera(cam, dt) || FBGarage.Camera(cam, dt)) return;
             // no veículo a câmera é sempre de 3ª pessoa: vindo da 1ª pessoa o corpo ficava só com a sombra (SetBodyVisible(false) e o laço
@@ -796,7 +812,7 @@ namespace FreeBala
                 }
                 else if (s != null && !vm && !fp) BuildViewModel();
                 if (vm && s == null) Destroy(vm);
-                SetBodyVisible(false);
+                SetBodyVisible(viewBlendT > 0 && target == ch);   // r60: vindo da 3ª, o corpo fica até a câmera chegar no olho
             }
             else
             {
@@ -844,6 +860,13 @@ namespace FreeBala
                 float zk = FBScopes.Scoped && s != null ? 1 / Mathf.Max(1, FBScopes.Zoom(s)) : 1;   // na luneta o tremor é atenuado pelo aumento
                 if (camShake > 0 && target == ch) { camShake = Mathf.Max(0, camShake - dt * 2); cam.transform.Rotate(Random.Range(-1f, 1f) * camShake * .7f * zk, Random.Range(-1f, 1f) * camShake * .7f * zk, 0, Space.Self); }
                 if (tpsShake > 0) { tpsShake = Mathf.Max(0, tpsShake - dt * T("shakeDecaySpeed", 1.6f)); float a = tpsShake * tpsShake, t = Time.time * T("shakeFrequency", 18); var sm = Json.O(GameData.Section("tpsCamera"), "shakeMaxAngles"); cam.transform.Rotate(Mathf.Sin(t * 1.1f) * a * Json.F(sm, "x", 1.2f), Mathf.Sin(t * 1.3f + 1) * a * Json.F(sm, "y", 1), 0, Space.Self); }
+            }
+            // r60: sai da pose guardada até a pose do ramo novo, com suavização de entrada/saída. Antes a tecla V dava um salto seco de
+            // uns 2 m (olho <-> atrás do ombro). Vem depois do tremor para o tranco não ser suavizado junto.
+            if (viewBlendT > 0 && target == ch && ch.alive)
+            {
+                float u = Mathf.Clamp01(1 - viewBlendT / ViewBlendTime); u = u * u * (3 - 2 * u);
+                cam.transform.SetPositionAndRotation(Vector3.Lerp(ch.Pos + viewBlendOff, cam.transform.position, u), Quaternion.Slerp(viewBlendRot, cam.transform.rotation, u));
             }
             if (vmCam) { vmCam.fieldOfView = Json.F(GameData.Section("character"), "fieldOfViewWeapon", 65) * (aim && s != null ? Json.F(FBWeaponModel.Scope(s), "fieldOfViewMultiplierAimWeapon", 1) : 1); vmCam.enabled = (firstPerson || oe >= .5f) && !ch.vehiclePose; }
             if (target == ch) PredictImpact(); else AimBlocked = false;                                 // r52: com a câmera final deste quadro

@@ -149,6 +149,11 @@ namespace FreeBala
         {
             public readonly List<float> aim = new(), lh = new(), pop = new(), rate = new(); public readonly Dictionary<string, int> clips = new(); public float elbowMin = 999, kneeRev; public int n;
             public float stretchMax, stretchFrac, squashMin = 9, popMax, holsterCm, gapCm; public string worstBone = "-", popBone = "-", holsterWhat = "-", gapWhat = "-";
+            // r60: o estiramento "cru" é amplificado por arestas MINÚSCULAS do bind (o filtro era 1e-5 m = 0,01 mm; uma aresta de 0,1 mm que
+            // vira 1 cm dá 100× sem nada aparecer na tela). stretchFirme ignora as arestas abaixo de 20 % da mediana do bind — é o número
+            // que corresponde ao que se vê. worstLen0/worstLen1 = a aresta culpada no bind e deformada, em mm, para saber qual dos dois é.
+            public float stretchFirme, worstLen0, worstLen1; public string firmeBone = "-";
+            public float aboveCm; public string aboveWhat = "-";   // r60: arma guardada passando do alto da cabeça
             public readonly Dictionary<Transform, Quaternion> prev = new();
         }
         static readonly List<AnimatorClipInfo> ciL = new();
@@ -187,7 +192,7 @@ namespace FreeBala
         }
 
         // estiramento da malha: arestas do corpo deformado ÷ as do bind (normalizado pela mediana — escala some); maior e fração > 1,6×
-        static readonly Dictionary<Mesh, (int[] a, int[] b, float[] len, BoneWeight[] bw)> edgeCache = new();
+        static readonly Dictionary<Mesh, (int[] a, int[] b, float[] len, BoneWeight[] bw, float med0)> edgeCache = new();
         static void Stretch(FBCharacter c, M m)
         {
             var tmp = new Mesh();
@@ -205,29 +210,36 @@ namespace FreeBala
                             int x = T[k + e], y = T[k + (e + 1) % 3]; if (x > y) (x, y) = (y, x); long key = ((long)x << 32) | (uint)y; if (!seen.Add(key)) continue;
                             float l0 = (V0[x] - V0[y]).magnitude; if (l0 < 1e-5f) continue; la.Add(x); lb.Add(y); ll.Add(l0);
                         }
-                    E = (la.ToArray(), lb.ToArray(), ll.ToArray(), sm.boneWeights); edgeCache[sm] = E;
+                    var ls = ll.ToArray(); var lsOrd = (float[])ls.Clone(); System.Array.Sort(lsOrd);
+                    E = (la.ToArray(), lb.ToArray(), ls, sm.boneWeights, lsOrd.Length > 0 ? lsOrd[lsOrd.Length / 2] : 0f); edgeCache[sm] = E;
                 }
                 try { r.BakeMesh(tmp, true); } catch { continue; }
                 var V = tmp.vertices; if (V.Length != sm.vertexCount) continue; int n = E.a.Length; if (n == 0) continue;
                 var ratio = new float[n]; for (int k = 0; k < n; k++) ratio[k] = (V[E.a[k]] - V[E.b[k]]).magnitude / E.len[k];
                 var sorted = (float[])ratio.Clone(); System.Array.Sort(sorted); float med = Mathf.Max(1e-6f, sorted[n / 2]);
-                int over = 0, worst = -1; float mx = 0, mn = 9;
-                for (int k = 0; k < n; k++) { float s = ratio[k] / med; if (s > 1.6f) over++; if (s > mx) { mx = s; worst = k; } if (s < mn) mn = s; }
+                int over = 0, worst = -1, worstF = -1; float mx = 0, mn = 9, mxF = 0; float minLen = E.med0 * .2f;   // r60: aresta curta demais no bind = ruído
+                for (int k = 0; k < n; k++)
+                {
+                    float s = ratio[k] / med; if (s > 1.6f) over++; if (s > mx) { mx = s; worst = k; } if (s < mn) mn = s;
+                    if (E.len[k] >= minLen && s > mxF) { mxF = s; worstF = k; }
+                }
+                if (mx > m.stretchMax && worst >= 0) { m.worstLen0 = E.len[worst] * 1000; m.worstLen1 = (V[E.a[worst]] - V[E.b[worst]]).magnitude * 1000; }
                 m.stretchMax = Mathf.Max(m.stretchMax, mx); m.stretchFrac = Mathf.Max(m.stretchFrac, over / (float)n); m.squashMin = Mathf.Min(m.squashMin, mn);
+                if (mxF > m.stretchFirme) { m.stretchFirme = mxF; if (worstF >= 0 && E.bw != null && E.bw.Length > E.a[worstF]) { int bf = E.bw[E.a[worstF]].boneIndex0; var bb = r.bones; if (bf >= 0 && bf < bb.Length && bb[bf]) m.firmeBone = bb[bf].name; } }
                 if (worst >= 0 && E.bw != null && E.bw.Length > E.a[worst]) { int bi = E.bw[E.a[worst]].boneIndex0; var bs = r.bones; if (bi >= 0 && bi < bs.Length && bs[bi]) m.worstBone = bs[bi].name; }
             }
             Destroy(tmp);
         }
-        static void Holster(FBCharacter c, M m) { var hp = HolsterPenetration(c); if (hp.cm > m.holsterCm) { m.holsterCm = hp.cm; m.holsterWhat = hp.what; } if (hp.gap > m.gapCm) { m.gapCm = hp.gap; m.gapWhat = hp.gapWhat; } }
+        static void Holster(FBCharacter c, M m) { var hp = HolsterPenetration(c); if (hp.cm > m.holsterCm) { m.holsterCm = hp.cm; m.holsterWhat = hp.what; } if (hp.gap > m.gapCm) { m.gapCm = hp.gap; m.gapWhat = hp.gapWhat; } if (hp.above > m.aboveCm) { m.aboveCm = hp.above; m.aboveWhat = hp.aboveWhat; } }
         static float P(List<float> l, float q) { if (l.Count == 0) return 0; var c = new List<float>(l); c.Sort(); return c[Mathf.Clamp(Mathf.RoundToInt(q * (c.Count - 1)), 0, c.Count - 1)]; }
 
         /// <summary>Rodada 38: quanto cada arma GUARDADA entra no corpo, medido na pose atual contra os triângulos da malha (não o perfil do
         /// jogo): raio pela direção do encaixe (costas: de trás para a frente; bandoleira: da frente para trás; coxa: de fora para dentro);
         /// ponto da arma entre a 1ª e a última superfície do corpo = dentro, penetração = distância da superfície de entrada. Braços/mãos
         /// fora (seguram a arma da mão e balançam). Retorna o pior (cm), a arma e o encaixe.</summary>
-        public static (float cm, string what, float gap, string gapWhat) HolsterPenetration(FBCharacter c)
+        public static (float cm, string what, float gap, string gapWhat, float above, string aboveWhat) HolsterPenetration(FBCharacter c)
         {
-            var hs = c.HolsterObjects.Where(o => o && o.activeInHierarchy).ToList(); if (hs.Count == 0 || !c.Chest || !c.an) return (0, "-", 0, "-");
+            var hs = c.HolsterObjects.Where(o => o && o.activeInHierarchy).ToList(); if (hs.Count == 0 || !c.Chest || !c.an) return (0, "-", 0, "-", 0, "-");
             c.TorsoAxes(out var up, out var fw, out var right); c.ThighAxes(out _, out var tside, out _);   // eixos do PRÓPRIO tronco/coxa (rodada 38)
             var arms = new HashSet<Transform>(); var ua = new[] { c.an.GetBoneTransform(HumanBodyBones.LeftUpperArm), c.an.GetBoneTransform(HumanBodyBones.RightUpperArm) }; float shR = .13f * c.ScaleK;
             foreach (var hb in new[] { HumanBodyBones.LeftLowerArm, HumanBodyBones.RightLowerArm }) { var t0 = c.an.GetBoneTransform(hb); if (t0) foreach (var t in t0.GetComponentsInChildren<Transform>(true)) arms.Add(t); }
@@ -246,8 +258,12 @@ namespace FreeBala
                 else continue;
                 for (int k = 0; k + 2 < T.Length; k += 3) { tris.Add(V[T[k]]); tris.Add(V[T[k + 1]]); tris.Add(V[T[k + 2]]); }
             }
-            Object.Destroy(tmp); if (tris.Count == 0) return (0, "sem malha legível", 0, "-");
+            Object.Destroy(tmp); if (tris.Count == 0) return (0, "sem malha legível", 0, "-", 0, "-");
             float worst = 0; string what = "-"; float gapW = 0; string gapWhat = "-";
+            // r60: quanto a arma guardada passa ACIMA do alto da cabeça. Nas folhas de costas o fuzil nas costas sobe muito, e o "afastamento"
+            // antigo não distingue isso de uma arma só comprida: aqui é uma medida direta e fácil de julgar (0 = encostado no alto da cabeça).
+            float topBody = float.NegativeInfinity; foreach (var t in tris) if (t.y > topBody) topBody = t.y;
+            float aboveW = 0; string aboveWhat = "-";
             foreach (var h in hs)
             {
                 var id = h.name.Replace("Coldre_", ""); string slot = GameData.Weapons.TryGetValue(id, out var wd) ? FBCharacter.HolsterSlot(wd.cls) : "back";
@@ -255,6 +271,9 @@ namespace FreeBala
                 var pts = new List<Vector3>();
                 foreach (var mf in h.GetComponentsInChildren<MeshFilter>()) { if (!mf.sharedMesh || !mf.sharedMesh.isReadable || !mf.GetComponent<Renderer>() || !mf.GetComponent<Renderer>().enabled) continue; var V = mf.sharedMesh.vertices; var M = mf.transform.localToWorldMatrix; int step = Mathf.Max(1, V.Length / 600); for (int i = 0; i < V.Length; i += step) pts.Add(M.MultiplyPoint3x4(V[i])); }
                 if (pts.Count == 0) continue;
+                float topGun = float.NegativeInfinity; foreach (var q in pts) if (q.y > topGun) topGun = q.y;
+                float above = (topGun - topBody) * 100 / Mathf.Max(.01f, c.ScaleK);
+                if (above > aboveW) { aboveW = above; aboveWhat = h.name.Replace("Coldre_", "") + "@" + slot; }
                 // grade dos triângulos projetados (2 cm) só em volta da arma
                 float cell = .02f * c.ScaleK; float u0 = pts.Min(p => Vector3.Dot(p, au)) - cell, u1 = pts.Max(p => Vector3.Dot(p, au)) + cell, v0 = pts.Min(p => Vector3.Dot(p, av)) - cell, v1 = pts.Max(p => Vector3.Dot(p, av)) + cell;
                 int nu = Mathf.Clamp(Mathf.CeilToInt((u1 - u0) / cell), 1, 400), nv = Mathf.Clamp(Mathf.CeilToInt((v1 - v0) / cell), 1, 400); var grid = new List<int>[nu * nv];
@@ -277,7 +296,7 @@ namespace FreeBala
                 if (pen > worst) { worst = pen; what = id + "@" + slot; }
                 if (pen <= 0 && gap < 1e8f && gap > gapW) { gapW = gap; gapWhat = id + "@" + slot; }
             }
-            return (worst * 100 / Mathf.Max(.01f, c.ScaleK), what, gapW * 100 / Mathf.Max(.01f, c.ScaleK), gapWhat);
+            return (worst * 100 / Mathf.Max(.01f, c.ScaleK), what, gapW * 100 / Mathf.Max(.01f, c.ScaleK), gapWhat, aboveW, aboveWhat);
         }
         static bool RayTri(Vector3 o, Vector3 d, Vector3 a, Vector3 b, Vector3 c, out float t)
         {
@@ -355,7 +374,7 @@ namespace FreeBala
             string rifle = First("fuzil", FBSession.primary) ?? First("fuzil", "ak"), smg = First("submetralhadora", FBSession.smg), pistol = First("pistola", FBSession.secondary), sg = First("escopeta", null), sn = First("sniper", null);
             var sets = new List<(string id, string[] give, int slot)> { ("desarmado", new[] { rifle, smg, pistol }, 3), ("fuzil", new[] { rifle, smg, pistol }, 0), ("pistola", new[] { rifle, smg, pistol }, 2), ("smg", new[] { rifle, smg, pistol }, 1), ("escopeta", new[] { sg, smg, pistol }, 0), ("sniper", new[] { sn, smg, pistol }, 0) };
             if (setArg != "all") { var want = new HashSet<string>(setArg.Split(',')); sets = sets.Where(s => want.Contains(s.id)).ToList(); }
-            var csv = new System.Text.StringBuilder("conjunto;estado;personagem;erro_mira_p95_graus;mao_esq_p95_cm;estalo_p99_graus_s;estalo_max;cotovelo_min_graus;joelho_invertido_quadros;estiramento_max;estiramento_frac;compressao_min;osso_pior;osso_estalo;coldre_dentro_cm;coldre_pior;coldre_folga_cm;coldre_folga_pior;ritmo_passo_med;clipe_base\n");
+            var csv = new System.Text.StringBuilder("conjunto;estado;personagem;erro_mira_p95_graus;mao_esq_p95_cm;estalo_p99_graus_s;estalo_max;cotovelo_min_graus;joelho_invertido_quadros;estiramento_max;estiramento_frac;compressao_min;osso_pior;osso_estalo;coldre_dentro_cm;coldre_pior;coldre_folga_cm;coldre_folga_pior;ritmo_passo_med;clipe_base;estiramento_firme;osso_firme;aresta_bind_mm;aresta_deformada_mm;arma_acima_cabeca_cm;arma_acima_qual\n");
             var ic = System.Globalization.CultureInfo.InvariantCulture;
             bool first = true;
             foreach (var (setId, give, slot) in sets)
@@ -382,14 +401,14 @@ namespace FreeBala
                         }
                         if (!shot && t >= st.len * st.shotAt) { shot = true; yield return new WaitForEndOfFrame(); foreach (var c in chars) if (c) { Stretch(c, ms[c]); Holster(c, ms[c]); } Capture($"{setId}_{st.id}", st.views); }
                     }
-                    float aimW = 0, lhW = 0, popW = 0, strW = 0, holW = 0, gapW = 0, rLo = 9, rHi = 0; string wc = "-", hw = "-", rc = "-", gw = "-";
+                    float aimW = 0, lhW = 0, popW = 0, strW = 0, firW = 0, holW = 0, gapW = 0, rLo = 9, rHi = 0; string wc = "-", fc = "-", hw = "-", rc = "-", gw = "-"; float wl0 = 0, wl1 = 0, abvW = 0; string ac = "-";
                     foreach (var c in chars)
                     {
                         var m = ms[c]; float a95 = P(m.aim, .95f), l95 = P(m.lh, .95f) * 100, p99 = P(m.pop, .99f);
-                        csv.AppendLine(string.Join(";", setId, st.id, c.skinId, a95.ToString("0.0", ic), l95.ToString("0.0", ic), p99.ToString("0", ic), P(m.pop, 1).ToString("0", ic), m.elbowMin.ToString("0", ic), m.kneeRev.ToString("0", ic), m.stretchMax.ToString("0.00", ic), (m.stretchFrac * 100).ToString("0.00", ic), m.squashMin.ToString("0.00", ic), m.worstBone, m.popBone, m.holsterCm.ToString("0.0", ic), m.holsterWhat, m.gapCm.ToString("0.0", ic), m.gapWhat, P(m.rate, .5f).ToString("0.00", ic), m.clips.Count > 0 ? m.clips.OrderByDescending(k => k.Value).First().Key : "-"));
-                        aimW = Mathf.Max(aimW, a95); lhW = Mathf.Max(lhW, l95); popW = Mathf.Max(popW, p99); if (m.stretchMax > strW) { strW = m.stretchMax; wc = c.skinId + "/" + m.worstBone; } if (m.holsterCm > holW) { holW = m.holsterCm; hw = c.skinId + "/" + m.holsterWhat; } if (m.gapCm > gapW) { gapW = m.gapCm; gw = c.skinId + "/" + m.gapWhat; } if (m.rate.Count > 0) { float rm = P(m.rate, .5f); if (rm < rLo) { rLo = rm; rc = m.clips.OrderByDescending(k => k.Value).First().Key; } rHi = Mathf.Max(rHi, rm); }
+                        csv.AppendLine(string.Join(";", setId, st.id, c.skinId, a95.ToString("0.0", ic), l95.ToString("0.0", ic), p99.ToString("0", ic), P(m.pop, 1).ToString("0", ic), m.elbowMin.ToString("0", ic), m.kneeRev.ToString("0", ic), m.stretchMax.ToString("0.00", ic), (m.stretchFrac * 100).ToString("0.00", ic), m.squashMin.ToString("0.00", ic), m.worstBone, m.popBone, m.holsterCm.ToString("0.0", ic), m.holsterWhat, m.gapCm.ToString("0.0", ic), m.gapWhat, P(m.rate, .5f).ToString("0.00", ic), m.clips.Count > 0 ? m.clips.OrderByDescending(k => k.Value).First().Key : "-", m.stretchFirme.ToString("0.00", ic), m.firmeBone, m.worstLen0.ToString("0.000", ic), m.worstLen1.ToString("0.000", ic), m.aboveCm.ToString("0.0", ic), m.aboveWhat));
+                        aimW = Mathf.Max(aimW, a95); lhW = Mathf.Max(lhW, l95); popW = Mathf.Max(popW, p99); if (m.stretchMax > strW) { strW = m.stretchMax; wc = c.skinId + "/" + m.worstBone; wl0 = m.worstLen0; wl1 = m.worstLen1; } if (m.stretchFirme > firW) { firW = m.stretchFirme; fc = c.skinId + "/" + m.firmeBone; } if (m.aboveCm > abvW) { abvW = m.aboveCm; ac = c.skinId + "/" + m.aboveWhat; } if (m.holsterCm > holW) { holW = m.holsterCm; hw = c.skinId + "/" + m.holsterWhat; } if (m.gapCm > gapW) { gapW = m.gapCm; gw = c.skinId + "/" + m.gapWhat; } if (m.rate.Count > 0) { float rm = P(m.rate, .5f); if (rm < rLo) { rLo = rm; rc = m.clips.OrderByDescending(k => k.Value).First().Key; } rHi = Mathf.Max(rHi, rm); }
                     }
-                    Debug.Log($"[FreeBala][lab] {setId}/{st.id}: pior erro de mira {aimW:0.0}° · pior mão esq. {lhW:0.0} cm · pior estalo p99 {popW:0}°/s · pior estiramento {strW:0.00}× ({wc}) · arma guardada dentro do corpo {holW:0.0} cm ({hw}) · maior afastamento {gapW:0.0} cm ({gw}){(rHi > 0 ? $" · ritmo do passo {rLo:0.00}–{rHi:0.00} (mais lento: {rc})" : "")}");
+                    Debug.Log($"[FreeBala][lab] {setId}/{st.id}: pior erro de mira {aimW:0.0}° · pior mão esq. {lhW:0.0} cm · pior estalo p99 {popW:0}°/s · pior estiramento {strW:0.00}× ({wc}, aresta {wl0:0.00}→{wl1:0.00} mm) · FIRME {firW:0.00}× ({fc}) · arma guardada dentro do corpo {holW:0.0} cm ({hw}) · maior afastamento {gapW:0.0} cm ({gw}) · acima da cabeça {abvW:0.0} cm ({ac}){(rHi > 0 ? $" · ritmo do passo {rLo:0.00}–{rHi:0.00} (mais lento: {rc})" : "")}");
                     Debug.Log($"[FreeBala][lab] {setId}/{st.id} rig (modo {FBRig.Mode}): ergueu {FBRig.LiftN} quadros (média {(FBRig.LiftN > 0 ? FBRig.LiftSum / FBRig.LiftN : 0):0.0}°) · centralizou {FBRig.CenterN} quadros · diag {FBRig.DbgN} q: cru {FBRig.DbgRaw / Mathf.Max(1, FBRig.DbgN):0.0}° punho {FBRig.DbgWrist / Mathf.Max(1, FBRig.DbgN):0.0}° corpo {FBRig.DbgClear / Mathf.Max(1, FBRig.DbgN):0.0}° fim {FBRig.DbgLeft / Mathf.Max(1, FBRig.DbgN):0.0}° · low ready {FBRig.DbgLower / Mathf.Max(1, FBRig.DbgN):0.0}° · empurrão {100 * FBRig.DbgPush / Mathf.Max(1, FBRig.DbgN):0.0} cm · punho no limite {FBRig.DbgClamp} · longe {FBRig.DbgFar}"); FBRig.LiftN = FBRig.CenterN = 0; FBRig.LiftSum = 0; FBRig.DbgN = FBRig.DbgClamp = FBRig.DbgFar = 0; FBRig.DbgRaw = FBRig.DbgWrist = FBRig.DbgClear = FBRig.DbgLeft = FBRig.DbgLower = FBRig.DbgPush = 0;
                 }
                 foreach (var a in actors) a.Leave();
