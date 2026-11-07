@@ -54,7 +54,7 @@ namespace FreeBala
 
         readonly List<(RectTransform rt, Image em, Text num, Text nm, RectTransform barBg, Image bar)> tagW = new(); readonly List<Image> miniArrows = new();
 
-        Text blockX; bool impOn; Vector2 impPx; Vector2 crossOff; float crossGap; bool crossVis; float hpLagV = 100; int magN; string wId; Text nT; Image zoneRing, zoneNext, heliScanRing;
+        Text blockX; Image impX; bool impOn; Vector2 impPx; Vector2 crossOff; float crossGap; bool crossVis, crossDotVis; float hpLagV = 100; int magN; string wId; Text nT; Image zoneRing, zoneNext, heliScanRing;
 
         static readonly Dictionary<FBCharacter, int> squadNo = new(); static FBMatch squadMatch;
 
@@ -526,11 +526,19 @@ namespace FreeBala
 
         }
 
-        // o retículo único: os 4 traços em volta do centro mais o ponto, todos deslocados por crossOff (zero = centro da tela)
+        // UM MARCADOR POR VEZ (r60b, pedido do Ruan: "na mira, tenhamos o ✕ quando o tiro estiver em um muro"):
+
+        //  · tiro livre      -> só o retículo (4 traços + ponto), no centro da tela;
+
+        //  · tiro bloqueado  -> só o ✕, no ponto REAL onde a bala para, em vermelho.
+
+        // Nunca os dois juntos, que era a queixa original (duas miras em lugares diferentes).
 
         void CrossLayout()
 
         {
+
+            bool xOn = impOn && crossVis;
 
             for (int i = 0; i < 4; i++)
 
@@ -538,13 +546,15 @@ namespace FreeBala
 
                 if (!cross[i]) continue;
 
-                var b = i == 0 ? new Vector2(0, crossGap) : i == 1 ? new Vector2(0, -crossGap) : i == 2 ? new Vector2(crossGap, 0) : new Vector2(-crossGap, 0);
+                cross[i].gameObject.SetActive(crossVis && !xOn);
 
-                cross[i].anchoredPosition = b + crossOff;
+                cross[i].anchoredPosition = i == 0 ? new Vector2(0, crossGap) : i == 1 ? new Vector2(0, -crossGap) : i == 2 ? new Vector2(crossGap, 0) : new Vector2(-crossGap, 0);
 
             }
 
-            if (crossDot) crossDot.rectTransform.anchoredPosition = crossOff;
+            if (crossDot) { crossDot.gameObject.SetActive(crossDotVis && !xOn); crossDot.rectTransform.anchoredPosition = Vector2.zero; }
+
+            if (impX) { impX.gameObject.SetActive(xOn); if (xOn) impX.rectTransform.anchoredPosition = crossOff; }
 
         }
 
@@ -1000,15 +1010,15 @@ namespace FreeBala
 
                 crossDot.color = cc;
 
-                // r60: o ✕ separado saiu de vez. Quem mostra o ponto real do impacto é esta mesma mira, deslocada no PlaceImpact (fim do
+                if (!impX) { impX = Img("impacto", C, C, Vector2.zero, new Vector2(18, 18), Color.white); impX.sprite = FBOptic.ImpactSprite; impX.gameObject.SetActive(false); }
 
-                // LateUpdate do FBPlayer). Aqui ficam só cor, tamanho e visibilidade; a posição é toda do CrossLayout.
+                impX.color = cc;
 
-                crossGap = gap; crossVis = show;
+                // r60b: aqui só cor, tamanho e QUEM pode aparecer. Quem decide se é o retículo ou o ✕, e onde, é o CrossLayout,
 
-                for (int i = 0; i < 4; i++) cross[i].gameObject.SetActive(show);
+                // chamado pelo PlaceImpact no fim do LateUpdate do FBPlayer (câmera final do quadro, sem um quadro de atraso).
 
-                crossDot.gameObject.SetActive(show || (w == null && ch.alive && !pl.firstPerson));
+                crossGap = gap; crossVis = show; crossDotVis = show || (w == null && ch.alive && !pl.firstPerson);
 
                 CrossLayout();
 

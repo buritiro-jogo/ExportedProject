@@ -107,11 +107,16 @@ _backup_projeto/
 Assets/AdvancedTerrainGrass/
 Assets/AdvancedTerrainGrass.meta
 
-# EXPERIMENTAL_FPSAF: as DEMOS do FPS Animation Framework (867 MB: 736 MB de Resources e
-# 131 MB de audio, contra 128 KB de codigo). Foram material de pesquisa das rodadas 57-59.
-# Nenhum .cs do projeto cita essa pasta, e ela nao tem asmdef, entao o nosso codigo nao
-# consegue depender dela. O que o jogo usa de verdade e Assets/KINEMATION (20 MB), que
-# tem os assemblies FPSAnimationFramework.Runtime e KAnimationCore.Runtime e o
-# InputConfig que o FBFpsafSetup copia. Pacote pago: quem precisar baixa da Asset Store.
+# EXPERIMENTAL_FPSAF: RETIRADO DO PROJETO em 07/11/2026, a pedido do Ruan. Movido para
+# unity/retirados_r60/ (fora do repositorio), nao apagado.
+# Eram as demos do FPS Animation Framework (867 MB) das rodadas 57-59. O pacote se
+# AUTO-INSTALAVA: FBPacoteArmas injetava as armas pac_* em GameData.Weapons e na loja por
+# RuntimeInitializeOnLoadMethod, e FBPacoteAnim sobrescrevia o Rifle_SprintLoop com o sprint
+# tatico de duas maos. Resultado relatado em 07/11: armas brancas (sem textura) equipadas no
+# perfil e a corrida com o fuzil nas DUAS maos, no lugar da locomocao do IE aprovada em 22/10.
+# Nenhum .cs do FreeBala citava a pasta, entao a retirada nao quebra compilacao.
+# O que FICA e Assets/KINEMATION (20 MB): e dependencia de COMPILACAO (os asmdef referenciam
+# FPSAnimationFramework.Runtime e KAnimationCore.Runtime) e nao traz arma nem animacao.
+# As duas linhas abaixo seguem, para o caso de o pacote ser reimportado por engano.
 Assets/EXPERIMENTAL_FPSAF/
 Assets/EXPERIMENTAL_FPSAF.meta

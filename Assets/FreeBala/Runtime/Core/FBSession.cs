@@ -78,6 +78,15 @@ namespace FreeBala
             if (GameData.BannedWeapons.Contains(primary)) primary = "ak";
             if (GameData.BannedWeapons.Contains(smg)) smg = "p90";
             if (GameData.BannedWeapons.Contains(secondary)) secondary = "38";
+            // r60b: arma salva que SAIU do jogo — o mesmo tratamento que o personagem que saiu, algumas linhas acima. Sem isto o
+            // jogador fica de mãos vazias: no lobby a pose de fuzil toca sem fuzil e os braços parecem quebrados (relatado em 07/11,
+            // depois que as armas pac_* do pacote experimental foram retiradas). Só com o catálogo já carregado.
+            if (GameData.Weapons.Count > 0)
+            {
+                if (!GameData.Weapons.ContainsKey(primary)) primary = "ak";
+                if (!GameData.Weapons.ContainsKey(smg)) smg = "p90";
+                if (!GameData.Weapons.ContainsKey(secondary)) secondary = "38";
+            }
             wx.Clear(); foreach (var e in G("wx", "").Split(';')) { var kv = e.Split('='); if (kv.Length == 2) { var tw = kv[1].Split(','); if (tw.Length == 2) wx[kv[0]] = (tw[0], tw[1]); } }
             Apply();
         }
