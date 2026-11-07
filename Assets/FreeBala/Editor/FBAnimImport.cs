@@ -90,6 +90,31 @@ namespace FreeBala.EditorTools
             Debug.Log($"[FreeBala] {n} clipes de combate do IE importados; registro com {(reg ? reg.clips.Count : 0)} clipes");
         }
 
+        // r60b MIRA DO COMPLEXO FAVELA: assets/anims_cf_mira.json com "Aiming" e "Idle Aiming".
+        // Por que nao vieram no import geral: o tools/anims.py le o datapack do Complexo Favela mas filtra
+        // SO os objetos de resources.assets, e esses dois estao em sharedassets5.assets (unicos 2 clipes de la).
+        // Por isso a vaga Rifle_Idle so tinha o "Rifle Idle", que e de ARMA BAIXA — e mirar a partir dele fazia
+        // o rig deitar a coluna ate 22 graus para levantar o cano (o "corpo inclinando" relatado em 07/11).
+        // Unity -batchmode -projectPath FreeBala -executeMethod FreeBala.EditorTools.FBAnimImport.ImportMiraCfBatch
+        public static void ImportMiraCfBatch()
+        {
+            int code = 0;
+            try { ImportMiraCf(); } catch (System.Exception e) { Debug.LogError("[FreeBala] mira do CF: " + e); code = 1; }
+            EditorApplication.Exit(code);
+        }
+        [MenuItem("FreeBala/Importar mira do Complexo Favela", priority = 5)]
+        public static void ImportMiraCf()
+        {
+            var f = Path.Combine(FBImport.Src, "anims_cf_mira.json"); if (!File.Exists(f)) { Debug.LogWarning("[FreeBala] faltou " + f); return; }
+            Directory.CreateDirectory(ClipDir); int n = 0;
+            if (Json.Parse(File.ReadAllText(f)) is Dictionary<string, object> root)
+                foreach (var kv in root) { var d = Json.Floats(Json.L(kv.Value, "d")); if (d.Length < 102) continue; MakeClip(kv.Key, Json.F(kv.Value, "fps", 30), d, 1, Json.B(kv.Value, "loop")); n++; }
+            AssetDatabase.SaveAssets(); AssetDatabase.Refresh();
+            var reg = AssetDatabase.LoadAssetAtPath<FBRegistry>("Assets/FreeBala/Resources/FBRegistry.asset");
+            if (reg) { reg.clips = Directory.GetFiles(ClipDir, "*.anim").Select(p => AssetDatabase.LoadAssetAtPath<AnimationClip>(p.Replace(Path.DirectorySeparatorChar, '/'))).Where(c => c).ToList(); EditorUtility.SetDirty(reg); AssetDatabase.SaveAssets(); }
+            Debug.Log($"[FreeBala] {n} clipes de mira do Complexo Favela importados; registro com {(reg ? reg.clips.Count : 0)} clipes");
+        }
+
         // clipes do 171 (rodada 39 — uso condicionado à autorização da Betagames): assets/anims_171.json, gerado por tools/re/ue_anim (GLB do
         // esqueleto ALS) -> src/tools_retarget.mjs (FULL=. : 20 qps). Só este arquivo, sem refazer o import inteiro:
         // Unity -batchmode -projectPath FreeBala -executeMethod FreeBala.EditorTools.FBAnimImport.Import171Batch

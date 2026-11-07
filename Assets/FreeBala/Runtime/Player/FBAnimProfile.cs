@@ -131,7 +131,12 @@ namespace FreeBala
             // ARMA BAIXA, e para por o cano no alvo a partir dali o rig deita a coluna ate 22 graus para tras e levanta os bracos ate
             // 46 graus. Os clipes de mira DE VERDADE do Complexo Favela ("Aiming" e "Idle Aiming") NAO estao importados no projeto:
             // so veio o "Rifle Idle", que e o de arma baixa. Para fazer como o web e preciso importar aqueles dois primeiro.
-            ["Rifle_Idle"] = "POL_PR_idle_aiming",                       // parado de mira (pose de mira de verdade, nao arma baixa)
+            // r60b: MIRA DO COMPLEXO FAVELA, enfim. O "Idle Aiming" (2,1 s em laco, com respiracao) veio do datapack do jogo e e a
+            // pose de mira parada DE VERDADE. Ele nunca tinha sido importado porque o tools/anims.py filtra so resources.assets e
+            // este clipe esta em sharedassets5.assets; extraido agora pelo FBAnimImport.ImportMiraCf.
+            // Antes passou por aqui: POL_PR_idle_aiming (Mixamo da r55, servia mas nao era a fonte pedida) e, por um commit, a vaga
+            // caiu no "Rifle Idle" de ARMA BAIXA, que fazia o rig deitar a coluna 22 graus para levantar o cano.
+            ["Rifle_Idle"] = "Idle Aiming",                               // parado de mira
             ["Rifle_Reload_2"] = "POL_BS_reloading_fit",                 // recarga
             ["Rifle_Grenade_Throw_Single"] = "POL_BS_toss_grenade_fit",  // granada
             ["Rifle_Hit_C_1"] = "POL_BS_hit_reaction",                   // levou tiro
