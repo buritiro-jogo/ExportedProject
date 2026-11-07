@@ -23,6 +23,17 @@ namespace FreeBala
             if (r != s.Trim()) why = "SÍMBOLOS TIRADOS (SÓ LETRAS, NÚMEROS, _ . -)";
             return r;
         }
+        public const string OldDefaultServer = "ws://localhost:8123/ws";
+        public static string ServidorPadrao()
+        {
+            try
+            {
+                var f = System.IO.Path.Combine(Application.streamingAssetsPath, "servidor.txt");
+                if (System.IO.File.Exists(f)) { foreach (var l in System.IO.File.ReadAllLines(f)) { var t = l.Trim(); if (t.StartsWith("ws://") || t.StartsWith("wss://")) return t; } }
+            }
+            catch { }
+            return OldDefaultServer;
+        }
         public static void SetName(string n) { name = n; PlayerPrefs.SetInt("fb_nameChosen", 1); Save(); }
         public static readonly bool Lab = System.Array.Exists(System.Environment.GetCommandLineArgs(), x => x.StartsWith("-fb") && x.EndsWith("lab"));   // r45b: executável rodando um laboratório (-fb*lab)
         public static string view = "tps", aimAssist = "assist", victory; public static float fov = .375f, sens = .5f, adsSens = .5f, master = .9f, music = .5f, sfx = 1, voice = 1, vehicles = 1, ambient = 1; public static bool holdRun, invertY, aimToggle, blood = true, pickRandom, freeLookToggle, mobileHUD;   // padrões do SET do main.js
@@ -44,7 +55,10 @@ namespace FreeBala
         public static void Load()
         {
             string G(string k, string d) => PlayerPrefs.GetString("fb_" + k, d);
-            skin = G("skin", skin); look = G("look", look); map = G("map", map); mode = G("mode", mode); primary = G("primary", primary); smg = G("smg", smg); secondary = G("secondary", secondary); name = G("name", name); server = G("server", server);
+            // [parceiro 07/11] servidor online padrão: StreamingAssets/servidor.txt (o instalador do jogo grava o IP do VPS).
+            // Quem ainda tem o padrão antigo (localhost) salvo passa a usar o do arquivo; quem digitou outro endereço mantém o seu.
+            server = ServidorPadrao(); var salvo = G("server", server); if (salvo != OldDefaultServer) server = salvo;
+            skin = G("skin", skin); look = G("look", look); map = G("map", map); mode = G("mode", mode); primary = G("primary", primary); smg = G("smg", smg); secondary = G("secondary", secondary); name = G("name", name);
             view = "tps"; /* r45b: câmera em 1ª pessoa removida do jogo (pedido) */ aimAssist = G("aimAssist", aimAssist); victory = G("victory", ""); if (victory == "" || FBEmotes.IsFF(victory)) victory = null;   /* r47: dança de vitória FF salva */ emoteSlots = G("emotes", "");
             diff = PlayerPrefs.GetInt("fb_diff", diff); money = PlayerPrefs.GetInt("fb_money", money); xp = PlayerPrefs.GetInt("fb_xp", xp); passXp = PlayerPrefs.GetInt("fb_passXp", passXp); quality = PlayerPrefs.GetInt("fb_quality", quality);
             fov = PlayerPrefs.GetFloat("fb_fov", fov); sens = PlayerPrefs.GetFloat("fb_sens", sens); adsSens = PlayerPrefs.GetFloat("fb_adsSens", adsSens); master = PlayerPrefs.GetFloat("fb_master", master); music = PlayerPrefs.GetFloat("fb_music", music); sfx = PlayerPrefs.GetFloat("fb_sfx", sfx); voice = PlayerPrefs.GetFloat("fb_voice", voice); vehicles = PlayerPrefs.GetFloat("fb_vehicles", vehicles); ambient = PlayerPrefs.GetFloat("fb_ambient", ambient);

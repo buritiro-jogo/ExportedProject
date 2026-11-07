@@ -91,6 +91,15 @@ namespace FreeBala.EditorTools
         }
         static bool mono;
         public static void WindowsBatch() => EditorApplication.Exit(Ok(Run(BuildTarget.StandaloneWindows64, BuildTargetGroup.Standalone, Out("Windows/Buritiro.exe"))));
+        // [parceiro 07/11] entrega em MONO, sem Development: plano B do instalador quando o PC não tem o módulo IL2CPP ou o C++ do Visual Studio.
+        // Saída própria (WindowsMono); o IL2CPP volta a ser o padrão logo depois, como no WindowsLabBatch.
+        public static void WindowsMonoBatch()
+        {
+            bool ok;
+            try { mono = true; ok = Run(BuildTarget.StandaloneWindows64, BuildTargetGroup.Standalone, Out("WindowsMono/Buritiro.exe")); }
+            finally { mono = false; PlayerSettings.SetScriptingBackend(NamedBuildTarget.Standalone, ScriptingImplementation.IL2CPP); }
+            EditorApplication.Exit(Ok(ok));
+        }
         public static void WebGLBatch() => EditorApplication.Exit(Ok(Run(BuildTarget.WebGL, BuildTargetGroup.WebGL, Out("WebGL"))));
         public static void AndroidAPKBatch() { Android(false); EditorApplication.Exit(Ok(Run(BuildTarget.Android, BuildTargetGroup.Android, Out("Android/Buritiro.apk")))); }
         public static void AndroidAABBatch() { Android(true); EditorApplication.Exit(Ok(Run(BuildTarget.Android, BuildTargetGroup.Android, Out("Android/Buritiro.aab")))); }
