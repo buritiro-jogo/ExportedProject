@@ -106,3 +106,12 @@ _backup_projeto/
 # pacote na Asset Store; o jogo compila e roda sem ele.
 Assets/AdvancedTerrainGrass/
 Assets/AdvancedTerrainGrass.meta
+
+# EXPERIMENTAL_FPSAF: as DEMOS do FPS Animation Framework (867 MB: 736 MB de Resources e
+# 131 MB de audio, contra 128 KB de codigo). Foram material de pesquisa das rodadas 57-59.
+# Nenhum .cs do projeto cita essa pasta, e ela nao tem asmdef, entao o nosso codigo nao
+# consegue depender dela. O que o jogo usa de verdade e Assets/KINEMATION (20 MB), que
+# tem os assemblies FPSAnimationFramework.Runtime e KAnimationCore.Runtime e o
+# InputConfig que o FBFpsafSetup copia. Pacote pago: quem precisar baixa da Asset Store.
+Assets/EXPERIMENTAL_FPSAF/
+Assets/EXPERIMENTAL_FPSAF.meta
