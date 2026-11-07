@@ -31,7 +31,7 @@ namespace FreeBala
             maxInstances = Mathf.Max(500, FBQuality.VegMaxInstances), shadows = FBQuality.VegShadows,
         };
 
-        void OnEnable() { I = this; FBQuality.Changed += Apply; FBGfx.Changed += Apply; Apply(); FBGrassCarpet.Ensure(this); }   // tapete de lâminas (versão final da grama)
+        void OnEnable() { I = this; FBQuality.Changed += Apply; FBGfx.Changed += Apply; Apply(); FBGrassCarpet.Ensure(this); FBGrassATG.Ensure(this); }   // tapete de lâminas (Praça das Águas) + grama do ATG espalhada pela máscara (Vila Jardim)
         void OnDisable() { FBQuality.Changed -= Apply; FBGfx.Changed -= Apply; if (I == this) { I = null; Visible = Total = 0; } }
 
         void Apply()

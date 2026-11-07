@@ -43,8 +43,12 @@ namespace FreeBala
                 var res = frameData.Get<UniversalResourceData>(); var cam = frameData.Get<UniversalCameraData>();
                 if (!res.cameraDepthTexture.IsValid() || !res.cameraColor.IsValid()) return;
                 var cdesc = cam.cameraTargetDescriptor;
+                // LIMPA no valor NEUTRO (nada espalhado, transmitância 1). Com clearBuffer=false, num quadro em que o raymarch não escreve
+                // (shader ainda compilando, textura reciclada do pool do RenderGraph) a composição lia LIXO e aplicava como névoa: a cena
+                // ficava lavada de azul com borda dura. Acontecia de forma aleatória — 3 execuções seguidas da MESMA build e da mesma pose
+                // deram 26 %, 2 % e 98 % de pixels azulados (06/11). Limpar em preto não serve: daria col.rgb*0 = cena preta.
                 var vd = new TextureDesc(Mathf.Max(1, (int)(cdesc.width * scale)), Mathf.Max(1, (int)(cdesc.height * scale)))
-                { colorFormat = GraphicsFormat.R16G16B16A16_SFloat, name = "_FBVolTex", clearBuffer = false, filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
+                { colorFormat = GraphicsFormat.R16G16B16A16_SFloat, name = "_FBVolTex", clearBuffer = true, clearColor = new Color(0, 0, 0, 1), filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
                 var vol = rg.CreateTexture(vd);
                 using (var b = rg.AddRasterRenderPass<MarchData>("FB Volumetrica Raymarch", out var d, profilingSampler))
                 {

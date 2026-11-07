@@ -72,6 +72,25 @@ namespace FreeBala
             Refresh();
         }
 
+        // QUAL névoa volumétrica fica ligada. Linha de comando: -fbvol casa|cq|ambas|nenhuma
+        //  · "" (padrão) e "casa": só o FBVolumetricFeature, o raymarch da casa — é o que o jogo usa.
+        //  · "cq": só o pacote URP Volumetric Fog.  · "ambas": os dois.  · "nenhuma": sem névoa volumétrica.
+        // Medido em 06/11 na Vila Jardim (pose vj5, 4 corridas de cada), fração de pixels azulados: com o CQ ligado 46/42/17/47 %,
+        // só com o raymarch da casa 12/13/13/12 %, sem nenhuma das duas 13/12/13/13 %. Ou seja, quem lavava a cena de azul era o
+        // pacote CQ sozinho, não a soma das duas; e o raymarch da casa não cobra nada por isso (FPS igual nos quatro modos).
+        static string volMode;
+        public static string VolMode
+        {
+            get
+            {
+                if (volMode != null) return volMode;
+                volMode = "";
+                var a = System.Environment.GetCommandLineArgs(); int i = System.Array.IndexOf(a, "-fbvol");
+                if (i >= 0 && i + 1 < a.Length) volMode = a[i + 1].ToLowerInvariant();
+                return volMode;
+            }
+        }
+
         public static void Refresh()
         {
             Tier = Detect(); var f = FlagsOverride != null ? FlagsOverride(Tier) : Defaults(Tier); F = f;
@@ -82,12 +101,16 @@ namespace FreeBala
                         if (!feat) continue;
                         if (feat is ScreenSpaceAmbientOcclusion) feat.SetActive(f.ssao);
                         else if (feat is FBHeightFogFeature) feat.SetActive(f.heightFog);
-                        else if (feat is FBVolumetricFeature || feat is VolumetricFogRendererFeature) feat.SetActive(f.volumetric);
+                        else if (feat is FBVolumetricFeature) feat.SetActive(f.volumetric && VolMode != "cq" && VolMode != "nenhuma");
+                        // o pacote CQ fica DESLIGADO por padrão: medido em 06/11 na Vila Jardim (pose vj5, 4 corridas de cada), com ele a
+                        // cena distante era lavada de azul em 46/42/17/47 % dos pixels, contra 12 % sem ele — o mesmo valor de desligar as
+                        // duas. A luz volumétrica dos postes continua, pelo raymarch da casa. Para ligá-lo de novo: -fbvol cq (ou ambas)
+                        else if (feat is VolumetricFogRendererFeature) feat.SetActive(f.volumetric && (VolMode == "cq" || VolMode == "ambas"));
 #if URP_SCREEN_SPACE_REFLECTION
                         else if (feat is ScreenSpaceReflectionRendererFeature) feat.SetActive(f.ssr);
 #endif
                     }
-            FBVolumetric.Active = f.volumetric; FBVolumetric.Steps = Mathf.Max(8, f.volSteps); FBVolumetric.ResolutionScale = f.volScale > 0 ? f.volScale : .5f;
+            FBVolumetric.Active = f.volumetric && VolMode != "nenhuma"; FBVolumetric.Steps = Mathf.Max(8, f.volSteps); FBVolumetric.ResolutionScale = f.volScale > 0 ? f.volScale : .5f;
             Changed?.Invoke();
         }
         static IEnumerable<ScriptableRendererData> Renderers(UniversalRenderPipelineAsset a)

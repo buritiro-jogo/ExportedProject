@@ -15,5 +15,8 @@ namespace FreeBala
         // tapete de grama (FBGrassCarpet): máscara do gramado (R8, 0..1 com borda suave) e altura do chão (RHalf, metros acima de grassY0)
         // numa grade de grassRect = (x0, z0, largura, profundidade) no mundo; material FreeBala/GrassCarpet salvo como asset (leva o shader ao build)
         public Texture2D grassMask, grassHeight; public Vector4 grassRect; public float grassY0; public Material grassMat;
+        // grama espalhada em RUNTIME pela máscara (FBGrassATG, malhas do Advanced Terrain Grass): quais tipos entram no tapete e quantos
+        // tufos por m² na densidade cheia. A máscara aqui guarda a DENSIDADE do chão no alfa (gramado 1, terra ~0,4, junta de muro ~0,9).
+        public int[] carpetKinds; public float carpetDensity = 3;
     }
 }

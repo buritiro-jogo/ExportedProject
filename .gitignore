@@ -97,3 +97,12 @@ _backup_projeto/
 **/*token*.txt
 **/*_token.json
 **/credenciais*
+
+# --- Pacotes de loja usados so como MATERIA-PRIMA (nao vao para o repositorio) ---
+# AdvancedTerrainGrass: pacote pago, 117 MB (com demos, PDF e o .unitypackage do HDRP).
+# Nada no projeto aponta para ele: a grama da Vila Jardim sai do atlas que o Blender assa em
+# assets/vegetation/atg_vj.glb, importado para Resources/FBImported/Vegetation/atg_vj_tex.
+# O material (veg_atg_vj.mat) usa o nosso FBFoliage.shader. Quem quiser reassar precisa do
+# pacote na Asset Store; o jogo compila e roda sem ele.
+Assets/AdvancedTerrainGrass/
+Assets/AdvancedTerrainGrass.meta

@@ -15,6 +15,12 @@ namespace FreeBala.EditorTools
         public static void VegRebakeBatch()
         {
             var args = System.Environment.GetCommandLineArgs(); int i = System.Array.IndexOf(args, "-fbmap"); string id = i >= 0 && i + 1 < args.Length ? args[i + 1] : "praca_aguas";
+            EditorApplication.Exit(VegRebake(id) ? 0 : 1);
+        }
+
+        // mesma coisa com o Editor aberto (o laboratório chama por "metodo ...") — sem fechar o Unity
+        public static bool VegRebake(string id)
+        {
             int code = 0;
             try
             {
@@ -30,7 +36,7 @@ namespace FreeBala.EditorTools
                 Debug.Log($"[FreeBala] vegetação refeita: {id} ({swap.Count} malhas LOD trocadas durante o bake)");
             }
             catch (System.Exception e) { Debug.LogError("[FreeBala] VegRebake falhou: " + e); code = 1; }
-            EditorApplication.Exit(code);
+            return code == 0;
         }
     }
 }

@@ -51,6 +51,14 @@ namespace FreeBala
             new() { n = "g10", map = "vila_jardim", time = "dia", weather = "limpo", pose = Pose.GramaPerto },
             new() { n = "g11", map = "praca_aguas", time = "dia", weather = "limpo", pose = Pose.Container },
             new() { n = "g12", map = "vila_jardim", time = "dia", weather = "limpo", pose = Pose.Container },
+            // grama DENTRO do bairro (Vila Jardim): beco, meio-fio e quintal — os pontos de grama (g5–g10) caem todos no descampado
+            new() { n = "vj1", map = "vila_jardim", time = "dia", weather = "limpo", pose = Pose.Fixa, eye = new(103.8f, -65.3f, 1.89f), tgt = new(93.6f, -74.8f, 1.74f) },   // beco entre blocos
+            new() { n = "vj2", map = "vila_jardim", time = "dia", weather = "limpo", pose = Pose.Fixa, eye = new(28.8f, -41.3f, 1.20f), tgt = new(22.0f, -46.0f, 0.90f) },    // rua: junta do meio-fio
+            new() { n = "vj3", map = "vila_jardim", time = "dia", weather = "limpo", pose = Pose.Fixa, eye = new(67.8f, -101.3f, 1.84f), tgt = new(77.7f, -108.1f, 1.54f) },  // beco 2 (olhando para fora do bloco)
+            new() { n = "vj4", map = "vila_jardim", time = "dia", weather = "limpo", pose = Pose.Fixa, eye = new(-79.2f, -31.3f, 1.74f), tgt = new(-74.4f, -22.5f, 1.54f) },  // quintal/terra perto do nascer A
+            // vista rasante e vista alta do mesmo descampado: é onde se via a faixa de laterita quando o tapete do FBGrassATG acabava (06/11)
+            new() { n = "vj5", map = "vila_jardim", time = "dia", weather = "limpo", pose = Pose.Fixa, eye = new(-79.2f, -31.3f, 2.60f), tgt = new(-20f, 30f, 2.30f) },
+            new() { n = "vj6", map = "vila_jardim", time = "dia", weather = "limpo", pose = Pose.Fixa, eye = new(-79.2f, -31.3f, 14f), tgt = new(-10f, 40f, 0f) },
             // noite com postes acesos (retorno: noite clara demais, postes sem luz)
             new() { n = "n1", map = "praca_aguas", time = "noite", weather = "limpo", pose = Pose.Poste },
             new() { n = "n2", map = "praca_aguas", time = "noite", weather = "limpo", pose = Pose.GramaPraca },
