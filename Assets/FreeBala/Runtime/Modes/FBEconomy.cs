@@ -22,6 +22,10 @@ namespace FreeBala
             new Cat { cat = "FUZIS", icon = "rifle", items = new() { ("ar15", 1900), ("aks74", 2000), ("ak", 2100), ("m4", 2100), ("m16", 2200), ("galil_ace", 2300), ("g36", 2300), ("lr_300", 2300), ("sig", 2400), ("parafal_1", 2400), ("acr", 2500), ("scar", 2500), ("fal", 2600), ("ak12", 2700), ("ar10", 2800), ("rpk", 3000) } },
             new Cat { cat = "SNIPERS", icon = "scope", items = new() { ("parafal", 2600), ("sniper_hunting", 2800), ("barret_50", 4500) } },
             new Cat { cat = "EQUIPAMENTO", icon = "vest", items = new() { ("kit", 1000), ("colete", 650), ("capacete", 450), ("medkit", FBMed.Price) } },
+            // r60b: ACESSORIOS. A build de navegador tem esta categoria desde sempre (SHOP do main.js) e o Unity nunca a portou --
+            // dava para equipar laser no ARSENAL do menu, mas nao para comprar peca nenhuma durante a partida. Mesmos itens e precos.
+            new Cat { cat = "ACESSORIOS", icon = "scope", items = new() { ("att:scopes:1.3", 200), ("att:scopes:1.5", 250), ("att:scopes:2", 400), ("att:scopes:4", 650), ("att:scopes:6", 900),
+                ("att:muzzles:sil", 350), ("att:magazines:ext", 300), ("att:grips:any", 150), ("att:lasers:laser", 150), ("att:lasers:flash", 150) } },
         };
         static readonly Dictionary<string, (string name, string sub)> GEAR = new() { ["colete"] = ("COLETE", "BLINDAGEM · ABSORVE 45%"), ["capacete"] = ("CAPACETE", "HEADSHOT −40%"), ["kit"] = ("KIT COLETE + CAPACETE", "PROTEÇÃO COMPLETA · ECONOMIZE $100"), ["medkit"] = ("KIT MÉDICO", $"+{FBMed.Heal} DE VIDA · TECLA H") };
         static readonly Dictionary<string, int> CLS_PRICE = new() { ["pistola"] = 400, ["submetralhadora"] = 1000, ["escopeta"] = 1000, ["fuzil"] = 2200, ["sniper"] = 2800, ["explosivo"] = 5000 };
@@ -110,6 +114,13 @@ namespace FreeBala
                         if (id == "medkit") { it.own = FBMed.kits >= FBMed.Max; it.rebuy = FBMed.kits < FBMed.Max; it.note = $"{FBMed.kits}/{FBMed.Max}"; }
                         items.Add(it);
                     }
+                    else if (IsAtt(id))
+                    {
+                        var ap = AttParts(id); var cw = AttTarget(wu, ap.kind, ap.val, out int ix);
+                        if (cw == null) continue;                                         // nenhuma arma do jogador tem esse encaixe
+                        bool fitted = AttFitted(FBWeaponModel.Of(cw), ap.kind) == ix;
+                        items.Add(new Item { id = id, price = price, name = AttName(cw, ap.kind, ap.val, ix), sub = cw.name.ToUpper(), gear = true, own = fitted, rebuy = false });
+                    }
                     else if (GameData.Weapons.TryGetValue(id, out var d) && FBRegistry.I.Weapon(id))
                         items.Add(new Item { id = id, price = price, name = d.name.ToUpper(), cls = d.cls, sub = d.cls.ToUpper(), own = wu.Has(id), rebuy = false, stats = WStats(id) });
                 }
@@ -117,6 +128,58 @@ namespace FreeBala
             }
             return res;
         }
+        // ---- ACESSORIOS da loja (r60b, porte do shopAtt/attLabel/ZNAME do main.js)
+        // O id e "att:<tipo>:<valor>". A peca e procurada na arma que o jogador tem NA MAO: a mesma luneta 4x e um indice
+        // diferente em cada arma, e arma que nao tem aquele encaixe simplesmente nao mostra o item na loja.
+        public static bool IsAtt(string id) => id != null && id.StartsWith("att:");
+        static float ZoomTag(string v) => v == "1.12" ? 1.12f : v == "1.3" ? 1.3f : v == "1.5" ? 1.5f : v == "2" ? 2 : v == "4" ? 4 : v == "6" ? 6 : 0;
+        static readonly Dictionary<float, string> ZNAME = new() { [1.12f] = "MIRA DE PONTO", [1.3f] = "RED DOT", [1.5f] = "HOLOGRAFICA", [2f] = "MIRA 2X (ACOG)", [4f] = "LUNETA 4X", [6f] = "LUNETA 6X" };
+        static bool Rx(string t, string pat) => !string.IsNullOrEmpty(t) && System.Text.RegularExpressions.Regex.IsMatch(t, pat, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+        // indice da peca dentro da lista de encaixes da arma, ou -1 se ela nao tem
+        public static int AttIndex(WeaponDef d, string kind, string v)
+        {
+            if (d == null) return -1;
+            var arr = Json.L(Json.O(Json.O(GameData.WeaponsRaw, d.id), "att"), kind); if (arr == null) return -1;
+            var bs = FBWeaponModel.Default(d);                                    // o "sem acessorio" da arma nao conta como peca
+            int skip = kind == "muzzles" ? bs.muzzle : kind == "scopes" ? bs.scope : kind == "magazines" ? 0 : -1;
+            for (int i = 0; i < arr.Count; i++)
+            {
+                if (i == skip) continue;
+                var a = arr[i] as Dictionary<string, object>; if (a == null) continue;
+                string node = Json.S(a, "node", ""); if (node.Length == 0 || node == "None") continue;
+                bool ok = kind == "scopes" ? Mathf.Abs(FBWeaponModel.Zoom(a) - ZoomTag(v)) < .01f
+                        : kind == "muzzles" ? Rx(node, "Silencer|Supress")
+                        : kind == "lasers" ? Rx(node, "Flash|Tactical") == (v == "flash")
+                        : true;                                                   // carregador e empunhadura: a primeira que nao for a base
+                if (ok) return i;
+            }
+            return -1;
+        }
+        // r60b: a peca vale para a arma da MAO; se ela nao tiver aquele encaixe (ou se a mao esta vazia, como no comeco da fase de
+        // compra), procura nas outras armas do jogador. Sem isto a categoria inteira sumia da loja ate alguem ter arma na mao, que e
+        // justamente o contrario do que se faz numa fase de compra: compra-se a arma e depois o acessorio.
+        public static WeaponDef AttTarget(FBWeaponUser wu, string kind, string v, out int ix)
+        {
+            ix = -1; if (wu == null) return null;
+            var cur = wu.Cur;
+            if (cur != null) { ix = AttIndex(cur, kind, v); if (ix >= 0) return cur; }
+            if (wu.slots != null) foreach (var w in wu.slots) { if (w == null || w == cur) continue; int k = AttIndex(w, kind, v); if (k >= 0) { ix = k; return w; } }
+            return null;
+        }
+        public static (string kind, string val) AttParts(string id) { var q = id.Split(':'); return (q.Length > 1 ? q[1] : "", q.Length > 2 ? q[2] : ""); }
+        static string AttName(WeaponDef d, string kind, string v, int i)
+        {
+            var a = FBWeaponModel.Att(d, kind, i);
+            return kind == "scopes" ? (ZNAME.TryGetValue(ZoomTag(v), out var z) ? z : "MIRA")
+                 : kind == "muzzles" ? "SILENCIADOR"
+                 : kind == "magazines" ? "CARREGADOR " + Json.F(a, "ammo", 0).ToString("0") + " BALAS"
+                 : kind == "lasers" ? (v == "flash" ? "LANTERNA" : "LASER")
+                 : Rx(Json.S(a, "node", ""), "Bipod") ? "BIPE" : "EMPUNHADURA";
+        }
+        static int AttFitted(FBWeaponModel.Choice c, string kind) => kind == "scopes" ? c.scope : kind == "muzzles" ? c.muzzle : kind == "magazines" ? c.magazine : kind == "lasers" ? c.laser : c.grip;
+        static void AttFit(FBWeaponModel.Choice c, string kind, int i) { if (kind == "scopes") c.scope = i; else if (kind == "muzzles") c.muzzle = i; else if (kind == "magazines") c.magazine = i; else if (kind == "lasers") c.laser = i; else c.grip = i; }
+
         static (string, float)[] WStats(string id)
         {
             // r51: as barras da loja vêm do MESMO modelo que calcula o dano (antes: números do pacote LPSP, sem relação com o tiro)
@@ -132,6 +195,17 @@ namespace FreeBala
             if (!buying) return;
             if (it.own && !it.rebuy) { if (!it.gear) wu.SwitchTo(wu.SlotOfId(it.id)); return; }
             if (Money(p) < it.price) { FBAudio.Synth("deny"); return; }
+            if (IsAtt(it.id))
+            {
+                var ap = AttParts(it.id); var cw = AttTarget(wu, ap.kind, ap.val, out int ix);
+                if (cw == null) { FBAudio.Synth("deny"); return; }
+                var ch2 = FBWeaponModel.Of(cw); AttFit(ch2, ap.kind, ix); FBWeaponModel.Set(cw, ch2);
+                // so reconstroi se a peca foi para a arma que esta NA MAO; se foi para outra do inventario, um Equip aqui trocaria
+                // a arma do jogador no meio da fase de compra. A outra ja sai montada quando ele a sacar.
+                if (wu.Cur == cw) wu.Equip(wu.SlotOfId(cw.id), true);
+                money[p] -= it.price; FBAudio.Synth("buy"); FBAudio.Play2D("reload", .4f);
+                FBHUD.I?.Toast("ACESSORIO", it.name, "-$" + it.price + " - " + cw.name.ToUpper(), new Color(.21f, .76f, .35f)); Hud(); FBShop.Refresh(); return;
+            }
             if (it.gear)
             {
                 if (it.id == "medkit") { if (!FBMed.Add()) { FBAudio.Synth("deny"); return; } }
