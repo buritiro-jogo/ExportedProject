@@ -270,7 +270,11 @@ namespace FreeBala
             // como a pistola já faz, mas sem um clipe animado PARA isso o resultado fica pior: o clipe do IE espera as duas mãos na
             // arma, e sem o IK a esquerda fica solta no ar perto dela. Os "braços quebrados" que o Ruan viu em 07/11 eram do sprint
             // tático do pacote EXPERIMENTAL_FPSAF, que saiu do projeto nesta mesma rodada — não desta linha.
-            bool wantIK = ikOn && (pistol ? !ch.sprint : true);   // pistola: duas mãos sempre (descanso = low ready); só o sprint fica numa mão
+            // r60b: CORRENDO, a arma vai em um braço só — o fuzil passa a fazer o que a pistola já fazia nesta mesma linha.
+            // O IK prendia a mão esquerda no guarda-mão em TODO estado, então o clipe de sprint era sobrescrito. Só soltar não basta:
+            // precisa de um clipe com a mão direita BAIXA e estável, senão a arma acompanha o braço que bombeia e aponta para cima
+            // (ver o comentário do Rifle_SprintLoop no FBAnimProfile). Os dois andam juntos.
+            bool wantIK = ikOn && !ch.sprint;
             ikW = Mathf.Lerp(ikW, wantIK ? 1 : 0, 1 - Mathf.Exp(-dt * 12));
             DbgHandsN++; if (ikW > .02f && wpVis) DbgIkN++;                                         // [parceiro] contadores do laboratório (FBLabFisica)
             fingW = Mathf.Lerp(fingW, wpVis && ch.alive && !spc && !busy ? 1 : 0, 1 - Mathf.Exp(-dt * 12));

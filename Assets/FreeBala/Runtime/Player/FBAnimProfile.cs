@@ -53,12 +53,15 @@ namespace FreeBala
         {
             ["Walk With Rifle"] = "IE_Rifle_Run_F", ["StrafeRightLoop"] = "IE_Rifle_Run_R", ["StrafeLeftLoop"] = "IE_Rifle_Run_L", ["WalkBwdLoop"] = "IE_Rifle_Run_B",
             ["RunFwdLoop"] = "IE_Rifle_Run_F", ["Run Forward Right"] = "IE_Rifle_Run_FR", ["Run Forward Left"] = "IE_Rifle_Run_FL",
-            // r60b: VOLTOU para o clipe do IE. Tentei o anim_rifle_ip_strafe_supersprint_ar_f (da RE do APK) para correr com a arma em
-            // um braco so, e NAO serve: ele foi animado SEM ARMA — e uma corrida livre de bracos bombeando. Com o fuzil presa a mao
-            // direita, a arma fica na VERTICAL apontando para cima atras da cabeca (visto de lado, 07/11). Busquei na biblioteca
-            // inteira da RE (IE, CF, Sigma, REB, OS): nao ha clipe de corrida com fuzil em UMA mao baixada. Para ter esse visual e
-            // preciso animar um, ou montar a pose por codigo. Ver RODADA60.md.
-            ["Rifle_SprintLoop"] = "IE_Rifle_Sprint_F", ["Rifle_RunFwdLoop"] = "IE_Rifle_Run_F", ["Rifle_RunBwdLoop"] = "IE_Rifle_Run_B",
+            // r60b (pedido do Ruan: correr com a arma em um braço só) — sprint do COMPLEXO FAVELA, que estava importado e sem uso.
+            // Caminho até aqui, porque dois candidatos falharam e vale não repetir:
+            //  · IE_Rifle_Sprint_F .................. as duas mãos na arma;
+            //  · anim_rifle_ip_strafe_supersprint_ar_f (RE do APK): animado SEM ARMA, é corrida livre de braços bombeando — com o
+            //    fuzil preso à mão direita ele fica na VERTICAL atrás da cabeça (só aparece na vista de LADO);
+            //  · IE_Pistol_Sprint_F / POL_PI_pistol_run: mãos juntas no queixo / correr mirando.
+            // Este tem as mãos BAIXAS e estáveis na cintura, então a arma fica à frente e para baixo. Vale junto com o IK solto no
+            // sprint (FBRig): sem isso a esquerda é puxada de volta para o guarda-mão.
+            ["Rifle_SprintLoop"] = "Rifle_SprintLoop", ["Rifle_RunFwdLoop"] = "IE_Rifle_Run_F", ["Rifle_RunBwdLoop"] = "IE_Rifle_Run_B",
             // [parceiro] 31/10/2026: o CombatLocomotion ganhou correr de lado e na diagonal de verdade
             // (antes o "de lado" tocava a corrida na diagonal para frente e o pé escorregava).
             // Estes clipes base só aparecem no RelaxedLocomotion, que só roda desarmado.
