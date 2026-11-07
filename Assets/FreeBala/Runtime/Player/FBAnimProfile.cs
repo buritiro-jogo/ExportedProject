@@ -51,7 +51,11 @@ namespace FreeBala
         // de corrida da PatrolLocomotion e da CombatLocomotion; o andar de combate continua o do Complexo (como antes, quando "em ação")
         public static readonly Dictionary<string, string> ArmedRun = new()
         {
-            ["Walk With Rifle"] = "IE_Rifle_Run_F", ["StrafeRightLoop"] = "IE_Rifle_Run_R", ["StrafeLeftLoop"] = "IE_Rifle_Run_L", ["WalkBwdLoop"] = "IE_Rifle_Run_B",
+            // r60b: ANDAR armado usava o clipe de CORRER (IE_Rifle_Run_F) — era a causa do braço esticado atravessando o peito ao
+            // caminhar com a arma (Ruan, 07/11). A build de navegador, que o Ruan diz estar certa, usa IE_x_walk_forward nesta mesma
+            // vaga (src/actor.js, AR_OVR.rifle). O clipe já estava em Anim/Clips e nunca tinha sido ligado aqui. Comparando os dois
+            // mapas inteiros, esta era a ÚNICA diferença fora o sprint.
+            ["Walk With Rifle"] = "IE_x_walk_forward", ["StrafeRightLoop"] = "IE_Rifle_Run_R", ["StrafeLeftLoop"] = "IE_Rifle_Run_L", ["WalkBwdLoop"] = "IE_Rifle_Run_B",
             ["RunFwdLoop"] = "IE_Rifle_Run_F", ["Run Forward Right"] = "IE_Rifle_Run_FR", ["Run Forward Left"] = "IE_Rifle_Run_FL",
             // r60b (pedido do Ruan: correr com a arma em um braço só) — sprint do COMPLEXO FAVELA, que estava importado e sem uso.
             // Caminho até aqui, porque dois candidatos falharam e vale não repetir:
@@ -121,7 +125,10 @@ namespace FreeBala
         // de 1.000 a 2.000 °/s a mais que os do jogo. Andar, correr, agachar e pular continuam os aprovados.
         public static readonly Dictionary<string, string> NovoRifle = new()
         {
-            ["Rifle_Idle"] = "POL_PR_idle_aiming",                       // parado de mira
+            // r60b: a MIRA saiu daqui (era "POL_PR_idle_aiming", do Mixamo da r55). Pedido do Ruan, 07/11: "a animação de mirar com a
+            // arma em terceira pessoa também deve ser puxada do complexo favela". Sem esta linha a vaga Rifle_Idle não é sobrescrita
+            // e volta a tocar o clipe do próprio Animator, que é o do Complexo Favela (LPSP) — o mesmo que a build de navegador usa,
+            // já que o AR_OVR do src/actor.js não mexe em mira. Recarga, granada e reação a tiro seguem com os clipes da r58.
             ["Rifle_Reload_2"] = "POL_BS_reloading_fit",                 // recarga
             ["Rifle_Grenade_Throw_Single"] = "POL_BS_toss_grenade_fit",  // granada
             ["Rifle_Hit_C_1"] = "POL_BS_hit_reaction",                   // levou tiro
