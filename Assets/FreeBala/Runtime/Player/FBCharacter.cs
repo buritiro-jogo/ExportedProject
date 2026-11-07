@@ -857,7 +857,12 @@ namespace FreeBala
                 // afastamento do eixo do osso: tronco ≈ meia profundidade (~0,3 × ombros), coxa ≈ raio (~0,45 × quadris); o limite máximo é a
                 // largura do corpo (0,5 × ombros / 0,6 × quadris) + meia espessura da arma + folga — nunca flutua longe, mesmo se o solver errar
                 bool isThigh = h.slot == "thigh" && thighOk;
-                float cap = (isThigh ? .6f * hipW : .5f * shW) + th + gap; fallback = (isThigh ? .45f * hipW : .3f * shW) + th + gap;
+                // r60: teto APERTADO. O solver afasta a arma até ela limpar a malha do corpo — e roupa volumosa entra nessa conta. Em
+                // personagem de casaco longo e esvoaçante (r_miguel) o fuzil das costas e a pistola da coxa iam parar no ar, com vão
+                // visível; em personagem de roupa normal (r_rigote) a mesma pose fica certa. Como isto é um TETO, baixá-lo só mexe em
+                // quem estava encostando nele: quem já está bem não muda. Arma levemente enfiada no casaco lê muito melhor que arma
+                // flutuando a 20 cm das costas. Medido nas folhas de costas em 07/11 (antes .5/.6; ver RODADA60.md).
+                float cap = (isThigh ? .42f * hipW : .32f * shW) + th + gap; fallback = (isThigh ? .38f * hipW : .26f * shW) + th + gap;
 
                 // Se houve calibracao visual (Play -> Pause -> arrastar -> Salvar),
                 // a pose local gravada substitui a pose automatica deste coldre.
