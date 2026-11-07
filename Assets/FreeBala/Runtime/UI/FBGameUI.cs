@@ -148,6 +148,10 @@ namespace FreeBala
                 Choice("BOTÃO DE MIRA", new[] { "SEGURAR", "ALTERNAR" }, FBSession.aimToggle ? 1 : 0, i => FBSession.aimToggle = i == 1, new[] { "mira aberta enquanto segura o botão direito", "um clique abre, outro fecha" });
                 Choice("CORRIDA", new[] { "AUTOMÁTICA (SHIFT)", "SEGURAR SHIFT" }, FBSession.holdRun ? 1 : 0, i => FBSession.holdRun = i == 1);
                 Choice("INVERTER EIXO Y", new[] { "NÃO", "SIM" }, FBSession.invertY ? 1 : 0, i => FBSession.invertY = i == 1);
+                Choice("RIG DE COMBATE", new[] { "NOVO", "CLÁSSICO" }, FBSession.rigNovo ? 0 : 1, i => FBSession.rigNovo = i == 0,
+                    new[] { "acabamento procedural novo por cima da animação (teste)", "o rig de sempre, sem o acabamento novo" });
+                Choice("ANIMAÇÃO DE COMBATE", new[] { "NOVA", "CLÁSSICA" }, FBSession.animNova ? 0 : 1, i => FBSession.animNova = i == 0,
+                    new[] { "mirar, atirar e recarregar novos (andar e correr não mudam)", "as animações de combate de sempre" });
                 Choice("HUD MOBILE NA TELA", new[] { "DESLIGADO", "LIGADO" }, FBSession.mobileHUD ? 1 : 0, i => { FBSession.mobileHUD = i == 1; FBSession.Save(); }, new[] { "controles por teclado e mouse", "botões de toque virtuais ativos na tela" });
                 Label("LAYOUT DOS BOTÕES MOBILE", "mover, dimensionar, transparência e visibilidade");
                 FBKit.Primary(o, "PERSONALIZAR HUD MOBILE", CX, y + 4, CW, 36, () => FBMobileHudEditor.Open());
@@ -176,7 +180,7 @@ namespace FreeBala
         // padrões do SET do main.js, por aba
         static void Defaults(int tab)
         {
-            if (tab == 0) { FBSession.sens = .5f; FBSession.adsSens = .5f; FBSession.fov = .375f; FBSession.aimAssist = "assist"; FBSession.aimToggle = false; FBSession.holdRun = false; FBSession.invertY = false; FBSession.freeLookToggle = false; }
+            if (tab == 0) { FBSession.sens = .5f; FBSession.adsSens = .5f; FBSession.fov = .375f; FBSession.aimAssist = "assist"; FBSession.aimToggle = false; FBSession.holdRun = false; FBSession.invertY = false; FBSession.freeLookToggle = false; FBSession.rigNovo = true; FBSession.animNova = true; }
             else if (tab == 1) { FBSession.master = .9f; FBSession.sfx = 1; FBSession.music = .5f; FBSession.voice = 1; FBSession.vehicles = 1; FBSession.ambient = 1; }
             else { FBQuality.Set(-1); FBSession.blood = true; }
         }

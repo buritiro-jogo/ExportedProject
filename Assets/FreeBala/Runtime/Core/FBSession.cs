@@ -25,7 +25,12 @@ namespace FreeBala
         }
         public static void SetName(string n) { name = n; PlayerPrefs.SetInt("fb_nameChosen", 1); Save(); }
         public static readonly bool Lab = System.Array.Exists(System.Environment.GetCommandLineArgs(), x => x.StartsWith("-fb") && x.EndsWith("lab"));   // r45b: executável rodando um laboratório (-fb*lab)
-        public static string view = "tps", aimAssist = "assist", victory; public static float fov = .375f, sens = .5f, adsSens = .5f, master = .9f, music = .5f, sfx = 1, voice = 1, vehicles = 1, ambient = 1; public static bool holdRun, invertY, aimToggle, blood = true, pickRandom, freeLookToggle, mobileHUD;   // padrões do SET do main.js
+        public static string view = "tps", aimAssist = "assist", victory; public static float fov = .375f, sens = .5f, adsSens = .5f, master = .9f, music = .5f, sfx = 1, voice = 1, vehicles = 1, ambient = 1; public static bool holdRun, invertY, aimToggle, blood = true, pickRandom, freeLookToggle, mobileHUD;
+        // r57: rig de combate novo (KINEMATION FPS Animation Framework) por cima do Animator. O rig clássico (FBRig) fica
+        // de reserva e volta escolhendo "CLÁSSICO" nos ajustes. Policiais não entram neste teste.
+        public static bool rigNovo = true;
+        // r58: animação de COMBATE nova (mira/tiro/recarga do Mixamo) para quem não é policial. A locomoção NÃO muda.
+        public static bool animNova = true;   // padrões do SET do main.js
         public static int money = 2000, xp, passXp, quality = -1; public static string emoteSlots = "";
         static readonly Dictionary<string, (string time, string weather)> wx = new();
         public static (string time, string weather) WeatherFor(string mapId) => wx.TryGetValue(mapId, out var w) ? w : ("dia", "limpo");
@@ -37,7 +42,7 @@ namespace FreeBala
                 PlayerPrefs.SetString("fb_" + k, v);
             PlayerPrefs.SetInt("fb_diff", diff); PlayerPrefs.SetInt("fb_money", money); PlayerPrefs.SetInt("fb_xp", xp); PlayerPrefs.SetInt("fb_passXp", passXp); PlayerPrefs.SetInt("fb_quality", quality);
             PlayerPrefs.SetFloat("fb_fov", fov); PlayerPrefs.SetFloat("fb_sens", sens); PlayerPrefs.SetFloat("fb_adsSens", adsSens); PlayerPrefs.SetFloat("fb_master", master); PlayerPrefs.SetFloat("fb_music", music); PlayerPrefs.SetFloat("fb_sfx", sfx); PlayerPrefs.SetFloat("fb_voice", voice); PlayerPrefs.SetFloat("fb_vehicles", vehicles); PlayerPrefs.SetFloat("fb_ambient", ambient);
-            PlayerPrefs.SetInt("fb_holdRun", holdRun ? 1 : 0); PlayerPrefs.SetInt("fb_invertY", invertY ? 1 : 0); PlayerPrefs.SetInt("fb_aimToggle", aimToggle ? 1 : 0); PlayerPrefs.SetInt("fb_blood", blood ? 1 : 0); PlayerPrefs.SetInt("fb_pickRandom", pickRandom ? 1 : 0); PlayerPrefs.SetInt("fb_freeLookToggle", freeLookToggle ? 1 : 0); PlayerPrefs.SetInt("fb_mobileHUD", mobileHUD ? 1 : 0);
+            PlayerPrefs.SetInt("fb_holdRun", holdRun ? 1 : 0); PlayerPrefs.SetInt("fb_invertY", invertY ? 1 : 0); PlayerPrefs.SetInt("fb_aimToggle", aimToggle ? 1 : 0); PlayerPrefs.SetInt("fb_blood", blood ? 1 : 0); PlayerPrefs.SetInt("fb_pickRandom", pickRandom ? 1 : 0); PlayerPrefs.SetInt("fb_freeLookToggle", freeLookToggle ? 1 : 0); PlayerPrefs.SetInt("fb_mobileHUD", mobileHUD ? 1 : 0); PlayerPrefs.SetInt("fb_rigNovo", rigNovo ? 1 : 0); PlayerPrefs.SetInt("fb_animNova", animNova ? 1 : 0);
             var sb = new System.Text.StringBuilder(); foreach (var kv in wx) sb.Append(kv.Key).Append('=').Append(kv.Value.time).Append(',').Append(kv.Value.weather).Append(';'); PlayerPrefs.SetString("fb_wx", sb.ToString());
             PlayerPrefs.Save(); Apply();
         }
@@ -48,7 +53,7 @@ namespace FreeBala
             view = "tps"; /* r45b: câmera em 1ª pessoa removida do jogo (pedido) */ aimAssist = G("aimAssist", aimAssist); victory = G("victory", ""); if (victory == "" || FBEmotes.IsFF(victory)) victory = null;   /* r47: dança de vitória FF salva */ emoteSlots = G("emotes", "");
             diff = PlayerPrefs.GetInt("fb_diff", diff); money = PlayerPrefs.GetInt("fb_money", money); xp = PlayerPrefs.GetInt("fb_xp", xp); passXp = PlayerPrefs.GetInt("fb_passXp", passXp); quality = PlayerPrefs.GetInt("fb_quality", quality);
             fov = PlayerPrefs.GetFloat("fb_fov", fov); sens = PlayerPrefs.GetFloat("fb_sens", sens); adsSens = PlayerPrefs.GetFloat("fb_adsSens", adsSens); master = PlayerPrefs.GetFloat("fb_master", master); music = PlayerPrefs.GetFloat("fb_music", music); sfx = PlayerPrefs.GetFloat("fb_sfx", sfx); voice = PlayerPrefs.GetFloat("fb_voice", voice); vehicles = PlayerPrefs.GetFloat("fb_vehicles", vehicles); ambient = PlayerPrefs.GetFloat("fb_ambient", ambient);
-            holdRun = PlayerPrefs.GetInt("fb_holdRun", 0) == 1; invertY = PlayerPrefs.GetInt("fb_invertY", 0) == 1; aimToggle = PlayerPrefs.GetInt("fb_aimToggle", 0) == 1; blood = PlayerPrefs.GetInt("fb_blood", 1) == 1; pickRandom = PlayerPrefs.GetInt("fb_pickRandom", 0) == 1; freeLookToggle = PlayerPrefs.GetInt("fb_freeLookToggle", 0) == 1;
+            holdRun = PlayerPrefs.GetInt("fb_holdRun", 0) == 1; invertY = PlayerPrefs.GetInt("fb_invertY", 0) == 1; aimToggle = PlayerPrefs.GetInt("fb_aimToggle", 0) == 1; blood = PlayerPrefs.GetInt("fb_blood", 1) == 1; pickRandom = PlayerPrefs.GetInt("fb_pickRandom", 0) == 1; freeLookToggle = PlayerPrefs.GetInt("fb_freeLookToggle", 0) == 1; rigNovo = PlayerPrefs.GetInt("fb_rigNovo", 1) == 1; animNova = PlayerPrefs.GetInt("fb_animNova", 1) == 1;
             mobileHUD = PlayerPrefs.GetInt("fb_mobileHUD", Application.isMobilePlatform ? 1 : 0) == 1;
             if (FBRegistry.I && !FBRegistry.I.HasChar(skin)) { skin = FBRegistry.I.HasChar(DefaultSkin) ? DefaultSkin : skin; look = ""; }   // salvo com um jogável que saiu do jogo
             // liberado para todos os personagens (masculino e feminino)

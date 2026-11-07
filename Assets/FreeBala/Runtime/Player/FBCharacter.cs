@@ -73,6 +73,7 @@ namespace FreeBala
         public Transform Muzzle => muzzle ? muzzle : rHand;
         public Transform RightHand => rHand; public Transform LeftHand => lHand; public Transform Hips => hips; public Transform Neck => neck; public Transform Chest => chest;
         [System.NonSerialized] public FBRig rig;
+        [System.NonSerialized] public FBFpsaf fpsaf;   // r57: rig de combate novo (nulo quando desligado nos ajustes ou em policial)
         // conjunto do pacote NPCS (idle sorteado a cada parada, andar próprio) — npcanims.js
         public class NpcSet { public List<string> idle = new(), talk = new(), sit = new(), dance = new(); public Dictionary<string, string> ovr = new(); public string walk, sex = "m"; public float walkRs = 1; public bool activity; }   // activity: andar de atividade do 171 (celular, cigarro…)
         [System.NonSerialized] public float walkSpeed = 1.4f;
@@ -108,6 +109,7 @@ namespace FreeBala
             scaleK = transform.lossyScale.y / FBConst.ModelScale;
             handCorr = FBHand.RightCorrection(an, out palmK, out HandDeg);       // rig com o osso da mão girado (IE/CC) → mesma pegada anatômica
             rig = this.GetOrAdd<FBRig>(); rig.Init(this);
+            fpsaf = FBFpsaf.Criar(this);                                   // r57: rig novo (KINEMATION) por cima; null = segue só o clássico
             feet = this.GetOrAdd<FBFootIK>(); feet.Init(this);              // IK dos pés (Agente 3)
             SetUnarmedLocomotion(true, true);
         }
@@ -141,6 +143,10 @@ namespace FreeBala
             var m = new Dictionary<string, string>();
             foreach (var k in FBAnimProfile.Unarmed.Keys) m[k] = k;
             foreach (var k in FBAnimProfile.ArmedRun.Keys) m[k] = k;
+            bool pol = IsPolice;
+            if (pol) foreach (var d in PolMaps) foreach (var k in d.Keys) m[k] = k;   // troca de arma: nada do conjunto anterior fica preso
+            bool novo = !pol && FBAnimProfile.CombateNovo(skinId);                 // r58: combate novo para quem não é policial
+            if (novo) foreach (var d in NovoMaps) foreach (var k in d.Keys) m[k] = k;
             if (UnarmedLocomotion)
             {
                 foreach (var kv in FBAnimProfile.Unarmed) if (Has(kv.Value)) m[kv.Key] = kv.Value;
@@ -161,7 +167,40 @@ namespace FreeBala
                 if (IsPistol && Has(FBAnimProfile.PistolSprint)) m["Rifle_SprintLoop"] = FBAnimProfile.PistolSprint;
             }
             CombatOverrides(m);
+            if (pol) PoliceOverrides(m);
+            if (novo) NovoCombate(m);
             SetOverrides(m);
+        }
+        // r58: só mira/tiro/recarga/granada/reação. Nada de locomoção — ver o cabeçalho do NovoRifle no FBAnimProfile.
+        static readonly Dictionary<string, string>[] NovoMaps = { FBAnimProfile.NovoRifle, FBAnimProfile.NovoPistol };
+        void NovoCombate(Dictionary<string, string> m)
+        {
+            if (UnarmedLocomotion || weapon == null) return;
+            void P(Dictionary<string, string> d)
+            {
+                foreach (var kv in d) if ((origByName.ContainsKey(kv.Key) || origByName.ContainsKey(FBRegistry.Safe(kv.Key))) && Has(kv.Value)) m[kv.Key] = kv.Value;
+            }
+            if (IsPistol) { P(FBAnimProfile.NovoPistol); if (crouch && Has(FBAnimProfile.NovoPistolCrouch)) m["Rifle_Idle"] = FBAnimProfile.NovoPistolCrouch; return; }
+            P(FBAnimProfile.NovoRifle);
+            if (crouch && Has(FBAnimProfile.NovoCrouchAim)) m["Rifle_Idle"] = FBAnimProfile.NovoCrouchAim;
+        }
+        // rodada 55: policiais (categoria "policia" do elenco) com os pacotes táticos do Mixamo (FBAnimProfile.Pol*); só com -fbpoliciatatica desde a r56
+        static readonly Dictionary<string, string>[] PolMaps = { FBAnimProfile.PolRifle, FBAnimProfile.PolRifleSprint, FBAnimProfile.PolPistol, FBAnimProfile.PolPistolSprint, FBAnimProfile.PolUnarmed, FBAnimProfile.PolCompact };
+        string polSkin; bool polVal, polSprint, polCrouch; bool novoCrouch;
+        public bool IsPolice { get { if (polSkin != skinId) { polSkin = skinId; polVal = FBAnimProfile.PoliciaTatica && FBElenco.In(skinId, FBElenco.POLICIA); } return polVal; } }
+        void PoliceOverrides(Dictionary<string, string> m)
+        {
+            void P(Dictionary<string, string> d, string skip = null)
+            {
+                foreach (var kv in d) if (kv.Key != skip && (origByName.ContainsKey(kv.Key) || origByName.ContainsKey(FBRegistry.Safe(kv.Key))) && Has(kv.Value)) m[kv.Key] = kv.Value;
+            }
+            polSprint = sprint; polCrouch = crouch;
+            if (UnarmedLocomotion || weapon == null) { P(FBAnimProfile.PolUnarmed, IsFemale ? "WalkFwdLoop" : null); return; }   // a policial mantém o andar feminino aprovado
+            if (IsPistol) { P(FBAnimProfile.PolPistol); if (sprint) P(FBAnimProfile.PolPistolSprint); return; }   // recarga da pistola: a de sempre
+            P(FBAnimProfile.PolRifle); if (sprint) P(FBAnimProfile.PolRifleSprint);
+            // arma curta (SMG/escopeta): parado de mira e pulo do Basic Shooter, para não ficar igual ao fuzil
+            if (weapon.cls == "submetralhadora" || weapon.cls == "escopeta") P(FBAnimProfile.PolCompact);
+            if (crouch && Has(FBAnimProfile.PolCrouchAim)) m["Rifle_Idle"] = FBAnimProfile.PolCrouchAim;
         }
         // agachado rápido (Shift agachado): troca as 4 direções do andar agachado armado pelas do IE (ver FBAnimProfile.UnarmedCrouch)
         bool crouchFast;
@@ -176,6 +215,7 @@ namespace FreeBala
         public void SetFireMode(bool automatic)
         {
             var target = automatic ? "Rifle_ShootLoop_Additive" : FBAnimProfile.Fire(weapon) ?? "Rifle_ShootOnce";
+            if ((IsPolice || FBAnimProfile.CombateNovo(skinId)) && weapon != null && !IsPistol) target = automatic ? FBAnimProfile.PolFireAuto : FBAnimProfile.PolFireSemi;
             SetOverride("Rifle_ShootOnce", Has(target) ? target : "Rifle_ShootOnce");
         }
         // ações por classe (FBAnimProfile): recarga do Complexo para fuzil/SMG; pistola/escopeta/sniper do IE (o Complexo não tem em 3ª pessoa);
@@ -225,6 +265,7 @@ namespace FreeBala
             if (def != null) SetFireMode(def.auto);
             LocoOverrides();
             rig?.OnWeapon(weaponGO, grip, mag, muzzle, IsPistol);
+            fpsaf?.OnWeapon(weaponGO, grip, IsPistol);                      // r57: alvo dos ossos virtuais do rig novo
         }
         Quaternion handCorr = Quaternion.identity; float palmK = 1; [System.NonSerialized] public float HandDeg;   // desvio do osso da mão deste rig (graus)
         public Vector3 ProxyLocalPos => proxyP; public Quaternion ProxyLocalRot => proxyQ;
@@ -1026,6 +1067,8 @@ namespace FreeBala
             airT = grounded ? 0 : airT + dt; bool inAir = alive && !grounded && airT > .2f;
             SB("InAir", inAir); SB("IsGrounded", !inAir); SF("VerticalVelocity", velocity.y);
             if (inAir && !wasAir && velocity.y > PUP("jumpVelocityThreshold", 2)) ST("JumpStart"); if (!inAir && wasAir) ST("JumpLand"); wasAir = inAir;
+            if (IsPolice && !UnarmedLocomotion && (sprint != polSprint || crouch != polCrouch)) LocoOverrides();   // policial: corrida/mira agachado por direção
+            else if (!IsPolice && !UnarmedLocomotion && crouch != novoCrouch && FBAnimProfile.CombateNovo(skinId)) { novoCrouch = crouch; LocoOverrides(); }   // r58: mira agachado
             bool cr = crouch && alive; SB("IsCrouching", cr); SF("CrouchAlpha", cr ? 1 : 0); if (cr && !wasCrouch) ST("CrouchTrigger"); wasCrouch = cr;
             bool bare = UnarmedLocomotion; bool busy = !bare && (shooting || aiming || reloading);
             stillT = g < PUP("relaxedMoveStillThreshold", .1f) && !busy && !cr ? stillT + dt : 0;
@@ -1179,6 +1222,9 @@ namespace FreeBala
             DanceGround(dt);
             VaultInPlace();
             PlaceHolsters();
+            // r57: o rig novo é o ÚLTIMO a escrever — depois da arma, do FBRig, dos pés e dos coldres. É a ordem que a r42
+            // mostrou ser obrigatória: camada que roda antes da arma deixa a mão segurando o nada.
+            fpsaf?.Avaliar(dt);
         }
         // r49 (pedido 30/10: "manter o alinhamento com o chão; curar deitado sem levantar automaticamente nem deformar os braços"):
         //  · rampa/calçada inclinada: a pose deitada é plana e o quadril fica no centro da cápsula — em ladeira a cabeça entrava no chão de um

@@ -68,7 +68,9 @@ namespace FreeBala
             foreach (var t in FBTransito.List)
             {
                 bool viatura = t.car && FBSiren.IsPolice(t.car);
-                Need(t.actor, viatura ? "viatura" : "motorista", s => viatura ? In(s, POLICIA) && s.func == "pm_viatura" : In(s, CIVIL));
+                // r56: o carro do açaí tem motorista próprio (funcao/vendedor_acai), não um civil qualquer
+                if (t.tag == "acai") Need(t.actor, "açaí", s => In(s, FUNCAO) && s.func == "vendedor_acai" || In(s, CIVIL));
+                else Need(t.actor, viatura ? "viatura" : "motorista", s => viatura ? In(s, POLICIA) && s.func == "pm_viatura" : In(s, CIVIL));
                 Need(t.garupa, "garupa", s => In(s, CIVIL));
             }
             if (FBBaculejo.Frisker != null) Need(FBBaculejo.Frisker.c, "PM abordagem", s => In(s, POLICIA));

@@ -140,7 +140,10 @@ namespace FreeBala
             // Saveiro de vendedor: SEMPRE branca, altura e roda de fábrica (rnd fixo = sorteio "de fábrica"), sem som/paredão
             car = FBVehicles.Make(id, p, Mathf.Atan2(tan.x, tan.z) * Mathf.Rad2Deg, true, () => .5f, true, WHITE, false); if (!car) return false;
             car.name = "Carro_Acai";
-            var did = FBStreetEvents.FreeCivilian(true); driver = did != null ? FBStreetEvents.Spawn(did, p, 0, "acai") : null;
+            // r56: quem dirige o carro do açaí é o VENDEDOR DE AÇAÍ (elenco "funcao"/vendedor_acai) e mais ninguém.
+            // Só cai num civil qualquer se ele ainda não estiver registrado (projeto sem a importação da r56).
+            var did = FBElenco.Ids(FBElenco.FUNCAO, "vendedor_acai").FirstOrDefault() ?? FBStreetEvents.FreeCivilian(true);
+            driver = did != null ? FBStreetEvents.Spawn(did, p, 0, "acai") : null;
             if (!driver) { Kill(); return false; }
             tc = FBTransito.SpawnSpecial(car, driver, "acai", Random.Range(4.2f, 5.4f), seg, s);   // 15–19 km/h: velocidade de quem vende na rua
             if (tc == null) { Kill(); return false; }

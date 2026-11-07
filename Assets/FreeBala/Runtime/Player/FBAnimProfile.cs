@@ -95,6 +95,131 @@ namespace FreeBala
             ["thigh"] = new Holster { draw = "IE_Pistol_Equip", grab = .24f, put = "IE_Pistol_Unequip", rel = .30f, drawSpeed = 1.50f, putSpeed = 1.50f },
         };
 
+        // POLICIAIS TÁTICOS (rodada 55): pacotes Mixamo do usuário (F:\...\ANIMAÇÕES\MIXAMO), retarget nativo (FBPoliciaMixamo), SÓ em quem
+        // está na categoria "policia" do elenco (FBElenco.POLICIA) — o resto do elenco não muda. LIGA com -fbpoliciatatica (r56: saiu do padrão, ver FBAnimProfile.PoliciaTatica).
+        // Velocidades medidas (rs → m/s no corpo de jogo ≈ ×1,86): o andar do Pro Rifle (≈3,3 m/s) casa com o andar armado do jogo (3,4 em
+        // ação / 4,2 fora); a corrida (≈8,1) com o sprint (7,4); o "sprint" do pacote (≈12,2 m/s) passa do sprint do jogo e escorregaria —
+        // fica fora. Por isso o anel de "corrida" das árvores (onde o andar de 3,4–4,2 m/s cai) recebe o ANDAR tático, e o sprint a corrida.
+        // Rodada 56 (05/11/2026): o pacote tático do Mixamo saiu do padrão. Medido no MESMO laboratório, com civil e
+        // policial lado a lado (logs/r56_lab_mix), os clipes POL_* de locomoção estalam de 1.000 a 2.000 °/s a mais
+        // que os do jogo (correr desarmado +2.042, andar de lado +1.027, andar em combate +1.118) — é o "travado,
+        // robótico" que o Ruan viu. Mira, mão na arma, cotovelo, joelho e estiramento dão IGUAL ao civil, então o
+        // problema é só o encaixe dos clipes. Fica atrás de -fbpoliciatatica até os clipes serem reciclados.
+        public static bool PoliciaTatica => System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-fbpoliciatatica") >= 0;
+        // ===================== RODADA 58: animação de COMBATE nova para quem NÃO é policial =====================
+        // Mesma biblioteca do Mixamo da r55 (os clipes POL_* já estão importados), mas SÓ mira, tiro, recarga, granada
+        // e reação a tiro. A LOCOMOÇÃO fica de fora de propósito: foi exatamente ela que quebrou nos policiais — medido
+        // na r57, com civil e policial na mesma corrida do laboratório, os clipes de andar/correr do Mixamo estalavam
+        // de 1.000 a 2.000 °/s a mais que os do jogo. Andar, correr, agachar e pular continuam os aprovados.
+        public static readonly Dictionary<string, string> NovoRifle = new()
+        {
+            ["Rifle_Idle"] = "POL_PR_idle_aiming",                       // parado de mira
+            ["Rifle_Reload_2"] = "POL_BS_reloading_fit",                 // recarga
+            ["Rifle_Grenade_Throw_Single"] = "POL_BS_toss_grenade_fit",  // granada
+            ["Rifle_Hit_C_1"] = "POL_BS_hit_reaction",                   // levou tiro
+        };
+        public static readonly Dictionary<string, string> NovoPistol = new()
+        {
+            ["Rifle_Idle"] = "POL_PI_pistol_idle",
+        };
+        public const string NovoCrouchAim = "POL_PR_idle_crouching_aiming", NovoPistolCrouch = "POL_PI_pistol_kneeling_idle";
+
+        /// <summary>chave dos ajustes; -fbanimnova id1,id2 limita a estes personagens (laboratório: comparar na MESMA corrida)</summary>
+        static string[] soEstes; static bool leuSoEstes;
+        public static bool CombateNovo(string skinId)
+        {
+            if (!FBSession.animNova) return false;
+            if (!leuSoEstes)
+            {
+                leuSoEstes = true;
+                var a = System.Environment.GetCommandLineArgs(); int i = System.Array.IndexOf(a, "-fbanimnova");
+                if (i >= 0 && i + 1 < a.Length) soEstes = a[i + 1].Split(',');
+            }
+            return soEstes == null || System.Array.IndexOf(soEstes, skinId) >= 0;
+        }
+
+        // fuzil/SMG/escopeta/sniper — CombatLocomotion (em ação) e PatrolLocomotion (fora de ação) nas 8 direções do andar do Pro Rifle
+        public static readonly Dictionary<string, string> PolRifle = new()
+        {
+            ["Rifle_Idle"] = "POL_PR_idle_aiming", ["Rifle Idle"] = "POL_PR_idle",
+            ["Rifle_WalkFwdLoop"] = "POL_PR_walk_forward", ["Walk Forward Right"] = "POL_PR_walk_forward_right", ["Rifle_StrafeRightLoop"] = "POL_PR_walk_right",
+            ["Walk Backward Right"] = "POL_PR_walk_backward_right", ["Rifle_WalkBwdLoop"] = "POL_PR_walk_backward", ["Walk Backward Left"] = "POL_PR_walk_backward_left",
+            ["Rifle_StrafeLeftLoop"] = "POL_PR_walk_left", ["Walk Forward Left"] = "POL_PR_walk_forward_left",
+            ["Rifle_RunFwdLoop"] = "POL_PR_walk_forward", ["Run Forward Right"] = "POL_PR_walk_forward_right", ["Run Forward Left"] = "POL_PR_walk_forward_left",
+            ["Rifle_RunBwdLoop"] = "POL_PR_walk_backward", ["RunRtLoop"] = "POL_PR_walk_right", ["RunLtLoop"] = "POL_PR_walk_left",
+            ["RunStrafeRight135Loop"] = "POL_PR_walk_backward_right", ["RunStrafeLeft135Loop"] = "POL_PR_walk_backward_left",
+            ["Walk With Rifle"] = "POL_PR_walk_forward", ["RunFwdLoop"] = "POL_PR_walk_forward",
+            ["StrafeRightLoop"] = "POL_PR_walk_right", ["StrafeLeftLoop"] = "POL_PR_walk_left", ["WalkBwdLoop"] = "POL_PR_walk_backward",
+            ["Rifle_SprintLoop"] = "POL_PR_run_forward",
+            ["Rifle_CrouchLoop"] = "POL_PR_idle_crouching", ["Walk Crouching Forward"] = "POL_PR_walk_crouching_forward",
+            ["Crouch Walk Strafe Right"] = "POL_PR_walk_crouching_right", ["Walk Crouching Backward 1"] = "POL_PR_walk_crouching_backward",
+            ["Crouch Walk Strafe Left"] = "POL_PR_walk_crouching_left",
+            ["Jump"] = "POL_PR_jump_loop", ["Landing"] = "POL_PR_jump_down", ["Rifle_Hit_C_1"] = "POL_BS_hit_reaction",
+            ["Rifle_Grenade_Throw_Single"] = "POL_BS_toss_grenade_fit", ["Rifle_Reload_2"] = "POL_BS_reloading_fit",
+            // 2ª passada (pedido do usuário: "use todas as animações novas"): as vagas do controller que ainda caíam nos clipes
+            // antigos — ré do anel de corrida e as 4 diagonais (45° e 135°) dos dois anéis.
+            ["RunBwdLoop"] = "POL_PR_walk_backward",
+            ["StrafeRight45Loop"] = "POL_PR_walk_forward_right", ["StrafeLeft45Loop"] = "POL_PR_walk_forward_left",
+            ["StrafeRight135Loop"] = "POL_PR_walk_backward_right", ["StrafeLeft135Loop"] = "POL_PR_walk_backward_left",
+            ["RunStrafeRight45Loop"] = "POL_PR_walk_forward_right", ["RunStrafeLeft45Loop"] = "POL_PR_walk_forward_left",
+        };
+        // sprint (Shift): a corrida tática nas vagas que a árvore usa a 7,4 m/s em cada direção (sem isto o lado/ré tocava o andar a 1,45×)
+        public static readonly Dictionary<string, string> PolRifleSprint = new()
+        {
+            ["Run Forward Right"] = "POL_PR_run_forward_right", ["Run Forward Left"] = "POL_PR_run_forward_left", ["RunFwdLoop"] = "POL_PR_run_forward",
+            ["StrafeRightLoop"] = "POL_PR_run_right", ["StrafeLeftLoop"] = "POL_PR_run_left", ["WalkBwdLoop"] = "POL_PR_run_backward",
+            ["RunRtLoop"] = "POL_PR_run_right", ["RunLtLoop"] = "POL_PR_run_left", ["Rifle_RunBwdLoop"] = "POL_PR_run_backward",
+            ["RunStrafeRight135Loop"] = "POL_PR_run_backward_right", ["RunStrafeLeft135Loop"] = "POL_PR_run_backward_left",
+            ["RunBwdLoop"] = "POL_PR_run_backward",
+            ["StrafeRight45Loop"] = "POL_PR_run_forward_right", ["StrafeLeft45Loop"] = "POL_PR_run_forward_left",
+            ["StrafeRight135Loop"] = "POL_PR_run_backward_right", ["StrafeLeft135Loop"] = "POL_PR_run_backward_left",
+            ["RunStrafeRight45Loop"] = "POL_PR_run_forward_right", ["RunStrafeLeft45Loop"] = "POL_PR_run_forward_left",
+        };
+        // SMG e escopeta: postura de arma curta do Basic Shooter (parado de mira e pulo próprios); a locomoção continua a do Pro Rifle
+        // porque a do Basic Shooter anda a ≈1,6 m/s e correria a 2,4× de ritmo nos anéis do jogo (pernas girando).
+        public static readonly Dictionary<string, string> PolCompact = new()
+        {
+            ["Rifle_Idle"] = "POL_BS_rifle_aiming_idle", ["Jump"] = "POL_BS_rifle_jump",
+        };
+        public const string PolCrouchAim = "POL_PR_idle_crouching_aiming";                  // mira agachado (Upper Body "Idle" enquanto agachado)
+        public const string PolFireAuto = "POL_SH_firing_rifle", PolFireSemi = "POL_BS_firing_rifle";
+        // pistola — Pistol Handgun Locomotion Pack (lado medido no FBX: "pistol strafe" vai para a ESQUERDA, "(2)" para a direita);
+        // diagonais = andar de frente/ré do pacote (os "arc" do pacote são curvas de 25–45°, sem vaga: o giro é do controle)
+        public static readonly Dictionary<string, string> PolPistol = new()
+        {
+            ["Rifle_Idle"] = "POL_PI_pistol_idle", ["Rifle Idle"] = "POL_PI_pistol_idle",
+            ["Rifle_WalkFwdLoop"] = "POL_PI_pistol_walk", ["Walk Forward Right"] = "POL_PI_pistol_walk", ["Walk Forward Left"] = "POL_PI_pistol_walk",
+            ["Rifle_StrafeRightLoop"] = "POL_PI_pistol_strafe_2", ["Rifle_StrafeLeftLoop"] = "POL_PI_pistol_strafe",
+            ["Rifle_WalkBwdLoop"] = "POL_PI_pistol_walk_backward", ["Walk Backward Right"] = "POL_PI_pistol_walk_backward", ["Walk Backward Left"] = "POL_PI_pistol_walk_backward",
+            ["Rifle_RunFwdLoop"] = "POL_PI_pistol_walk", ["Run Forward Right"] = "POL_PI_pistol_walk", ["Run Forward Left"] = "POL_PI_pistol_walk",
+            ["Rifle_RunBwdLoop"] = "POL_PI_pistol_walk_backward", ["RunRtLoop"] = "POL_PI_pistol_strafe_2", ["RunLtLoop"] = "POL_PI_pistol_strafe",
+            ["RunStrafeRight135Loop"] = "POL_PI_pistol_walk_backward", ["RunStrafeLeft135Loop"] = "POL_PI_pistol_walk_backward",
+            ["Walk With Rifle"] = "POL_PI_pistol_walk", ["RunFwdLoop"] = "POL_PI_pistol_walk",
+            ["StrafeRightLoop"] = "POL_PI_pistol_strafe_2", ["StrafeLeftLoop"] = "POL_PI_pistol_strafe", ["WalkBwdLoop"] = "POL_PI_pistol_walk_backward",
+            ["Rifle_SprintLoop"] = "POL_PI_pistol_run", ["Rifle_CrouchLoop"] = "POL_PI_pistol_kneeling_idle",
+            // 2ª passada: ré do anel de corrida, as 4 diagonais e o pulo/queda. O pacote de pistola não tem andar agachado nem
+            // pulo em laço — entram os do Pro Rifle (as pernas são as mesmas; as mãos da pistola vêm do IK de duas mãos, como em pé).
+            ["RunBwdLoop"] = "POL_PI_pistol_walk_backward",
+            ["StrafeRight45Loop"] = "POL_PI_pistol_walk", ["StrafeLeft45Loop"] = "POL_PI_pistol_walk",
+            ["StrafeRight135Loop"] = "POL_PI_pistol_walk_backward", ["StrafeLeft135Loop"] = "POL_PI_pistol_walk_backward",
+            ["RunStrafeRight45Loop"] = "POL_PI_pistol_walk", ["RunStrafeLeft45Loop"] = "POL_PI_pistol_walk",
+            ["Walk Crouching Forward"] = "POL_PR_walk_crouching_forward", ["Crouch Walk Strafe Right"] = "POL_PR_walk_crouching_right",
+            ["Walk Crouching Backward 1"] = "POL_PR_walk_crouching_backward", ["Crouch Walk Strafe Left"] = "POL_PR_walk_crouching_left",
+            ["Jump"] = "POL_PR_jump_loop", ["Landing"] = "POL_PR_jump_down",
+        };
+        public static readonly Dictionary<string, string> PolPistolSprint = new()
+        {
+            ["Run Forward Right"] = "POL_PI_pistol_run", ["Run Forward Left"] = "POL_PI_pistol_run", ["RunFwdLoop"] = "POL_PI_pistol_run",
+            ["WalkBwdLoop"] = "POL_PI_pistol_run_backward", ["Rifle_RunBwdLoop"] = "POL_PI_pistol_run_backward",
+        };
+        // desarmado — Locomotion Pack (parado, andar, andar/correr de lado, correr); a policial mantém o andar de frente por sexo (REG_Walk_F)
+        public static readonly Dictionary<string, string> PolUnarmed = new()
+        {
+            ["Idle"] = "POL_LO_idle", ["WalkFwdLoop"] = "POL_LO_walking",
+            ["StrafeLeftLoop"] = "POL_LO_left_strafe_walking", ["StrafeRightLoop"] = "POL_LO_right_strafe_walking",
+            ["RunLtLoop"] = "POL_LO_left_strafe", ["RunRtLoop"] = "POL_LO_right_strafe", ["RunFwdLoop"] = "POL_LO_running", ["SprintFwdLoop"] = "POL_LO_running",
+        };
+
         // Sigma (Free Fire): cura em pé, cura agachado e reanimar aliado (mesma família CURE do FF)
         public const string HealStart = "FF_SYS_Heal_Start", HealLoop = "FF_SYS_Heal_Loop", HealEnd = "FF_SYS_Heal_End", HealCrouch = "FF_SYS_KO_Revive";
         // reanimar aliado (rodada 38): o "Crouch_Self_Rescue" do FF era a animação de se AUTO-curar agachado (o usuário: "a animação de reanimar

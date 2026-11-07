@@ -1,4 +1,4 @@
-// r48: FOLHA DE FOTOS DE CLIPE NO EDITOR (sem build) — o clipe PURO no personagem (PlayableGraph, sem IK, sem lógica de jogo e sem o
+﻿// r48: FOLHA DE FOTOS DE CLIPE NO EDITOR (sem build) — o clipe PURO no personagem (PlayableGraph, sem IK, sem lógica de jogo e sem o
 // veículo na frente), em 4 ângulos × N tempos, para ver o que o retarget entrega antes de qualquer correção em jogo.
 // Unity -batchmode -projectPath FreeBala -executeMethod FreeBala.EditorTools.FBClipShots.Batch
 //   -fbcs_chars r_elaine,x171_gorda1 -fbcs_clips X171_Go_to_bike_L,... [-fbcs_n 8] [-fbcs_dir Assets/FreeBala/Anim/Clips] [-fbcs_tag r48b]
@@ -52,6 +52,17 @@ namespace FreeBala.EditorTools
                 var an = go.GetComponent<Animator>() ?? go.GetComponentInChildren<Animator>(); if (!an || !an.avatar || !an.avatar.isHuman) { Debug.LogError("[FreeBala][cs] sem avatar humano " + id); Object.DestroyImmediate(go); continue; }
                 an.cullingMode = AnimatorCullingMode.AlwaysAnimate; an.applyRootMotion = false; an.runtimeAnimatorController = null;
                 var hips = an.GetBoneTransform(HumanBodyBones.Hips);
+                // r55: em lote o skinning não roda entre as fotos (só no laço do player) → cópia "assada" da malha na pose do instante
+                var baked = new List<(SkinnedMeshRenderer smr, Mesh mesh, Transform t)>();
+                foreach (var smr in go.GetComponentsInChildren<SkinnedMeshRenderer>())
+                {
+                    var bo = new GameObject("cs_baked_" + smr.name); var m = new Mesh(); bo.AddComponent<MeshFilter>().sharedMesh = m;
+                    bo.AddComponent<MeshRenderer>().sharedMaterials = smr.sharedMaterials; smr.enabled = false; baked.Add((smr, m, bo.transform));
+                }
+                // r55: BakeMesh(useScale: false) já entrega os vértices no tamanho de mundo destes personagens — pôr também
+                // localScale = lossyScale aplicava a escala DUAS vezes (corpo ~2,2× maior que o esqueleto: a folha só mostrava as pernas).
+                void Bake() { foreach (var b in baked) { b.smr.BakeMesh(b.mesh, false); b.t.SetPositionAndRotation(b.smr.transform.position, b.smr.transform.rotation); b.t.localScale = Vector3.one; } }
+                void Sample(AnimationClip cl, float t) { if (!AnimationMode.InAnimationMode()) AnimationMode.StartAnimationMode(); AnimationMode.BeginSampling(); AnimationMode.SampleAnimationClip(go, cl, t); AnimationMode.EndSampling(); }
                 foreach (var cid in clips)
                 {
                     var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>($"{dir}/{cid}.anim"); if (!clip) { Debug.LogError("[FreeBala][cs] sem clipe " + dir + "/" + cid); continue; }
@@ -59,13 +70,28 @@ namespace FreeBala.EditorTools
                     var cp = AnimationClipPlayable.Create(g, clip); cp.SetApplyFootIK(false);
                     var o = AnimationPlayableOutput.Create(g, "o", an); o.SetSourcePlayable(cp);
                     var sheet = new Texture2D(Cell * n, Cell * views.Length, TextureFormat.RGB24, false); var times = new List<string>();
+                    // r55: enquadramento do clipe inteiro, medido UMA vez na metade dele pela caixa do que é realmente desenhado (as
+                    // cópias assadas). Antes a câmera era fixa (raio 1,15 no quadril) e o corpo saía maior que a janela: as folhas
+                    // mostravam só as pernas. Medir uma vez só mantém o personagem do mesmo tamanho em todas as colunas.
+                    Sample(clip, clip.length * .5f); Bake();
+                    var bb = new Bounds(hips.position, Vector3.one * .1f);   // pelos OSSOS humanos: a caixa da malha estoura com um
+                    for (int hb = 0; hb < (int)HumanBodyBones.LastBone; hb++)   // vértice solto (dedo) e o corpo sairia minúsculo
+                    { var t2 = an.GetBoneTransform((HumanBodyBones)hb); if (t2) bb.Encapsulate(t2.position); }
+                    bb.Expand(.22f);
+                    var ctr = bb.center; float half = Mathf.Max(.6f, bb.extents.y, bb.extents.x, bb.extents.z) * 1.18f, dist = Mathf.Max(6, half * 5);
+                    cam.orthographicSize = half;
+                    Debug.Log($"[FreeBala][cs] {id} × {cid}: caixa {bb.size.y:0.00} u · câmera {half:0.00} · centro {ctr.y:0.00}");
                     for (int k = 0; k < n; k++)
                     {
-                        float t = n == 1 ? 0 : clip.length * k / (n - 1); cp.SetTime(t); cp.SetTime(t); g.Evaluate(0); times.Add(t.ToString("0.00"));
-                        var c = hips.position; c.y = Mathf.Max(c.y, .95f);
+                        float t = n == 1 ? 0 : clip.length * k / (n - 1); times.Add(t.ToString("0.00"));
+                        // r55: no Unity 6.6 em lote o grafo manual só aplicava a 1ª avaliação (todas as fotos iguais, inclusive de clipes antigos)
+                        // → amostra pelo AnimationMode (a prévia do Editor); -fbcs_grafo 1 = caminho antigo
+                        if (Arg("-fbcs_grafo", "0") == "1") { cp.SetTime(t); cp.SetTime(t); g.Evaluate(0); }
+                        else Sample(clip, t);
+                        Bake();
                         for (int v = 0; v < views.Length; v++)
                         {
-                            cam.transform.position = c + views[v].dirCam.normalized * 6; cam.transform.LookAt(c);
+                            cam.transform.position = ctr + views[v].dirCam.normalized * dist; cam.transform.LookAt(ctr);
                             cam.Render(); RenderTexture.active = rt; sheet.ReadPixels(new Rect(0, 0, Cell, Cell), k * Cell, (views.Length - 1 - v) * Cell); RenderTexture.active = null;
                         }
                     }
@@ -73,6 +99,7 @@ namespace FreeBala.EditorTools
                     Debug.Log($"[FreeBala][cs] {id} × {cid} ({clip.length:0.00} s) tempos {string.Join(" ", times)} -> {p}");
                     g.Destroy();
                 }
+                foreach (var b in baked) { Object.DestroyImmediate(b.t.gameObject); Object.DestroyImmediate(b.mesh); }
                 Object.DestroyImmediate(go);
             }
         }

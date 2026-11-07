@@ -38,8 +38,8 @@ namespace FreeBala
             ("Avenida_Pupunha", -52.9f, -396.4f, 253f), ("Avenida_Acai", -106.5f, -545.2f, 253f), ("Avenida_S", -46.4f, -633.6f, 160f),
         };
         // r53: -fbtourpts <arquivo.json> troca os pontos acima pelas posições/direções das fotos do Street View (tools/vj_full/sv_tour_r53.py):
-        // {"pts":[{"n","x","y","h","z","fov"}]} — uma vista por ponto, olho a z m do chão, campo de visão vertical fov, olhar na horizontal.
-        [System.Serializable] class SvShot { public string n; public float x, y, h, z = 2.5f, fov = 60f; }
+        // {"pts":[{"n","x","y","h","z","fov","p"}]} — uma vista por ponto, olho a z m do chão, campo de visão vertical fov, olhar p graus para baixo (0 = horizontal).
+        [System.Serializable] class SvShot { public string n; public float x, y, h, z = 2.5f, fov = 60f, p; }
         [System.Serializable] class SvList { public SvShot[] pts; }
         static void Log(string s) => Debug.Log("[FreeBala][tour] " + s);
         IEnumerator Wait(float s) { for (float w = 0; w < s; w += Time.unscaledDeltaTime) yield return null; }
@@ -73,7 +73,8 @@ namespace FreeBala
                     float gy = Physics.Raycast(flat + Vector3.up * 80, Vector3.down, out var hit, 160, FBWorld.SolidMask, QueryTriggerInteraction.Ignore) ? hit.point.y : float.NaN;
                     if (float.IsNaN(gy)) { Log($"{p.n}: SEM CHÃO em {flat}"); continue; }
                     float hr = p.h * Mathf.Deg2Rad; var dirv = new Vector3(-Mathf.Cos(hr), 0, -Mathf.Sin(hr)).normalized;
-                    cam.fieldOfView = p.fov; cam.transform.SetPositionAndRotation(new Vector3(flat.x, gy + p.z, flat.z), Quaternion.LookRotation(dirv));
+                    var olhar = Quaternion.AngleAxis(p.p, Vector3.Cross(Vector3.up, dirv)) * dirv;   // eixo = direita do olhar: p > 0 abaixa a câmera (o Cross(dirv, up) do tour clássico abaixo é a esquerda e levanta)
+                    cam.fieldOfView = p.fov; cam.transform.SetPositionAndRotation(new Vector3(flat.x, gy + p.z, flat.z), Quaternion.LookRotation(olhar));
                     FBDistanceCull.Refresh(); yield return Wait(1.6f);
                     ScreenCapture.CaptureScreenshot(System.IO.Path.Combine(dir, $"sv_{p.n}.png")); yield return null; yield return null;
                     Log($"sv {p.n}: chão {gy:0.00} · tris {Rec(tr) / 1000}k · draw calls {Rec(dc)}"); ok++;

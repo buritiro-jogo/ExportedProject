@@ -26,7 +26,7 @@ namespace FreeBala
 {
     public static class FBDeath
     {
-        public class Clip { public string id, face, kind; public float fwd, right, dur, land; public float Len => Mathf.Sqrt(fwd * fwd + right * right); }
+        public class Clip { public string id, face, kind; public bool pol; public float fwd, right, dur, land; public float Len => Mathf.Sqrt(fwd * fwd + right * right); }
         static List<Clip> lib; static readonly List<string> recent = new();
         public static string LastPick, LastWhy;                                                       // diagnóstico (autoteste)
 
@@ -36,7 +36,7 @@ namespace FreeBala
             var ta = Resources.Load<TextAsset>("FBDeathLib"); if (!ta) return lib;
             foreach (var o in Json.L(Json.Parse(ta.text), "clips") ?? new List<object>())
             {
-                var c = new Clip { id = Json.S(o, "id"), fwd = Json.F(o, "fwd"), right = Json.F(o, "right"), dur = Json.F(o, "dur"), land = Json.F(o, "land"), face = Json.S(o, "face"), kind = Json.S(o, "kind", "stand") };
+                var c = new Clip { id = Json.S(o, "id"), fwd = Json.F(o, "fwd"), right = Json.F(o, "right"), dur = Json.F(o, "dur"), land = Json.F(o, "land"), face = Json.S(o, "face"), kind = Json.S(o, "kind", "stand"), pol = Json.B(o, "pol") };
                 if (FBRegistry.I && FBRegistry.I.Clip(c.id)) lib.Add(c);
             }
             return lib;
@@ -63,9 +63,10 @@ namespace FreeBala
             var vel = tf.InverseTransformDirection(ch.velocity); bool running = vel.z > 4.5f && !ch.crouch;
             bool crouched = ch.crouch, head = ch.lastHitHead; float s = Mathf.Max(.5f, ch.ScaleK);
             var chest = ch.Chest ? ch.Chest.position : ch.Pos + Vector3.up * 1.2f * s; float gy = ch.Pos.y;
-            Clip best = null; float bestS = -1e9f; int fits = 0;
+            Clip best = null; float bestS = -1e9f; int fits = 0; bool police = ch.IsPolice;
             foreach (var c in L)
             {
+                if (c.pol && !police) continue;                                   // r55: quedas do pacote tático só no policial
                 if (running ? !(c.kind == "run" || c.fwd > 1.2f) : c.kind == "run") continue;
                 if (crouched && c.Len > .8f) continue;
                 if (head && c.land > 1.3f) continue;
@@ -75,7 +76,8 @@ namespace FreeBala
                 var land = ch.Pos + wv; if (!(FBWorld.GroundY(land.x, gy + .6f, land.z, .6f, 1.2f) is float ly) || Mathf.Abs(ly - gy) > .3f) continue;
                 fits++;
                 var fv = new Vector2(c.right, c.fwd); float align = fv.sqrMagnitude > .01f ? Vector2.Dot(fv.normalized, pushV) : .2f;
-                float sc = (running ? .3f : 1f) * align + Random.value * .45f - (recent.Contains(c.id) ? 1.2f : 0);
+                float sc = (running ? .3f : 1f) * align + Random.value * .45f - (recent.Contains(c.id) ? 1.2f : 0)
+                         + (c.pol ? .35f : 0) + (c.pol && c.id.Contains("headshot") ? (head ? .5f : -.5f) : 0);   // policial: prefere as próprias; tiro na cabeça → "headshot"
                 if (sc > bestS) { bestS = sc; best = c; }
             }
             if (best == null)
