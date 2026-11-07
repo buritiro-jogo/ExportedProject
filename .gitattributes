@@ -56,3 +56,8 @@ Assets/FreeBala/Resources/FBImported/**/*.asset  filter=lfs diff=lfs merge=lfs -
 # estavam no repositório (cada um tem no máximo ~4 MB); passar para o LFS regravaria ~3.700 arquivos sem mudança.
 # NavMesh assado em serialização binária do Unity: nunca converter fim de linha (o "*.asset text" acima corrompia o da PT)
 Assets/BURITIRO_Mapas/**/NavMesh*.asset          binary
+
+# Scripts do Windows (instalador) com fim de linha CRLF
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+*.iss text eol=crlf
