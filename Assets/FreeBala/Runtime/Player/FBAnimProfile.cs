@@ -53,11 +53,12 @@ namespace FreeBala
         {
             ["Walk With Rifle"] = "IE_Rifle_Run_F", ["StrafeRightLoop"] = "IE_Rifle_Run_R", ["StrafeLeftLoop"] = "IE_Rifle_Run_L", ["WalkBwdLoop"] = "IE_Rifle_Run_B",
             ["RunFwdLoop"] = "IE_Rifle_Run_F", ["Run Forward Right"] = "IE_Rifle_Run_FR", ["Run Forward Left"] = "IE_Rifle_Run_FL",
-            // r60b (pedido do Ruan, 07/11): correr com o fuzil em UM braco so. O IE_Rifle_Sprint_F mantem as duas maos na arma; este
-            // clipe, que veio da engenharia reversa do APK e estava sem uso em Anim/Clips, e a corrida de verdade — bracos alternando,
-            // o fuzil acompanhando a mao direita e o esquerdo livre. (O sprint tatico de duas maos do pacote EXPERIMENTAL_FPSAF saiu
-            // na mesma rodada; ver .gitignore.)
-            ["Rifle_SprintLoop"] = "anim_rifle_ip_strafe_supersprint_ar_f", ["Rifle_RunFwdLoop"] = "IE_Rifle_Run_F", ["Rifle_RunBwdLoop"] = "IE_Rifle_Run_B",
+            // r60b: VOLTOU para o clipe do IE. Tentei o anim_rifle_ip_strafe_supersprint_ar_f (da RE do APK) para correr com a arma em
+            // um braco so, e NAO serve: ele foi animado SEM ARMA — e uma corrida livre de bracos bombeando. Com o fuzil presa a mao
+            // direita, a arma fica na VERTICAL apontando para cima atras da cabeca (visto de lado, 07/11). Busquei na biblioteca
+            // inteira da RE (IE, CF, Sigma, REB, OS): nao ha clipe de corrida com fuzil em UMA mao baixada. Para ter esse visual e
+            // preciso animar um, ou montar a pose por codigo. Ver RODADA60.md.
+            ["Rifle_SprintLoop"] = "IE_Rifle_Sprint_F", ["Rifle_RunFwdLoop"] = "IE_Rifle_Run_F", ["Rifle_RunBwdLoop"] = "IE_Rifle_Run_B",
             // [parceiro] 31/10/2026: o CombatLocomotion ganhou correr de lado e na diagonal de verdade
             // (antes o "de lado" tocava a corrida na diagonal para frente e o pé escorregava).
             // Estes clipes base só aparecem no RelaxedLocomotion, que só roda desarmado.

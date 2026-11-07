@@ -266,12 +266,11 @@ namespace FreeBala
             bool spc = ch.Special || !ch.alive || ch.vehiclePose, busy = ch.HandsBusy;
             bool wpVis = weapon && weapon.activeSelf;
             bool ikOn = ch.alive && !spc && !busy && !ch.UnarmedLocomotion && wpVis;
-            // r60b: CORRENDO, a arma vai em UM BRAÇO SÓ — fuzil igual à pistola, que já fazia isso desde sempre nesta mesma linha.
-            // Era a causa dos "braços quebrados" ao correr armado (Ruan, 07/11): o IK prendia a mão esquerda no guarda-mão em TODO
-            // estado, então qualquer clipe de corrida era sobrescrito e o braço esticava atravessado no peito para alcançar a arma.
-            // Trocar o clipe não resolvia (testado com o supersprint da RE: mesmo defeito), porque quem mandava era o IK.
-            // Agora o clipe de sprint roda solto: a arma acompanha a mão direita (está presa ao osso, não ao IK) e o esquerdo bombeia.
-            bool wantIK = ikOn && !ch.sprint;
+            // r60b: soltar o IK do fuzil no sprint (ikOn && !ch.sprint) FOI REVERTIDO. A ideia era correr com a arma em um braço só,
+            // como a pistola já faz, mas sem um clipe animado PARA isso o resultado fica pior: o clipe do IE espera as duas mãos na
+            // arma, e sem o IK a esquerda fica solta no ar perto dela. Os "braços quebrados" que o Ruan viu em 07/11 eram do sprint
+            // tático do pacote EXPERIMENTAL_FPSAF, que saiu do projeto nesta mesma rodada — não desta linha.
+            bool wantIK = ikOn && (pistol ? !ch.sprint : true);   // pistola: duas mãos sempre (descanso = low ready); só o sprint fica numa mão
             ikW = Mathf.Lerp(ikW, wantIK ? 1 : 0, 1 - Mathf.Exp(-dt * 12));
             DbgHandsN++; if (ikW > .02f && wpVis) DbgIkN++;                                         // [parceiro] contadores do laboratório (FBLabFisica)
             fingW = Mathf.Lerp(fingW, wpVis && ch.alive && !spc && !busy ? 1 : 0, 1 - Mathf.Exp(-dt * 12));
