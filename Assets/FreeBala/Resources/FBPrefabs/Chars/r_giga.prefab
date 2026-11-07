@@ -32,6 +32,51 @@ Transform:
   - {fileID: 8082349764835283439}
   m_Father: {fileID: 2395734779274790196}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &136342930145982417
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4027160223814673825}
+  - component: {fileID: 2364842596655227451}
+  m_Layer: 0
+  m_Name: WeaponBone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4027160223814673825
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 136342930145982417}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.4687983, y: 0.5180763, z: -0.5259783, w: 0.48494527}
+  m_LocalPosition: {x: 0.38944125, y: 0.7827017, z: -0.029680703}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2451721396034420390}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2364842596655227451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 136342930145982417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f3351c9a16a41d9b4e52958975b758b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KAnimationCore.Runtime::KINEMATION.KAnimationCore.Runtime.Rig.KVirtualElement
+  targetBone: {fileID: 7212569859794560459}
 --- !u!1 &288174664654733839
 GameObject:
   m_ObjectHideFlags: 0
@@ -580,6 +625,51 @@ Transform:
   - {fileID: 9015560323067535842}
   m_Father: {fileID: 7212569859794560459}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2513481947932323914
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8737409236731115123}
+  - component: {fileID: 6604840928071908939}
+  m_Layer: 0
+  m_Name: IK LeftElbow
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8737409236731115123
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2513481947932323914}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.47144285, y: -0.47144118, z: 0.52701336, w: 0.52701217}
+  m_LocalPosition: {x: -0.24369325, y: 0.7827123, z: -0.032390736}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2451721396034420390}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6604840928071908939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2513481947932323914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f3351c9a16a41d9b4e52958975b758b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KAnimationCore.Runtime::KINEMATION.KAnimationCore.Runtime.Rig.KVirtualElement
+  targetBone: {fileID: 5986474220213288561}
 --- !u!1 &2736093937686460067
 GameObject:
   m_ObjectHideFlags: 0
@@ -591,6 +681,7 @@ GameObject:
   - component: {fileID: 2451721396034420390}
   - component: {fileID: 5995884311373958760}
   - component: {fileID: 7873111269875111420}
+  - component: {fileID: 1453549754443036726}
   m_Layer: 0
   m_Name: r_giga
   m_TagString: Untagged
@@ -613,6 +704,12 @@ Transform:
   m_Children:
   - {fileID: 4431461685323050122}
   - {fileID: 3173239346722620063}
+  - {fileID: 4469807518888465151}
+  - {fileID: 8737409236731115123}
+  - {fileID: 624074684384199270}
+  - {fileID: 1077863271810134818}
+  - {fileID: 4027160223814673825}
+  - {fileID: 1337489130444248201}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &5995884311373958760
@@ -665,6 +762,93 @@ MonoBehaviour:
   deaths: 0
   netId: -1
   kits: 2
+--- !u!114 &1453549754443036726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2736093937686460067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e03e7ed42ce9470c899fc6cc550571e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KAnimationCore.Runtime::KINEMATION.KAnimationCore.Runtime.Rig.KRigComponent
+  hierarchy:
+  - {fileID: 2451721396034420390}
+  - {fileID: 4431461685323050122}
+  - {fileID: 6893453754412895145}
+  - {fileID: 472607153753184904}
+  - {fileID: 6214690605230982264}
+  - {fileID: 6357295251826383586}
+  - {fileID: 5758531573228195425}
+  - {fileID: 2950787730164637431}
+  - {fileID: 6741030250138497772}
+  - {fileID: 8713770897246271509}
+  - {fileID: 7729376492365127450}
+  - {fileID: 7084422168035715698}
+  - {fileID: 5397702736311743839}
+  - {fileID: 3963289114197871809}
+  - {fileID: 2395734779274790196}
+  - {fileID: 714572744047233203}
+  - {fileID: 8082349764835283439}
+  - {fileID: 5986474220213288561}
+  - {fileID: 1273244904900621836}
+  - {fileID: 4291718520129266474}
+  - {fileID: 6801998558925732147}
+  - {fileID: 4872794392245840079}
+  - {fileID: 6371580039835828187}
+  - {fileID: 7391338617183549601}
+  - {fileID: 2373079454186726588}
+  - {fileID: 789975597515091320}
+  - {fileID: 2695379629835777607}
+  - {fileID: 1298463139149955089}
+  - {fileID: 8144332582311089452}
+  - {fileID: 5329398505620737043}
+  - {fileID: 5688737083470978277}
+  - {fileID: 1266646879041628227}
+  - {fileID: 2134839512011913982}
+  - {fileID: 592938401384199782}
+  - {fileID: 6770415121087371056}
+  - {fileID: 8128229313273838912}
+  - {fileID: 3396715818090776339}
+  - {fileID: 7289574987733626557}
+  - {fileID: 277376257809972348}
+  - {fileID: 3451607840204692119}
+  - {fileID: 4786107552391896974}
+  - {fileID: 403451292276681090}
+  - {fileID: 3348106498913808298}
+  - {fileID: 6674020125367867319}
+  - {fileID: 6254901579418209049}
+  - {fileID: 7212569859794560459}
+  - {fileID: 2078779163742892239}
+  - {fileID: 5445405390282264684}
+  - {fileID: 1769506476190939470}
+  - {fileID: 1459498092078477639}
+  - {fileID: 4074278309017884758}
+  - {fileID: 4100295855105853369}
+  - {fileID: 631511747677565112}
+  - {fileID: 914408958354098244}
+  - {fileID: 2871052783264581724}
+  - {fileID: 1492012582417213547}
+  - {fileID: 4938198816813305379}
+  - {fileID: 1354042216722127380}
+  - {fileID: 2904953390269616851}
+  - {fileID: 9015560323067535842}
+  - {fileID: 6241174224668288291}
+  - {fileID: 7015356650543802561}
+  - {fileID: 6208134291821220698}
+  - {fileID: 2270469295448204642}
+  - {fileID: 1472161302395201853}
+  - {fileID: 6720209962141269902}
+  - {fileID: 3173239346722620063}
+  - {fileID: 4469807518888465151}
+  - {fileID: 8737409236731115123}
+  - {fileID: 624074684384199270}
+  - {fileID: 1077863271810134818}
+  - {fileID: 4027160223814673825}
+  - {fileID: 1337489130444248201}
+  hierarchyDepths: 00000000010000000200000003000000040000000500000006000000020000000300000004000000050000000600000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c000000090000000a0000000b0000000c000000090000000a0000000b0000000c000000090000000a0000000b0000000c000000090000000a0000000b0000000c00000005000000060000000700000005000000060000000700000008000000090000000a0000000b0000000c000000090000000a0000000b0000000c000000090000000a0000000b0000000c000000090000000a0000000b0000000c000000090000000a0000000b0000000c00000001000000010000000100000001000000010000000100000001000000i
 --- !u!1 &2897682529292854245
 GameObject:
   m_ObjectHideFlags: 0
@@ -948,6 +1132,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4786107552391896974}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3812370562982981085
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1077863271810134818}
+  - component: {fileID: 3325596068435069789}
+  m_Layer: 0
+  m_Name: IK RightElbow
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1077863271810134818
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3812370562982981085}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.4742104, y: 0.47421083, z: -0.5245229, w: 0.5245229}
+  m_LocalPosition: {x: 0.24370338, y: 0.7827016, z: -0.029680658}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2451721396034420390}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3325596068435069789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3812370562982981085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f3351c9a16a41d9b4e52958975b758b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KAnimationCore.Runtime::KINEMATION.KAnimationCore.Runtime.Rig.KVirtualElement
+  targetBone: {fileID: 6254901579418209049}
 --- !u!1 &3844594216424360790
 GameObject:
   m_ObjectHideFlags: 0
@@ -980,6 +1209,51 @@ Transform:
   - {fileID: 7084422168035715698}
   m_Father: {fileID: 8713770897246271509}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3844987332228073558
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1337489130444248201}
+  - component: {fileID: 5406549411999288133}
+  m_Layer: 0
+  m_Name: IK WeaponBone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1337489130444248201
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3844987332228073558}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.4687983, y: 0.5180763, z: -0.5259783, w: 0.48494527}
+  m_LocalPosition: {x: 0.38944125, y: 0.7827017, z: -0.029680703}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2451721396034420390}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5406549411999288133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3844987332228073558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f3351c9a16a41d9b4e52958975b758b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KAnimationCore.Runtime::KINEMATION.KAnimationCore.Runtime.Rig.KVirtualElement
+  targetBone: {fileID: 7212569859794560459}
 --- !u!1 &3923905497727546649
 GameObject:
   m_ObjectHideFlags: 0
@@ -1076,6 +1350,51 @@ Transform:
   - {fileID: 631511747677565112}
   m_Father: {fileID: 4074278309017884758}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4161270471465231014
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4469807518888465151}
+  - component: {fileID: 7360025174289536342}
+  m_Layer: 0
+  m_Name: IK LeftHand
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4469807518888465151
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4161270471465231014}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.47433445, y: -0.51301485, z: 0.5316044, w: 0.47876856}
+  m_LocalPosition: {x: -0.38936564, y: 0.7827118, z: -0.03239061}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2451721396034420390}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7360025174289536342
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4161270471465231014}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f3351c9a16a41d9b4e52958975b758b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KAnimationCore.Runtime::KINEMATION.KAnimationCore.Runtime.Rig.KVirtualElement
+  targetBone: {fileID: 1273244904900621836}
 --- !u!1 &4176614358759908071
 GameObject:
   m_ObjectHideFlags: 0
@@ -1971,6 +2290,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7289574987733626557}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8538956375786383256
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 624074684384199270}
+  - component: {fileID: 126434688742222122}
+  m_Layer: 0
+  m_Name: IK RightHand
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &624074684384199270
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8538956375786383256}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.4687983, y: 0.5180763, z: -0.5259783, w: 0.48494527}
+  m_LocalPosition: {x: 0.38944125, y: 0.7827017, z: -0.029680703}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2451721396034420390}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &126434688742222122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8538956375786383256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f3351c9a16a41d9b4e52958975b758b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: KAnimationCore.Runtime::KINEMATION.KAnimationCore.Runtime.Rig.KVirtualElement
+  targetBone: {fileID: 7212569859794560459}
 --- !u!1 &8636674288616269979
 GameObject:
   m_ObjectHideFlags: 0
