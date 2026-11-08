@@ -78,7 +78,7 @@ namespace FreeBala
         {
             // "unity": o server.mjs aceita os mapas que só o Unity tem (orla, centro_civico, morro_sacola) e esconde essas salas do jogo web;
             // a praca_pt é outro mapa em cada jogo, então a sala dela só aparece para quem é do mesmo jogo de quem a criou
-            Send(new Dictionary<string, object> { ["t"] = "hello", ["name"] = FBSession.name, ["skin"] = FBSession.FullSkin, ["team"] = FBSession.team, ["code"] = "", ["unity"] = true });
+            Send(new Dictionary<string, object> { ["t"] = "hello", ["name"] = FBSession.name, ["skin"] = FBSession.FullSkin, ["team"] = FBSession.team, ["code"] = "", ["unity"] = true, ["pid"] = FBLobbyNet.Pid });   // r62: pid = código de jogador (squad: mesmo time na sala reservada)
             Send(new Dictionary<string, object> { ["t"] = "list" });
         }
         public void Send(Dictionary<string, object> o) => SendRaw(ToJson(o));
@@ -130,7 +130,8 @@ namespace FreeBala
                 case "pong": ping = Time.realtimeSinceStartup * 1000 - Json.F(m, "ts"); break;
                 case "rooms":
                     {
-                        string join = null; foreach (var r in Json.L(m, "rooms") ?? new List<object>()) if (Json.S(r, "map") == FBSession.map && Json.I(r, "players") < Json.I(r, "max")) { join = Json.S(r, "id"); break; }
+                        string join = null; if (!string.IsNullOrEmpty(FBSession.room)) { join = FBSession.room; FBSession.room = null; }   // r62: sala escolhida pelo squad
+                        else foreach (var r in Json.L(m, "rooms") ?? new List<object>()) if (Json.S(r, "map") == FBSession.map && Json.I(r, "players") < Json.I(r, "max")) { join = Json.S(r, "id"); break; }
                         if (join != null) Send(new Dictionary<string, object> { ["t"] = "join", ["id"] = join });
                         else Send(new Dictionary<string, object> { ["t"] = "create", ["name"] = "Sala de " + FBSession.name, ["mode"] = "tdm", ["map"] = FBSession.map, ["max"] = 10 });
                         break;

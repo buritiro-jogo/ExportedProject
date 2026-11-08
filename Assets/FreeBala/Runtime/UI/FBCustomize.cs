@@ -27,7 +27,8 @@ namespace FreeBala
             ("pele", "PELE", new string[0], FBCustomizeStage.Frame.Bust),
         };
         static readonly Dictionary<string, string> CAT_NAMES = new() { ["hat"] = "Chapéu/Capacete", ["face"] = "Rosto", ["head"] = "Cabeça/Cabelo", ["top"] = "Camisa", ["vest"] = "Colete", ["bottom"] = "Calça/Bermuda", ["shoes"] = "Calçado", ["acc"] = "Acessórios", ["hands"] = "Luvas" };
-        static readonly Color Txt = new(.925f, .91f, .863f), Dim = new(.925f, .91f, .863f, .55f), Gold2 = new(1, .77f, 0), Orange = new(.82f, .06f, 0), PanelC = new(.04f, .047f, .055f, .86f), Card = new(.09f, .1f, .115f, .92f), CardHi = new(.16f, .14f, .1f, .95f);
+        static readonly Color Txt = new(.96f, .97f, 1f), Dim = new(.8f, .87f, 1f, .6f), Gold2 = new(.36f, .66f, 1f), Orange = new(.13f, .62f, .3f), PanelC = new(.02f, .055f, .12f, .88f), Card = new(.05f, .11f, .23f, .92f), CardHi = new(.1f, .27f, .56f, .95f),   // r62: cores da bandeira (azul/branco/verde), sem cinza
+            Navy = new(.07f, .15f, .3f, .85f), NavyHi = new(.1f, .22f, .42f, .95f);
 
         // ---- estado
         public FBCustomizeStage stage; public FBCustomizeThumbs thumbs; public string sel; public string tab = "chars", group = "tronco";
@@ -71,23 +72,23 @@ namespace FreeBala
             st.transform.SetAsFirstSibling(); root = safe;
             float lw = aspect == FBCustomizeFx.Aspect.Narrow ? 430 : 480, rw = aspect == FBCustomizeFx.Aspect.Narrow ? 330 : 380, topH = 72;
             // topo
-            top = FBUI.Panel(root, "topo", new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -topH / 2), new Vector2(0, topH), new Color(.03f, .035f, .04f, .82f)).rectTransform;
+            top = FBUI.Panel(root, "topo", new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -topH / 2), new Vector2(0, topH), new Color(.015f, .03f, .07f, .93f)).rectTransform;
             var bk = Btn(top, "‹ VOLTAR", new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(98, 0), new Vector2(164, 46), Close);
-            FBUI.Label(top, "PERSONAGEM", portrait ? 30 : 34, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(0, 6), new Vector2(600, 40), TextAnchor.MiddleCenter, true, FBUI.Gold);
+            FBUI.Label(top, "PERSONAGEM", portrait ? 30 : 34, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(0, 6), new Vector2(600, 40), TextAnchor.MiddleCenter, true, Color.white);
             FBUI.Label(top, $"{FBCustomizeData.Roster.Count} OPERADORES · {FBCustomizeData.Roster.Count(e => e.fem)} FEMININAS · {FBCustomizeData.Roster.Count(e => !e.fem)} MASCULINOS", 12, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(0, -22), new Vector2(700, 16), TextAnchor.MiddleCenter, false, Dim);
             var line = FBUI.Panel(top, "linha", new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(0, 2), new Color(Gold2.r, Gold2.g, Gold2.b, .35f)); line.raycastTarget = false;
             // painéis
             if (portrait)
             {
                 left = FBUI.Panel(root, "gaveta", new Vector2(0, 0), new Vector2(1, .44f), Vector2.zero, Vector2.zero, PanelC).rectTransform;
-                right = FBUI.Panel(root, "destaque", new Vector2(0, .44f), new Vector2(1, .44f), new Vector2(0, 74), new Vector2(0, 148), new Color(.03f, .035f, .04f, .7f)).rectTransform;
+                right = FBUI.Panel(root, "destaque", new Vector2(0, .44f), new Vector2(1, .44f), new Vector2(0, 74), new Vector2(0, 148), new Color(.015f, .04f, .09f, .8f)).rectTransform;
             }
             else
             {
                 left = FBUI.Panel(root, "lista", new Vector2(0, 0), new Vector2(0, 1), new Vector2(lw / 2 + 16, -topH / 2 + 2), new Vector2(lw, -topH - 28), PanelC).rectTransform;
                 right = FBUI.Panel(root, "destaque", new Vector2(1, 0), new Vector2(1, 1), new Vector2(-rw / 2 - 16, -topH / 2 + 2), new Vector2(rw, -topH - 28), PanelC).rectTransform;
             }
-            left.gameObject.AddComponent<Outline>().effectColor = new Color(1, 1, 1, .08f); right.gameObject.AddComponent<Outline>().effectColor = new Color(1, 1, 1, .08f);
+            left.gameObject.AddComponent<Outline>().effectColor = FBKit.Line; right.gameObject.AddComponent<Outline>().effectColor = FBKit.Line; FBKit.Round(left.GetComponent<Image>(), 12); FBKit.Round(right.GetComponent<Image>(), 12);
             // dica do palco
             var hint = FBUI.Label(root, Application.isMobilePlatform ? "ARRASTE PARA GIRAR · PINÇA PARA ZOOM · TOQUE DUPLO DANÇA" : "ARRASTE PARA GIRAR · RODA = ZOOM · CLIQUE DUPLO DANÇA · ← → NAVEGAR · ENTER USAR", 12,
                 portrait ? new Vector2(.5f, .44f) : new Vector2(.5f, 0), portrait ? new Vector2(.5f, .44f) : new Vector2(.5f, 0), portrait ? new Vector2(0, 160) : new Vector2((lw - rw) / 2, 22), new Vector2(760, 18), TextAnchor.MiddleCenter, false, Dim);
@@ -117,14 +118,14 @@ namespace FreeBala
         static Vector2 Logical(CanvasScaler sc)
         {
             float w = Mathf.Max(1, Screen.width), h = Mathf.Max(1, Screen.height), r = sc.referenceResolution.x, q = sc.referenceResolution.y;
-            float k = Mathf.Pow(2, Mathf.Lerp(Mathf.Log(w / r, 2), Mathf.Log(h / q, 2), sc.matchWidthOrHeight)); return new Vector2(w / k, h / k);
+            float k = sc.screenMatchMode == CanvasScaler.ScreenMatchMode.Expand ? Mathf.Min(w / r, h / q) : Mathf.Pow(2, Mathf.Lerp(Mathf.Log(w / r, 2), Mathf.Log(h / q, 2), sc.matchWidthOrHeight)); return new Vector2(w / k, h / k);   // r62: modo EXPAND
         }
         // ---- helpers de interface (mesma linguagem visual do lobby)
         static Button Btn(Transform p, string text, Vector2 aMin, Vector2 aMax, Vector2 pos, Vector2 size, System.Action act, bool primary = false, int fs = 0)
         {
             var b = FBUI.Button(p, text, aMin, aMax, pos, size, () => { FBAudio.Synth("hover"); act?.Invoke(); }, primary);
             var t = b.GetComponentInChildren<Text>(); if (fs > 0) t.fontSize = fs; else if (!primary) t.fontSize = 16; t.supportRichText = true;
-            if (!primary) b.GetComponent<Image>().color = new Color(1, 1, 1, .07f);
+            if (!primary) b.GetComponent<Image>().color = Navy; else b.GetComponent<Image>().color = FBKit.Flag; FBKit.Round(b.GetComponent<Image>(), 8);
             return b;
         }
         /// <summary>Linha de layout (Vertical/Horizontal) com altura fixa.</summary>
@@ -138,10 +139,10 @@ namespace FreeBala
         static Button Chip(Transform p, string text, bool on, System.Action act, int fs = 14)
         {
             var im = new GameObject("chip_" + text, typeof(RectTransform), typeof(Image)).GetComponent<Image>(); im.transform.SetParent(p, false);
-            im.color = on ? FBUI.Gold : new Color(1, 1, 1, .07f);
-            var b = im.gameObject.AddComponent<Button>(); b.targetGraphic = im; var cb = b.colors; cb.highlightedColor = on ? new Color(1, .85f, .4f) : new Color(1.6f, 1.6f, 1.6f); cb.pressedColor = Gold2; b.colors = cb;
+            im.color = on ? FBKit.BlueDeep : Navy; FBKit.Round(im, 6);
+            var b = im.gameObject.AddComponent<Button>(); b.targetGraphic = im; var cb = b.colors; cb.highlightedColor = new Color(1.35f, 1.35f, 1.35f); cb.pressedColor = new Color(.8f, .9f, 1f); b.colors = cb;
             b.onClick.AddListener(() => { FBAudio.Synth("hover"); act?.Invoke(); });
-            var t = FBUI.Label(im.transform, text, fs, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(-8, 0), TextAnchor.MiddleCenter, true, on ? new Color(.07f, .06f, .04f) : Txt); t.supportRichText = true;
+            var t = FBUI.Label(im.transform, text, fs, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(-8, 0), TextAnchor.MiddleCenter, true, Color.white); t.supportRichText = true;
             t.horizontalOverflow = HorizontalWrapMode.Wrap; t.resizeTextForBestFit = true; t.resizeTextMinSize = 9; t.resizeTextMaxSize = fs;
             return b;
         }
@@ -176,7 +177,7 @@ namespace FreeBala
         }
         void Tab(Transform p, string text, bool on, System.Action act)
         {
-            var b = Chip(p, text, false, act, 16); var im = b.GetComponent<Image>(); im.color = on ? new Color(1, 1, 1, .1f) : new Color(1, 1, 1, .03f);
+            var b = Chip(p, text, false, act, 16); var im = b.GetComponent<Image>(); im.color = on ? NavyHi : new Color(.03f, .08f, .17f, .7f);
             b.GetComponentInChildren<Text>().color = on ? Gold2 : Dim;
             if (on) { var u = FBUI.Panel(b.transform, "sublinhado", new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 2), new Vector2(0, 4), Gold2); u.raycastTarget = false; }
         }
@@ -194,12 +195,12 @@ namespace FreeBala
             var R = FBCustomizeData.Roster;
             var r1 = Row(body, "sexo", 32);
             foreach (var (k, t, n) in new[] { ("all", "TODOS", R.Count), ("m", "MASCULINO", R.Count(e => !e.fem)), ("f", "FEMININO", R.Count(e => e.fem)) })
-            { var kk = k; Chip(r1, $"{t} <size=11><color=#{(sexF == k ? "3a2a08" : "f5ab17")}>{n}</color></size>", sexF == k, () => { sexF = kk; BuildLeft(); }, 14); }
+            { var kk = k; Chip(r1, $"{t} <size=11><color=#{(sexF == k ? "ffffff" : "5aa8ff")}>{n}</color></size>", sexF == k, () => { sexF = kk; BuildLeft(); }, 14); }
             var r2 = Row(body, "origem", 28);
             foreach (var (o, t) in new[] { (FBCustomizeData.Origin.All, "TODOS"), (FBCustomizeData.Origin.Original, "REGIONAIS"), (FBCustomizeData.Origin.Npc, "NPC"), (FBCustomizeData.Origin.Fav, "★ FAVORITOS") })
             { var oo = o; Chip(r2, t, originF == o, () => { originF = oo; BuildLeft(); }, 13); }
             // busca
-            var sr = Row(body, "busca", 36, false); var sbg = sr.gameObject.AddComponent<Image>(); sbg.color = new Color(1, 1, 1, .07f);
+            var sr = Row(body, "busca", 36, false); var sbg = sr.gameObject.AddComponent<Image>(); sbg.color = new Color(.01f, .04f, .1f, .9f); FBKit.Round(sbg, 8);
             FBUI.Label(sr, "⌕", 22, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(20, 0), new Vector2(30, 40), TextAnchor.MiddleCenter, false, Dim);
             var tx = FBUI.Label(sr, query, 18, Vector2.zero, Vector2.one, new Vector2(16, 0), new Vector2(-52, 0), TextAnchor.MiddleLeft, false, Txt); tx.raycastTarget = false; tx.supportRichText = false;
             var ph = FBUI.Label(sr, "Buscar pelo nome…", 17, Vector2.zero, Vector2.one, new Vector2(16, 0), new Vector2(-52, 0), TextAnchor.MiddleLeft, false, new Color(1, 1, 1, .3f)); ph.fontStyle = FontStyle.Italic;
@@ -280,7 +281,7 @@ namespace FreeBala
             var w = stage.wardrobe;
             if (!w || !w.Customizable)
             {
-                var m = FBUI.Label(body, "Este personagem é uma peça única do jogo original (malha e textura inteiras) e a pele dele não pôde ser separada com segurança (roupa camuflada ou marrom parecida com a pele).\n\nOs personagens <color=#f5ab17>IE</color> têm guarda-roupa completo, os <color=#f5ab17>NPCs</color> trocam pele, cabelo e roupa, e a maioria dos originais troca o <color=#f5ab17>tom de pele</color>.", 16, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.UpperLeft, false, Txt);
+                var m = FBUI.Label(body, "Este personagem é uma peça única do jogo original (malha e textura inteiras) e a pele dele não pôde ser separada com segurança (roupa camuflada ou marrom parecida com a pele).\n\nOs personagens <color=#5aa8ff>IE</color> têm guarda-roupa completo, os <color=#5aa8ff>NPCs</color> trocam pele, cabelo e roupa, e a maioria dos originais troca o <color=#5aa8ff>tom de pele</color>.", 16, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.UpperLeft, false, Txt);
                 m.supportRichText = true; m.gameObject.AddComponent<LayoutElement>().preferredHeight = 200;
                 var ir = Row(body, "ir", 50); Chip(ir, "VER PERSONAGENS PERSONALIZÁVEIS", false, () => { query = ""; originF = FBCustomizeData.Origin.All; tab = "chars"; BuildLeft(); var e = FBCustomizeData.Roster.FirstOrDefault(x => x.id.StartsWith("ie_")); if (e != null) Select(e.id); }, 15);
                 return;
@@ -319,10 +320,10 @@ namespace FreeBala
             Chip(acts, "ORIGINAL", false, () => { Commit(w.Default()); BuildLeft(); }, 15);
         }
         static string Pretty(string n) { if (string.IsNullOrEmpty(n)) return "Peça"; n = n.Replace("_", " ").Trim(); return n.Length > 1 ? char.ToUpperInvariant(n[0]) + n.Substring(1) : n; }
-        void Section(Transform p, string t) { var l = FBUI.Label(p, t, 13, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.LowerLeft, true, FBUI.Gold); l.gameObject.AddComponent<LayoutElement>().preferredHeight = 26; }
+        void Section(Transform p, string t) { var l = FBUI.Label(p, t, 13, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.LowerLeft, true, Gold2); l.gameObject.AddComponent<LayoutElement>().preferredHeight = 26; }
         void PartRow(Transform p, string name, bool on, System.Action act)
         {
-            var r = Row(p, "peca", 40, false); var im = r.gameObject.AddComponent<Image>(); im.color = on ? new Color(Gold2.r, Gold2.g, Gold2.b, .22f) : new Color(1, 1, 1, .05f);
+            var r = Row(p, "peca", 40, false); var im = r.gameObject.AddComponent<Image>(); im.color = on ? new Color(Gold2.r, Gold2.g, Gold2.b, .22f) : new Color(.05f, .11f, .23f, .8f);
             var b = r.gameObject.AddComponent<Button>(); b.targetGraphic = im; b.onClick.AddListener(() => { FBAudio.Synth("hover"); act(); BuildLeftKeepScroll(); });
             var ck = FBUI.Panel(r, "marca", new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(20, 0), new Vector2(16, 16), on ? Gold2 : new Color(1, 1, 1, .15f)); ck.raycastTarget = false;
             if (on) FBUI.Label(ck.transform, "✓", 13, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, TextAnchor.MiddleCenter, true, Color.black);
@@ -383,7 +384,7 @@ namespace FreeBala
             var vl = right.GetComponent<VerticalLayoutGroup>(); if (!vl) vl = right.gameObject.AddComponent<VerticalLayoutGroup>();
             vl.padding = new RectOffset(18, 18, 16, 16); vl.spacing = 8; vl.childControlHeight = vl.childControlWidth = true; vl.childForceExpandHeight = false; vl.childForceExpandWidth = true;
             Text L(string t, int fs, bool title, Color c, float h, TextAnchor a = TextAnchor.MiddleLeft) { var x = FBUI.Label(right, t, fs, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, a, title, c); x.supportRichText = true; x.gameObject.AddComponent<LayoutElement>().preferredHeight = h; return x; }
-            var idx = Row(right, "indice", 26, true, 4); FBUI.Label(idx, $"<color=#f5ab17>#{e.index + 1:00}</color> <size=12>/ {FBCustomizeData.Roster.Count} OPERADORES</size>", 20, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft, true, Dim).supportRichText = true;
+            var idx = Row(right, "indice", 26, true, 4); FBUI.Label(idx, $"<color=#5aa8ff>#{e.index + 1:00}</color> <size=12>/ {FBCustomizeData.Roster.Count} OPERADORES</size>", 20, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft, true, Dim).supportRichText = true;
             var fv = Chip(idx, FBCustomizeData.IsFav(e.id) ? "★ FAVORITO" : "☆ FAVORITAR", FBCustomizeData.IsFav(e.id), ToggleFav, 12); fv.gameObject.AddComponent<LayoutElement>().preferredWidth = 120;
             var nt = L(e.name.ToUpper(), 38, true, Txt, 54); nt.resizeTextForBestFit = true; nt.resizeTextMinSize = 20; nt.resizeTextMaxSize = 38; nt.gameObject.AddComponent<Shadow>().effectDistance = new Vector2(0, -3);
             L(Tags(e, using_), 13, true, Gold2, 20);
@@ -393,9 +394,9 @@ namespace FreeBala
             var custom = w && w.Customizable ? (w.HasSheet ? $"GUARDA-ROUPA: {w.Parts.Count(p => p.cat != "body")} PEÇAS" : (w.HasSkinMask ? "TOM DE PELE (APROXIMADO)" : "PERSONALIZÁVEL: PELE, CABELO E ROUPA")) : "PEÇA ÚNICA (SEM TROCA DE ROUPA)";
             var cr = Row(right, "visual", 40); var vb = Chip(cr, (w && w.Customizable ? "✂ PERSONALIZAR · " : "") + custom, false, () => SetTab("look"), 12); vb.interactable = w && w.Customizable;
             var use = Row(right, "usar", 78, false); var ub2 = FBUI.Button(use, "", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, Use, !using_);
-            ub2.GetComponentInChildren<Text>().text = ""; if (using_) ub2.GetComponent<Image>().color = new Color(.2f, .55f, .25f, .85f);
-            FBUI.Label(ub2.transform, using_ ? "✓ EM USO" : "USAR ESTE PERSONAGEM", using_ ? 28 : 24, Vector2.zero, Vector2.one, new Vector2(0, 9), new Vector2(-10, -24), TextAnchor.MiddleCenter, true, using_ ? Color.white : new Color(.165f, .082f, 0)).fontStyle = FontStyle.Italic;
-            FBUI.Label(ub2.transform, using_ ? "FIXO EM TODAS AS PARTIDAS" : fixedMode ? "TROCA O SEU PERSONAGEM" : "DESLIGA O MODO ALEATÓRIO", 11, new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 14), new Vector2(0, 16), TextAnchor.MiddleCenter, false, using_ ? new Color(1, 1, 1, .8f) : new Color(.165f, .082f, 0, .8f));
+            ub2.GetComponentInChildren<Text>().text = ""; ub2.GetComponent<Image>().color = using_ ? new Color(.08f, .45f, .22f, .95f) : FBKit.Flag;
+            FBUI.Label(ub2.transform, using_ ? "✓ EM USO" : "USAR ESTE PERSONAGEM", using_ ? 28 : 24, Vector2.zero, Vector2.one, new Vector2(0, 9), new Vector2(-10, -24), TextAnchor.MiddleCenter, true, using_ ? Color.white : Color.white).fontStyle = FontStyle.Italic;
+            FBUI.Label(ub2.transform, using_ ? "FIXO EM TODAS AS PARTIDAS" : fixedMode ? "TROCA O SEU PERSONAGEM" : "DESLIGA O MODO ALEATÓRIO", 11, new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 14), new Vector2(0, 16), TextAnchor.MiddleCenter, false, using_ ? new Color(1, 1, 1, .8f) : new Color(1, 1, 1, .8f));
             var ar = Row(right, "acoes", 44); Chip(ar, "SORTEAR", false, Shuffle, 14); Chip(ar, "♪ DANÇAR", false, () => stage.PlayDance(), 14); Chip(ar, "CENTRALIZAR", false, () => stage.ResetView(), 12);
             L("COMO VOCÊ ENTRA NA PARTIDA", 12, true, Dim, 22, TextAnchor.LowerLeft);
             var mr = Row(right, "modo", 52);

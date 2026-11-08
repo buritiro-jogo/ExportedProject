@@ -974,9 +974,11 @@ namespace FreeBala
         public bool PlayDance(string clip, string sitEnter = null, string sitOut = null)
         {
             if (LE < 0 || !Has(clip) || !alive || FBEmotes.IsFF(clip)) return false;   // r47: emote FF não toca nem vindo da rede (cliente antigo)
+            var edef = FBEmotes.Get(clip); if (edef != null && !string.IsNullOrEmpty(edef.only) && edef.only != skinId) return false;   // r62: exclusivo só no dono
             StopWaitPose(); var c = FBRegistry.I.Clip(clip);
             bool emote = !clip.StartsWith("FF_SYS_") && !clip.StartsWith("REB_");
             string first = clip; float len = emote ? Mathf.Max(c.length * 2, 6) : c.isLooping ? 20 : c.length; var chain = new Queue<(string, bool)>();
+            if (emote && edef != null && edef.reps > 0) len = c.length * edef.reps;   // r62: emote com número de passadas (moonwalk do Michael)
             if (sitEnter != null && Has(sitEnter)) { first = sitEnter; len = FBRegistry.I.Clip(first).length; chain.Enqueue((clip, true)); }
             else if (sitEnter != null) len = 1e9f;
             fullClip = null; PlayFull(first, .25f);

@@ -82,7 +82,7 @@ namespace FreeBala
             if (mode.ffa) { FFA = true; var p = mode.SpawnPoint(); Teleport(Player, p, SpawnYaw(p)); }
             bool noCivs = FBEconomy.EconMode(FBSession.mode) || FBSession.mode == "treino" || FBSession.mode == "ffa" || FBSession.online || FBSession.mode == "role" || FBSession.mode == "br";
             if (!noCivs) SpawnCivilians(10); B("civis");
-            if (FBSession.map != "estande" && FBSession.map != "bermuda") FBGraffiti.Place(FBSession.map);   // grafites v4 (todos os mapas, cada arte uma vez)
+            if (FBSession.map != "estande" && FBSession.map != "bermuda") { FBGraffiti.Place(FBSession.map); FBSponsors.Place(FBSession.map); if (System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-fbpatrocinio") >= 0) new GameObject("TestePatrocinio").AddComponent<FBSponsorShots>(); }   // grafites v4 (todos os mapas, cada arte uma vez) + logos dos patrocinadores nos contêineres (r62)
             B("grafites"); if (FBSession.mode == "role") FBRole.Setup(this); else { FBAmbientScenery.Spawn(this); FBTactics.Spawn(); }
             B(FBSession.mode == "role" ? "rolê (trânsito/NPCs)" : "cenário/táticas"); FBStreetEvents.Boot(this); B("eventos de rua");
             if (FBSession.mode != "role" && FBSession.map != "estande" && FBSession.map != "bermuda") { FBVestirRua.Dress(); B("objetos do 171"); }   // r44                                                                   // carro do açaí e baculejo (rodada 39)

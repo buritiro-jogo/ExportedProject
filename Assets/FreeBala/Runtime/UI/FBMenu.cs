@@ -80,6 +80,7 @@ namespace FreeBala
 
             { var cv = FBUI.Canvas("Lobby", 5).transform; var sa = FBUI.Rect(cv, "area_segura", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero); sa.gameObject.AddComponent<FBSafeArea>(); root = sa; }   // r47: entalhe/cantos do celular
 
+            FBLobbyNet.Ensure(); FBMenuAvisos.Create();   // r62: conexão de lobby (amigos/squad) e avisos/convites por cima de tudo
             Home(); if (WantTitle()) Title();   // r61: tela de título só na primeira abertura
 
             FBAudio.SetLoop("menu_music", "music", .9f);   /* r47: categoria MÚSICA (o volume do ajuste entra na hora; antes saía pelos efeitos e só valia ao reabrir o menu) */
@@ -96,7 +97,11 @@ namespace FreeBala
 
             if (System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-fbmenu") >= 0) StartCoroutine(MenuShots());
 
-            if (System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-fbposelab") >= 0) StartCoroutine(PoseShots());   // r61: comparação das poses do palco
+            if (System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-fbposelab") >= 0) StartCoroutine(PoseShots());
+            if (System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-fbsquad") >= 0) StartCoroutine(SquadShots());
+            if (System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-fbmoonwalk") >= 0) StartCoroutine(MoonShots());   /* r62: emote exclusivo do Michael */
+            { var aa = System.Environment.GetCommandLineArgs(); int pi = System.Array.IndexOf(aa, "-fbpatrocinio");   // r62: teste das logos nos contêineres
+              if (pi >= 0 && pi + 1 < aa.Length) { FBSponsors.keepMap = FBSession.map; FBSponsors.keepMode = FBSession.mode; FBSession.map = aa[pi + 1]; FBSession.mode = "treino"; FBSession.online = false; FBSession.Save(); Go(); return; /* salva: o carregamento relê o salvo (o teste devolve no fim) */ } }   // r62: squad com amigos de mentira   // r61: comparação das poses do palco
 
         }
 
@@ -230,7 +235,7 @@ namespace FreeBala
 
             if (FBSession.mode == "pvl") Seg("SEU LADO", new[] { "FARINHA · POLÍCIA", "BURITI · LADRÃO" }, FBSession.team, i => FBSession.team = i);
 
-            FBKit.Primary(b, "CONFIRMAR", RX, Mathf.Max(y0 + 12, 600), RW, 54, () => { if (preview) preview.SetActive(true); Home(); });
+            FBKit.Primary(b, "CONFIRMAR", RX, Mathf.Max(y0 + 12, 600), RW, 54, () => { if (preview) preview.SetActive(true); var back = matchBack ?? Home; matchBack = null; back(); });   // r62: volta para quem abriu (INÍCIO ou SQUAD)
 
         }
 
@@ -284,7 +289,7 @@ namespace FreeBala
 
             var p = Page("ARSENAL", false); if (preview) preview.SetActive(false);   // sem véu escuro: a arma 3D fica ATRÁS da tela (véu apagava a arma)
 
-            var b = FBUI.Rect(p, "corpo", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero); b.offsetMin = new Vector2(26, 18); b.offsetMax = new Vector2(-26, -74);
+            var b = Box1548(p);   // r62: quadro fixo centrado (antes esticava na tela toda e o rodapé saía da tela em 21:9)
 
             const float LW = 220, RW = 290, G = 16, H = 808, CAR = 120; float MW = 1548 - LW - RW - 2 * G, MX = LW + G, RX = MX + MW + G;
 
@@ -292,7 +297,7 @@ namespace FreeBala
 
             // ---- esquerda: equipamento + categorias
 
-            FBKit.Box(b, "fundoL", -10, -8, LW + 20, H - CAR - G + 12, new Color(.02f, .025f, .03f, .82f), false); FBKit.Box(b, "fundoR", RX - 10, -8, RW + 20, H - CAR - G + 12, new Color(.02f, .025f, .03f, .82f), false); FBKit.Box(b, "fundoB", -10, H - CAR - 8, 1568, CAR + 22, new Color(.02f, .025f, .03f, .82f), false);
+            FBKit.Box(b, "fundoL", -10, -8, LW + 20, H - CAR - G + 12, new Color(.02f, .055f, .12f, .84f), false); FBKit.Box(b, "fundoR", RX - 10, -8, RW + 20, H - CAR - G + 12, new Color(.02f, .055f, .12f, .84f), false); FBKit.Box(b, "fundoB", -10, H - CAR - 8, 1568, CAR + 18, new Color(.02f, .055f, .12f, .84f), false);
 
             Hdr(b, "EQUIPAMENTO", 0, 0, LW);
 
@@ -302,9 +307,8 @@ namespace FreeBala
 
                 var (k, n) = LOADOUT[i]; var id = Slot(k); bool on = id == arSel; var t = FBKit.Tile(b, "slot_" + k, 0, 24 + i * 76, LW, 68, false, () => { if (W.TryGetValue(id ?? "", out var dd)) { arCls = ClsOf(dd); arSel = id; arPage = -1; arOpen = null; Arsenal(); } });
 
-                t.GetComponent<Image>().color = on ? new Color(1, .74f, .12f, .14f) : new Color(1, 1, 1, .04f);
-
-                FBKit.Box(t.transform, "borda", 0, 0, 3, 68, on ? FBKit.Gold : new Color(.33f, .33f, .33f), false);
+                t.GetComponent<Image>().color = on ? FBKit.Sel : FBKit.Card;
+                FBKit.Box(t.transform, "borda", 0, 0, 3, 68, on ? FBKit.Gold : new Color(.22f, .36f, .6f), false);
 
                 FBKit.T(t.transform, n, 9, 12, 8, 120, 14, TextAnchor.MiddleLeft, true, FBKit.Dim);
 
@@ -324,7 +328,7 @@ namespace FreeBala
 
                 var t = FBKit.Tile(b, "cat_" + cl, 0, 286 + i * 40, LW, 36, false, () => { arCls = cl; arSel = null; arPage = 0; arOpen = null; Arsenal(); });
 
-                t.GetComponent<Image>().color = on ? new Color(1, .74f, .12f, .16f) : new Color(0, 0, 0, 0); t.GetComponent<Outline>().enabled = false;
+                t.GetComponent<Image>().color = on ? FBKit.Sel : new Color(0, 0, 0, 0); t.GetComponent<Outline>().enabled = false;
 
                 if (on) FBKit.Box(t.transform, "borda", 0, 0, 2, 36, FBKit.Gold, false);
 
@@ -360,7 +364,7 @@ namespace FreeBala
 
                 var part = parts.First(x => x.kind == arOpen); var opts = Json.L(raw, arOpen); var ol = new List<int>(); if (arOpen == "scopes" || arOpen == "lasers" || arOpen == "grips") ol.Add(-1); for (int i = 0; i < opts.Count; i++) if (opts[i] != null) ol.Add(i);
 
-                var tb = FBKit.Box(b, "bandeja", MX, viewH + 8, MW, trayH, new Color(.04f, .05f, .055f, .92f)); tb.GetComponent<Outline>().effectColor = new Color(1, .74f, .12f, .35f);
+                var tb = FBKit.Box(b, "bandeja", MX, viewH + 8, MW, trayH, new Color(.03f, .08f, .17f, .94f)); tb.GetComponent<Outline>().effectColor = new Color(.45f, .72f, 1f, .4f);
 
                 FBKit.T(tb.transform, part.l + "   <color=#9aa3ab>escolha uma opção</color>", 10, 10, 6, 400, 16, TextAnchor.MiddleLeft, true, FBKit.Gold).supportRichText = true;
 
@@ -392,9 +396,9 @@ namespace FreeBala
 
                 var t = FBKit.Tile(b, "peca_" + kind, MX + i * (pw + 8), slotsY, pw, 70, false, () => { arOpen = arOpen == kind ? null : kind; Arsenal(); });
 
-                t.GetComponent<Image>().color = on ? new Color(1, .74f, .12f, .16f) : new Color(.055f, .067f, .08f, .85f);
+                t.GetComponent<Image>().color = on ? FBKit.Sel : new Color(.04f, .1f, .21f, .88f);
 
-                FBKit.Box(t.transform, "topo", 0, 0, pw, 2, on ? FBKit.Gold : new Color(1, 1, 1, .12f), false);
+                FBKit.Box(t.transform, "topo", 0, 0, pw, 2, on ? FBKit.Gold : new Color(.45f, .65f, 1f, .25f), false);
 
                 FBKit.T(t.transform, l, 9, 10, 12, pw - 20, 14, TextAnchor.MiddleLeft, true, FBKit.Dim);
 
@@ -432,7 +436,7 @@ namespace FreeBala
 
                 ("MUNIÇÃO", ammo, 200, ammo.ToString()), ("SILÊNCIO", sil ? 90 : 20, 100, sil ? "silenciada" : "alta") };
 
-            var sb = FBKit.Box(b, "atributos", RX, 24, RW, 22 + stats.Length * 34, new Color(.04f, .05f, .055f, .6f)).transform;
+            var sb = FBKit.Box(b, "atributos", RX, 24, RW, 22 + stats.Length * 34, new Color(.03f, .08f, .17f, .75f)).transform;
 
             for (int i = 0; i < stats.Length; i++)
 
@@ -440,7 +444,7 @@ namespace FreeBala
 
                 var s = stats[i]; float y = 12 + i * 34; FBKit.T(sb, s.l, 10, 12, y, 140, 14, TextAnchor.MiddleLeft, true, FBKit.Dim); FBKit.T(sb, s.f, 12, RW - 132, y, 120, 14, TextAnchor.MiddleRight, true, FBKit.Txt);
 
-                var bg = FBKit.Box(sb, "barra", 12, y + 18, RW - 24, 5, new Color(1, 1, 1, .08f), false); FBKit.Box(bg.transform, "f", 0, 0, (RW - 24) * Mathf.Clamp(s.v / s.m, .03f, 1), 5, new Color(.93f, .91f, .86f), false);
+                var bg = FBKit.Box(sb, "barra", 12, y + 18, RW - 24, 5, new Color(1, 1, 1, .08f), false); FBKit.Box(bg.transform, "f", 0, 0, (RW - 24) * Mathf.Clamp(s.v / s.m, .03f, 1), 5, FBKit.Blue, false);
 
             }
 
@@ -448,13 +452,13 @@ namespace FreeBala
 
             var info = new[] { ("TIPO", CLASS_N[ClsOf(d)]), ("PENTE", ammo + " balas"), ("DISPARO", d.pellets > 1 ? $"Chumbo ({d.pellets})" : d.auto ? "Automático" : d.bolt ? "Ferrolho" : "Semi"), ("SLOT", LOADOUT.First(x => x.k == slotK).n) };
 
-            for (int i = 0; i < 4; i++) { var t = FBKit.Box(b, "info", RX + (i % 2) * (cw + 6), iy + (i / 2) * 50, cw, 44, new Color(1, 1, 1, .035f)).transform; FBKit.T(t, info[i].Item1, 9, 9, 6, cw - 18, 12, TextAnchor.MiddleLeft, true, FBKit.Dim); FBKit.T(t, info[i].Item2, 13, 9, 20, cw - 18, 18, TextAnchor.MiddleLeft, true, Color.white); }
+            for (int i = 0; i < 4; i++) { var t = FBKit.Box(b, "info", RX + (i % 2) * (cw + 6), iy + (i / 2) * 50, cw, 44, FBKit.Card).transform; FBKit.T(t, info[i].Item1, 9, 9, 6, cw - 18, 12, TextAnchor.MiddleLeft, true, FBKit.Dim); FBKit.T(t, info[i].Item2, 13, 9, 20, cw - 18, 18, TextAnchor.MiddleLeft, true, Color.white); }
 
             float ey = H - CAR - G - 64;
 
             if (eq) { var t = FBKit.Box(b, "equipada", RX, ey, RW, 64, new Color(.21f, .76f, .35f, .16f)); t.GetComponent<Outline>().effectColor = new Color(.21f, .76f, .35f, .5f); FBKit.T(t.transform, "✓ EQUIPADA", 20, 0, 10, RW, 28, TextAnchor.MiddleCenter, true, new Color(.48f, .89f, .6f)); FBKit.T(t.transform, "SLOT " + LOADOUT.First(x => x.k == slotK).n, 10, 0, 40, RW, 14, TextAnchor.MiddleCenter, true, new Color(.48f, .89f, .6f, .7f)); }
 
-            else { var bt = FBKit.Primary(b, "EQUIPAR", RX, ey, RW, 64, () => { SetSlot(slotK, d.id); FBSession.Save(); Arsenal(); }); var tx = bt.GetComponentInChildren<Text>(); tx.fontSize = 22; tx.rectTransform.anchoredPosition += new Vector2(0, 7); FBKit.T(bt.transform, "NO SLOT " + LOADOUT.First(x => x.k == slotK).n, 10, 0, 42, RW, 14, TextAnchor.MiddleCenter, true, new Color(.16f, .1f, 0, .7f)); }
+            else { var bt = FBKit.Primary(b, "EQUIPAR", RX, ey, RW, 64, () => { SetSlot(slotK, d.id); FBSession.Save(); Arsenal(); }); var tx = bt.GetComponentInChildren<Text>(); tx.fontSize = 22; tx.rectTransform.anchoredPosition += new Vector2(0, 7); FBKit.T(bt.transform, "NO SLOT " + LOADOUT.First(x => x.k == slotK).n, 10, 0, 42, RW, 14, TextAnchor.MiddleCenter, true, new Color(1, 1, 1, .75f)); }
 
             // ---- rodapé: carrossel
 
@@ -472,9 +476,8 @@ namespace FreeBala
 
                 var t = FBKit.Tile(b, "card_" + w.id, 42 + i * (CWD + CG), cy, CWD, CAR, false, () => { arSel = w.id; arOpen = null; Arsenal(); });
 
-                t.GetComponent<Image>().color = on ? new Color(.16f, .14f, .07f, .95f) : new Color(.08f, .095f, .11f, .95f); if (on) t.GetComponent<Outline>().effectColor = new Color(1, .74f, .12f, .6f);
-
-                FBKit.Box(t.transform, "base", 0, CAR - 3, CWD, 3, on ? FBKit.Gold : new Color(.2f, .2f, .2f), false);
+                t.GetComponent<Image>().color = on ? new Color(.1f, .27f, .56f, .95f) : new Color(.04f, .1f, .21f, .92f); if (on) t.GetComponent<Outline>().effectColor = new Color(.5f, .76f, 1f, .8f);
+                FBKit.Box(t.transform, "base", 0, CAR - 3, CWD, 3, on ? FBKit.Gold : new Color(.18f, .3f, .52f), false);
 
                 var ic = FBIcons.Weapon(w.id, 280, 110); if (ic) { var ri = FBKit.At(t.transform, "ic", 10, 20, CWD - 20, 58).gameObject.AddComponent<RawImage>(); ri.texture = ic; ri.raycastTarget = false; }
 
@@ -484,7 +487,7 @@ namespace FreeBala
 
             }
 
-            if (pages > 1) for (int i = 0; i < pages; i++) FBKit.Box(b, "pg", 1548 / 2f - pages * 10.5f + i * 21, H + 6, 16, 3, i == arPage ? FBKit.Gold : new Color(1, 1, 1, .18f), false);
+            if (pages > 1) for (int i = 0; i < pages; i++) FBKit.Box(b, "pg", 1548 / 2f - pages * 10.5f + i * 21, H - CAR - 9, 16, 3, i == arPage ? FBKit.Gold : new Color(1, 1, 1, .18f), false);
 
             StartCoroutine(PlaceWeapon(d, view.rectTransform));
 
@@ -576,7 +579,7 @@ namespace FreeBala
 
             yield return new WaitForSeconds(2.5f);
 
-            var pages = new (string n, System.Action a)[] { ("titulo", () => { Home(); Title(); }), ("inicio", Home), ("partida", MatchPicker), ("armas", Arsenal), ("armas_mira", () => { arOpen = "scopes"; Arsenal(); }), ("armas_pistola", () => { arOpen = null; arCls = "pistola"; arSel = null; Arsenal(); }), ("emotes", Emotes), ("passe", Pass), ("controles", Controls), ("ajustes", () => { Home(); FBSettings.Open(root, 0); }), ("ajustes_audio", () => { Home(); FBSettings.Open(root, 1); }), ("ajustes_video", () => { Home(); FBSettings.Open(root, 2); }), ("online", Online) };
+            var pages = new (string n, System.Action a)[] { ("titulo", () => { Home(); Title(); }), ("inicio", Home), ("partida", MatchPicker), ("armas", Arsenal), ("armas_mira", () => { arOpen = "scopes"; Arsenal(); }), ("armas_pistola", () => { arOpen = null; arCls = "pistola"; arSel = null; Arsenal(); }), ("emotes", Emotes), ("passe", Pass), ("squad", Squad), ("squad_bots", () => { sqVsBots = true; Squad(); }), ("sair", () => { sqVsBots = false; Home(); ConfirmQuit(); }), ("controles", Controls), ("ajustes", () => { Home(); FBSettings.Open(root, 0); }), ("ajustes_audio", () => { Home(); FBSettings.Open(root, 1); }), ("ajustes_video", () => { Home(); FBSettings.Open(root, 2); }), ("online", Online) };
 
             foreach (var (n, a) in pages) { a(); yield return new WaitForSeconds(1.5f); ScreenCapture.CaptureScreenshot(System.IO.Path.Combine(dir, "menu_" + n + ".png")); yield return new WaitForSeconds(.6f); }
 
@@ -658,109 +661,7 @@ namespace FreeBala
 
 
 
-        // ---------------------------------------------------------------- EMOTES
-
-        // esquerda: catálogo com miniatura da pose; palco no centro mostra o emote; direita: os 8 da roda e a dança da vitória
-
-        void Emotes()
-
-        {
-
-            var p = Page("EMOTES"); var eq = FBEmotes.Equipped(); var b = FBKit.Body(p, 64);
-
-            FBKit.Box(b, "fundoL", 0, 16, 380, 740, new Color(0, 0, 0, .55f)); FBKit.Section(b, "CATÁLOGO · CLIQUE PARA EQUIPAR", 14, 30, 360);
-
-            var list = FBKit.Scroll(b, 8, 58, 364, 690);
-
-            foreach (var e in FBEmotes.All.Where(x => FBRegistry.I.Clip(x.id)).OrderBy(x => x.cat).ThenBy(x => x.name))
-
-            {
-
-                var ee = e; bool on = eq.Contains(e.id);
-
-                var r = FBKit.Row(list, "          " + e.name.ToUpper(), on ? "NA RODA ✓" : e.cat.ToUpper(), on, () =>
-
-                {
-
-                    var l = FBEmotes.Equipped(); if (l.Contains(ee.id)) l.Remove(ee.id); else { if (l.Count >= 8) l.RemoveAt(0); l.Add(ee.id); }
-
-                    FBSession.emoteSlots = string.Join("|", l); FBSession.Save(); Preview(false, ee.id); Emotes();
-
-                }, 48);
-
-                var ic = FBIcons.Emote(e.id, FBSession.skin, 96); if (ic) { var ri = FBUI.Rect(r.transform, "ic", new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(34, 0), new Vector2(42, 42)).gameObject.AddComponent<RawImage>(); ri.texture = ic; ri.raycastTarget = false; }
-
-            }
-
-            const float RX = 900, RW = 340;
-
-            var box = FBKit.Box(b, "roda", RX, 16, RW, 470, new Color(0, 0, 0, .55f)).transform; FBKit.Section(box, $"NA RODA ({eq.Count}/8)", 14, 14, 300);
-
-            for (int i = 0; i < 8; i++)
-
-            {
-
-                float x = 14 + (i % 2) * 160, y = 44 + (i / 2) * 104; var id = i < eq.Count ? eq[i] : null; var t = FBKit.Box(box, "slot", x, y, 152, 96, FBKit.Card).transform;
-
-                if (id == null) { FBKit.T(t, "VAZIO", 11, 0, 0, 152, 96, TextAnchor.MiddleCenter, true, FBKit.Dim); continue; }
-
-                var ic = FBIcons.Emote(id, FBSession.skin, 96); if (ic) { var ri = FBKit.At(t, "ic", 46, 6, 60, 60).gameObject.AddComponent<RawImage>(); ri.texture = ic; ri.raycastTarget = false; }
-
-                FBKit.T(t, FBEmotes.NameOf(id).ToUpper(), 10, 6, 70, 140, 20, TextAnchor.MiddleCenter, true, FBKit.Txt);
-
-            }
-
-            FBKit.Section(b, "DANÇA DA VITÓRIA", RX, 504, RW);
-
-            FBKit.TextTile(b, FBSession.victory != null ? FBEmotes.NameOf(FBSession.victory).ToUpper() + "  ›" : "ALEATÓRIA  ›", RX, 530, RW, 44, true, () => { var l = FBEmotes.Equipped(); int i = l.IndexOf(FBSession.victory ?? ""); FBSession.victory = i + 1 < l.Count ? l[i + 1] : null; FBSession.Save(); Emotes(); }, 14);
-
-            FBKit.T(b, "Na partida: segure B para abrir a roda de emotes.", 12, RX, 590, RW, 40, TextAnchor.UpperLeft, false, FBKit.Dim);
-
-        }
-
-
-
         // ---------------------------------------------------------------- PASSE / CONTROLES / ONLINE
-
-        void Pass()
-
-        {
-
-            var p = Page("PASSE DE BATALHA", true); var b = FBKit.Body(p, 64); int tier = FBPass.Tier; FBPass.Claimed = Mathf.Min(FBPass.TIERS, tier + 1);
-
-            int into = FBSession.passXp % FBPass.PER_TIER;
-
-            FBKit.T(b, "TEMPORADA 1", 12, 0, 22, 400, 18, TextAnchor.MiddleLeft, true, FBKit.Gold);
-
-            FBKit.T(b, $"NÍVEL {tier}", 34, 0, 40, 400, 44, TextAnchor.MiddleLeft, true, Color.white);
-
-            var bar = FBKit.Box(b, "barra", 0, 96, FBKit.MaxW, 8, new Color(1, 1, 1, .1f), false); FBKit.Box(bar.transform, "f", 0, 0, FBKit.MaxW * into / (float)FBPass.PER_TIER, 8, FBKit.Gold, false);
-
-            FBKit.T(b, $"{into} / {FBPass.PER_TIER} XP PARA O PRÓXIMO NÍVEL", 12, FBKit.MaxW - 500, 70, 500, 18, TextAnchor.MiddleRight, true, FBKit.Dim);
-
-            const float S = 112, G = 12;
-
-            for (int i = 0; i < FBPass.TIERS; i++)
-
-            {
-
-                bool got = i < tier, next = i == tier; float x = (i % 10) * (S + G), y = 136 + (i / 10) * (S + 34);
-
-                var t = FBKit.Box(b, "nivel", x, y, S, S, got ? new Color(1, .74f, .12f, .2f) : next ? new Color(1, 1, 1, .09f) : FBKit.Card).transform;
-
-                if (got || next) t.GetComponent<Outline>().effectColor = got ? new Color(1, .74f, .12f, .8f) : new Color(1, 1, 1, .4f);
-
-                FBKit.T(t, (i + 1).ToString(), 30, 0, 18, S, 50, TextAnchor.MiddleCenter, true, got ? FBKit.Gold : FBKit.Txt);
-
-                FBKit.T(t, got ? "LIBERADO" : next ? "PRÓXIMO" : "BLOQUEADO", 10, 0, 76, S, 18, TextAnchor.MiddleCenter, true, got ? FBKit.Gold : FBKit.Dim);
-
-                FBKit.T(b, i % 5 == 4 ? "★ PRÊMIO" : "$ " + (100 + i * 20), 11, x, y + S + 6, S, 16, TextAnchor.MiddleCenter, true, FBKit.Dim);
-
-            }
-
-            FBKit.T(b, "Abate +100 XP  ·  Tiro na cabeça +150  ·  Partida +200  ·  Vitória +500", 13, 0, 590, FBKit.MaxW, 20, TextAnchor.MiddleCenter, false, FBKit.Dim);
-
-        }
 
         void Controls()
         {
@@ -844,28 +745,7 @@ namespace FreeBala
 
         }
 
-        void Online()
-
-        {
-
-            var p = Page("JOGAR ONLINE", true); if (preview) preview.SetActive(false); var b = FBKit.Body(p, 64); const float W = 560; float x = (FBKit.MaxW - W) / 2;
-
-            var box = FBKit.Box(b, "online", x, 90, W, 420, new Color(0, 0, 0, .55f)).transform;
-
-            FBKit.T(box, "SALA ONLINE", 22, 28, 24, W - 56, 30, TextAnchor.MiddleLeft, true, Color.white);
-
-            FBKit.T(box, "Mesmo servidor do jogo web: navegador e app entram na mesma sala.", 13, 28, 58, W - 56, 36, TextAnchor.UpperLeft, false, FBKit.Dim);
-
-            InputField F(string label, string val, float y) { FBKit.Section(box, label, 28, y, W); var bg = FBKit.Box(box, "campo", 28, y + 26, W - 56, 44, new Color(1, 1, 1, .06f)); bg.raycastTarget = true; var t = FBKit.T(bg.transform, val, 17, 14, 0, W - 84, 44, TextAnchor.MiddleLeft, false, Color.white); var f = bg.gameObject.AddComponent<InputField>(); f.textComponent = t; f.text = val; return f; }
-
-            var nameF = F("SEU NOME", FBSession.name, 112); var serverF = F("SERVIDOR (ws://IP:8123/ws)", FBSession.server, 200);
-
-            FBKit.Primary(box, "ENTRAR NA SALA DO MAPA", 28, 320, W - 56, 56, () => { { var nn = FBSession.CleanName(nameF.text, out _); if (nn != null) FBSession.SetName(nn.ToUpper()); } FBSession.server = serverF.text.Trim(); FBSession.online = true; FBSession.Save(); Go(); });
-
-        }
-
-
-
+        void Online() => Squad();   // r62: tela antiga de sala online virou a tela de SQUAD (FBMenuPaginas.cs)
         void Play() { FBSession.online = false; FBSession.Save(); Go(); }
 
         void Go()

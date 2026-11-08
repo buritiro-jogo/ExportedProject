@@ -46,8 +46,8 @@ namespace FreeBala
             ids = FBEmotes.Equipped(); if (ids.Count == 0) return; if (go) Object.Destroy(go);
             var c = FBUI.Canvas("RodaEmotes", 25); go = c.gameObject; labels = new Text[ids.Count];
             var ring = FBUI.Panel(c.transform, "anel", new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, new Vector2(520, 520), new Color(0, 0, 0, .45f)); ring.sprite = FBUI.CircleSprite;
-            for (int i = 0; i < ids.Count; i++) { float a = i / (float)ids.Count * Mathf.PI * 2; labels[i] = FBUI.Label(c.transform, FBEmotes.NameOf(ids[i]).ToUpper(), 14, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(Mathf.Sin(a), Mathf.Cos(a)) * 190 - new Vector2(0, 46), new Vector2(170, 30), TextAnchor.MiddleCenter, true);
-                var tex = FBIcons.Emote(ids[i], FBSession.skin, 128);   // pose do emote (FBIcons)
+            for (int i = 0; i < ids.Count; i++) { float a = i / (float)ids.Count * Mathf.PI * 2; labels[i] = FBUI.Label(c.transform, FBMenu.EmName(FBEmotes.NameOf(ids[i])), 14, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(Mathf.Sin(a), Mathf.Cos(a)) * 190 - new Vector2(0, 46), new Vector2(170, 30), TextAnchor.MiddleCenter, true);
+                var tex = FBIcons.EmoteWhite(ids[i], FBSession.skin, 128);   // pose do emote (FBIcons), silhueta branca (r62)
                 if (tex) { var ri = new GameObject("icone", typeof(RectTransform), typeof(RawImage)); var rr = (RectTransform)ri.transform; rr.SetParent(c.transform, false); rr.anchorMin = rr.anchorMax = new Vector2(.5f, .5f); rr.anchoredPosition = new Vector2(Mathf.Sin(a), Mathf.Cos(a)) * 190 + new Vector2(0, 8); rr.sizeDelta = new Vector2(96, 96); var rw = ri.GetComponent<RawImage>(); rw.texture = tex; rw.raycastTarget = false; } }
             sel = -1; Cursor.lockState = CursorLockMode.None; Cursor.visible = true; go.AddComponent<FBEmoteWheelTicker>();
         }
@@ -96,8 +96,10 @@ namespace FreeBala
         {
             var bg = FBUI.Panel(parent, "ajustes", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, new Color(0, 0, 0, .8f));
             bg.gameObject.AddComponent<FBSettingsSaver>();
-            const float W = 980, H = 820;   // r61: 720 não cabia as 11 linhas de CONTROLES (o rodapé cobria o HUD mobile) lastTab = tab = Mathf.Clamp(tab, 0, TABS.Length - 1);
+            const float W = 980, H = 820;   // r61: 720 não cabia as 11 linhas de CONTROLES (o rodapé cobria o HUD mobile)
+            lastTab = tab = Mathf.Clamp(tab, 0, TABS.Length - 1);   // r62: o comentário do r61 tinha engolido esta linha (abas não voltavam)
             var p = FBKit.Box(bg.transform, "painel", 0, 0, W, H, FBKit.Bg, false); var pr = p.rectTransform; pr.anchorMin = pr.anchorMax = pr.pivot = new Vector2(.5f, .5f); pr.anchoredPosition = Vector2.zero; p.raycastTarget = true; FBKit.Frame(p);
+            p.gameObject.AddComponent<FBFitParent>();   // r62: encolhe se a tela lógica for menor que o painel (pausa na HUD meio a meio)
             var o = p.transform;
             FBKit.T(o, "AJUSTES", 24, 32, 22, 400, 34, TextAnchor.MiddleLeft, true, Color.white);
             FBKit.Box(o, "fio", 32, 66, W - 64, 1, FBKit.Line, false);

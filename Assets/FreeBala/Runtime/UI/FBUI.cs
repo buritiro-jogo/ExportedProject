@@ -40,10 +40,15 @@ namespace FreeBala
         public static Sprite HitSprite => hit ? hit : hit = Make(64, (x, y) => { float ax = Mathf.Abs(x), ay = Mathf.Abs(y); bool arm = (ax < .1f && ay > .35f) || (ay < .1f && ax > .35f); return arm ? 1 : 0; });
         public static Sprite ArrowSprite => arrow ? arrow : arrow = Make(64, (x, y) => { float yy = (y + 1) / 2; return Mathf.Abs(x) < (1 - yy) * .9f && y > -.8f ? 1 : 0; });
 
-        public static Canvas Canvas(string name, int order)
+        // r62 (pedido 07/11: "tudo preso à tela visível, nada passa dos limites"): telas montadas para 1600×900 usam o modo EXPAND do
+        // CanvasScaler — o retângulo lógico nunca fica menor que 1600×900, então nada do layout sai da tela em 21:9, 4:3 ou janelas
+        // estreitas (o "meio a meio" antigo deixava a tela lógica com ~780 de altura em 2000×843 e cortava rodapés e painéis).
+        // fit=false mantém o meio a meio (HUD da partida e editor do HUD mobile, que guardam posições nesse referencial).
+        public static Canvas Canvas(string name, int order, bool fit = true)
         {
             var g = new GameObject(name); var c = g.AddComponent<Canvas>(); c.renderMode = RenderMode.ScreenSpaceOverlay; c.sortingOrder = order;
             var s = g.AddComponent<CanvasScaler>(); s.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize; s.referenceResolution = new Vector2(1600, 900); s.matchWidthOrHeight = .5f;
+            if (fit) s.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
             g.AddComponent<GraphicRaycaster>();
             if (!Object.FindAnyObjectByType<EventSystem>()) { var es = new GameObject("EventSystem"); es.AddComponent<EventSystem>(); es.AddComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>(); }
             return c;

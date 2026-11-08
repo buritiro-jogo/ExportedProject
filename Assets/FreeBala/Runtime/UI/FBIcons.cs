@@ -77,6 +77,15 @@ namespace FreeBala
             var tex = Shoot(size, size); Object.DestroyImmediate(go); tex.name = "emote_" + clipId; return cache[k] = tex;
         }
 
+        // r62: emote em silhueta TODA branca (rodas de emotes do menu e da partida); cópia separada, a colorida continua no catálogo
+        public static Texture2D EmoteWhite(string clipId, string charId, int size = 160)
+        {
+            var src = Emote(clipId, charId, size); if (!src) return null; string k = "w|" + clipId + "|" + charId + "|" + size; if (cache.TryGetValue(k, out var c) && c) return c;
+            var px = src.GetPixels32();
+            for (int i = 0; i < px.Length; i++) { var a = px[i].a; px[i] = new Color32(255, 255, 255, a < 8 ? (byte)0 : (byte)Mathf.Min(255, a * 1.15f)); }
+            var t = new Texture2D(src.width, src.height, TextureFormat.RGBA32, false); t.SetPixels32(px); t.Apply(false, false); t.name = "emote_branco_" + clipId; return cache[k] = t;
+        }
+
         // silhueta branca (HUD preto e branco, estilo FF): mantém o alfa, um leve sombreado pela luminância dá volume
         static void Mono(Texture2D t)
         {

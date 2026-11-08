@@ -42,6 +42,73 @@ namespace FreeBala
         [System.Serializable] class SvShot { public string n; public float x, y, h, z = 2.5f, fov = 60f, p; }
         [System.Serializable] class SvList { public SvShot[] pts; }
         static void Log(string s) => Debug.Log("[FreeBala][tour] " + s);
+        // r62: o que está no centro da vista (caminho, camada, materiais) e o que há a 4 m do ponto — para achar objeto que o render do Blender não tem
+        static string PathOf(Transform t) { string s = ""; for (int k = 0; t && k < 6; k++, t = t.parent) s = t.name + "/" + s; return s; }
+        static string MatDesc(Material m)
+        {
+            string tp = m.HasProperty("_BaseMap") ? "_BaseMap" : m.HasProperty("baseColorTexture") ? "baseColorTexture" : null; var t = tp != null ? m.GetTexture(tp) : null;
+            return $"{m.name}[{(m.shader ? m.shader.name : "?")}|tex {(t ? t.name + " " + t.width : "-")}|kw {string.Join(" ", m.shaderKeywords)}]";
+        }
+        // r62: renderers (com ou sem colisor) cuja CAIXA cruza o raio do centro — acha o que só é desenhado (sem colisor)
+        static Renderer[] allR;
+        static void ProbeRends(Camera cam, string n)
+        {
+            if (allR == null) allR = Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None);
+            var ray = new Ray(cam.transform.position, cam.transform.forward); var l = new List<(float d, Renderer r)>();
+            foreach (var r in allR)
+            {
+                if (!r || !r.enabled || r.forceRenderingOff || !r.gameObject.activeInHierarchy || r is ParticleSystemRenderer) continue;
+                var b = r.bounds; if (Mathf.Max(b.size.x, b.size.z) > 60 || !b.IntersectRay(ray, out float d) || d > 80) continue; l.Add((d, r));
+            }
+            l.Sort((a, b) => a.d.CompareTo(b.d));
+            for (int k = 0; k < l.Count && k < 10; k++)
+            {
+                var r = l[k].r; var mf = r.GetComponent<MeshFilter>(); var mats = string.Join(",", System.Linq.Enumerable.Select(System.Linq.Enumerable.Where(r.sharedMaterials, m => m), m => MatDesc(m)));
+                Log($"sonda {n}:   caixa no raio {l[k].d:0.0} m · {PathOf(r.transform)} · cena {r.gameObject.scene.name} · camada {r.gameObject.layer} · colisor {(r.GetComponent<Collider>() ? "sim" : "não")} · tam {r.bounds.size:F1} · malha {(mf && mf.sharedMesh ? mf.sharedMesh.name : "-")} · {mats}");
+            }
+        }
+        // r62: -fbmatdump nome1,nome2 → todas as propriedades do material em jogo + a textura base gravada como PNG (o que a GPU tem)
+        static bool dumped;
+        static void DumpMats()
+        {
+            if (dumped) return; dumped = true;
+            var a = System.Environment.GetCommandLineArgs(); int i = System.Array.IndexOf(a, "-fbmatdump"); if (i < 0 || i + 1 >= a.Length) return;
+            var want = new HashSet<string>(a[i + 1].Split(','));
+            foreach (var m in Resources.FindObjectsOfTypeAll<Material>())
+            {
+                if (!m || !want.Contains(m.name)) continue; var sh = m.shader; var sb = new System.Text.StringBuilder();
+                for (int k = 0; k < sh.GetPropertyCount(); k++)
+                {
+                    var pn = sh.GetPropertyName(k); var ty = sh.GetPropertyType(k);
+                    string v = ty == UnityEngine.Rendering.ShaderPropertyType.Color ? m.GetColor(pn).ToString("F3") : ty == UnityEngine.Rendering.ShaderPropertyType.Vector ? m.GetVector(pn).ToString("F3")
+                        : ty == UnityEngine.Rendering.ShaderPropertyType.Texture ? (m.GetTexture(pn) ? m.GetTexture(pn).name + " st " + m.GetTextureScale(pn).ToString("F2") + m.GetTextureOffset(pn).ToString("F2") : "-") : ty == UnityEngine.Rendering.ShaderPropertyType.Int ? m.GetInt(pn).ToString() : m.GetFloat(pn).ToString("0.###");
+                    sb.Append(pn).Append('=').Append(v).Append("; ");
+                }
+                Log($"matdump {m.name} [{sh.name}] fila {m.renderQueue} kw [{string.Join(" ", m.shaderKeywords)}] passes {m.passCount} · {sb}");
+                foreach (var tn in m.GetTexturePropertyNames())
+                {
+                    var t = m.GetTexture(tn) as Texture2D; if (!t) continue;
+                    var rt = RenderTexture.GetTemporary(256, 256, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB); Graphics.Blit(t, rt);
+                    var prev = RenderTexture.active; RenderTexture.active = rt; var o = new Texture2D(256, 256, TextureFormat.RGB24, false); o.ReadPixels(new Rect(0, 0, 256, 256), 0, 0); o.Apply();
+                    RenderTexture.active = prev; RenderTexture.ReleaseTemporary(rt);
+                    var dir = System.IO.Path.Combine(Application.dataPath, "../autoteste/tour"); System.IO.Directory.CreateDirectory(dir);
+                    System.IO.File.WriteAllBytes(System.IO.Path.Combine(dir, $"mat_{m.name}_{tn}.png"), o.EncodeToPNG()); Object.Destroy(o);
+                    Log($"matdump {m.name}.{tn}: {t.name} {t.width}x{t.height} {t.format} mips {t.mipmapCount} sRGB {t.isDataSRGB} gravada");
+                }
+            }
+        }
+        static void Probe(Camera cam, string n)
+        {
+            ProbeRends(cam, n); DumpMats();
+            if (!Physics.Raycast(cam.transform.position, cam.transform.forward, out var h, 120, ~0, QueryTriggerInteraction.Ignore)) { Log($"sonda {n}: nada no centro"); return; }
+            var r = h.collider.GetComponentInParent<Renderer>() ?? h.collider.GetComponentInChildren<Renderer>();
+            string mats = r ? string.Join(",", System.Linq.Enumerable.Select(System.Linq.Enumerable.Where(r.sharedMaterials, m => m), m => MatDesc(m))) : "-";
+            if (r) Log($"sonda {n}:   renderer {PathOf(r.transform)} · {r.GetType().Name} · ativo {r.enabled} · caixa {r.bounds.size:F1}");
+            Log($"sonda {n}: centro bate em {PathOf(h.collider.transform)} a {h.distance:0.0} m · camada {h.collider.gameObject.layer} · colisor {h.collider.GetType().Name} · mats {mats}");
+            var seen = new HashSet<Transform>();
+            foreach (var c in Physics.OverlapSphere(h.point, 4f, ~0, QueryTriggerInteraction.Collide))
+            { var t = c.transform; if (!seen.Add(t) || seen.Count > 12) continue; Log($"sonda {n}:   perto {PathOf(t)} · {c.GetType().Name} · caixa {c.bounds.size:F1}"); }
+        }
         IEnumerator Wait(float s) { for (float w = 0; w < s; w += Time.unscaledDeltaTime) yield return null; }
         IEnumerator Start()
         {
@@ -78,6 +145,7 @@ namespace FreeBala
                     FBDistanceCull.Refresh(); yield return Wait(1.6f);
                     ScreenCapture.CaptureScreenshot(System.IO.Path.Combine(dir, $"sv_{p.n}.png")); yield return null; yield return null;
                     Log($"sv {p.n}: chão {gy:0.00} · tris {Rec(tr) / 1000}k · draw calls {Rec(dc)}"); ok++;
+                    Probe(cam, p.n);
                 }
                 cam.fieldOfView = fov0; Log($"fim sv · {ok}/{sv.pts.Length} vistas"); FBSession.map = keepMap; FBSession.mode = keepMode; FBSession.Save(); Application.Quit(); yield break;
             }

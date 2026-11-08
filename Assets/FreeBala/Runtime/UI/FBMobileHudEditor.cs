@@ -65,7 +65,7 @@ namespace FreeBala
 
         void BuildUI()
         {
-            canvas = FBUI.Canvas("FBMobileHudEditor_Canvas", 90);
+            canvas = FBUI.Canvas("FBMobileHudEditor_Canvas", 90, false);
             canvas.transform.SetParent(transform, false);
             var root = canvas.transform;
 

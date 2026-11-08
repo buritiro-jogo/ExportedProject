@@ -143,8 +143,8 @@ namespace FreeBala
             {
                 var item = it; bool sel = it.id == selId, can = Afford(it), inHand = !it.gear && wu.Cur != null && wu.Cur.id == it.id;
                 var g = new GameObject("carta_" + it.id, typeof(RectTransform), typeof(Image), typeof(CanvasGroup)); g.transform.SetParent(gridR, false);
-                var im = g.GetComponent<Image>(); Color baseC = sel ? new Color(1, .74f, .12f, .14f) : it.own ? GreenBg : FBKit.Card; im.color = baseC;
-                var ol = g.AddComponent<Outline>(); ol.effectColor = sel ? new Color(1, .74f, .12f, .95f) : FBKit.Line; ol.effectDistance = sel ? new Vector2(2, -2) : new Vector2(1, -1);
+                var im = g.GetComponent<Image>(); Color baseC = sel ? FBKit.Sel : it.own ? GreenBg : FBKit.Card; im.color = baseC;
+                var ol = g.AddComponent<Outline>(); ol.effectColor = sel ? new Color(.45f, .72f, 1f, .95f) : FBKit.Line; ol.effectDistance = sel ? new Vector2(2, -2) : new Vector2(1, -1);
                 g.GetComponent<CanvasGroup>().alpha = can || it.own ? 1 : .5f;
                 var t = g.transform;
                 FBKit.T(t, it.name, 15, 12, 10, 208, 20, TextAnchor.MiddleLeft, true);
@@ -206,7 +206,7 @@ namespace FreeBala
             FBKit.Box(detailR, "fundo", 0, 0, W, 590, Panel);
             FBKit.Section(detailR, hoverId != null && hoverId != selId ? "PRÉVIA" : "SELECIONADO", 14, 14, 300);
             var art = FBKit.Box(detailR, "arte", 14, 42, W - 28, 168, new Color(1, 1, 1, .035f));
-            var glow = FBKit.At(art.transform, "brilho", (W - 28) / 2 - 150, 4, 300, 160).gameObject.AddComponent<Image>(); glow.sprite = FBUI.CircleSprite; glow.color = new Color(1, .74f, .12f, .07f); glow.raycastTarget = false;
+            var glow = FBKit.At(art.transform, "brilho", (W - 28) / 2 - 150, 4, 300, 160).gameObject.AddComponent<Image>(); glow.sprite = FBUI.CircleSprite; glow.color = new Color(.27f, .6f, 1f, .08f); glow.raycastTarget = false;
             var tex = !it.gear ? FBIcons.Weapon(it.id, 512, 224) : null;
             if (tex) { var ri = FBKit.At(art.transform, "img", 16, 10, W - 60, 148).gameObject.AddComponent<RawImage>(); ri.texture = tex; ri.raycastTarget = false; }
             else FBKit.T(art.transform, GearGlyph(it.id), 30, 0, 0, W - 28, 168, TextAnchor.MiddleCenter, true, new Color(1, 1, 1, .3f));
@@ -274,7 +274,7 @@ namespace FreeBala
             for (int i = 0; i < 3; i++)
             {
                 var d = wu.slots[i]; bool cur = wu.cur == i;
-                var b = FBKit.Box(loadR, "slot" + i, x, 0, 218, 88, cur ? new Color(1, .74f, .12f, .12f) : FBKit.Card);
+                var b = FBKit.Box(loadR, "slot" + i, x, 0, 218, 88, cur ? FBKit.Sel : FBKit.Card);
                 if (cur) { var a = FBKit.At(b.transform, "acento", 0, 85, 218, 3).gameObject.AddComponent<Image>(); a.color = FBKit.Gold; a.raycastTarget = false; }
                 FBKit.T(b.transform, $"{i + 1}  {SLOT[i]}", 10, 10, 8, 120, 14, TextAnchor.MiddleLeft, true, FBKit.Dim);
                 if (d != null)

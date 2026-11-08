@@ -24,9 +24,10 @@ namespace FreeBala
     public partial class FBMenu
     {
         // paleta da logo oficial: branco, amarelo da estrela, azul e verde da bandeira de Roraima, laranja do buriti
-        static readonly Color Yel = new(.98f, .77f, .1f), YelDark = new(.12f, .07f, 0), Ink = new(.95f, .95f, .96f), InkDim = new(.95f, .95f, .96f, .6f),
+        static readonly Color Yel = new(.36f, .66f, 1f), YelDark = new(1, 1, 1),   // r62: acento azul da bandeira (era o amarelo)
+            Ink = new(.95f, .95f, .96f), InkDim = new(.95f, .95f, .96f, .6f),
             InkFaint = new(.95f, .95f, .96f, .34f), RRBlue = new(.2f, .47f, .88f), RRGreen = new(.13f, .55f, .22f), Buriti = new(.9f, .48f, .16f),
-            GlassC = new(.035f, .045f, .06f, .74f), Stroke = new(1, 1, 1, .1f);
+            GlassC = new(.02f, .06f, .14f, .8f), Stroke = new(.55f, .72f, 1f, .2f);   // r62: azul-marinho (era cinza)
         static readonly Vector3 CamHome = new(0, 1.18f, -6.3f);      // páginas com o personagem no centro (emotes): enquadramento antigo
         static readonly Vector3 CamHero = new(0, .93f, -5.2f);       // INÍCIO: mais perto, o personagem enche ~70 % da altura
         static readonly Vector3 HeroPos = new(.72f, 0, 0);           // terço direito da tela
@@ -52,7 +53,7 @@ namespace FreeBala
                 l.transform.SetParent(lightRig, false); l.transform.localPosition = at; l.transform.localRotation = Quaternion.LookRotation(new Vector3(0, 1.1f, 0) - at); return l;
             }
             Spot("RecorteAzul", new Vector3(-2.0f, 3.0f, 2.3f), new Color(.38f, .58f, 1f), 30);
-            Spot("RecorteQuente", new Vector3(2.1f, 2.7f, 2.0f), new Color(1, .56f, .22f), 26);
+            Spot("RecorteVerde", new Vector3(2.1f, 2.7f, 2.0f), new Color(.45f, 1f, .6f), 18);   // r62: verde da bandeira (era laranja)
             var fill = new GameObject("Preenchimento").AddComponent<Light>(); fill.type = LightType.Point; fill.range = 9; fill.intensity = 2.6f; fill.color = new Color(1, .86f, .7f);
             fill.transform.SetParent(lightRig, false); fill.transform.localPosition = new Vector3(-.4f, .6f, -2.2f);
         }
@@ -170,14 +171,14 @@ namespace FreeBala
 
         void HomeTopBar(Transform p)
         {
-            Pic(p, "logo", T("logo"), new Vector2(0, 1), new Vector2(0, .5f), new Vector2(36, -44), new Vector2(288, 50));
+            Pic(p, "logo", T("logo"), new Vector2(0, 1), new Vector2(0, .5f), new Vector2(36, -44), new Vector2(242, 42));   // r62: menor (cabe a aba SQUAD)
             FlagTick(p, new Vector2(0, 1), new Vector2(0, .5f), new Vector2(40, -80), 96, 3);
             // abas
-            var tabs = new (string l, System.Action a)[] { ("JOGAR", null), ("ARSENAL", Arsenal), ("PERSONAGEM", Characters), ("EMOTES", Emotes), ("PASSE", Pass) };
-            float x = 36 + 288 + 44; int pend = FBPass.Claimable();
+            var tabs = new (string l, System.Action a)[] { ("JOGAR", null), ("SQUAD", Squad), ("ARSENAL", Arsenal), ("PERSONAGEM", Characters), ("EMOTES", Emotes), ("PASSE", Pass) };
+            float x = 36 + 242 + 40; int pend = FBPass.Claimable();
             foreach (var (l, a) in tabs)
             {
-                bool on = a == null; var t = Tx(p, l, 16, new Vector2(0, 1), new Vector2(0, .5f), new Vector2(x, -44), new Vector2(200, 30), TextAnchor.MiddleLeft, true, on ? Ink : InkDim);
+                bool on = a == null; var t = Tx(p, l, 15, new Vector2(0, 1), new Vector2(0, .5f), new Vector2(x, -44), new Vector2(200, 30), TextAnchor.MiddleLeft, true, on ? Ink : InkDim);
                 float w = t.preferredWidth; t.rectTransform.sizeDelta = new Vector2(w + 2, 30);
                 var hit = Bx(p, "aba_" + l, new Vector2(0, 1), new Vector2(0, .5f), new Vector2(x - 12, -44), new Vector2(w + 24, 48), new Color(1, 1, 1, 0), 8);
                 hit.transform.SetSiblingIndex(t.transform.GetSiblingIndex());
@@ -188,28 +189,30 @@ namespace FreeBala
                     var b = Bx(p, "selo", new Vector2(0, 1), new Vector2(0, .5f), new Vector2(x + w + 4, -34), new Vector2(18, 18), FBKit.Red, 9);
                     Tx(b.transform, pend.ToString(), 10, new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, new Vector2(18, 18), TextAnchor.MiddleCenter, true, Color.white);
                 }
-                x += w + 40;
+                x += w + 32;
             }
             // direita: perfil, atalhos e dinheiro
             int lvl = Level(out float k, out int into, out int need);
-            var prof = Glass(p, "perfil", new Vector2(1, 1), new Vector2(1, .5f), new Vector2(-36, -44), new Vector2(232, 52), 12);
+            var prof = Glass(p, "perfil", new Vector2(1, 1), new Vector2(1, .5f), new Vector2(-36, -44), new Vector2(222, 52), 12);
             var ring = Bx(prof.transform, "aro", new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(5, 0), new Vector2(42, 42), Yel, 10);
             var mask = Bx(ring.transform, "recorte", new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, new Vector2(38, 38), Color.white, 8); mask.gameObject.AddComponent<Mask>().showMaskGraphic = false;
             var avt = FBCustomizeThumbs.Get(FBSession.skin) ?? T("avatar");
             var av = Pic(mask.transform, "avatar", avt, new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, new Vector2(38, 38)); av.uvRect = avt == T("avatar") ? new Rect(0, .25f, 1, .75f) : new Rect(0, 0, 1, 1);
-            nameT = Tx(prof.transform, (FBSession.name ?? "JOGADOR").ToUpper(), 14, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(56, 9), new Vector2(150, 20), TextAnchor.MiddleLeft, true, Ink);
+            nameT = Tx(prof.transform, (FBSession.name ?? "JOGADOR").ToUpper(), 14, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(56, 9), new Vector2(140, 20), TextAnchor.MiddleLeft, true, Ink);
             Tx(prof.transform, $"NÍVEL {lvl}", 10, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(56, -7), new Vector2(60, 14), TextAnchor.MiddleLeft, true, Yel);
-            var xb = Bx(prof.transform, "xp", new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(112, -7), new Vector2(104, 3), new Color(1, 1, 1, .14f), 1);
-            Bx(xb.transform, "f", new Vector2(0, .5f), new Vector2(0, .5f), Vector2.zero, new Vector2(104 * k, 3), Yel, 1);
+            var xb = Bx(prof.transform, "xp", new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(112, -7), new Vector2(94, 3), new Color(1, 1, 1, .14f), 1);
+            Bx(xb.transform, "f", new Vector2(0, .5f), new Vector2(0, .5f), Vector2.zero, new Vector2(94 * k, 3), FBKit.Flag, 1);
             Pic(prof.transform, "editar", T("ic_edit"), new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-10, 8), new Vector2(13, 13), InkFaint);
             Click(prof, NameDialog, .05f, 1.02f);
-            float ix = -36 - 232 - 12;
-            foreach (var (ic, a) in new (string, System.Action)[] { ("ic_gear", () => FBSettings.Open(root)), ("ic_keyboard", Controls), ("ic_users", Online) })
+            float ix = -36 - 222 - 10;
+            // r62: botão SAIR DO JOGO (pedido "preciso de um botão de sair do jogo, para fechar o game") ao lado do perfil; ESC no início também pergunta
+            foreach (var (ic, a) in new (string, System.Action)[] { ("ic_power", ConfirmQuit), ("ic_gear", () => FBSettings.Open(root)), ("ic_keyboard", Controls), ("ic_users", Squad) })
             {
-                var b = Glass(p, "atalho_" + ic, new Vector2(1, 1), new Vector2(1, .5f), new Vector2(ix, -44), new Vector2(44, 44), 12);
-                var icon = Pic(b.transform, "ic", T(ic), new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, new Vector2(20, 20), InkDim);
-                var hv = Click(b, a, .08f, 1.06f).GetComponent<FBHover>(); hv.onHover = h => icon.color = h ? Yel : InkDim;
-                ix -= 44 + 8;
+                var b = Glass(p, "atalho_" + ic, new Vector2(1, 1), new Vector2(1, .5f), new Vector2(ix, -44), new Vector2(42, 42), 12);
+                var icon = Pic(b.transform, "ic", T(ic), new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, new Vector2(19, 19), InkDim);
+                Color hc = ic == "ic_power" ? new Color(1, .42f, .38f) : Yel;
+                var hv = Click(b, a, .08f, 1.06f).GetComponent<FBHover>(); hv.onHover = h => icon.color = h ? hc : InkDim;
+                ix -= 42 + 6;
             }
             MoneyPill(p, new Vector2(1, 1), new Vector2(ix - 4, -44));
         }
@@ -220,15 +223,15 @@ namespace FreeBala
             var mp = GameData.Maps.TryGetValue(FBSession.map, out var mm) ? mm.name : FBSession.map; var wx = FBSession.WeatherFor(FBSession.map);
             var a = new Vector2(0, 0); const float X = 48, W = 420;
             // JOGAR
-            var play = Bx(p, "jogar", a, a, new Vector2(X, 44), new Vector2(W, 84), Yel, 8); play.gameObject.AddComponent<Mask>().showMaskGraphic = true;
-            { var sh = play.gameObject.AddComponent<Shadow>(); sh.effectColor = new Color(1, .7f, 0, .28f); sh.effectDistance = new Vector2(0, -5); }
+            var play = Bx(p, "jogar", a, a, new Vector2(X, 44), new Vector2(W, 84), FBKit.Flag, 8);   // r62: JOGAR verde play.gameObject.AddComponent<Mask>().showMaskGraphic = true;
+            { var sh = play.gameObject.AddComponent<Shadow>(); sh.effectColor = new Color(0, .45f, .15f, .35f); sh.effectDistance = new Vector2(0, -5); }
             var arrowBox = Bx(play.transform, "seta_fundo", new Vector2(1, .5f), new Vector2(1, .5f), Vector2.zero, new Vector2(84, 84), new Color(0, 0, 0, .12f));
             var arrow = R(arrowBox.transform, "seta", new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(3, 0), new Vector2(30, 30)).gameObject.AddComponent<Image>(); arrow.sprite = FBUI.ArrowSprite; arrow.color = YelDark; arrow.raycastTarget = false; arrow.rectTransform.localRotation = Quaternion.Euler(0, 0, -90);
             var pt = Tx(play.transform, "JOGAR", 40, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(26, 9), new Vector2(300, 48), TextAnchor.MiddleLeft, true, YelDark); pt.fontStyle = FontStyle.Italic;
             Tx(play.transform, $"{M.name}  ·  {mp.ToUpper()}", 11, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(28, -22), new Vector2(300, 16), TextAnchor.MiddleLeft, true, new Color(YelDark.r, YelDark.g, YelDark.b, .72f));
             { var band = FBUI.Rect(play.transform, "brilho", new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, new Vector2(60, 220)); band.localRotation = Quaternion.Euler(0, 0, -22); var bi = band.gameObject.AddComponent<RawImage>(); bi.texture = GlintTex; bi.color = new Color(1, 1, .92f, .55f); bi.raycastTarget = false;
               var gl = play.gameObject.AddComponent<FBGlint>(); gl.band = band; gl.width = W; }
-            Click(play, Play, .12f, 1.025f);
+            Click(play, PlayOrParty, .12f, 1.025f);   // r62: com squad, o líder inicia a partida do squad
             // ALTERAR PARTIDA e AMIGOS
             var chg = Glass(p, "alterar", a, a, new Vector2(X, 140), new Vector2(W - 56 - 8, 46), 10);
             Tx(chg.transform, "ALTERAR PARTIDA", 14, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(18, 0), new Vector2(240, 26), TextAnchor.MiddleLeft, true, Ink);
@@ -236,11 +239,11 @@ namespace FreeBala
             Click(chg, MatchPicker, .07f, 1.015f);
             var fr = Glass(p, "amigos", a, a, new Vector2(X + W - 56, 140), new Vector2(56, 46), 10);
             var fi = Pic(fr.transform, "ic", T("ic_users"), new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, new Vector2(20, 20), InkDim);
-            Click(fr, Online, .08f, 1.05f).GetComponent<FBHover>().onHover = h => fi.color = h ? Yel : InkDim;
+            Click(fr, Squad, .08f, 1.05f).GetComponent<FBHover>().onHover = h => fi.color = h ? Yel : InkDim;
             // condições
             float cx = X; foreach (var s in new[] { DIFFS[Mathf.Clamp(FBSession.diff, 0, 2)], wx.time == "noite" ? "NOITE" : wx.time == "anoitecer" ? "ANOITECER" : "DIA", wx.weather == "chuva" ? "CHUVA" : "TEMPO LIMPO" })
             {
-                var c = Bx(p, "cond", a, a, new Vector2(cx, 206), new Vector2(10, 24), new Color(1, 1, 1, .06f), 12); var o = c.gameObject.AddComponent<Outline>(); o.effectColor = Stroke; o.effectDistance = new Vector2(1, -1);
+                var c = Bx(p, "cond", a, a, new Vector2(cx, 206), new Vector2(10, 24), new Color(.08f, .2f, .42f, .6f), 12); var o = c.gameObject.AddComponent<Outline>(); o.effectColor = Stroke; o.effectDistance = new Vector2(1, -1);
                 var ct = Tx(c.transform, s, 10, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(12, 0), new Vector2(160, 18), TextAnchor.MiddleLeft, true, InkDim);
                 float w = ct.preferredWidth + 24; c.rectTransform.sizeDelta = new Vector2(w, 24); cx += w + 6;
             }
@@ -263,7 +266,7 @@ namespace FreeBala
         {
             var a = new Vector2(1, 1); const float X = -36, W = 340;
             // NOVIDADES
-            var card = Glass(p, "novidades", a, a, new Vector2(X, -96), new Vector2(W, 196), 12, new Color(.03f, .035f, .045f, .9f)); card.gameObject.AddComponent<Mask>().showMaskGraphic = true;
+            var card = Glass(p, "novidades", a, a, new Vector2(X, -96), new Vector2(W, 196), 12, new Color(.02f, .05f, .12f, .92f)); card.gameObject.AddComponent<Mask>().showMaskGraphic = true;
             var news = card.gameObject.AddComponent<FBNews>();
             var slides = new List<FBNews.Slide>();
             int tier = FBPass.Tier, pend = FBPass.Claimable();
@@ -284,6 +287,7 @@ namespace FreeBala
             var bar = Bx(pc.transform, "barra", new Vector2(0, 0), new Vector2(0, 0), new Vector2(16, 12), new Vector2(W - 32, 4), new Color(1, 1, 1, .1f), 2);
             Bx(bar.transform, "f", new Vector2(0, .5f), new Vector2(0, .5f), Vector2.zero, new Vector2((W - 32) * into / (float)FBPass.PER_TIER, 4), Yel, 2);
             Click(pc, Pass, .06f, 1.015f);
+            HomeSquadCard(p, a, X, -396, W);   // r62
         }
 
         void HomeCharTag(Transform p)
@@ -352,7 +356,11 @@ namespace FreeBala
             if (lightRig) lightRig.position = show ? preview.transform.position : Vector3.zero;
             if (stageFx) stageFx.target = show ? preview.transform : null;
             var kb = Keyboard.current;
-            if (kb != null && kb.escapeKey.wasPressedThisFrame && !atHome && !Customize && !FBLoading.Busy && !root.GetComponentInChildren<FBTitleWait>()) { if (nameDlg) Destroy(nameDlg); else { if (preview) preview.SetActive(true); Home(); } }
+            if (kb != null && kb.escapeKey.wasPressedThisFrame && !Customize && !FBLoading.Busy && !root.GetComponentInChildren<FBTitleWait>())
+            {
+                if (quitDlg) Destroy(quitDlg); else if (nameDlg) Destroy(nameDlg); else if (root.Find("ajustes")) Destroy(root.Find("ajustes").gameObject);
+                else if (!atHome) { if (preview) preview.SetActive(true); Home(); } else ConfirmQuit();   // r62: ESC no início = sair do jogo?
+            }
         }
     }
 
@@ -379,22 +387,22 @@ namespace FreeBala
         {
             var layer = FBUI.Rect(transform, "efeitos", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero); fx = layer.gameObject.AddComponent<CanvasGroup>(); fx.blocksRaycasts = false;
             coolI = Img(layer, "brilho_azul", glow, new Vector2(1000, 1000), new Color(.2f, .42f, .95f, .2f)); cool = coolI.rectTransform;
-            warmI = Img(layer, "brilho_quente", glow, new Vector2(1150, 1050), new Color(.95f, .5f, .16f, .3f)); warm = warmI.rectTransform;
+            warmI = Img(layer, "brilho_verde", glow, new Vector2(1150, 1050), new Color(.15f, .75f, .38f, .22f)); warm = warmI.rectTransform;
             beams = FBUI.Rect(layer, "fachos", new Vector2(.5f, 1), new Vector2(.5f, 1), Vector2.zero, new Vector2(10, 10));
             beamI = new RawImage[3];
-            var cols = new[] { new Color(1, .78f, .5f, .11f), new Color(.55f, .7f, 1f, .08f), new Color(1, .9f, .75f, .06f) };
+            var cols = new[] { new Color(.8f, .9f, 1f, .11f), new Color(.55f, .7f, 1f, .08f), new Color(.75f, 1f, .85f, .06f) };
             var rots = new[] { 14f, -17f, 4f }; var offs = new[] { -170f, 210f, 40f };
             for (int i = 0; i < 3; i++)
             {
                 var b = Img(beams, "facho", beam, new Vector2(i == 2 ? 300 : 420, 1150), cols[i]); var r = b.rectTransform;
                 r.anchorMin = r.anchorMax = new Vector2(.5f, 1); r.pivot = new Vector2(.5f, 1); r.anchoredPosition = new Vector2(offs[i], 40); r.localRotation = Quaternion.Euler(0, 0, rots[i]); beamI[i] = b;
             }
-            floorI = Img(layer, "luz_chao", floorGlow ? floorGlow : glow, new Vector2(760, 140), new Color(1, .82f, .6f, .85f)); floorR = floorI.rectTransform;
+            floorI = Img(layer, "luz_chao", floorGlow ? floorGlow : glow, new Vector2(760, 140), new Color(.75f, .88f, 1f, .8f)); floorR = floorI.rectTransform;
             var rnd = new System.Random(11);
             for (int i = 0; i < 46; i++)
             {
                 float s = 2 + (float)rnd.NextDouble() * 4, a = .1f + (float)rnd.NextDouble() * .3f;
-                var d = Img(layer, "poeira", glow, new Vector2(s, s), new Color(1, .9f, .75f, a)); var r = d.rectTransform;
+                var d = Img(layer, "poeira", glow, new Vector2(s, s), new Color(.85f, .93f, 1f, a)); var r = d.rectTransform;
                 r.anchorMin = r.anchorMax = new Vector2((float)rnd.NextDouble(), (float)rnd.NextDouble());
                 dust.Add((r, d, .006f + (float)rnd.NextDouble() * .018f, (float)rnd.NextDouble() * 6.28f, a));
             }
@@ -411,7 +419,7 @@ namespace FreeBala
             }
             warm.anchorMin = warm.anchorMax = tgt + new Vector2(.03f, .02f); cool.anchorMin = cool.anchorMax = tgt + new Vector2(-.13f, .09f);
             beams.anchorMin = beams.anchorMax = new Vector2(tgt.x, 1); beams.anchoredPosition = Vector2.zero;
-            warmI.color = new Color(.95f, .5f, .16f, .27f + Mathf.Sin(t * .7f) * .03f); coolI.color = new Color(.2f, .42f, .95f, .19f + Mathf.Sin(t * .5f + 1) * .03f);
+            warmI.color = new Color(.15f, .75f, .38f, .2f + Mathf.Sin(t * .7f) * .03f); coolI.color = new Color(.2f, .42f, .95f, .19f + Mathf.Sin(t * .5f + 1) * .03f);
             for (int i = 0; i < beamI.Length; i++) { var c = beamI[i].color; c.a = (i == 0 ? .11f : i == 1 ? .08f : .06f) * (.75f + .25f * Mathf.Sin(t * (.35f + i * .17f) + i * 2)); beamI[i].color = c; }
             foreach (var d in dust)
             {
@@ -432,9 +440,9 @@ namespace FreeBala
             img = FBUI.Rect(p, "foto", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero).gameObject.AddComponent<RawImage>(); img.raycastTarget = false;
             var sh = FBUI.Rect(p, "sombra", Vector2.zero, new Vector2(1, .75f), Vector2.zero, Vector2.zero).gameObject.AddComponent<RawImage>(); sh.texture = FBKit.GradTex; sh.raycastTarget = false; sh.rectTransform.offsetMin = sh.rectTransform.offsetMax = Vector2.zero;
             var cg = FBUI.Rect(p, "texto", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero); content = cg.gameObject.AddComponent<CanvasGroup>(); content.blocksRaycasts = false;
-            tagB = FBUI.Panel(cg, "tag", new Vector2(0, 1), new Vector2(0, 1), new Vector2(14 + 60, -14 - 10), new Vector2(120, 20), new Color(.98f, .77f, .1f)); FBKit.Pill(tagB); tagB.raycastTarget = false;
+            tagB = FBUI.Panel(cg, "tag", new Vector2(0, 1), new Vector2(0, 1), new Vector2(14 + 60, -14 - 10), new Vector2(120, 20), FBKit.BlueDeep); FBKit.Pill(tagB); tagB.raycastTarget = false;
             tagB.rectTransform.pivot = new Vector2(0, .5f); tagB.rectTransform.anchoredPosition = new Vector2(14, -24);
-            tagT = FBUI.Label(tagB.transform, "", 9, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, TextAnchor.MiddleCenter, true, new Color(.12f, .07f, 0));
+            tagT = FBUI.Label(tagB.transform, "", 9, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, TextAnchor.MiddleCenter, true, Color.white);
             titleT = FBUI.Label(cg, "", 20, new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 48), new Vector2(-28, 28), TextAnchor.MiddleLeft, true, Color.white);
             subT = FBUI.Label(cg, "", 12, new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 24), new Vector2(-28, 18), TextAnchor.MiddleLeft, false, new Color(1, 1, 1, .72f)); subT.font = FBKit.BodyFont;
             dots = new Image[slides.Count];
@@ -453,7 +461,7 @@ namespace FreeBala
             cur = i; var s = slides[i]; img.texture = s.tex; img.color = s.tex ? Color.white : new Color(.1f, .12f, .15f);
             if (s.tex) { float ar = (float)s.tex.width / s.tex.height, want = w / h; img.uvRect = ar > want ? new Rect((1 - want / ar) / 2, 0, want / ar, 1) : new Rect(0, (1 - ar / want) / 2, 1, ar / want); }
             tagT.text = s.tag; tagB.rectTransform.sizeDelta = new Vector2(tagT.preferredWidth + 20, 20); titleT.text = s.title; subT.text = s.sub;
-            for (int k = 0; k < dots.Length; k++) { dots[k].color = k == i ? new Color(.98f, .77f, .1f) : new Color(1, 1, 1, .3f); dots[k].rectTransform.sizeDelta = new Vector2(k == i ? 18 : 8, 8); }
+            for (int k = 0; k < dots.Length; k++) { dots[k].color = k == i ? FBKit.Blue : new Color(1, 1, 1, .3f); dots[k].rectTransform.sizeDelta = new Vector2(k == i ? 18 : 8, 8); }
         }
         void Update()
         {

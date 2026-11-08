@@ -68,7 +68,7 @@ namespace FreeBala
 
         {
 
-            I = this; canvas = FBUI.Canvas("HUD", 10); root = canvas.transform; CardOpen = false;
+            I = this; canvas = FBUI.Canvas("HUD", 10, false); root = canvas.transform; CardOpen = false;
 
             FBDamageIndicators.Ensure(root);                                                // arcos de direção do dano (rodada 37)
 

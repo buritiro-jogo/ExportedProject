@@ -13,9 +13,14 @@ namespace FreeBala
 {
     public static class FBKit
     {
-        public static readonly Color Bg = new(.035f, .04f, .05f, .94f), Card = new(1, 1, 1, .045f), CardHi = new(1, 1, 1, .09f), Line = new(1, 1, 1, .1f),
-            Txt = new(.93f, .92f, .88f), Dim = new(.93f, .92f, .88f, .55f), Gold = new(1, .74f, .12f), GoldDark = new(.16f, .1f, 0),
-            Glass = new(.05f, .058f, .07f, .74f), Red = new(.86f, .12f, .06f), Green = new(.45f, .95f, .55f);
+        // r62 (pedido 07/11: "as cores devem ser as cores da bandeira, azul, branco e verde" e "não gosto do fundo cinza nos cards"):
+        // cartões em azul-marinho translúcido (nada de cinza), acento AZUL da bandeira de Roraima (o campo "Gold" ficou com o nome antigo
+        // para não mexer nas dezenas de chamadas), confirmação/principal em VERDE, texto branco.
+        public static readonly Color Bg = new(.012f, .03f, .07f, .95f), Card = new(.07f, .14f, .27f, .62f), CardHi = new(.1f, .22f, .42f, .8f), Line = new(.55f, .72f, 1f, .16f),
+            Txt = new(.96f, .97f, 1f), Dim = new(.8f, .87f, 1f, .6f), Gold = new(.27f, .6f, 1f), GoldDark = new(1, 1, 1),
+            Glass = new(.02f, .06f, .13f, .8f), Red = new(.86f, .12f, .06f), Green = new(.45f, .95f, .55f),
+            Blue = new(.27f, .6f, 1f), BlueDeep = new(.08f, .3f, .7f), Flag = new(.13f, .66f, .33f), FlagDark = new(.06f, .42f, .2f),
+            Sel = new(.16f, .44f, .9f, .38f);
         public const float MaxW = 1240;
         public const int R = 6;   // raio padrão dos cartões
         static Font body;
@@ -63,8 +68,8 @@ namespace FreeBala
         // botão/cartão selecionável: fundo neutro, realce animado no hover, selecionado = borda + fio dourado embaixo
         public static Button Tile(Transform p, string n, float x, float y, float w, float h, bool sel, System.Action click)
         {
-            var im = Box(p, n, x, y, w, h, sel ? new Color(1, .74f, .12f, .14f) : Card); im.raycastTarget = true;
-            if (sel) { im.GetComponent<Outline>().effectColor = new Color(1, .74f, .12f, .9f); var ln = At(im.transform, "sel", 6, h - 3, w - 12, 3).gameObject.AddComponent<Image>(); ln.color = Gold; ln.raycastTarget = false; Pill(ln); }
+            var im = Box(p, n, x, y, w, h, sel ? Sel : Card); im.raycastTarget = true;
+            if (sel) { im.GetComponent<Outline>().effectColor = new Color(.45f, .72f, 1f, .95f); var ln = At(im.transform, "sel", 6, h - 3, w - 12, 3).gameObject.AddComponent<Image>(); ln.color = Gold; ln.raycastTarget = false; Pill(ln); }
             var b = im.gameObject.AddComponent<Button>(); b.targetGraphic = im; b.transition = Selectable.Transition.None;
             b.onClick.AddListener(() => { FBAudio.Synth("hover"); click?.Invoke(); });
             FBHover.Add(im, .07f, w * h > 60000 ? 1.008f : 1.02f);
@@ -74,10 +79,10 @@ namespace FreeBala
         { var b = Tile(p, "b_" + s, x, y, w, h, sel, click); T(b.transform, s, size, 0, 0, w, h, TextAnchor.MiddleCenter, true, sel ? Color.white : Txt); return b; }
         public static Button Primary(Transform p, string s, float x, float y, float w, float h, System.Action click)
         {
-            var im = Box(p, "b_" + s, x, y, w, h, Gold, false); im.raycastTarget = true; Round(im, 8); var b = im.gameObject.AddComponent<Button>(); b.targetGraphic = im; b.transition = Selectable.Transition.None;
+            var im = Box(p, "b_" + s, x, y, w, h, Flag, false); im.raycastTarget = true; Round(im, 8); var b = im.gameObject.AddComponent<Button>(); b.targetGraphic = im; b.transition = Selectable.Transition.None;
             b.onClick.AddListener(() => { FBAudio.Synth("hover"); click?.Invoke(); });
-            var sh = im.gameObject.AddComponent<Shadow>(); sh.effectColor = new Color(1, .6f, 0, .25f); sh.effectDistance = new Vector2(0, -4);
-            T(im.transform, s, 18, 0, 0, w, h, TextAnchor.MiddleCenter, true, GoldDark); FBHover.Add(im, .2f, 1.03f); return b;
+            var sh = im.gameObject.AddComponent<Shadow>(); sh.effectColor = new Color(0, .35f, .12f, .35f); sh.effectDistance = new Vector2(0, -4);
+            T(im.transform, s, 18, 0, 0, w, h, TextAnchor.MiddleCenter, true, Color.white); FBHover.Add(im, .2f, 1.03f); return b;
         }
         // seta ‹ › clicável dentro de um seletor (cada lado com o próprio clique)
         public static Button Arrow(Transform p, bool right, float x, float w, float h, System.Action click)
@@ -92,7 +97,7 @@ namespace FreeBala
         {
             var ri = At(p, "img", x, y, w, h).gameObject.AddComponent<RawImage>(); ri.raycastTarget = false; ri.texture = tex;
             if (tex) { float ar = (float)tex.width / tex.height, want = w / h; ri.uvRect = ar > want ? new Rect((1 - want / ar) / 2, 0, want / ar, 1) : new Rect(0, (1 - ar / want) * Mathf.Clamp01(yAlign), 1, ar / want); }
-            else ri.color = new Color(.12f, .13f, .15f);
+            else ri.color = new Color(.06f, .12f, .24f);
             return ri;
         }
         // degradê escuro na base de uma imagem (legibilidade do texto por cima)
@@ -107,7 +112,7 @@ namespace FreeBala
         // lista com rolagem vertical (conteúdo com VerticalLayoutGroup)
         public static RectTransform Scroll(Transform p, float x, float y, float w, float h, float spacing = 6)
         {
-            var bg = Box(p, "lista", x, y, w, h, new Color(0, 0, 0, .25f)); bg.raycastTarget = true; bg.gameObject.AddComponent<RectMask2D>();
+            var bg = Box(p, "lista", x, y, w, h, new Color(.01f, .04f, .1f, .55f)); bg.raycastTarget = true; bg.gameObject.AddComponent<RectMask2D>();
             var content = new GameObject("c", typeof(RectTransform)); var cr = (RectTransform)content.transform; cr.SetParent(bg.transform, false); cr.anchorMin = new Vector2(0, 1); cr.anchorMax = new Vector2(1, 1); cr.pivot = new Vector2(.5f, 1); cr.sizeDelta = Vector2.zero;
             var vl = content.AddComponent<VerticalLayoutGroup>(); vl.spacing = spacing; vl.padding = new RectOffset(8, 8, 8, 8); vl.childControlHeight = true; vl.childForceExpandHeight = false; vl.childControlWidth = true; vl.childForceExpandWidth = true;
             content.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
@@ -117,7 +122,7 @@ namespace FreeBala
         public static Button Row(Transform list, string title, string sub, bool sel, System.Action click, float h = 40)
         {
             var g = new GameObject("linha", typeof(RectTransform), typeof(Image), typeof(LayoutElement)); g.transform.SetParent(list, false); g.GetComponent<LayoutElement>().preferredHeight = h;
-            var im = g.GetComponent<Image>(); Color baseC = sel ? new Color(1, .74f, .12f, .16f) : new Color(1, 1, 1, .035f); im.color = baseC; Round(im);
+            var im = g.GetComponent<Image>(); Color baseC = sel ? Sel : new Color(.07f, .14f, .27f, .45f); im.color = baseC; Round(im);
             if (sel) { var a = FBUI.Panel(g.transform, "acento", new Vector2(0, 0), new Vector2(0, 1), new Vector2(3.5f, 0), new Vector2(3, -12), Gold); a.raycastTarget = false; Pill(a); }
             var t = FBUI.Label(g.transform, title, 15, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft, true, sel ? Color.white : Txt); t.rectTransform.offsetMin = new Vector2(16, 0); t.rectTransform.offsetMax = new Vector2(-110, 0);
             if (!string.IsNullOrEmpty(sub)) { var s = FBUI.Label(g.transform, sub, 11, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, TextAnchor.MiddleRight, true, Dim); s.rectTransform.offsetMin = new Vector2(0, 0); s.rectTransform.offsetMax = new Vector2(-14, 0); }
@@ -150,10 +155,22 @@ namespace FreeBala
             float ta = down ? pressA : over ? hoverA : 0, ts = down ? Mathf.Min(1, grow) * .985f : over ? grow : 1, tl = over || down ? 1 : 0;
             if (Mathf.Abs(a - ta) < .002f && Mathf.Abs(sc - ts) < .0005f && Mathf.Abs(sl - tl) < .002f) return;
             float k = 1 - Mathf.Exp(-18 * Time.unscaledDeltaTime); a = Mathf.Lerp(a, ta, k); sc = Mathf.Lerp(sc, ts, k); sl = Mathf.Lerp(sl, tl, k);
-            if (glow) glow.color = new Color(1, 1, 1, a); transform.localScale = new Vector3(sc, sc, 1);
+            if (glow) glow.color = new Color(.5f, .74f, 1f, a); transform.localScale = new Vector3(sc, sc, 1);
             if (slide != Vector2.zero && transform is RectTransform rt) { if (!hasP0) { p0 = rt.anchoredPosition; hasP0 = true; } rt.anchoredPosition = p0 + slide * sl; }
         }
         void OnDisable() { over = down = false; a = 0; sc = 1; sl = 0; if (glow) glow.color = new Color(1, 1, 1, 0); transform.localScale = Vector3.one; if (hasP0 && transform is RectTransform rt) rt.anchoredPosition = p0; }
+    }
+
+    // r62: mantém um painel inteiro dentro do pai (encolhe por igual quando o pai é menor que o painel + margem; nunca aumenta)
+    public class FBFitParent : MonoBehaviour
+    {
+        public float margin = 20;
+        void LateUpdate()
+        {
+            var rt = (RectTransform)transform; if (!(rt.parent is RectTransform pr)) return; var r = rt.rect; if (r.width < 1 || r.height < 1) return;
+            float s = Mathf.Min(1, (pr.rect.width - 2 * margin) / r.width, (pr.rect.height - 2 * margin) / r.height); if (s <= 0) return;
+            if (Mathf.Abs(rt.localScale.x - s) > .001f) rt.localScale = new Vector3(s, s, 1);
+        }
     }
 
     // entrada de página: transparência 0 -> 1 com subida curta (ease-out cúbico), em tempo real (funciona com o jogo pausado)

@@ -50,6 +50,8 @@ namespace FreeBala
             float r = Random.value * sum; string pick = acts[0].a; foreach (var x in acts) { r -= x.w; if (r <= 0) { pick = x.a; break; } }
             if (pick == "emote")
             {
+                var exs = FBEmotes.ExclusiveFor(ch.skinId);
+                if (exs.Count > 0 && Random.value < .65f && ch.PlayDance(exs[Random.Range(0, exs.Count)])) { last = "emote"; t = 7 + Random.value * 4; return; }   // r62: Michael → moonwalk
                 var e = FBEmotes.RandomShort(ch.IsFemale);
                 if (e != null && ch.PlayEmote(e)) { last = "emote"; t = 6 + Random.value * 4; return; }
                 pick = "look";
@@ -91,7 +93,7 @@ namespace FreeBala
     // catálogo de emotes (assets/emotes.json -> fb_data.emotes): categoria e duração, para o lobby, a roda de emotes e a vitória
     public static class FBEmotes
     {
-        public class Def { public string id, name, cat; public float len; public bool loop; }
+        public class Def { public string id, name, cat, only; public float len; public bool loop; public int reps; }   // r62: only = emote exclusivo de um personagem; reps = passadas
         // r47 (pedido 30/10: "remova todos os emotes do Free Fire ... interface, listas, referências e execução"): saíram os 9 do web
         // (EMOTE_PICKS) e o catálogo FF inteiro (199 clipes FF_*). Ficam as danças/poses do pacote NPC. NÃO são emotes e continuam:
         // FF_SYS_* (caído, cura, pulo de janela, paraquedas, veículo — mecânica) e FF_REB_* (abordagem/rendido do REB, só têm o prefixo).
@@ -106,7 +108,7 @@ namespace FreeBala
                 if (all != null) return all; all = new List<Def>(); GameData.Load();
                 if (GameData.Emotes != null) foreach (var o in GameData.Emotes)
                         if ((Json.S(o, "id") ?? "").StartsWith("NPC_"))   // r47: só as danças/poses NPC (FF fora)
-                        all.Add(new Def { id = Json.S(o, "id"), name = Json.S(o, "name", Json.S(o, "id")), cat = Json.S(o, "cat", "fun"), len = Json.F(o, "len", 9), loop = Json.B(o, "loop") });
+                        all.Add(new Def { id = Json.S(o, "id"), name = Json.S(o, "name", Json.S(o, "id")), cat = Json.S(o, "cat", "fun"), len = Json.F(o, "len", 9), loop = Json.B(o, "loop"), only = Json.S(o, "only"), reps = (int)Json.F(o, "reps", 0) });
                 return all;
             }
         }
@@ -118,11 +120,16 @@ namespace FreeBala
         static readonly System.Text.RegularExpressions.Regex NOSTAGE = new(@"Sit|Stand_to|Saloon|Fast_Forward|Against_Wall|Break_Door", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
         public static bool FitsSex(string id, bool female) => id != null && (female ? !MASC.IsMatch(id) : !FEM.IsMatch(id));
         static bool Ok(string id) => FBRegistry.I && FBRegistry.I.Clip(id);
+        // r62: emote EXCLUSIVO (ex.: Moonwalk do Michael) — só aparece/toca no personagem dono; nunca entra em sorteio de bot/NPC/vitória
+        public static Def Get(string id) => id == null ? null : All.Find(e => e.id == id);
+        public static bool Free(Def e) => e != null && string.IsNullOrEmpty(e.only);
+        public static bool Allowed(string id, string skin) { var d = Get(id); return d == null || string.IsNullOrEmpty(d.only) || d.only == skin; }
+        public static List<string> ExclusiveFor(string skin) => string.IsNullOrEmpty(skin) ? new List<string>() : All.Where(e => e.only == skin && Ok(e.id)).Select(e => e.id).ToList();
         public static List<string> Victory => (GameData.Victory ?? new List<object>()).Select(o => o as string).Where(id => !IsFF(id) && Ok(id)).ToList();   // a lista do fb_data era só FF: vazia cai nas danças
         public static string RandomVictory(bool? female = null)
         {
             var l = Victory.Where(id => female == null || FitsSex(id, female.Value)).ToList();
-            if (l.Count == 0) l = All.Where(e => e.cat == "dance" && Ok(e.id) && (female == null || FitsSex(e.id, female.Value))).Select(e => e.id).ToList();
+            if (l.Count == 0) l = All.Where(e => e.cat == "dance" && Free(e) && Ok(e.id) && (female == null || FitsSex(e.id, female.Value))).Select(e => e.id).ToList();
             return l.Count > 0 ? l[Random.Range(0, l.Count)] : null;
         }
         /// <summary>Pose de confirmar do palco: a do sexo do personagem (Posing/Emote do pacote NPC), senão uma dança de vitória.</summary>
@@ -131,22 +138,23 @@ namespace FreeBala
             var l = (female ? new[] { "NPC_Posing_F", "NPC_Emote_F" } : new[] { "NPC_Posing_M", "NPC_Emote_M" }).Where(Ok).ToList();
             return l.Count > 0 ? l[Random.Range(0, l.Count)] : RandomVictory(female);
         }
-        public static IEnumerable<string> DanceIds() => Victory.Concat(All.Where(e => e.cat == "dance").Select(e => e.id)).Distinct();   // roleDances do web: vitórias + danças
-        public static string RandomDance(bool? female = null) { var l = All.Where(e => e.cat == "dance" && Ok(e.id) && (female == null || FitsSex(e.id, female.Value))).Select(e => e.id).ToList(); return l.Count > 0 ? l[Random.Range(0, l.Count)] : null; }
+        public static IEnumerable<string> DanceIds() => Victory.Concat(All.Where(e => e.cat == "dance" && Free(e)).Select(e => e.id)).Distinct();   // roleDances do web: vitórias + danças
+        public static string RandomDance(bool? female = null) { var l = All.Where(e => e.cat == "dance" && Free(e) && Ok(e.id) && (female == null || FitsSex(e.id, female.Value))).Select(e => e.id).ToList(); return l.Count > 0 ? l[Random.Range(0, l.Count)] : null; }
         public static string NameOf(string id) => All.Find(e => e.id == id)?.name ?? id;
         // emotes equipados (até 8, escolhidos no menu EMOTES); padrão = DEFAULT. Slots salvos com FF (versões antigas) são descartados;
         // se não sobrar nenhum, volta ao padrão.
         public static List<string> Equipped()
         {
-            var l = string.IsNullOrEmpty(FBSession.emoteSlots) ? new List<string>() : FBSession.emoteSlots.Split('|').Where(id => id.StartsWith("NPC_") && Ok(id)).ToList();
+            var l = string.IsNullOrEmpty(FBSession.emoteSlots) ? new List<string>() : FBSession.emoteSlots.Split('|').Where(id => id.StartsWith("NPC_") && Ok(id) && Allowed(id, FBSession.skin)).ToList();
             if (l.Count == 0) l = DEFAULT.Where(Ok).ToList();
+            foreach (var ex in ExclusiveFor(FBSession.skin)) if (!l.Contains(ex)) l.Insert(0, ex);   // r62: o exclusivo do personagem vem sempre na roda (1.º lugar)
             return l.Take(8).ToList();
         }
         // pose de espera desarmado no 4X4 (fase de compra): parado do pacote NPC do sexo do personagem (era o FF_Emote_supercar...)
         public static string WaitPose(bool female) { var id = female ? "NPC_Idle01_F" : "NPC_Idle01_M"; return Ok(id) ? id : null; }
         public static string RandomShort(bool? female = null)
         {
-            var l = All.FindAll(e => (e.cat == "pose" || e.cat == "fun") && e.len < 7 && Ok(e.id) && !NOSTAGE.IsMatch(e.id) && (female == null || FitsSex(e.id, female.Value)));
+            var l = All.FindAll(e => (e.cat == "pose" || e.cat == "fun") && Free(e) && e.len < 7 && Ok(e.id) && !NOSTAGE.IsMatch(e.id) && (female == null || FitsSex(e.id, female.Value)));
             return l.Count > 0 ? l[Random.Range(0, l.Count)].id : null;
         }
     }
