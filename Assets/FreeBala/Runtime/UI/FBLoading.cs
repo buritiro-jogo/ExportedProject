@@ -94,7 +94,7 @@ namespace FreeBala
             if (sa.width > 10) { safe.anchorMin = new Vector2(sa.x / W, sa.y / H); safe.anchorMax = new Vector2(sa.xMax / W, sa.yMax / H); safe.offsetMin = safe.offsetMax = Vector2.zero; }
             // logo
             var logo = Resources.Load<Texture2D>("UI/Lobby/logo");
-            if (logo) { var li = FBUI.Rect(safe, "logo", new Vector2(0, 1), new Vector2(0, 1), new Vector2(40 + 139, -28 - 52), new Vector2(278, 104)).gameObject.AddComponent<RawImage>(); li.texture = logo; li.raycastTarget = false; }
+            if (logo) { var li = FBUI.Rect(safe, "logo", new Vector2(0, 1), new Vector2(0, 1), new Vector2(40 + 170, -30 - 30), new Vector2(340, 59)).gameObject.AddComponent<RawImage>(); li.texture = logo; li.raycastTarget = false; }
             // modo + mapa (canto inferior esquerdo; no retrato, embaixo centralizado)
             var M = FBMenu.MODES.FirstOrDefault(m => m.id == modeId); string modeName = M.name ?? (modeId ?? "").ToUpper(), modeTag = M.tag ?? "";
             string mapName = GameData.Maps.TryGetValue(mapId ?? "", out var md) ? md.name : mapId;

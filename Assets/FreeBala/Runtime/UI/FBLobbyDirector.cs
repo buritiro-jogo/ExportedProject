@@ -13,6 +13,9 @@ namespace FreeBala
         static readonly (string a, float w)[] PISTOL = { ("check", 3.2f), ("holster", 3), ("look", 2.4f), ("cam", 2.2f), ("emote", 1.2f) };
         static readonly (string a, float w)[] BARE = { ("look", 3), ("cam", 2.5f), ("emote", 2.2f) };
         public bool home = true; public Camera cam;
+        // r61: pose de base do palco (vaga "Rifle Idle"); -fbpose <clipe> troca sem recompilar; Quiet = sem ações sorteadas (laboratório -fbposelab)
+        public static string Pose = "Rifle Idle"; public static bool Quiet;   // r61: -fbposelab comparou 11 clipes; só este segura a arma limpo nos dois sexos (ANIM-Rifle_Idle nem está no registro)
+        static string PoseArg { get { var a = System.Environment.GetCommandLineArgs(); int i = System.Array.IndexOf(a, "-fbpose"); return i >= 0 && i + 1 < a.Length ? a[i + 1] : null; } }
         FBCharacter ch; Animator an; Transform head, neck;
         float t, k, len, at; string act, last; bool drew;
 
@@ -21,7 +24,7 @@ namespace FreeBala
             ch = GetComponent<FBCharacter>(); an = GetComponent<Animator>(); t = 2.5f + Random.value * 3;
             if (an && an.isHuman) { head = an.GetBoneTransform(HumanBodyBones.Head); neck = an.GetBoneTransform(HumanBodyBones.Neck); }
             if (!cam) cam = Camera.main;
-            if (ch && ch.weapon != null) ch.SetOverride("Rifle Idle", "ANIM-Rifle_Idle");                 // parado longo do IE como base
+            if (ch && ch.weapon != null) ch.SetOverride("Rifle Idle", PoseArg ?? Pose);                 // parado longo do IE como base
         }
 
         // [parceiro] v1 (thread de física): tempo de CPU do Update/LateUpdate medido pelo FBTempo (desligado no jogo: só um teste de bool; o FBTesteExe liga)
@@ -41,7 +44,7 @@ namespace FreeBala
                 if (k >= len) { last = act; act = null; t = 4.5f + Random.value * 4.5f; }
                 return;
             }
-            if ((t -= dt) > 0 || !home) return;
+            if ((t -= dt) > 0 || !home || Quiet) return;
             var set = ch.weapon == null ? BARE : ch.weapon.IsPistol ? PISTOL : LONG;
             var acts = new List<(string a, float w)>(); float sum = 0; foreach (var x in set) if (x.a != last) { acts.Add(x); sum += x.w; }
             float r = Random.value * sum; string pick = acts[0].a; foreach (var x in acts) { r -= x.w; if (r <= 0) { pick = x.a; break; } }

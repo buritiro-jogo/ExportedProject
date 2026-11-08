@@ -26,7 +26,7 @@ namespace FreeBala
 
 {
 
-    public class FBMenu : MonoBehaviour
+    public partial class FBMenu : MonoBehaviour
 
     {
 
@@ -80,7 +80,7 @@ namespace FreeBala
 
             { var cv = FBUI.Canvas("Lobby", 5).transform; var sa = FBUI.Rect(cv, "area_segura", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero); sa.gameObject.AddComponent<FBSafeArea>(); root = sa; }   // r47: entalhe/cantos do celular
 
-            Home();
+            Home(); if (WantTitle()) Title();   // r61: tela de título só na primeira abertura
 
             FBAudio.SetLoop("menu_music", "music", .9f);   /* r47: categoria MÚSICA (o volume do ajuste entra na hora; antes saía pelos efeitos e só valia ao reabrir o menu) */
 
@@ -96,6 +96,8 @@ namespace FreeBala
 
             if (System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-fbmenu") >= 0) StartCoroutine(MenuShots());
 
+            if (System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-fbposelab") >= 0) StartCoroutine(PoseShots());   // r61: comparação das poses do palco
+
         }
 
         public static FBMenu I { get; private set; }
@@ -103,290 +105,12 @@ namespace FreeBala
         void OnDestroy() { FBAudio.StopLoop("menu_music"); }
 
 
-
-        // ---- palco (igual ao lobby web): foto do fundo desfocada e escurecida com os brilhos quentes (assada em Resources/UI/Lobby/lobby_bg),
-
-        // luz dourada no chão sob o personagem, luzes quentes de recorte; a câmera enquadra o personagem inteiro no centro
+        // r61 (07/11/2026, "tela inicial triplo A"): palco, INÍCIO, tela de título, páginas e pose do personagem em FBMenuInicio.cs
 
         static Texture2D T(string n) => Resources.Load<Texture2D>("UI/Lobby/" + n);
 
-        void BuildStage()
 
-        {
 
-            FBWeather.ResetGlobals(); FBVolumetric.Clear();   // nada do clima da partida no palco (voltar da partida deixava contorno nos personagens)
-
-            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight; RenderSettings.ambientSkyColor = new Color(.42f, .4f, .4f); RenderSettings.ambientEquatorColor = new Color(.3f, .25f, .22f); RenderSettings.ambientGroundColor = new Color(.15f, .1f, .06f); RenderSettings.fog = false;
-
-            if (cam) { cam.clearFlags = CameraClearFlags.SolidColor; cam.backgroundColor = new Color(.03f, .04f, .05f); }
-
-            var bgc = new GameObject("LobbyFundo"); var c = bgc.AddComponent<Canvas>(); c.renderMode = RenderMode.ScreenSpaceCamera; c.worldCamera = cam; c.planeDistance = 60; c.sortingOrder = -100;
-
-            var sc = bgc.AddComponent<CanvasScaler>(); sc.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize; sc.referenceResolution = new Vector2(1600, 900); sc.matchWidthOrHeight = .5f;
-
-            var bg = new GameObject("foto", typeof(RectTransform), typeof(RawImage)); bg.transform.SetParent(bgc.transform, false); var bi = bg.GetComponent<RawImage>(); bi.texture = T("lobby_bg"); bi.raycastTarget = false;
-
-            var fit = bg.AddComponent<AspectRatioFitter>(); fit.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent; fit.aspectRatio = 16f / 9;
-
-            var fl = new GameObject("luz_chao", typeof(RectTransform), typeof(RawImage)); fl.transform.SetParent(bgc.transform, false); var fr = (RectTransform)fl.transform;
-
-            fr.anchorMin = fr.anchorMax = new Vector2(.5f, 0); fr.anchoredPosition = new Vector2(0, 900 * .07f + 56); fr.sizeDelta = new Vector2(820, 140); var fi = fl.GetComponent<RawImage>(); fi.texture = T("floor_glow"); fi.raycastTarget = false;
-
-            var key = new GameObject("LuzChave").AddComponent<Light>(); key.type = LightType.Directional; key.intensity = 1.25f; key.color = new Color(1, .9f, .78f); key.transform.rotation = Quaternion.Euler(24, 20, 0); key.shadows = LightShadows.None;
-
-            var rim = new GameObject("Recorte").AddComponent<Light>(); rim.type = LightType.Spot; rim.range = 12; rim.spotAngle = 55; rim.intensity = 26; rim.color = new Color(1, .62f, .22f); rim.transform.SetPositionAndRotation(new Vector3(-2.2f, 3.2f, 2.4f), Quaternion.LookRotation(new Vector3(2.2f, -2.2f, -2.4f)));
-
-            var rim2 = new GameObject("Recorte2").AddComponent<Light>(); rim2.type = LightType.Spot; rim2.range = 12; rim2.spotAngle = 55; rim2.intensity = 18; rim2.color = new Color(1, .35f, .12f); rim2.transform.SetPositionAndRotation(new Vector3(2.2f, 3.0f, 2.2f), Quaternion.LookRotation(new Vector3(-2.2f, -2.0f, -2.2f)));
-
-            var fill = new GameObject("Preenchimento").AddComponent<Light>(); fill.type = LightType.Point; fill.range = 9; fill.intensity = 3; fill.color = new Color(1, .78f, .5f); fill.transform.position = new Vector3(0, .4f, -2.2f);
-
-        }
-
-        static readonly Vector3 CamHome = new(0, 1.18f, -6.3f);
-
-        void Preview(bool withWeapon = true, string dance = null)
-
-        {
-
-            if (preview) Destroy(preview); var prefab = FBRegistry.I ? FBRegistry.I.Char(FBSession.skin) : null; if (!prefab) return;
-
-            preview = Instantiate(prefab, Vector3.zero, Quaternion.Euler(0, 180, 0)); preview.name = "Previa";
-
-            FBWardrobe.ApplyTo(preview, FBSession.look);
-
-            var ch = preview.GetComponent<FBCharacter>(); ch.relaxed = true; ch.isPlayer = false; ch.skinId = FBSession.skin;   // r43: sem o id o IsFemale dava sempre "homem" (dança/pose por sexo)
-
-            if (withWeapon && GameData.Weapons.TryGetValue(FBSession.primary, out var d)) { ch.SetWeapon(d, FBRegistry.I.Weapon(d.id)); }   // vitrine do lobby (igual ao web): só a arma na mão, sem as guardadas no coldre
-
-            var ld = preview.AddComponent<FBLobbyDirector>(); ld.cam = cam;
-
-            if (dance != null) { ld.home = false; ch.PlayDance(dance); }
-
-        }
-
-
-
-        // ---- base das páginas: barra de topo fina (voltar, título, dinheiro) e corpo centrado com largura máxima (FBKit)
-
-        void Clear() { foreach (Transform t in root) Destroy(t.gameObject); if (wpPreview) Destroy(wpPreview); }
-
-        Transform Page(string title, bool dimStage = false)
-
-        {
-
-            Clear(); var p = FBUI.Panel(root, "pagina", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, dimStage ? FBKit.Bg : new Color(0, 0, 0, 0)).transform; FBFadeIn.Add(p, 0, 10);   // r47: entrada suave
-
-            var top = FBUI.Panel(p, "topo", new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -32), new Vector2(0, 64), new Color(.02f, .025f, .03f, .92f)).transform;
-
-            var ln = FBUI.Panel(top, "fio", new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, .5f), new Vector2(0, 1), FBKit.Line); ln.raycastTarget = false;
-
-            var bk = FBUI.Rect(top, "voltar", new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(24 + 60, 0), new Vector2(120, 38)); FBKit.TextTile(bk, "‹  VOLTAR", 0, 0, 120, 38, false, Home, 14);
-
-            FBUI.Label(top, title, 22, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(170 + 300, 0), new Vector2(600, 40), TextAnchor.MiddleLeft, true, FBKit.Txt);
-
-            moneyT = FBUI.Label(top, $"$ {FBSession.money:N0}", 18, new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-24 - 110, 0), new Vector2(220, 36), TextAnchor.MiddleRight, true, new Color(.45f, .95f, .55f));
-
-            return p;
-
-        }
-
-
-
-        // ---------------------------------------------------------------- INÍCIO
-
-        // INÍCIO (base: lobby web, webui.js pageHome): perfil e nível, logo, dinheiro, menu lateral com ícones, cartão do modo com a foto do
-
-        // mapa, JOGAR COM AMIGOS, COMEÇAR dourado inclinado e o nome do personagem embaixo
-
-        // r47 (pedido 30/10: "modernizar a tela principal ... preservando a identidade visual, a estrutura e as funcionalidades"): mesma
-
-        // disposição e as mesmas ações (perfil/nome, logo, dinheiro, 7 atalhos à esquerda, cartão do modo, JOGAR COM AMIGOS, COMEÇAR,
-
-        // personagem), agora com cartões de vidro arredondados (FBKit.Round/Frame), realce animado (FBHover: brilho + escala + deslize na
-
-        // barra lateral), barra de XP no perfil, arte do modo recortada nos cantos (Mask), brilho passando no COMEÇAR (FBGlint),
-
-        // degradês de leitura no topo e na base, entrada com fade (FBFadeIn) e área segura do celular (root = FBSafeArea).
-
-        void Home()
-
-        {
-
-            Clear(); Preview(); if (cam) cam.transform.SetPositionAndRotation(CamHome, Quaternion.identity);
-
-            var p = (Transform)FBUI.Rect(root, "inicio", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero); FBFadeIn.Add(p, 0, 8);
-
-            Color txt = new(.925f, .91f, .863f), gold2 = new(1, .77f, 0), dim = new(.925f, .91f, .863f, .55f), glass = new(.045f, .052f, .062f, .78f);
-
-            RawImage Img(Transform par, string n, Vector2 aMin, Vector2 aMax, Vector2 pos, Vector2 size) { var r = FBUI.Rect(par, n, aMin, aMax, pos, size).gameObject.AddComponent<RawImage>(); r.texture = T(n); r.raycastTarget = false; return r; }
-
-            Image Glass(Transform par, string n, Vector2 a, Vector2 pos, Vector2 size, int rad = 10, Color? c = null, float border = .1f)
-
-            { var im = FBUI.Panel(par, n, a, a, pos, size, c ?? glass); FBKit.Round(im, rad); var o = im.gameObject.AddComponent<Outline>(); o.effectColor = new Color(1, 1, 1, border); o.effectDistance = new Vector2(1, -1); return im; }
-
-            // degradês de leitura (topo e base) — não bloqueiam clique
-
-            { var g = FBUI.Rect(p, "degrade_topo", new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -90), new Vector2(0, 180)).gameObject.AddComponent<RawImage>(); g.texture = FBKit.GradTex; g.uvRect = new Rect(0, 1, 1, -1); g.color = new Color(1, 1, 1, .55f); g.raycastTarget = false;
-
-              var g2 = FBUI.Rect(p, "degrade_base", new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 110), new Vector2(0, 220)).gameObject.AddComponent<RawImage>(); g2.texture = FBKit.GradTex; g2.color = new Color(1, 1, 1, .6f); g2.raycastTarget = false; }
-
-            int lvl = 1 + (int)Mathf.Sqrt(FBSession.xp / 120f); float x0l = 120f * (lvl - 1) * (lvl - 1), x1l = 120f * lvl * lvl, xpK = Mathf.Clamp01((FBSession.xp - x0l) / Mathf.Max(1, x1l - x0l));
-
-            // perfil: vidro arredondado, avatar recortado com aro dourado, nome, nível e barra de XP; tocar = trocar o nome de usuário (r43)
-
-            var prof = Glass(p, "perfil", new Vector2(0, 1), new Vector2(24 + 180, -20 - 36), new Vector2(360, 72), 12);
-
-            var ring = FBUI.Panel(prof.transform, "aro", new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(8 + 29, 0), new Vector2(58, 58), gold2); FBKit.Round(ring, 12); ring.raycastTarget = false;
-
-            var mask = FBUI.Panel(ring.transform, "recorte", Vector2.zero, Vector2.one, Vector2.zero, new Vector2(-5, -5), Color.white); FBKit.Round(mask, 10); mask.raycastTarget = false; mask.gameObject.AddComponent<Mask>().showMaskGraphic = false;
-
-            var avt = FBCustomizeThumbs.Get(FBSession.skin) ?? T("avatar");
-
-            var avi = FBUI.Rect(mask.transform, "avatar", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero).gameObject.AddComponent<RawImage>(); avi.texture = avt; avi.raycastTarget = false; avi.uvRect = avt == T("avatar") ? new Rect(0, .25f, 1, .75f) : new Rect(0, 0, 1, 1);
-
-            nameT = FBUI.Label(prof.transform, (FBSession.name ?? "JOGADOR").ToUpper(), 19, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(80 + 130, 13), new Vector2(260, 28), TextAnchor.MiddleLeft, true, txt);
-
-            var lv = FBUI.Label(prof.transform, $"NÍVEL {lvl}", 12, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(80 + 130, -8), new Vector2(260, 18), TextAnchor.MiddleLeft, true, gold2);
-
-            var xb = FBUI.Panel(prof.transform, "xp", new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(80 + 90, -24), new Vector2(180, 4), new Color(1, 1, 1, .12f)); FBKit.Pill(xb); xb.raycastTarget = false;
-
-            var xf = FBUI.Panel(xb.transform, "f", new Vector2(0, 0), new Vector2(xpK, 1), Vector2.zero, Vector2.zero, gold2); FBKit.Pill(xf); xf.raycastTarget = false; xf.rectTransform.offsetMin = xf.rectTransform.offsetMax = Vector2.zero;
-
-            FBUI.Label(prof.transform, $"{FBSession.xp - (int)x0l} / {(int)(x1l - x0l)} XP", 10, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(80 + 180 + 46, -24), new Vector2(84, 14), TextAnchor.MiddleLeft, false, dim).font = FBKit.BodyFont;
-
-            var ed = FBUI.Rect(prof.transform, "editar", new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-22, 12), new Vector2(16, 16)).gameObject.AddComponent<RawImage>(); ed.texture = T("ic_edit"); ed.color = dim; ed.raycastTarget = false;
-
-            { var pb = prof.gameObject.AddComponent<Button>(); prof.raycastTarget = true; pb.transition = Selectable.Transition.None; pb.onClick.AddListener(() => { FBAudio.Synth("hover"); NameDialog(); }); FBHover.Add(prof, .05f, 1.01f); }
-
-            if (!FBSession.nameChosen && !askedName && System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-batchmode") < 0 && !System.Environment.GetCommandLineArgs().Any(a => a.StartsWith("-fb"))) { askedName = true; NameDialog(); }
-
-            // logo e selo da versão (build de desenvolvimento ≠ beta: o selo diz qual é)
-
-            Img(p, "logo", new Vector2(.5f, 1), new Vector2(.5f, 1), new Vector2(14, -18 - 42), new Vector2(240, 80));
-
-            { bool dev = Debug.isDebugBuild; var tag = FBUI.Panel(p, "selo_versao", new Vector2(.5f, 1), new Vector2(.5f, 1), new Vector2(14, -18 - 102), new Vector2(dev ? 196 : 132, 20), dev ? new Color(.1f, .12f, .14f, .9f) : new Color(.82f, .06f, 0, .9f)); FBKit.Pill(tag); tag.raycastTarget = false;
-
-              if (dev) { var o = tag.gameObject.AddComponent<Outline>(); o.effectColor = new Color(1, .77f, 0, .55f); o.effectDistance = new Vector2(1, -1); }
-
-              FBUI.Label(tag.transform, dev ? "BUILD DE DESENVOLVIMENTO" : "VERSÃO BETA", 10, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, TextAnchor.MiddleCenter, true, dev ? gold2 : Color.white); }
-
-            // dinheiro: pílula de vidro
-
-            var cur = Glass(p, "dinheiro", new Vector2(1, 1), new Vector2(-28 - 84, -20 - 22), new Vector2(168, 44), 22); cur.raycastTarget = false;
-
-            var ci = FBUI.Rect(cur.transform, "cash", new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(28, 0), new Vector2(32, 32)).gameObject.AddComponent<RawImage>(); ci.texture = T("cash"); ci.raycastTarget = false;
-
-            moneyT = FBUI.Label(cur.transform, FBSession.money.ToString("N0", new System.Globalization.CultureInfo("pt-BR")), 23, new Vector2(0, 0), new Vector2(1, 1), Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft, true, txt);
-
-            moneyT.rectTransform.offsetMin = new Vector2(52, 0); moneyT.rectTransform.offsetMax = new Vector2(-12, 0);
-
-            // barra lateral: 7 atalhos (vidro arredondado, ícone num quadrado, acento dourado e deslize de 8 px no hover)
-
-            var nav = new (string label, string ic, System.Action act)[] { ("PASSE", "ic_ticket", Pass), ("ARMAS", "ic_rifle", Arsenal), ("PERSONAGEM", "ic_user", Characters),
-
-                ("EMOTES", "ic_dance", Emotes), ("CONTROLES", "ic_keyboard", Controls), ("AJUSTES", "ic_gear", () => FBSettings.Open(root)), ("AMIGOS", "ic_users", Online) };
-
-            const float NS = 52; float y0 = (nav.Length - 1) * NS / 2f;
-
-            for (int i = 0; i < nav.Length; i++)
-
-            {
-
-                var n = nav[i]; var row = Glass(p, "nav_" + n.label, new Vector2(0, .5f), new Vector2(24 + 116, y0 - i * NS), new Vector2(232, 44), 10, new Color(.045f, .052f, .062f, .7f), .07f);
-
-                var bar = FBUI.Panel(row.transform, "borda", new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(3, 0), new Vector2(3, 22), gold2); FBKit.Pill(bar); bar.raycastTarget = false; bar.color = new Color(1, .77f, 0, 0);
-
-                var icb = FBUI.Panel(row.transform, "ic_fundo", new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(10 + 15, 0), new Vector2(30, 30), new Color(1, 1, 1, .06f)); FBKit.Round(icb, 8); icb.raycastTarget = false;
-
-                var ico = FBUI.Rect(icb.transform, "ic", new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, new Vector2(18, 18)).gameObject.AddComponent<RawImage>(); ico.texture = T(n.ic); ico.color = dim; ico.raycastTarget = false;
-
-                var lb = FBUI.Label(row.transform, n.label, 14, new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(50 + 80, 0), new Vector2(160, 24), TextAnchor.MiddleLeft, true, new Color(.925f, .91f, .863f, .85f));
-
-                if (n.label == "PASSE") { int pend = FBPass.Claimable(); var tg = FBUI.Panel(row.transform, "tag", new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-10 - 32, 0), new Vector2(64, 18), FBKit.Red); FBKit.Pill(tg); tg.raycastTarget = false; FBUI.Label(tg.transform, pend > 0 ? pend + " PRÊMIO" + (pend > 1 ? "S" : "") : "NOVO", 9, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, TextAnchor.MiddleCenter, true); }
-
-                row.raycastTarget = true; var bt = row.gameObject.AddComponent<Button>(); bt.targetGraphic = row; bt.transition = Selectable.Transition.None; bt.onClick.AddListener(() => { FBAudio.Synth("hover"); n.act(); });
-
-                var hv = FBHover.Add(row, .05f, 1); hv.slide = new Vector2(8, 0);
-
-                hv.onHover = on => { bar.color = new Color(1, .77f, 0, on ? 1 : 0); ico.color = on ? gold2 : dim; icb.color = on ? new Color(1, .77f, 0, .14f) : new Color(1, 1, 1, .06f); lb.color = on ? Color.white : new Color(.925f, .91f, .863f, .85f); };
-
-            }
-
-            // cartão do modo: arte recortada nos cantos, selo TROCAR, modo, mapa e opções
-
-            var M = MODES.FirstOrDefault(m => m.id == FBSession.mode); if (M.id == null) M = MODES[0];
-
-            var mc = Glass(p, "modo", new Vector2(1, 1), new Vector2(-28 - 170, -84 - 84), new Vector2(340, 168), 12, new Color(.04f, .047f, .055f, .88f), .12f);
-
-            mc.raycastTarget = true; mc.gameObject.AddComponent<Mask>().showMaskGraphic = true;
-
-            { var mb = mc.gameObject.AddComponent<Button>(); mb.transition = Selectable.Transition.None; mb.onClick.AddListener(() => { FBAudio.Synth("hover"); MatchPicker(); }); }
-
-            modeArt = FBUI.Rect(mc.transform, "arte", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero).gameObject.AddComponent<RawImage>(); modeArt.raycastTarget = false;
-
-            var shot = Resources.Load<Texture2D>("MapShots/" + FBSession.map); modeArt.texture = shot ? shot : Resources.Load<Texture2D>("Modes/" + M.id);
-
-            if (modeArt.texture) { float ar = (float)modeArt.texture.width / modeArt.texture.height, want = 340f / 168f; modeArt.uvRect = ar > want ? new Rect((1 - want / ar) / 2, 0, want / ar, 1) : new Rect(0, (1 - ar / want) / 2, 1, ar / want); }
-
-            var fade = FBUI.Rect(mc.transform, "fade", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero).gameObject.AddComponent<RawImage>(); fade.texture = FBKit.GradTex; fade.raycastTarget = false; fade.color = new Color(0, 0, 0, .85f);
-
-            var tc = FBUI.Panel(mc.transform, "trocar", new Vector2(1, 1), new Vector2(1, 1), new Vector2(-12 - 44, -12 - 12), new Vector2(88, 24), FBKit.Red); FBKit.Pill(tc); tc.raycastTarget = false; FBUI.Label(tc.transform, "TROCAR ›", 12, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, TextAnchor.MiddleCenter, true);
-
-            var mt = FBUI.Panel(mc.transform, "tag_modo", new Vector2(0, 0), new Vector2(0, 0), new Vector2(16 + 60, 76), new Vector2(120, 18), new Color(0, 0, 0, .55f)); FBKit.Pill(mt); mt.raycastTarget = false;
-
-            FBUI.Label(mt.transform, M.tag, 10, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, TextAnchor.MiddleCenter, true, gold2);
-
-            modeT = FBUI.Label(mc.transform, M.name, 23, new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 46), new Vector2(-32, 30), TextAnchor.MiddleLeft, true, txt);
-
-            var wx = FBSession.WeatherFor(FBSession.map); var mp = GameData.Maps.TryGetValue(FBSession.map, out var mm) ? mm.name : FBSession.map;
-
-            mapT = FBUI.Label(mc.transform, $"{mp} · {DIFFS[Mathf.Clamp(FBSession.diff, 0, 2)]}{(wx.time == "noite" ? " · NOITE" : wx.time == "anoitecer" ? " · ANOITECER" : "")}{(wx.weather == "chuva" ? " · CHUVA" : "")}", 12, new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 20), new Vector2(-32, 18), TextAnchor.MiddleLeft, false, new Color(.925f, .91f, .863f, .75f));
-
-            mapT.font = FBKit.BodyFont;
-
-            FBHover.Add(mc, .05f, 1.015f);
-
-            // JOGAR COM AMIGOS e COMEÇAR
-
-            var on = Glass(p, "amigos", new Vector2(1, 0), new Vector2(-28 - 170, 28 + 84 + 12 + 24), new Vector2(340, 48), 12, new Color(.045f, .052f, .062f, .7f), .18f); on.raycastTarget = true;
-
-            { var ob = on.gameObject.AddComponent<Button>(); ob.transition = Selectable.Transition.None; ob.onClick.AddListener(() => { FBAudio.Synth("hover"); Online(); }); FBHover.Add(on, .07f, 1.015f); }
-
-            var oi = FBUI.Rect(on.transform, "ic", new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(-100, 0), new Vector2(18, 18)).gameObject.AddComponent<RawImage>(); oi.texture = T("ic_users"); oi.raycastTarget = false;
-
-            FBUI.Label(on.transform, "JOGAR COM AMIGOS", 14, Vector2.zero, Vector2.one, new Vector2(14, 0), Vector2.zero, TextAnchor.MiddleCenter, true, txt);
-
-            var st = Img(p, "btn_start", new Vector2(1, 0), new Vector2(1, 0), new Vector2(-28 - 170, 28 + 42), new Vector2(340, 84)); st.raycastTarget = true; st.gameObject.AddComponent<Mask>().showMaskGraphic = true;
-
-            var sb = st.gameObject.AddComponent<Button>(); sb.targetGraphic = st; sb.transition = Selectable.Transition.None; sb.onClick.AddListener(Play);
-
-            { var band = FBUI.Rect(st.transform, "brilho", new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, new Vector2(54, 200)); band.localRotation = Quaternion.Euler(0, 0, -22); var bi = band.gameObject.AddComponent<RawImage>(); bi.texture = GlintTex; bi.color = new Color(1, 1, .9f, .5f); bi.raycastTarget = false;
-
-              var gl = st.gameObject.AddComponent<FBGlint>(); gl.band = band; gl.width = 340; }
-
-            var sl = FBUI.Label(st.transform, "COMEÇAR", 32, new Vector2(0, .5f), new Vector2(1, .5f), new Vector2(8, 8), new Vector2(0, 40), TextAnchor.MiddleCenter, true, new Color(.165f, .082f, 0)); sl.fontStyle = FontStyle.Italic;
-
-            FBUI.Label(st.transform, $"{M.name} · {mp.ToUpper()}", 10, new Vector2(0, .5f), new Vector2(1, .5f), new Vector2(8, -21), new Vector2(0, 16), TextAnchor.MiddleCenter, true, new Color(.165f, .082f, 0, .8f));
-
-            FBHover.Add(st, .12f, 1.03f);
-
-            // nome do personagem + pílula de troca
-
-            var cn = FBUI.Rect(p, "nome", new Vector2(.5f, 0), new Vector2(.5f, 0), new Vector2(0, 900 * .04f + 26), new Vector2(520, 60)); var cni = cn.gameObject.AddComponent<Image>(); cni.color = new Color(0, 0, 0, 0);
-
-            { var cb = cn.gameObject.AddComponent<Button>(); cb.transition = Selectable.Transition.None; cb.onClick.AddListener(() => { FBAudio.Synth("hover"); Characters(); }); }
-
-            var sk = FBCustomizeData.Find(FBSession.skin)?.def; var sex = sk?.sex == "f" ? "FEMININO" : "MASCULINO";   // inclui os personagens que só estão no registro
-
-            var cnt = FBUI.Label(cn, (sk?.name ?? FBSession.skin).ToUpper(), 26, new Vector2(.5f, 1), new Vector2(.5f, 1), new Vector2(0, -16), new Vector2(520, 34), TextAnchor.MiddleCenter, true, txt); cnt.gameObject.AddComponent<Shadow>().effectDistance = new Vector2(0, -3);
-
-            var chip = FBUI.Panel(cn, "trocar", new Vector2(.5f, 0), new Vector2(.5f, 0), new Vector2(0, 11), new Vector2(300, 22), new Color(0, 0, 0, .5f)); FBKit.Pill(chip); chip.raycastTarget = false; { var o = chip.gameObject.AddComponent<Outline>(); o.effectColor = new Color(1, .77f, 0, .35f); o.effectDistance = new Vector2(1, -1); }
-
-            FBUI.Label(chip.transform, (FBSession.pickRandom ? $"ALEATÓRIO · {sex}" : "PERSONAGEM FIXO") + " · TROCAR ›", 12, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, TextAnchor.MiddleCenter, true, gold2);
-
-            FBHover.Add(cni, 0, 1.03f);
-
-        }
 
         // faixa do brilho do COMEÇAR (alfa em sino na horizontal)
 
@@ -852,7 +576,7 @@ namespace FreeBala
 
             yield return new WaitForSeconds(2.5f);
 
-            var pages = new (string n, System.Action a)[] { ("inicio", Home), ("partida", MatchPicker), ("armas", Arsenal), ("armas_mira", () => { arOpen = "scopes"; Arsenal(); }), ("armas_pistola", () => { arOpen = null; arCls = "pistola"; arSel = null; Arsenal(); }), ("emotes", Emotes), ("passe", Pass), ("controles", Controls), ("ajustes", () => { Home(); FBSettings.Open(root, 0); }), ("ajustes_audio", () => { Home(); FBSettings.Open(root, 1); }), ("ajustes_video", () => { Home(); FBSettings.Open(root, 2); }), ("online", Online) };
+            var pages = new (string n, System.Action a)[] { ("titulo", () => { Home(); Title(); }), ("inicio", Home), ("partida", MatchPicker), ("armas", Arsenal), ("armas_mira", () => { arOpen = "scopes"; Arsenal(); }), ("armas_pistola", () => { arOpen = null; arCls = "pistola"; arSel = null; Arsenal(); }), ("emotes", Emotes), ("passe", Pass), ("controles", Controls), ("ajustes", () => { Home(); FBSettings.Open(root, 0); }), ("ajustes_audio", () => { Home(); FBSettings.Open(root, 1); }), ("ajustes_video", () => { Home(); FBSettings.Open(root, 2); }), ("online", Online) };
 
             foreach (var (n, a) in pages) { a(); yield return new WaitForSeconds(1.5f); ScreenCapture.CaptureScreenshot(System.IO.Path.Combine(dir, "menu_" + n + ".png")); yield return new WaitForSeconds(.6f); }
 
@@ -1158,13 +882,6 @@ namespace FreeBala
 
         }
 
-        // [parceiro 01/11] FBTempo: mede o custo do Update sem o Profiler (desligado no jogo, custa um teste de bool; o teste do .exe liga)
-
-        static readonly int __fbt_Update = FBTempo.Id("FBMenu.Update");
-
-        void Update() { if (!FBTempo.On) { Update__fbt(); return; } long t0 = FBTempo.T0(); Update__fbt(); FBTempo.Soma(__fbt_Update, t0); }
-
-        void Update__fbt() { if (!Customize && preview && preview.activeSelf) preview.transform.rotation = Quaternion.Euler(0, 180 + Mathf.Sin(Time.time * .4f) * 8, 0); }
 
     }
 

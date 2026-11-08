@@ -96,7 +96,7 @@ namespace FreeBala
         {
             var bg = FBUI.Panel(parent, "ajustes", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, new Color(0, 0, 0, .8f));
             bg.gameObject.AddComponent<FBSettingsSaver>();
-            const float W = 980, H = 720; lastTab = tab = Mathf.Clamp(tab, 0, TABS.Length - 1);
+            const float W = 980, H = 820;   // r61: 720 não cabia as 11 linhas de CONTROLES (o rodapé cobria o HUD mobile) lastTab = tab = Mathf.Clamp(tab, 0, TABS.Length - 1);
             var p = FBKit.Box(bg.transform, "painel", 0, 0, W, H, FBKit.Bg, false); var pr = p.rectTransform; pr.anchorMin = pr.anchorMax = pr.pivot = new Vector2(.5f, .5f); pr.anchoredPosition = Vector2.zero; p.raycastTarget = true; FBKit.Frame(p);
             var o = p.transform;
             FBKit.T(o, "AJUSTES", 24, 32, 22, 400, 34, TextAnchor.MiddleLeft, true, Color.white);
