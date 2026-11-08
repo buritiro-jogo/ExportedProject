@@ -1,7 +1,8 @@
-// POÇAS DA CHUVA (FBRain, 20/10) — ideias do Dyna-Wet (RayznGames; sem licença publicada, então nada copiado: reimplementado aqui):
+﻿// POÇAS DA CHUVA (FBRain, 20/10) — ideias do Dyna-Wet (RayznGames; sem licença publicada, então nada copiado: reimplementado aqui):
 // poça que ENCHE com o tempo de chuva (_FBPuddleFill 0..1: a forma por ruído vai crescendo do centro), água escura e lisa que reflete
 // (sonda de reflexo + SSR do URP pelo DepthNormals com suavidade) e ANÉIS de gota animados (células de 0,3 m no mundo, cada uma com o
 // seu tempo; dois níveis desencontrados), borda mais rasa = menos lisa. Uma malha só com todas as poças do mapa (FBRain.Puddles).
+// r63: _Fixo > 0 = poça permanente do mapa (FBMapLook.PocasBatch: barro alaranjado na laterita, escura no asfalto).
 // Opaco com alpha-to-coverage na borda (MSAA) — entra no SSR e no SSAO como o piso.
 Shader "FreeBala/Puddle"
 {
@@ -10,12 +11,15 @@ Shader "FreeBala/Puddle"
         _Color("Agua", Color) = (0.018, 0.021, 0.024, 1)
         _EdgeColor("Borda molhada", Color) = (0.05, 0.05, 0.05, 1)
         _Smooth("Lisura", Range(0, 1)) = 0.94
+        _Fixo("Enchimento fixo (0 = segue a chuva)", Range(0, 1)) = 0
+        _Metal("Tinge o reflexo (água barrenta)", Range(0, 1)) = 0
+        _Tinta("Cor da água barrenta vista (foto)", Color) = (1, 1, 1, 1)
     }
 
     HLSLINCLUDE
     #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
     CBUFFER_START(UnityPerMaterial)
-        half4 _Color, _EdgeColor; half _Smooth;
+        half4 _Color, _EdgeColor, _Tinta; half _Smooth; half _Fixo; half _Metal;
     CBUFFER_END
     float _FBPuddleFill, _FBRainK;
 
@@ -35,7 +39,7 @@ Shader "FreeBala/Puddle"
     {
         float2 c = uv - 0.5; float r = length(c) * 2.0;
         float n = PNoise(uv * 3.1 + seed * 37.0) * 0.6 + PNoise(uv * 7.3 + seed * 11.0) * 0.4;
-        float fill = saturate(_FBPuddleFill) * lerp(0.75, 1.0, seed.y);
+        float fill = (_Fixo > 0 ? _Fixo : saturate(_FBPuddleFill)) * lerp(0.75, 1.0, seed.y);   // r63: poça fixa do mapa (Vila Jardim) não depende da chuva
         float f = (1.0 - r) + (n - 0.5) * 0.85 - (1.0 - fill) * 0.95;
         return float2(saturate(f * 9.0), saturate(f * 2.2));
     }
@@ -92,9 +96,13 @@ Shader "FreeBala/Puddle"
                 d.shadowCoord = TransformWorldToShadowCoord(i.positionWS); d.fogCoord = i.fog; d.bakedGI = SampleSH(n);
                 d.normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(i.positionCS); d.shadowMask = half4(1, 1, 1, 1);
                 SurfaceData s = (SurfaceData)0;
-                s.albedo = lerp(_EdgeColor.rgb, _Color.rgb, sh.y); s.smoothness = lerp(0.55, _Smooth, sh.y); s.metallic = 0; s.occlusion = 1; s.alpha = sh.x;
+                s.albedo = lerp(_EdgeColor.rgb, _Color.rgb, sh.y); s.smoothness = lerp(0.55, _Smooth, sh.y); s.metallic = _Metal * sh.y; s.occlusion = 1;   // r63: barro opaco tinge o reflexo do céu de laranja (vídeo b_0642) s.alpha = sh.x;
                 s.specular = half3(0, 0, 0);
                 half4 c = UniversalFragmentPBR(d, s);
+                // r63: água BARRENTA é opaca — o reflexo do céu sai tingido de laranja (vídeo b_0642: 179,123,64), não branco-azulado
+                // mesmo brilho, matiz da água da foto (_Tinta): o céu refletido vira laranja de barro, como no vídeo
+                half3 W3 = half3(0.299, 0.587, 0.114); half lt = max(dot(_Tinta.rgb, W3), 1e-3);
+                c.rgb = lerp(c.rgb, dot(c.rgb, W3) * _Tinta.rgb / lt, _Metal * sh.y);
                 c.rgb = MixFog(c.rgb, d.fogCoord);
                 return half4(c.rgb, sh.x);
             }

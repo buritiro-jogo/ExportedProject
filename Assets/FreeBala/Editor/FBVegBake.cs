@@ -1,4 +1,4 @@
-// VEGETAÇÃO DOS MAPAS na importação (Agente 5; parte do FBMapLook, chamada depois da conversão dos materiais):
+﻿// VEGETAÇÃO DOS MAPAS na importação (Agente 5; parte do FBMapLook, chamada depois da conversão dos materiais):
 //  1. acha TODAS as superfícies verdes do mapa: nome do material (grama/grass/lawn/canteiro…) ou cor média verde da textura × cor, só em
 //     triângulos quase horizontais e com área relevante (fachada/placa/quadra pintada de verde ficam de fora);
 //  2. amostra o chão por RAIOS de cima numa grade com jitter estratificado (blue-noise) só onde há triângulo verde: o raio pega a superfície
@@ -47,7 +47,7 @@ namespace FreeBala.EditorTools
             {
                 // 14 tufos/m² é a densidade CHEIA do gramado perto da câmera (o FBGrassATG rareia com a distância); abaixo disso o chão
                 // aparece entre os tufos e vira "grama jogada em pontos aleatórios", que foi o retorno do usuário em 06/11.
-                glb = "atg_vj", atg = true, maskGS = .75f, carpetDensity = 14f, carpetKinds = new[] { 0, 1, 2, 3, 4, 5 },
+                glb = "atg_vj", atg = true, maskGS = .75f, carpetDensity = 14f, carpetKinds = new[] { 0, 1, 2, 4, 5 },   // r63: sem a grama_flor (3) no gramado de perto — o gramado real da VJ é baixo e liso, sem florzinha branca
                 kinds = new[]
                 {
                     ("grama_1", false), ("grama_2", false), ("grama_3", false), ("grama_flor", false), ("grama_seca", false), ("cartao_grama", false),
@@ -222,7 +222,7 @@ namespace FreeBala.EditorTools
                     {
                         if (cl == 3)                                                            // junta de pavimento: pouca coisa, mas em todo canto
                         {
-                            if (r > .22f) continue;
+                            if (r > .08f) continue;   // r63: junta de calçada/meio-fio bem mais limpa (vídeo b_0373, b_0642)
                             kind = r < .07f ? 8 + (int)(Hash(x, z, 4) * 2.999f) : (int)(Hash(x, z, 5) * 5.999f);
                             hs = Rng(.6f, 1.05f); ws = Rng(.6f, 1f);
                         }
@@ -230,12 +230,12 @@ namespace FreeBala.EditorTools
                         {
                             // sem o afinamento 'keep' (que é calculado pelo gramado inteiro, milhões de pontos): a terra é pouca e quem
                             // corta o excesso é o teto do fim
-                            float pkT = (junta[x, z] ? .42f : .22f) * Mathf.Lerp(.45f, 1.35f, n1);   // a laterita do descampado some sob o tapete de perto, mas no longe fica chapada
+                            float pkT = (junta[x, z] ? .10f : .012f) * Mathf.Lerp(.45f, 1.35f, n1);   // r63: vídeos (b_0597/0626/0642/0664) — a laterita entre os blocos é PELADA (lama, poças); mato só encostado no muro   // a laterita do descampado some sob o tapete de perto, mas no longe fica chapada
                             if (Hash(x, z, 6) > pkT) continue;
-                            kind = r < .10f ? 10 + (int)(Hash(x, z, 4) * 2.999f) : r < .26f ? 6 + (int)(Hash(x, z, 5) * 3.999f) : (int)(Hash(x, z, 7) * 5.999f);
+                            kind = r < .10f ? (Hash(x, z, 4) < .5f ? 10 : 12) : r < .30f ? 6 + (int)(Hash(x, z, 5) * 2.999f) : (int)(Hash(x, z, 7) * 2.999f);   // r63: sem mato_flor/cartão na terra
                             hs = Rng(.65f, 1.1f); ws = Rng(.7f, 1.1f);
                         }
-                        else if (border && r < .03f || r < .018f * clump) { kind = 11 + (int)(Hash(x, z, 4) * 1.999f); hs = Rng(.75f, 1.15f); ws = Rng(.8f, 1.15f); }   // mato alto (raro)
+                        else if (border && r < .03f || r < .018f * clump) { kind = Hash(x, z, 4) < .8f ? 12 : 11; hs = Rng(.75f, 1.15f); ws = Rng(.8f, 1.15f); }   // mato alto (raro) · r63: mato_flor (11) só em 20 %
                         else if (border && r < .12f || r < .10f * clump) { kind = 6 + (int)(Hash(x, z, 5) * 3.999f); hs = Rng(.7f, 1.15f); ws = Rng(.7f, 1.1f); }       // capim de borda
                         else
                         {
@@ -309,7 +309,9 @@ namespace FreeBala.EditorTools
                     var p = hitP[x, z]; if (zone(p) > 0) continue;                               // só a área jogável
                     int c = cls != null ? cls[x, z] : 1;
                     // o terreno seco em volta do bairro (VJ_grass_dry, 15 km²) leva metade da densidade: capim ralo, não gramado de praça
-                    float w = c == 1 ? (isDry != null && isDry[x, z] ? .5f : 1f) : c == 2 ? (junta != null && junta[x, z] ? .62f : .42f) : .85f;
+                    // r63 (vídeos do usuário): terra batida PELADA (0; 0,18 encostada em muro), junta de pavimento 0,25 — antes 0,42/0,62/0,85 punham
+                    // touceira em cima da laterita e uma faixa de grama em todo meio-fio
+                    float w = c == 1 ? (isDry != null && isDry[x, z] ? .5f : 1f) : c == 2 ? (junta != null && junta[x, z] ? .18f : 0f) : .25f;
                     acc[gx, gz] += w; hy[gx, gz] += p.y; hn[gx, gz]++; y0 = Mathf.Min(y0, p.y); nG++;
                 }
             if (nG == 0) { Debug.LogWarning($"[FreeBala] grama ATG {data.name}: nenhum chão na área jogável"); return; }

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -10,7 +10,7 @@ namespace FreeBala
     //   para pôr mais um patrocinador basta gerar o PNG lá: elas se revezam pelos contêineres, na ordem do nome do arquivo.
     // - Contêiner = qualquer objeto do mapa com "conteiner/contêiner/container" no nome (cobertura PA_/VJ_Cob_, lanche do PT…).
     //   A caixa é medida pelas malhas (LOD0) no espaço do próprio objeto; só entra se tiver medida de contêiner de verdade.
-    // - Cada lateral comprida LIVRE (nada encostado a menos de 0,8 m) ganha uma logo; as malhas ficam como filhas do contêiner,
+    // - r62c: cada logo aparece UMA vez por mapa, num contêiner e numa lateral LIVRE (nada encostado a menos de 0,8 m); as malhas ficam como filhas do contêiner,
     //   então somem junto quando o De Rolê desliga os contêineres de cobertura.
     // - Material = mesmo Lit com recorte de alfa dos grafites (variante já compilada no build; não causa travada de shader).
     public static class FBSponsors
@@ -51,43 +51,71 @@ namespace FreeBala
                 for (var t = r.transform; t; t = t.parent) { if (!RX.IsMatch(t.name)) continue; if (WorldSize(t) <= 14f) best = t; else break; }
                 roots.Add(best);
             }
-            int n = 0, nSide = 0, skipSize = 0, skipBlocked = 0, skipCounter = 0;
+            // r62c: cada logo UMA vez no mapa, num contêiner só e numa lateral só. Primeiro junta todas as laterais livres,
+            // depois escolhe: 1ª logo no contêiner livre mais perto do centro da área de jogo; as seguintes no que fica mais
+            // longe das já usadas (sem ir para a borda), um contêiner por logo.
+            int skipSize = 0, skipBlocked = 0, skipCounter = 0;
+            var cand = new List<(Transform root, Vector3 c, Vector3 up, Vector3 nrm, float H0, float L, float D, float V)>();
             foreach (var root in roots.OrderBy(t => t.position.x).ThenBy(t => t.position.z))
             {
                 if (!Measure(root, out var c, out var up, out var len, out var dep, out float H0, out float L, out float D, out int skipS)) { skipSize++; continue; }
-                var P = new List<Vector3>(); var UV = new List<Vector2>(); var N = new List<Vector3>(); var I = new List<int>(); var sub = new List<int>[mats.Length];
-                for (int k = 0; k < sub.Length; k++) sub[k] = new List<int>();
-                uint h = H(c);
                 foreach (int s in new[] { 1, -1 })
                 {
                     if (s == skipS) { skipCounter++; continue; }   // lado do balcão/toldo (janela de atendimento): sem logo
                     var nrm = dep * s; var face = c + nrm * (D * .5f);
                     if (Blocked(root, face, nrm, up, H0, L)) { skipBlocked++; continue; }
-                    int li = nSide % mats.Length; var tex = texs[li]; float asp = tex.height / (float)tex.width;   // altura/largura
-                    float w = Mathf.Min(L * .62f, H0 * .8f / asp, 3.4f), hh = w * asp;
-                    float slide = (R01(ref h) - .5f) * Mathf.Max(0, L - w - .6f) * .7f, lift = (R01(ref h) - .5f) * .12f * H0;
-                    float ang = (R01(ref h) - .5f) * 8f * Mathf.Deg2Rad, ca = Mathf.Cos(ang), sa = Mathf.Sin(ang);
-                    var t = new Vector3(nrm.z, 0, -nrm.x).normalized;   // tangente = up × normal (direita de quem olha)
-                    var ctr = face + t * slide + up * (lift - H0 * .03f) + nrm * .03f;
-                    int o0 = P.Count;
-                    foreach (var (sx, sy) in new[] { (-.5f, -.5f), (.5f, -.5f), (.5f, .5f), (-.5f, .5f) })
-                    {
-                        float x = sx * w, y = sy * hh, xr = x * ca - y * sa, yr = x * sa + y * ca;
-                        P.Add(root.InverseTransformPoint(ctr - t * xr + up * yr)); UV.Add(new Vector2(sx + .5f, sy + .5f)); N.Add(root.InverseTransformDirection(nrm).normalized);
-                    }
-                    sub[li].AddRange(new[] { o0, o0 + 2, o0 + 1, o0, o0 + 3, o0 + 2 }); nSide++;
+                    cand.Add((root, c, up, nrm, H0, L, D, Vista(root, face, nrm, up, H0, L)));
                 }
-                if (P.Count == 0) continue;
-                var used = Enumerable.Range(0, mats.Length).Where(k => sub[k].Count > 0).ToArray();
-                var m = new Mesh { name = "patrocinio" }; m.SetVertices(P); m.SetUVs(0, UV); m.SetNormals(N); m.subMeshCount = used.Length;
-                for (int k = 0; k < used.Length; k++) m.SetTriangles(sub[used[k]], k); m.RecalculateBounds(); m.RecalculateTangents();
-                var go = new GameObject("Patrocinio"); go.transform.SetParent(root, false); go.layer = 0;
-                go.AddComponent<MeshFilter>().sharedMesh = m; var mr = go.AddComponent<MeshRenderer>(); mr.sharedMaterials = used.Select(k => mats[k]).ToArray();
-                mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; made.Add(go); n++;
             }
-            LastReport = $"{map}: {roots.Count} contêineres achados · {n} com logo · {nSide} logos · fora de medida {skipSize} · laterais tampadas {skipBlocked} · lado de balcão {skipCounter} · {mats.Length} patrocinadores";
+            var pb = FBWorld.GetPlayableBounds(map); var ctr0 = pb.center; ctr0.y = 0;
+            bool In(Vector3 p) => p.x >= pb.min.x && p.x <= pb.max.x && p.z >= pb.min.z && p.z <= pb.max.z;
+            var pool = cand.Where(k => In(k.c)).ToList(); if (pool.Count == 0) pool = cand;
+            // r63: só laterais que se enxergam de frente (nada a menos de ~5 m tampando a logo); se faltar, aceita as outras
+            var vis = pool.Where(k => k.V >= 5f).ToList(); if (vis.Count >= mats.Length) pool = vis;
+            float Dc(Vector3 p) { p.y = 0; return (p - ctr0).magnitude; }
+            var pick = new List<int>(); var used = new HashSet<Transform>();
+            for (int li = 0; li < mats.Length && pick.Count < mats.Length; li++)
+            {
+                int best = -1; float bs = float.MinValue;
+                for (int k = 0; k < pool.Count; k++)
+                {
+                    if (used.Contains(pool[k].root)) continue;
+                    float sc;
+                    if (pick.Count == 0) sc = -Dc(pool[k].c);
+                    else { float md = pick.Min(j => Vector3.Distance(pool[j].c, pool[k].c)); sc = Mathf.Min(md, 90f) - .35f * Dc(pool[k].c); }
+                    // a lateral que olha para o centro (onde se joga) vale um pouco mais
+                    var toC = (ctr0 - pool[k].c); toC.y = 0; sc += 4f * Vector3.Dot(pool[k].nrm, toC.normalized) + 1.5f * pool[k].V;
+                    if (sc > bs) { bs = sc; best = k; }
+                }
+                if (best < 0) break; pick.Add(best); used.Add(pool[best].root);
+            }
+            int n = 0;
+            for (int li = 0; li < pick.Count; li++)
+            {
+                var (root, c, up, nrm, H0, L, D, V) = pool[pick[li]];
+                uint h = H(c); var face = c + nrm * (D * .5f);
+                var tex = texs[li]; float asp = tex.height / (float)tex.width;   // altura/largura
+                float w = Mathf.Min(L * .62f, H0 * .8f / asp, 3.4f), hh = w * asp;
+                float slide = (R01(ref h) - .5f) * Mathf.Max(0, L - w - .6f) * .7f, lift = (R01(ref h) - .5f) * .12f * H0;
+                float ang = (R01(ref h) - .5f) * 8f * Mathf.Deg2Rad, ca = Mathf.Cos(ang), sa = Mathf.Sin(ang);
+                var t = new Vector3(nrm.z, 0, -nrm.x).normalized;   // tangente = up × normal (direita de quem olha)
+                var ctr = face + t * slide + up * (lift - H0 * .03f) + nrm * .03f;
+                var P = new List<Vector3>(); var UV = new List<Vector2>(); var N = new List<Vector3>();
+                foreach (var (sx, sy) in new[] { (-.5f, -.5f), (.5f, -.5f), (.5f, .5f), (-.5f, .5f) })
+                {
+                    float x = sx * w, y = sy * hh, xr = x * ca - y * sa, yr = x * sa + y * ca;
+                    P.Add(root.InverseTransformPoint(ctr - t * xr + up * yr)); UV.Add(new Vector2(sx + .5f, sy + .5f)); N.Add(root.InverseTransformDirection(nrm).normalized);
+                }
+                var m = new Mesh { name = "patrocinio_" + tex.name }; m.SetVertices(P); m.SetUVs(0, UV); m.SetNormals(N); m.SetTriangles(new[] { 0, 2, 1, 0, 3, 2 }, 0);
+                m.RecalculateBounds(); m.RecalculateTangents();
+                var go = new GameObject("Patrocinio"); go.transform.SetParent(root, false); go.layer = 0;
+                go.AddComponent<MeshFilter>().sharedMesh = m; var mr = go.AddComponent<MeshRenderer>(); mr.sharedMaterial = mats[li];
+                mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; made.Add(go); n++;
+                Debug.Log($"[FreeBala][patrocinio] {tex.name} → {root.name} em {c:F1} (lado {nrm:F2}, {Dc(c):0} m do centro, vista livre {V:0.0} m)");
+            }
+            LastReport = $"{map}: {roots.Count} contêineres achados · {cand.Count} laterais livres ({pool.Count} na área) · {n} logos, 1 por contêiner · fora de medida {skipSize} · laterais tampadas {skipBlocked} · lado de balcão {skipCounter} · {mats.Length} patrocinadores";
             Debug.Log("[FreeBala][patrocinio] " + LastReport);
-            return nSide;
+            return n;
         }
 
         static float WorldSize(Transform t)
@@ -140,6 +168,21 @@ namespace FreeBala
             return hit >= 3;
         }
 
+        // r63: distância livre média na frente da lateral (5 raios na largura, altura do meio e um pouco acima), até 10 m
+        static float Vista(Transform root, Vector3 face, Vector3 n, Vector3 up, float h, float l)
+        {
+            var t = Vector3.Cross(up, n).normalized; float sum = 0, mn = 10f; int k = 0; int mask = FBWorld.SolidMask;
+            foreach (float u in new[] { -.4f, -.2f, 0f, .2f, .4f })
+                foreach (float v in new[] { 0f, .2f })
+                {
+                    var o = face + t * (u * l) + up * (v * h) + n * .05f; float d = 10f;
+                    foreach (var hh in Physics.RaycastAll(o, n, 10f, mask, QueryTriggerInteraction.Ignore))
+                        if (!hh.transform.IsChildOf(root) && hh.distance < d) d = hh.distance;
+                    sum += d; mn = Mathf.Min(mn, d); k++;
+                }
+            return Mathf.Min(sum / k, mn + 3f);   // um canto tampado já derruba a nota
+        }
+
         public static IReadOnlyList<GameObject> Made => made;
         // teste -fbpatrocinio <mapa>: guarda modo/mapa salvos do jogador para devolver no fim
         public static string keepMap, keepMode;
@@ -166,8 +209,7 @@ namespace FreeBala
             var main = Camera.main; if (main) { cam.clearFlags = main.clearFlags; cam.backgroundColor = main.backgroundColor; }
             var urp = cam.GetComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>() ?? cam.gameObject.AddComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>(); urp.renderPostProcessing = true;
             int i = 0; string map = FBSession.map;
-            var pref = Camera.main ? Camera.main.transform.position : Vector3.zero;   // mais perto do jogador primeiro (os da borda do mapa ficam fora da arena)
-            foreach (var g in FBSponsors.Made.Where(x => x).OrderBy(x => (x.transform.position - pref).sqrMagnitude).Take(10))
+            foreach (var g in FBSponsors.Made.Where(x => x))
             {
                 var mf = g.GetComponent<MeshFilter>(); var m = mf.sharedMesh; var root = g.transform;
                 for (int q = 0; q + 3 < m.vertexCount && i < 14; q += 4)
