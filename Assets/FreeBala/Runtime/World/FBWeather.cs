@@ -49,7 +49,9 @@ namespace FreeBala
             BuildCones();
             heads.Clear(); FBCarLights.Reset(); FBWindowLights.Build();   // janelas acesas à noite (interior + luz vazando)
             LightVolume();
-            Set(Night ? 1 : 0);
+            // r64: horário do dia com sol/lua reais e céu físico (BuritiroEnvironmentManager); -fbluzantiga = sistema antigo abaixo
+            if (!FBEnv.Legacy) { sun.useColorTemperature = false; FBEnvProbe.Build(go.transform); BuritiroEnvironmentManager.Begin(go, mapId, w.time, sun); }
+            else Set(Night ? 1 : 0);
             FBAmbientFx.Start(go.transform, mb);
             FBBirds.Begin(go.transform, groundY, Night, Rain);                                           // pombos (chão/telhados, revoada) e urubus planando
         }
@@ -109,6 +111,79 @@ namespace FreeBala
             curN = n;
             if (FBLivingSky.I) FBLivingSky.I.SetWeather(n, Rain, Dusk ? 1 : 0, Quaternion.Euler(el, -35, 0) * Vector3.back, moonRot * Vector3.back, cover, wind);   // céu vivo (sky.js)
         }
+        // r64: mesmo papel do Set(n), mas com o estado do BuritiroEnvironmentManager (sol/lua reais, céu físico, adaptação, curvas do preset).
+        // A chuva continua por cima (céu fechado, sol fraco, neblina perto, chão molhado). Nada aqui troca de uma vez: tudo vem de funções
+        // contínuas da hora.
+        public static void ApplyEnv(in FBEnvState s)
+        {
+            if (!sun) return; float rainK = Rain ? 1 : 0; float n = s.night; curN = n;
+            float dk = Mathf.Clamp01(Mathf.Max(n, s.skyNight));
+            // sol ou lua (uma luz direcional só: a troca acontece com as duas perto de zero, sem salto visível)
+            sun.transform.rotation = Quaternion.LookRotation(-s.lightDir, Mathf.Abs(s.lightDir.y) > .98f ? Vector3.forward : Vector3.up);
+            sun.color = Color.Lerp(s.lightColor, new Color(.75f, .76f, .8f), rainK * .6f);
+            sun.intensity = s.lightIntensity * (1 - rainK * (s.moonLight ? .6f : .55f));
+            sun.shadowStrength = s.shadowStrength * (Rain ? .4f : 1); sun.shadows = sun.intensity > .002f ? LightShadows.Soft : LightShadows.None;
+            // luz ambiente (o céu iluminando de verdade) — chuva puxa para o cinza
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
+            RenderSettings.ambientSkyColor = Color.Lerp(s.ambSky, new Color(.55f, .58f, .62f) * s.ambSky.maxColorComponent, rainK * .5f);
+            RenderSettings.ambientEquatorColor = Color.Lerp(s.ambEq, new Color(.45f, .46f, .48f) * s.ambEq.maxColorComponent * 1.1f, rainK * .5f);
+            RenderSettings.ambientGroundColor = s.ambGround;
+            RenderSettings.ambientIntensity = s.ambIntensity;
+            // neblina (cor = horizonte do céu físico); distâncias do mapa divididas pela densidade da curva; chuva aproxima
+            var fc = Color.Lerp(s.fogColor, new Color(.55f, .58f, .62f) * Mathf.Max(.1f, s.fogColor.maxColorComponent), rainK * .7f);
+            RenderSettings.fog = true; RenderSettings.fogColor = fc;
+            float fm = Mathf.Max(.2f, s.fogMul);
+            RenderSettings.fogStartDistance = fogNear * .75f / fm * Mathf.Lerp(1, .55f, rainK); RenderSettings.fogEndDistance = fogFar * .85f / fm * Mathf.Lerp(1, .55f, rainK);
+            Shader.SetGlobalColor("_FBFogColor", Color.Lerp(fc, Color.white, .06f * (1 - dk)));
+            bool sunUp = !s.moonLight && s.lightIntensity > .001f;
+            Shader.SetGlobalColor("_FBFogSunColor", sunUp ? Color.Lerp(fc, sun.color, .55f) : Color.Lerp(fc, new Color(.35f, .42f, .6f), .35f * (s.moonLight ? 1 : 0)));
+            Shader.SetGlobalVector("_FBFogParams", new Vector4(Mathf.Lerp(Mathf.Lerp(.0024f, .0032f, dk), .0065f, rainK) * Mathf.Lerp(1, fm, .5f), .045f, groundY, Mathf.Lerp(.5f, .78f, Mathf.Max(dk, rainK))));
+            Shader.SetGlobalVector("_FBFogSun", new Vector4(-sun.transform.forward.x, -sun.transform.forward.y, -sun.transform.forward.z, (1 - rainK * .7f) * (sunUp ? .9f : .35f)));
+            // reflexos: a sonda assada do mapa é do DIA — some no pôr do sol e a sonda do céu em tempo real (FBEnvProbe) assume
+            float bake = FBEnvProbe.Live ? s.bakedProbeK : Mathf.Lerp(1, .12f, dk);
+            if (probes != null) for (int i = 0; i < probes.Length; i++) if (probes[i]) { probes[i].intensity = probeI[i] * bake * (1 - rainK * .3f); probes[i].enabled = !FBEnvProbe.Live || bake > .02f; }
+            RenderSettings.reflectionIntensity = Mathf.Lerp(1, .05f, n) * (1 - rainK * .2f);
+            // sonda de luz ambiente montada direto (o player não recalcula sozinho)
+            { var k = RenderSettings.ambientIntensity; var sh = new UnityEngine.Rendering.SphericalHarmonicsL2(); var eq = RenderSettings.ambientEquatorColor * k;
+              sh.AddAmbientLight(eq); sh.AddDirectionalLight(Vector3.up, (RenderSettings.ambientSkyColor * k - eq) * .9f, 1); sh.AddDirectionalLight(Vector3.down, (RenderSettings.ambientGroundColor * k - eq) * .9f, 1);
+              RenderSettings.ambientProbe = sh; }
+            EnvGrade(s, rainK); ApplyWet(Mathf.Max(rainK, Mathf.SmoothStep(0, .7f, Mathf.InverseLerp(.3f, 1, n))));
+            // volumétrica: raios de sol baixos no pôr do sol, bruma urbana e fachos dos postes à noite
+            FBVolumetric.Density = Mathf.Lerp(.0016f * s.volumetric, .0105f, rainK); FBVolumetric.Falloff = Mathf.Lerp(.05f, .035f, dk);
+            float lowSun = sunUp ? 1 - Mathf.InverseLerp(3, 28, s.sunEl) : 0;
+            FBVolumetric.G = sunUp ? Mathf.Lerp(.62f, .76f, lowSun) : .4f; FBVolumetric.MaxDist = Mathf.Lerp(160, 120, dk); FBVolumetric.LampK = Rain ? 3.6f : 2.6f;
+            float mk = (sunUp ? Mathf.Lerp(.55f, 1.05f, lowSun) : 1.4f) * (1 - rainK * .5f);
+            FBVolumetric.MainColor = sun.color.linear * sun.intensity * mk; FBVolumetric.MainK = mk;
+            FBVolumetric.MainDir = -sun.transform.forward; FBVolumetric.Ambient = RenderSettings.ambientEquatorColor.linear * RenderSettings.ambientIntensity * .55f;
+            // céu
+            if (FBLivingSky.I) { FBLivingSky.I.SetWeather(s.skyNight, Rain, 0, s.sunDir, s.moonDir, cover, wind); FBLivingSky.I.SetPhysical(s.skyExposure, s.sunTint, s.moonPhase, s.lightPollution); }
+            FBEnvProbe.Changed(s);
+        }
+        // pós-processamento por horário: deltas sobre o volume base (o FB_Iluminacao e qualquer volume global do mapa)
+        static readonly Dictionary<UnityEngine.Rendering.VolumeProfile, (float exp, float con, float sat, float bi, float bt)> envBase = new();
+        static void EnvGrade(in FBEnvState s, float rainK)
+        {
+            foreach (var v in Object.FindObjectsByType<UnityEngine.Rendering.Volume>(FindObjectsSortMode.None))
+            {
+                if (!v || !v.isGlobal || !v.profile) continue; var prof = v.profile;
+                if (!prof.TryGet<UnityEngine.Rendering.Universal.ColorAdjustments>(out var ca)) ca = prof.Add<UnityEngine.Rendering.Universal.ColorAdjustments>(true);
+                prof.TryGet<UnityEngine.Rendering.Universal.Bloom>(out var bl);
+                if (!envBase.TryGetValue(prof, out var b0))
+                    envBase[prof] = b0 = (ca.postExposure.overrideState ? ca.postExposure.value : 0, ca.contrast.overrideState ? ca.contrast.value : 0, ca.saturation.overrideState ? ca.saturation.value : 0,
+                                          bl ? bl.intensity.value : 0, bl ? bl.threshold.value : 1);
+                bool main = v.name == "FB_Iluminacao";
+                ca.postExposure.overrideState = true; ca.postExposure.value = b0.exp + s.exposure - rainK * .1f;
+                ca.contrast.overrideState = true; ca.contrast.value = main ? s.contrast : b0.con + (s.contrast - 8);
+                ca.saturation.overrideState = true; ca.saturation.value = (main ? s.saturation : b0.sat + (s.saturation - 6)) - rainK * 12;
+                ca.colorFilter.overrideState = true; ca.colorFilter.value = Color.white;
+                if (main)
+                {
+                    if (!prof.TryGet<UnityEngine.Rendering.Universal.WhiteBalance>(out var wb)) wb = prof.Add<UnityEngine.Rendering.Universal.WhiteBalance>(true);
+                    wb.temperature.overrideState = wb.tint.overrideState = true; wb.temperature.value = s.whiteBalance * (1 - rainK); wb.tint.value = s.tint * (1 - rainK);
+                    if (bl) { bl.intensity.overrideState = bl.threshold.overrideState = true; bl.intensity.value = FBQuality.Mobile ? s.bloom * .5f : s.bloom; bl.threshold.value = Mathf.Lerp(1.05f, .8f, s.night); }
+                }
+            }
+        }
         static float curN, duskLt, lampCct = 3000; static GameObject cones; static Material coneMat;
         // cone de luz dos postes na névoa (referência: facho visível do poste até o chão): uma malha só com um cone aberto por luminária,
         // aditiva, degradê forte em cima e sumindo no chão; acende com a noite (mais forte na chuva/neblina)
@@ -147,7 +222,7 @@ namespace FreeBala
             var ca = p.Add<UnityEngine.Rendering.Universal.ColorAdjustments>(true); ca.postExposure.value = 0; ca.contrast.value = 8; ca.saturation.value = 6; ca.colorFilter.value = Color.white;
             var bl = p.Add<UnityEngine.Rendering.Universal.Bloom>(true); bl.threshold.value = 1.05f; bl.intensity.value = FBQuality.Mobile ? .15f : .3f; bl.scatter.value = .65f; bl.highQualityFiltering.value = !FBQuality.Mobile;
             var vg = p.Add<UnityEngine.Rendering.Universal.Vignette>(true); vg.intensity.value = .18f; vg.smoothness.value = .45f;
-            gradeBase.Clear(); bloomBase.Clear();
+            gradeBase.Clear(); bloomBase.Clear(); envBase.Clear();
             FBVolumetric.AttachProfile(p);                                                           // névoa volumétrica (pacote URP Volumetric Fog) no mesmo volume
         }
         // números reais da iluminação (vitrine -fbgfx): sol/lua, ambiente, sonda, exposição, luzes acesas
@@ -267,15 +342,25 @@ namespace FreeBala
             return res;
         }
         // pula o ANOITECER para 'secs' segundos de partida (vitrine gráfica -fbgfx)
-        public static void ForceNight(bool on) { Night = on; Dusk = false; Set(on ? 1 : 0); }   // autoteste (-fbr37): noite/dia na hora
-        public static void SkipDusk(float secs) { if (!Dusk) return; duskT = Mathf.Max(0, secs - .01f); duskLt = 0; Tick(.02f); }
+        public static void ForceNight(bool on)   // autoteste (-fbr37): noite/dia na hora
+        {
+            Night = on; Dusk = false;
+            if (BuritiroEnvironmentManager.Active) { var m = BuritiroEnvironmentManager.I; m.SetHour(on ? BuritiroEnvironmentManager.NightHour : BuritiroEnvironmentManager.DayHour, true); m.Evaluate(true); return; }
+            Set(on ? 1 : 0);
+        }
+        public static void SkipDusk(float secs)
+        {
+            if (!Dusk) return;
+            if (BuritiroEnvironmentManager.Active) { var m = BuritiroEnvironmentManager.I; m.SetDuskSeconds(secs); m.Evaluate(true); return; }
+            duskT = Mathf.Max(0, secs - .01f); duskLt = 0; Tick(.02f);
+        }
         public static void Tick(float dt)
         {
-            if (Dusk && duskT < 420 && (duskT += dt) > 0 && (duskLt -= dt) <= 0)               // ANOITECER (weather.js): pôr do sol -> crepúsculo -> noite em 7 min
+            if (!BuritiroEnvironmentManager.Active && Dusk && duskT < 420 && (duskT += dt) > 0 && (duskLt -= dt) <= 0)               // ANOITECER (weather.js): pôr do sol -> crepúsculo -> noite em 7 min
             { duskLt = .25f; float u = duskT / 420f; Set(Mathf.SmoothStep(0, 1, Mathf.Clamp01((u - .08f) / .84f))); }
             var cam = Camera.main; if (!cam) return;
             if (cones) { float ck = Mathf.InverseLerp(.4f, 1, curN); cones.SetActive(ck > .01f && !(FBVolumetric.Active && FBVolumetric.InScene)); if (coneMat) coneMat.SetColor("_BaseColor", new Color(1, .78f, .5f, 1) * (.09f * ck * (Rain ? 1.6f : 1))); }
-            FBCarLights.Tick(cam, curN, Rain, Time.deltaTime); FBWindowLights.Tick(cam, curN, Time.deltaTime);   // farol/lanterna/freio/ré nas posições reais de cada carro (FBCarLights)
+            FBCarLights.Tick(cam, curN, Rain, Time.deltaTime); FBWindowLights.Tick(cam, curN * (BuritiroEnvironmentManager.Active ? BuritiroEnvironmentManager.I.state.windows : 1), Time.deltaTime);   // r64: madrugada = quase todas as janelas apagadas   // farol/lanterna/freio/ré nas posições reais de cada carro (FBCarLights)
             LampGlow(Mathf.InverseLerp(.45f, 1, curN));                   // lâmpadas acesas (a chamada estava dentro do comentário acima: as luminárias nunca acendiam)
             FBStreetLights.Tick(cam, curN, Time.deltaTime); FBAccentLights.Tick(curN); FBVolumetric.Tick(cam);
         }

@@ -129,6 +129,19 @@ namespace FreeBala
             foreach (var c in clouds) { var col = rain ? rn : Color.Lerp(Color.Lerp(day, dk, dusk * (1 - night)), nt, night); col.a = rain ? Mathf.Min(1, c.op0 + .3f) : c.op0 * (1 - .4f * night); c.m.SetColor("_BaseColor", col); }
             hideBirds = night > .5f || rain; foreach (var b in birds) b.root.gameObject.SetActive(!hideBirds);
         }
+        // r64: céu FÍSICO (Rayleigh/Mie no FBSky.shader) guiado pelo BuritiroEnvironmentManager: exposição do céu (adaptação do olho), tinta
+        // do sol que chega às nuvens (dourada/rosada no pôr do sol), fase da lua com lado (crescente/minguante) e poluição luminosa.
+        public void SetPhysical(float skyExposure, Color sunTint, float moonPhase, float lightPollution)
+        {
+            if (sky)
+            {
+                sky.SetFloat("_FBPhys", 1); sky.SetFloat("_FBSkyExposure", skyExposure); sky.SetColor("_FBSunTint", sunTint);
+                sky.SetFloat("_MoonPhase", Mathf.Clamp(moonPhase, -1, 1)); sky.SetFloat("_FBLightPol", lightPollution);
+            }
+            // nuvens-sprite (níveis sem nuvem do céu): mesma tinta do sol e mesmo brilho do céu
+            float b = Mathf.Clamp(skyExposure / 6f, .08f, 1f); float m = Mathf.Max(1e-3f, sunTint.maxColorComponent); var tn = sunTint / m;
+            foreach (var c in clouds) { var col = Color.Lerp(Color.white, tn, .55f) * b; col.a = c.m.GetColor("_BaseColor").a; c.m.SetColor("_BaseColor", col); }
+        }
         // [parceiro] v1 (thread de física): tempo do LateUpdate medido pelo FBTempo (desligado no jogo: só um teste de bool; o FBTesteExe liga)
         static readonly int __fbt_LateUpdate = FBTempo.Id("FBLivingSky.LateUpdate");
         void LateUpdate()

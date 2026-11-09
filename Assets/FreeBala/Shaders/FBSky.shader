@@ -26,6 +26,10 @@ Shader "FreeBala/Sky"
         _Cover ("Cobertura de nuvens", Range(0,1)) = 0.45
         _WindSky ("Vento das nuvens (xz)", Vector) = (1, 0.35, 0, 0)
         _FBCloudVol ("Ruido 3D das nuvens", 3D) = "" {}
+        _FBPhys ("Ceu fisico (r64)", Range(0,1)) = 0
+        _FBSkyExposure ("Exposicao do ceu", Float) = 8
+        _FBSunTint ("Tinta do sol", Color) = (1,1,1,1)
+        _FBLightPol ("Poluicao luminosa", Range(0,1)) = 0.55
     }
     SubShader
     {
@@ -39,6 +43,7 @@ Shader "FreeBala/Sky"
             #pragma multi_compile_local _ _FB_SKY_LITE _FB_VOLCLOUDS
             #include "UnityCG.cginc"
             float _Night, _Dusk, _Rain, _MoonPhase, _SkyTime, _Cover; float4 _SunDir, _MoonDir, _WindSky;
+            float _FBPhys, _FBSkyExposure, _FBLightPol; float4 _FBSunTint;
             sampler3D _FBCloudVol;
             struct v2f { float4 pos : SV_POSITION; float3 dir : TEXCOORD0; };
             v2f vert (appdata_base v) { v2f o; o.pos = UnityObjectToClipPos(v.vertex); o.dir = v.vertex.xyz; o.dir.x = -o.dir.x; return o; }   // espelha X: mesmo céu do web (glTF/three.js)
@@ -83,6 +88,44 @@ Shader "FreeBala/Sky"
                 sky += sunC * (.035 * phaseHG(mu, .72) + .010 * phaseHG(mu, .95)) * vis;               // Mie: halo + auréola
                 sky += sunC * smoothstep(.99983, .99991, mu) * 5. * vis * smoothstep(-.02, .02, d.y);  // disco do sol (HDR -> bloom)
                 return sky;
+            }
+
+            // ---------- r64: atmosfera FÍSICA (espalhamento simples Rayleigh + Mie + ozônio, terra esférica) — o mesmo modelo do
+            // FBAtmosphere.cs que acende a cena; resultado LINEAR em unidades do sol (= 1), multiplicado por _FBSkyExposure (adaptação).
+            // 10 passos na visada (quadráticos: mais perto do chão) × 4 passos até o sol. Mobile/Web (_FB_SKY_LITE) seguem no modelo antigo.
+            static const float PRg = 6360e3, PRt = 6460e3, PHR = 8000., PHM = 1200.;
+            static const float3 PBR = float3(5.802e-6, 13.558e-6, 33.1e-6), PBO = float3(0.650e-6, 1.881e-6, 0.085e-6);
+            float _FBTurb; float PTurb() { return _FBTurb > 0. ? _FBTurb : 1.5; }
+            float2 RaySphere(float3 o, float3 d, float R) { float b = dot(o, d), c = dot(o, o) - R * R, h = b * b - c; if (h < 0.) return float2(-1, -1); h = sqrt(h); return float2(-b - h, -b + h); }
+            float3 PDepth(float3 p, float3 s, int n)
+            {
+                float2 ts = RaySphere(p, s, PRt); float L = max(ts.y, 0.);
+                float2 tg = RaySphere(p, s, PRg); if (tg.x > 0.) return float3(1e9, 1e9, 1e9);       // atrás da terra
+                float ds = L / n; float3 acc = 0;
+                [loop] for (int i = 0; i < n; i++) { float3 q = p + s * ((i + .5) * ds); float hh = length(q) - PRg; acc += float3(exp(-hh / PHR), exp(-hh / PHM), max(0., 1. - abs(hh - 25000.) / 15000.)) * ds; }
+                return acc;
+            }
+            float3 PhysSky(float3 d, float3 s)
+            {
+                float3 o = float3(0, PRg + 2., 0);
+                float L = RaySphere(o, d, PRt).y; float2 tg = RaySphere(o, d, PRg); if (tg.x > 0.) L = tg.x; L = min(L, 300e3);
+                float nu = dot(d, s), pR = 3. / (16. * 3.14159) * (1. + nu * nu), g = .8, g2 = g * g;
+                float pM = 3. / (8. * 3.14159) * ((1. - g2) * (1. + nu * nu)) / ((2. + g2) * pow(max(1e-4, 1. + g2 - 2. * g * nu), 1.5));
+                float tb = PTurb(); float3 accR = 0, accM = 0, od = 0; float prev = 0.; const int NV = 10;
+                [loop] for (int i = 1; i <= NV; i++)
+                {
+                    float t = L * (i / (float)NV) * (i / (float)NV), ds = t - prev, tm = (t + prev) * .5; prev = t;
+                    float3 p = o + d * tm; float hh = length(p) - PRg; if (hh < 0.) break;
+                    float3 e = float3(exp(-hh / PHR), exp(-hh / PHM), max(0., 1. - abs(hh - 25000.) / 15000.)) * ds; od += e;
+                    float3 ld = PDepth(p, s, 4); if (ld.x > 1e8) continue;
+                    float3 tau = PBR * (od.x + ld.x) + 4.40e-6 * tb * (od.y + ld.y) + PBO * (od.z + ld.z);
+                    float3 T = exp(-tau); accR += T * e.x; accM += T * e.y;
+                }
+                float3 col = accR * PBR * pR + accM * (3.996e-6 * tb * pM);
+                // disco do sol (transmitância na visada) — HDR para o bloom; some atrás da terra
+                float3 Ts = exp(-(PBR * od.x + 4.40e-6 * tb * od.y + PBO * od.z));
+                col += Ts * smoothstep(.99985, .99993, nu) * 900. * step(0., d.y + .002);
+                return col;
             }
 
             // ---------- nuvens 2D (cúmulos + cirros); alpha = cobertura
@@ -205,24 +248,40 @@ Shader "FreeBala/Sky"
                 float3 sunDir = normalize(_SunDir.xyz), moonDir = normalize(_MoonDir.xyz);
                 float night = _Night;
                 float3 sunC = SunColor(sunDir.y);
-                float3 sky = Atmosphere(d, sunDir, sunC);
-                // compatibilidade: _Dusk ainda puxa um pouco de laranja para o horizonte (ANOITECER)
-                sky = lerp(sky, sky * float3(1.05, .93, .86), _Dusk * (1. - night) * exp(-up * 4.) * .5);
+                float3 sky;
+                #if !defined(_FB_SKY_LITE)
+                if (_FBPhys > .5)
+                {
+                    // céu físico em linear → espaço "gamma" do resto do shader (nuvens/noite misturam lá; o fim converte de volta)
+                    float3 dd = d; if (dd.y < 0.) dd = normalize(float3(d.x, max(d.y, -.04) * .25, d.z));   // abaixo do horizonte: bruma clara (o chão do mapa cobre)
+                    float3 lin = PhysSky(dd, sunDir) * _FBSkyExposure;
+                    lin = lin / (1. + lin * .04);                                                     // ombro suave só no disco do sol
+                    sky = pow(max(lin, 0.), 1. / 2.2);
+                    sunC = pow(max(_FBSunTint.rgb, 1e-4), 1. / 2.2);
+                }
+                else
+                #endif
+                {
+                    sky = Atmosphere(d, sunDir, sunC);
+                    // compatibilidade: _Dusk ainda puxa um pouco de laranja para o horizonte (ANOITECER)
+                    sky = lerp(sky, sky * float3(1.05, .93, .86), _Dusk * (1. - night) * exp(-up * 4.) * .5);
+                }
 
                 float moonUp = smoothstep(-.05, .1, moonDir.y), md = dot(d, moonDir);
-                float phaseB = .25 + .75 * _MoonPhase;
+                float phaseB = .25 + .75 * abs(_MoonPhase);
                 float halo = (pow(max(md, 0.), 22.) * .18 + pow(max(md, 0.), 420.) * .45) * moonUp * phaseB;
                 if (night > .001)
                 {
                     float3 nsky = lerp(float3(.040, .060, .105), float3(.010, .018, .050), smoothstep(.0, .75, h));
-                    nsky += float3(.30, .17, .08) * exp(-up * 9.) * .42;                         // poluição luminosa da cidade
+                    float lpK = _FBPhys > .5 ? _FBLightPol / .55 : 1.;
+                    nsky += float3(.30, .17, .08) * exp(-up * 9.) * .42 * lpK;                   // poluição luminosa da cidade (r64: pelo preset)
                     nsky += float3(.05, .10, .07) * exp(-up * 14.) * .25;
                     nsky += float3(.42, .52, .70) * halo;
-                    float ext = smoothstep(.02, .30, d.y) * (1. - _Rain) * (1. - .55 * saturate(halo * 3.));
+                    float ext = smoothstep(.02, .30, d.y) * (1. - _Rain) * (1. - .55 * saturate(halo * 3.)) * (1. - .55 * saturate(lpK * .55 - .25) * smoothstep(.6, .0, d.y));   // r64: cidade apaga as estrelas baixas
                     float3 mwN = normalize(float3(.42, .36, .83)); float bd = dot(d, mwN);
                     float band = exp(-bd * bd * 16.); float cl = fbm3(d * 6.) * 1.4, dust = smoothstep(.45, .75, fbm3(d * 11. + 3.));
                     float mw = band * saturate(cl - .25) * (1. - dust * .75); float3 mwc = lerp(float3(.55, .62, .85), float3(.95, .86, .70), saturate(cl - .5));
-                    float moonWash = 1. - .45 * moonUp * _MoonPhase;                              // luar apaga as fracas
+                    float moonWash = 1. - .45 * moonUp * abs(_MoonPhase);                              // luar apaga as fracas
                     nsky += (mwc * mw * .42 + float3(.30, .34, .48) * band * .035) * ext * moonWash;
                     float3 st = StarLayer(d, 70., .50 + band * .15, 2.4, .55, 0., pixAng)
                               + StarLayer(RotX(RotY(d, 1.3), .7), 150., .62 + band * .2, 1.0, .35, 31.7, pixAng) * moonWash

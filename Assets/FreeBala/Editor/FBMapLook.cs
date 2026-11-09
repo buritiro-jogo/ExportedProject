@@ -72,6 +72,7 @@ namespace FreeBala.EditorTools
                     if (!conv.TryGetValue(m, out var nm))
                     {
                         nm = Convert(m, rends, det, out bool veg);
+                        if (nm != m) FBPbrMaps.Assign(nm, id);                         // r64: metal/oclusão/brilho por pixel (Art/Gfx/PBR/<mapa>)
                         conv[m] = nm;
                         if (nm != m)
                         {
