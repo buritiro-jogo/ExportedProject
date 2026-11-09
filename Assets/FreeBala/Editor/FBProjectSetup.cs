@@ -259,8 +259,8 @@ namespace FreeBala.EditorTools
         {
             PlayerSettings.companyName = "FreeBala"; PlayerSettings.productName = "BURITIRO";
             PlayerSettings.colorSpace = ColorSpace.Linear;
-            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, "com.freebala.game");
-            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.iOS, "com.freebala.game");
+            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, "com.buritiro.jogo");   // [mobile 09/11] nome definitivo na Play Store (não dá para trocar depois de publicar)
+            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.iOS, "com.buritiro.jogo");
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Standalone, "com.freebala.game");
             PlayerSettings.bundleVersion = "2.0.0"; PlayerSettings.Android.bundleVersionCode = 1; PlayerSettings.iOS.buildNumber = "1";
             PlayerSettings.SetScriptingBackend(NamedBuildTarget.Standalone, ScriptingImplementation.IL2CPP);

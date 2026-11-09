@@ -24,10 +24,18 @@ namespace FreeBala
             return r;
         }
         public const string OldDefaultServer = "ws://localhost:8123/ws";
+        public const string OldVpsServer = "ws://179.66.136.216:8123/ws";   // [mobile 09/11] VPS antigo (Boston), desligado na migração para o Brasil
+        static string LinhaServidor(string[] linhas) { foreach (var l in linhas) { var t = l.Trim(); if (t.StartsWith("ws://") || t.StartsWith("wss://")) return t; } return null; }
         public static string ServidorPadrao()
         {
             try
             {
+#if UNITY_ANDROID || UNITY_WEBGL
+                // [mobile 09/11] nessas plataformas StreamingAssets não é arquivo (fica dentro do APK): lê a cópia em Resources/servidor.txt
+                // (o FBBuild copia de StreamingAssets antes de cada build), como o GameData faz com o fb_data.
+                var ta = Resources.Load<TextAsset>("servidor");
+                if (ta) { var r = LinhaServidor(ta.text.Split('\n')); if (r != null) return r; }
+#endif
                 var f = System.IO.Path.Combine(Application.streamingAssetsPath, "servidor.txt");
                 if (System.IO.File.Exists(f)) { foreach (var l in System.IO.File.ReadAllLines(f)) { var t = l.Trim(); if (t.StartsWith("ws://") || t.StartsWith("wss://")) return t; } }
             }
@@ -62,7 +70,7 @@ namespace FreeBala
             string G(string k, string d) => PlayerPrefs.GetString("fb_" + k, d);
             // [parceiro 07/11] servidor online padrão: StreamingAssets/servidor.txt (o instalador do jogo grava o IP do VPS).
             // Quem ainda tem o padrão antigo (localhost) salvo passa a usar o do arquivo; quem digitou outro endereço mantém o seu.
-            server = ServidorPadrao(); var salvo = G("server", server); if (salvo != OldDefaultServer) server = salvo;
+            server = ServidorPadrao(); var salvo = G("server", server); if (salvo != OldDefaultServer && salvo != OldVpsServer) server = salvo;   // [mobile 09/11] quem tem o VPS antigo salvo também passa para o do arquivo
             skin = G("skin", skin); look = G("look", look); map = G("map", map); mode = G("mode", mode); primary = G("primary", primary); smg = G("smg", smg); secondary = G("secondary", secondary); name = G("name", name);
             view = "tps"; /* r45b: câmera em 1ª pessoa removida do jogo (pedido) */ aimAssist = G("aimAssist", aimAssist); victory = G("victory", ""); if (victory == "" || FBEmotes.IsFF(victory)) victory = null;   /* r47: dança de vitória FF salva */ emoteSlots = G("emotes", "");
             diff = PlayerPrefs.GetInt("fb_diff", diff); money = PlayerPrefs.GetInt("fb_money", money); xp = PlayerPrefs.GetInt("fb_xp", xp); passXp = PlayerPrefs.GetInt("fb_passXp", passXp); quality = PlayerPrefs.GetInt("fb_quality", quality);
