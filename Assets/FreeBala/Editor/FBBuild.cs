@@ -84,12 +84,23 @@ namespace FreeBala.EditorTools
         // cenas do Build Settings + cenas de teste que existirem (IKTest do Agente 3: o autoteste do executável abre pelo nome)
         static readonly string[] TestScenes = { FBImport.SceneDir + "/IKTest.unity" };
         static string[] Scenes => EditorBuildSettings.scenes.Where(s => s.enabled && File.Exists(s.path)).Select(s => s.path).Concat(TestScenes.Where(File.Exists)).Distinct().ToArray();
+        // [mobile 09/11] Android leve: o build com os 6 mapas deu 12 GB (o APK não fecha acima de ~4 GB). O celular leva só o Menu e os
+        //  mapas de FBAndroidLeve.Mapas (padrão: Praça das Águas e Vila Jardim; FB_ANDROID_MAPS=id1,id2 troca a lista). O menu já esconde
+        //  sozinho os mapas que não estão no build (FBMenu: Application.CanStreamedLevelBeLoaded).
+        static string[] ScenesFor(BuildTarget t)
+        {
+            if (t != BuildTarget.Android) return Scenes;
+            var mapas = FBAndroidLeve.Mapas;
+            return Scenes.Where(p => { var n = Path.GetFileNameWithoutExtension(p); return !n.StartsWith("Map_") || mapas.Contains(n.Substring(4)); }).ToArray();
+        }
         static bool Run(BuildTarget t, BuildTargetGroup g, string path, BuildOptions o = BuildOptions.None)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(path));
             if (EditorUserBuildSettings.activeBuildTarget != t) EditorUserBuildSettings.SwitchActiveBuildTarget(g, t);
             Compat(t); FBOptimize.GpuSkinning(); if (t == BuildTarget.Android || t == BuildTarget.WebGL) ServidorParaResources();
-            var r = BuildPipeline.BuildPlayer(new BuildPlayerOptions { scenes = Scenes, locationPathName = path, target = t, targetGroup = g, options = o });
+            FBAndroidLeve.DesempacotarX171();                                                      // texturas dos objetos de rua comprimidas (vale para todas as plataformas)
+            var cenas = ScenesFor(t); Debug.Log($"[FreeBala][build] {t}: {cenas.Length} cenas · {string.Join(", ", cenas.Select(Path.GetFileNameWithoutExtension))}");
+            var r = BuildPipeline.BuildPlayer(new BuildPlayerOptions { scenes = cenas, locationPathName = path, target = t, targetGroup = g, options = o });
             var s = r.summary; Debug.Log($"[FreeBala][build] {t}: {s.result} · {s.totalSize / 1048576f:0} MB · {s.totalTime} · erros {s.totalErrors} · avisos {s.totalWarnings} → {path}");
             File.WriteAllText(path + ".build.txt", $"{t} {s.result} {s.totalSize} bytes {s.totalTime} erros={s.totalErrors}\n" + string.Join("\n", r.steps.SelectMany(st => st.messages).Where(m => m.type == LogType.Error || m.type == LogType.Exception).Select(m => m.content)));
             if (s.result == BuildResult.Succeeded) AssetReport(r, path);

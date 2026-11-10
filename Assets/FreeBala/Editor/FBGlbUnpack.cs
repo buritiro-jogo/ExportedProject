@@ -86,7 +86,8 @@ namespace FreeBala.EditorTools
                 foreach (var plat in new[] { "Android", "iPhone", "WebGL" }) ga.SetPlatformTextureSettings(new TextureImporterPlatformSettings { name = plat, overridden = true, maxTextureSize = 2048, format = plat == "WebGL" ? TextureImporterFormat.Automatic : TextureImporterFormat.ASTC_6x6, textureCompression = TextureImporterCompression.Compressed });
                 return;
             }
-            if (!p.StartsWith(FBImport.Imp + "/") || !p.Contains(FBGlbUnpack.TexSuffix + "/")) return;
+            // [mobile 09/11] vale também para os objetos de rua do 171 (Resources/X171/**/<nome>_tex), desempacotados pelo FBAndroidLeve
+            if (!(p.StartsWith(FBImport.Imp + "/") || p.Contains("/Resources/X171/")) || !p.Contains(FBGlbUnpack.TexSuffix + "/")) return;
             var ti = (TextureImporter)assetImporter; var file = Path.GetFileNameWithoutExtension(p); char u = file.Length > 2 ? file[file.LastIndexOf('_') + 1] : 'c';
             bool map = p.Contains("/Maps/"), weapon = p.Contains("/Weapons/") || p.Contains("/FP/"), ch = p.Contains("/Chars/");
             ti.textureShape = TextureImporterShape.Texture2D; ti.mipmapEnabled = true; ti.isReadable = false; ti.streamingMipmaps = true;
