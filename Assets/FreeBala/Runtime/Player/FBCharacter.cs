@@ -169,7 +169,17 @@ namespace FreeBala
             CombatOverrides(m);
             if (pol) PoliceOverrides(m);
             if (novo) NovoCombate(m);
+            if (FBAnimProfile.FonteIE && !pol && !UnarmedLocomotion && weapon != null) FonteUnicaIE(m);   // [fonte única 10/11] por último: vence a mistura
             SetOverrides(m);
+        }
+        // [fonte única 10/11] só os ajustes que mediram melhor que a mistura (cabeçalho em FBAnimProfile): pistola com parado e recarga
+        // do Invasão Elite, recarga da escopeta do Invasão Elite e mira agachado com o "Idle Aiming" (sai o clipe do Mixamo).
+        void FonteUnicaIE(Dictionary<string, string> m)
+        {
+            bool Tem(string k) => origByName.ContainsKey(k) || origByName.ContainsKey(FBRegistry.Safe(k));
+            if (IsPistol) { foreach (var kv in FBAnimProfile.IePistol) if (Tem(kv.Key) && Has(kv.Value)) m[kv.Key] = kv.Value; return; }
+            if (crouch && Tem("Rifle_Idle") && Has(FBAnimProfile.MiraParada)) m["Rifle_Idle"] = FBAnimProfile.MiraParada;
+            if (weapon.cls == "escopeta" && Tem("Rifle_Reload_2") && Has(FBAnimProfile.IeShotgunReload)) m["Rifle_Reload_2"] = FBAnimProfile.IeShotgunReload;
         }
         // r58: só mira/tiro/recarga/granada/reação. Nada de locomoção — ver o cabeçalho do NovoRifle no FBAnimProfile.
         static readonly Dictionary<string, string>[] NovoMaps = { FBAnimProfile.NovoRifle, FBAnimProfile.NovoPistol };

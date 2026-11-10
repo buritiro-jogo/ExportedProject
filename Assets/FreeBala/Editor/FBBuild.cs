@@ -99,7 +99,11 @@ namespace FreeBala.EditorTools
             if (EditorUserBuildSettings.activeBuildTarget != t) EditorUserBuildSettings.SwitchActiveBuildTarget(g, t);
             Compat(t); FBOptimize.GpuSkinning(); if (t == BuildTarget.Android || t == BuildTarget.WebGL) ServidorParaResources();
             FBAndroidLeve.DesempacotarX171();                                                      // texturas dos objetos de rua comprimidas (vale para todas as plataformas)
-            var cenas = ScenesFor(t); Debug.Log($"[FreeBala][build] {t}: {cenas.Length} cenas · {string.Join(", ", cenas.Select(Path.GetFileNameWithoutExtension))}");
+            var cenas = ScenesFor(t);
+            // [lab 09/11] FB_SO_MENU=1: build só com a cena do Menu. O laboratório de animação (-fbanimlab) monta a própria cena, então não
+            // precisa dos mapas: a build de laboratório cai de ~15 min e 13 GB para poucos minutos. Use com FB_LAB_OUT para não sobrescrever.
+            if (System.Environment.GetEnvironmentVariable("FB_SO_MENU") == "1") cenas = cenas.Take(1).ToArray();
+            Debug.Log($"[FreeBala][build] {t}: {cenas.Length} cenas · {string.Join(", ", cenas.Select(Path.GetFileNameWithoutExtension))}");
             var r = BuildPipeline.BuildPlayer(new BuildPlayerOptions { scenes = cenas, locationPathName = path, target = t, targetGroup = g, options = o });
             var s = r.summary; Debug.Log($"[FreeBala][build] {t}: {s.result} · {s.totalSize / 1048576f:0} MB · {s.totalTime} · erros {s.totalErrors} · avisos {s.totalWarnings} → {path}");
             File.WriteAllText(path + ".build.txt", $"{t} {s.result} {s.totalSize} bytes {s.totalTime} erros={s.totalErrors}\n" + string.Join("\n", r.steps.SelectMany(st => st.messages).Where(m => m.type == LogType.Error || m.type == LogType.Exception).Select(m => m.content)));
