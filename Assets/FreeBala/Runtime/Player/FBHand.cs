@@ -40,6 +40,33 @@ namespace FreeBala
             local = Quaternion.LookRotation(f, n); palm = m.magnitude; return true;
         }
 
+        // [mãos 09/11] Frame + reserva para os rigs "mão de luva": 15 dos 56 jogáveis (r_aka_junin, r_elaine, r_jordan, r_maia…) só têm UMA
+        // cadeia de dedo no esqueleto (mapeada como indicador; alguns têm o polegar), então Frame devolvia false e o FBRig não girava a palma
+        // esquerda para o guarda-mão: a mão ficava com a rotação do clipe, aberta e de pé ao lado do fuzil (fotos do laboratório, 09/11).
+        // Medido nos 41 rigs completos (FBHandAudit, _diag\maos_avatar.txt): no espaço do osso a frente dos dedos é (±0,09; 1,00; −0,01) e a
+        // normal da palma ≈ (0; 0; 1) em TODOS — é o mesmo referencial do rig mixamorig de referência (RefFwd/RefSide), espelhado em X na
+        // esquerda. E a cadeia única desses rigs fica exatamente nessa frente. Então: sem os dedos, vale o referencial de referência, desde
+        // que a cadeia que existe aponte para onde ele diz (≤ 30°) ou o osso seja mixamorig. simple = true avisa que é mão de luva.
+        public static bool FrameOrSimple(Animator an, bool right, out Quaternion local, out float palm, out bool simple)
+        {
+            simple = false; if (Frame(an, right, out local, out palm)) return true;
+            local = Quaternion.identity; palm = RefPalm;
+            if (!an || !an.isHuman) return false;
+            var hand = an.GetBoneTransform(right ? HumanBodyBones.RightHand : HumanBodyBones.LeftHand); if (!hand) return false;
+            var idx = an.GetBoneTransform(right ? HumanBodyBones.RightIndexProximal : HumanBodyBones.LeftIndexProximal);
+            var f = (right ? RefFwd : new Vector3(-RefFwd.x, RefFwd.y, RefFwd.z)).normalized;
+            var sd = right ? RefSide : new Vector3(-RefSide.x, RefSide.y, RefSide.z);
+            if (idx)
+            {
+                var d = hand.InverseTransformPoint(idx.position);
+                if (d.sqrMagnitude < 1e-10f || Vector3.Angle(d, f) > 30) return false;
+                palm = d.magnitude;
+            }
+            else if (!hand.name.StartsWith("mixamorig")) return false;
+            var s = Vector3.ProjectOnPlane(sd, f).normalized; var n = right ? Vector3.Cross(f, s) : Vector3.Cross(s, f);
+            local = Quaternion.LookRotation(f, n); simple = true; return true;
+        }
+
         // correção do encaixe da arma na mão direita: pose do rig de referência → este rig (rotação no espaço do osso) + fator do tamanho da mão
         public static Quaternion RightCorrection(Animator an, out float palmK, out float deg)
         {
