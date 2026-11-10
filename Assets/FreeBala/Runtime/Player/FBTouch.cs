@@ -129,6 +129,7 @@ namespace FreeBala
             foreach (var b in layout)
             {
                 if (b.id == "JOYSTICK" || !b.enabled) continue;
+                if (HiddenInMode(b.id)) continue;
 
                 var rb = new RuntimeBtn { data = b };
                 float diam = b.TotalRadius * 2f;
@@ -172,6 +173,10 @@ namespace FreeBala
                 buttons.Add(rb);
             }
         }
+
+        // [mobile 09/11] DE ROLÊ é modo livre, sem armas e sem inimigos: os botões de combate não aparecem (cobriam a garagem e a tela).
+        static readonly HashSet<string> RoleHidden = new() { "FIRE", "FIRE_LEFT", "AIM", "RELOAD", "SWAP", "HEAL", "PRONE" };
+        static bool HiddenInMode(string id) => FBSession.mode == "role" && RoleHidden.Contains(id);
 
         Image CreateCircle(string name, Transform parent, Vector2 pos, Vector2 size, Color col)
         {
