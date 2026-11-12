@@ -147,6 +147,27 @@ namespace FreeBala
         };
         public const string NovoCrouchAim = "POL_PR_idle_crouching_aiming", NovoPistolCrouch = "POL_PI_pistol_kneeling_idle";
 
+        // ===================== FONTE ÚNICA (10/11): tentada, medida e reduzida ao que ganhou =====================
+        // Pedido do Ruan: "tem animações de 5 jogos; deixa somente animação de um jogo". Testei o armado SÓ com clipes do Invasão Elite
+        // (o único com parado, 8 direções em pé e agachado, sprint e recarga) contra a mistura, na mesma build, 4 e 8 personagens, 5
+        // classes de arma (laboratório; fotos em ..\..\_diagnim_fotos, folhas K e L). O que decidiu foi a MÃO NA ARMA e as FOTOS:
+        //  · NÃO GANHOU: andar em combate — o IE não tem andar tático em 8 direções; o trote tocado na velocidade de andar vira passada de
+        //    corrida em câmera lenta e o tronco continua inclinado. Parado de mira — a IE_Rifle_AimPose tem 2 quadros (estátua) e segura a
+        //    arma mais à frente: na escopeta a mão esquerda ficava 13,8 cm fora do guarda-mão e na sniper 5 cm. Agachado parado: mão 0,5 → 2,1 cm.
+        //  · GANHOU: pistola com parado e recarga do IE (mão esquerda 3,8 → 1,1 cm parado, mirando e atirando), recarga da escopeta e
+        //    mira AGACHADO com o "Idle Aiming" no lugar do clipe do Mixamo (mão na escopeta 3,7 → 0,7 cm, na sniper 3,9 → 0,6 cm).
+        // Estados com a mão a mais de 2 cm da arma: 21 na mistura, 14 com estes ajustes. Fica só o que ganhou.
+        // AVISO sobre o "estalo" (°/s) do laboratório: varia até 3× entre duas corridas da MESMA configuração (sprint 2.011 e 6.315 com o
+        // mesmo clipe), então não serve para comparar corridas diferentes — só personagens dentro da mesma corrida.
+        // Um jogo só de verdade precisa de um conjunto com andar tático em 8 direções, que não há no projeto.
+        // -fbfonteantiga desliga estes ajustes (comparar no laboratório).
+        public static bool FonteIE = System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-fbfonteantiga") < 0;
+        public static readonly Dictionary<string, string> IePistol = new()
+        {
+            ["Rifle_Idle"] = "IE_Pistol_Idle", ["Rifle Idle"] = "IE_Pistol_Idle", ["Rifle_Reload_2"] = "IE_Pistol_Reload",
+        };
+        public const string IeShotgunReload = "IE_Shotgun_Reload", MiraParada = "Idle Aiming";
+
         /// <summary>chave dos ajustes; -fbanimnova id1,id2 limita a estes personagens (laboratório: comparar na MESMA corrida)</summary>
         static string[] soEstes; static bool leuSoEstes;
         public static bool CombateNovo(string skinId)

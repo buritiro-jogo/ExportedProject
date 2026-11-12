@@ -34,13 +34,18 @@ namespace FreeBala
 
             ("role", "DE ROLÊ", "ROLE PLAY", "Modo livre: sem armas e sem inimigos. Carros liberados, paredão de som (K) e NPCs que curtem perto do som."),
 
+            // [mobile 09/11] Android: só DE ROLÊ e 4X4 (pedido do Ruan). O CLÁSSICO e o 10X10 ficam fora do menu do celular.
+#if !UNITY_ANDROID
             ("classico", "CLÁSSICO", "4 × 4", "Mata-mata 4×4 numa área delimitada do mapa. Primeiro time a 40 abates ou quem liderar após 8 minutos."),
+#endif
 
             ("squad", "4X4", "RODADAS", "Rodadas com compra no início, zona que fecha dentro da área da partida, primeiro a vencer 4 rodadas. Morreu, perde o equipamento."),
 
+#if !UNITY_ANDROID
             // [parceiro 31/10] modo 10x10 por rodadas com compra (FBModo10x10)
 
             ("10x10", "10X10", "RODADAS · COMPRA", "Dois times de 10 nascem juntos, cada um do seu lado. Compre no começo da rodada; abates e rodadas dão dinheiro. Primeiro a vencer 7 rodadas. Morreu, perde o equipamento."),
+#endif
 
         };
 
@@ -66,7 +71,7 @@ namespace FreeBala
 
             if (FBSession.mode == "4v4") FBSession.mode = "squad";
 
-            if (MODES.All(m => m.id != FBSession.mode)) FBSession.mode = "classico";
+            if (MODES.All(m => m.id != FBSession.mode)) FBSession.mode = MODES.Any(m => m.id == "classico") ? "classico" : "squad";   // [mobile 09/11] no Android não há CLÁSSICO: cai no 4X4
 
             if (!maps.Any(m => m.id == FBSession.map)) FBSession.map = "vila_jardim";   // [parceiro 31/10] mapa salvo fora da lista do menu volta para a Vila Jardim
 

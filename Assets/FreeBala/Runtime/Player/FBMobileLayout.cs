@@ -55,8 +55,10 @@ namespace FreeBala
                 new FBMobileButtonData { id = "PICKUP",     name = "PEGAR",        icon = "PEGAR",   pos = new Vector2(380, 190),  radius = 44, scale = 1f,   opacity = .65f, enabled = true },
 
                 // Centro / Topo
-                new FBMobileButtonData { id = "EMOTE",      name = "EMOTES",       icon = "EMOTE",   pos = new Vector2(800, 830),  radius = 42, scale = 1f,   opacity = .70f, enabled = true },
-                new FBMobileButtonData { id = "MAP",        name = "MAPA",         icon = "MAPA",    pos = new Vector2(1420, 830), radius = 42, scale = 1f,   opacity = .75f, enabled = true },
+                // [mobile 09/11] EMOTE e MAPA saíram de cima do placar (centro do topo) e do painel da arma (canto direito): ficam no
+                //  vão livre entre os dois, visto no teste do APK (prints em _diag\android_teste).
+                new FBMobileButtonData { id = "EMOTE",      name = "EMOTES",       icon = "EMOTE",   pos = new Vector2(1050, 838), radius = 42, scale = 1f,   opacity = .70f, enabled = true },
+                new FBMobileButtonData { id = "MAP",        name = "MAPA",         icon = "MAPA",    pos = new Vector2(1160, 838), radius = 42, scale = 1f,   opacity = .75f, enabled = true },
 
                 // Combate e ações (lado direito)
                 new FBMobileButtonData { id = "FIRE",       name = "ATIRAR",       icon = "TIRO",    pos = new Vector2(1390, 240), radius = 76, scale = 1.05f,opacity = .80f, enabled = true },

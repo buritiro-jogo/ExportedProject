@@ -551,6 +551,7 @@ namespace FreeBala
             var last = PlayerPrefs.GetString("fb_role_car", "S10_2017"); idx = Mathf.Max(0, ids.IndexOf(last));
             anchor = FreeAnchor(FBRole.spot.Value.p, FBRole.spot.Value.yaw);                     // um ponto só para todos os carros (cabe o maior)
             var cv = FBUI.Canvas("Garagem", 34); ui = cv.gameObject; Cursor.lockState = CursorLockMode.None; Cursor.visible = true;
+            if (FBTouch.I) FBTouch.I.Show(false);                                                  // [mobile 09/11] os botões de toque ficavam por cima da garagem (voltam no Pick)
             var p = FBUI.Panel(cv.transform, "barra", new Vector2(.5f, 0), new Vector2(.5f, 0), new Vector2(0, 90), new Vector2(720, 130), FBUI.Dark).transform;
             var nm = FBUI.Label(p, "", 26, new Vector2(.5f, 1), new Vector2(.5f, 1), new Vector2(0, -32), new Vector2(520, 36), TextAnchor.MiddleCenter, true, FBUI.Gold);
             FBUI.Label(p, "GARAGEM · ESCOLHA O CARRO DO ROLÊ", 12, new Vector2(.5f, 1), new Vector2(.5f, 1), new Vector2(0, -8), new Vector2(520, 18), TextAnchor.MiddleCenter, false, FBUI.Mut);
@@ -560,9 +561,9 @@ namespace FreeBala
             FBUI.Button(p, "PEGAR", new Vector2(.5f, 0), new Vector2(.5f, 0), new Vector2(0, 34), new Vector2(240, 50), Pick, true);
             // portas / capô / porta-malas (dados do Animator do REB)
             var q = FBUI.Panel(cv.transform, "pecas", new Vector2(.5f, 0), new Vector2(.5f, 0), new Vector2(0, 186), new Vector2(520, 50), FBUI.Dark).transform;
-            FBUI.Button(q, "PORTAS (U)", new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(92, 0), new Vector2(166, 40), () => FBDoors.Toggle(prev, FBDoors.DOORS));
-            FBUI.Button(q, "CAPÔ (J)", new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(0, 0), new Vector2(166, 40), () => FBDoors.Toggle(prev, FBDoors.HOOD));
-            FBUI.Button(q, "MALA (P)", new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-92, 0), new Vector2(166, 40), () => FBDoors.Toggle(prev, FBDoors.TRUNK));
+            FBUI.Button(q, FBInput.Touch ? "PORTAS" : "PORTAS (U)", new Vector2(0, .5f), new Vector2(0, .5f), new Vector2(92, 0), new Vector2(166, 40), () => FBDoors.Toggle(prev, FBDoors.DOORS));
+            FBUI.Button(q, FBInput.Touch ? "CAPÔ" : "CAPÔ (J)", new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(0, 0), new Vector2(166, 40), () => FBDoors.Toggle(prev, FBDoors.HOOD));
+            FBUI.Button(q, FBInput.Touch ? "MALA" : "MALA (P)", new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-92, 0), new Vector2(166, 40), () => FBDoors.Toggle(prev, FBDoors.TRUNK));
             Show();
         }
         static void Preview(string id)
@@ -619,8 +620,9 @@ namespace FreeBala
         {
             if (!prev) return; PlayerPrefs.SetString("fb_role_car", prev.id); FBRole.roleCar = prev; var car = prev; prev = null; Object.Destroy(ui); ui = null;
             if (!FBInput.Touch) { Cursor.lockState = CursorLockMode.Locked; Cursor.visible = false; }
+            if (FBTouch.I) FBTouch.I.Show(true);                                                   // [mobile 09/11] botões de toque de volta
             FBVehicles.fp = false; if (FBVehicles.CarOf(FBMatch.Player) != car) FBDrive.Enter(FBMatch.Player, car, true); if (FBPlayer.I) { FBPlayer.I.camYaw = car.transform.eulerAngles.y; FBPlayer.I.camPitch = -7; }
-            FBHUD.I?.Center("BOM ROLÊ! · G = GPS · K = SOM · N = LIGA O PAREDÃO", 3.5f);
+            FBHUD.I?.Center(FBInput.Touch ? "BOM ROLÊ!" : "BOM ROLÊ! · G = GPS · K = SOM · N = LIGA O PAREDÃO", 3.5f);
         }
     }
 }

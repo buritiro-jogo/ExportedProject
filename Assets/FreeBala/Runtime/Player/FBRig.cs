@@ -23,7 +23,7 @@ namespace FreeBala
         FBCharacter ch; Animator an; bool built;
         Transform[] spine; Transform lArm, lFore, lHand, rArm, rFore, rHand, rMid;
         GameObject weapon; Transform grip, mag, muzzle; bool pistol;
-        Quaternion lPalm = Quaternion.identity, rPalm = Quaternion.identity; bool lPalmOk, rPalmOk; float armL, meta;
+        Quaternion lPalm = Quaternion.identity, rPalm = Quaternion.identity; bool lPalmOk, rPalmOk, lSimple, rSimple; float armL, meta;   // [mãos 09/11] xSimple = mão de luva (uma cadeia de dedo só)
         float aimW, ikW, fingW;
         FBRemote remote; float farCheck; bool far;
         // longe da câmera (FBQuality.AnimCullDistance; o "far" do actor.js): sem pós-animação de tronco/mãos; o jogador local nunca
@@ -54,7 +54,7 @@ namespace FreeBala
             Transform B(HumanBodyBones b) => an.GetBoneTransform(b);
             lArm = B(HumanBodyBones.LeftUpperArm); lFore = B(HumanBodyBones.LeftLowerArm); lHand = B(HumanBodyBones.LeftHand);
             rArm = B(HumanBodyBones.RightUpperArm); rFore = B(HumanBodyBones.RightLowerArm); rHand = B(HumanBodyBones.RightHand); rMid = B(HumanBodyBones.RightMiddleProximal);
-            lPalmOk = FBHand.Frame(an, false, out lPalm, out _); rPalmOk = FBHand.Frame(an, true, out rPalm, out _);
+            lPalmOk = FBHand.FrameOrSimple(an, false, out lPalm, out _, out lSimple); rPalmOk = FBHand.FrameOrSimple(an, true, out rPalm, out _, out rSimple);   // [mãos 09/11] vale também para os rigs de mão de luva
             // dedos: rotação de descanso = pose do prefab (T-pose do avatar, dedos esticados) — a dobra é absoluta a partir dela, como no web
             foreach (var right in new[] { true, false })
             {
@@ -66,7 +66,7 @@ namespace FreeBala
                     var bs = new Transform[3]; bool ok = true;
                     for (int j = 0; j < 3; j++) { bs[j] = B((HumanBodyBones)((int)(right ? HumanBodyBones.RightThumbProximal : HumanBodyBones.LeftThumbProximal) + 3 * f + j)); ok &= bs[j]; }
                     if (!ok) continue;
-                    var fg = new Finger { b = bs, rest = new Quaternion[3], right = right, index = f == 1 };
+                    var fg = new Finger { b = bs, rest = new Quaternion[3], right = right, index = f == 1 && !(right ? rSimple : lSimple) };   // mão de luva: a cadeia única fecha como a mão toda, não como o dedo do gatilho
                     for (int j = 0; j < 3; j++) fg.rest[j] = bs[j].localRotation;
                     // sentido que FECHA para a palma (cada rig tem o seu): dobra um pouco e vê para onde a ponta foi
                     var t0 = Tip(fg); Bend(fg, .3f, A); var t1 = Tip(fg); fg.sg = Vector3.Dot(t1 - t0, N) > 0 ? 1 : -1;
@@ -82,7 +82,11 @@ namespace FreeBala
         {
             var i = an.GetBoneTransform(right ? HumanBodyBones.RightIndexProximal : HumanBodyBones.LeftIndexProximal);
             var l = an.GetBoneTransform(right ? HumanBodyBones.RightLittleProximal : HumanBodyBones.LeftLittleProximal) ?? an.GetBoneTransform(right ? HumanBodyBones.RightRingProximal : HumanBodyBones.LeftRingProximal);
-            return i && l ? (i.position - l.position).normalized : Vector3.zero;
+            if (i && l) return (i.position - l.position).normalized;
+            // [mãos 09/11] mão de luva (sem mínimo/anelar): o eixo sai do referencial da palma — LookRotation(frente, normal) tem a "direita"
+            // apontando do indicador para o mínimo na mão esquerda e ao contrário na direita
+            var hand = right ? rHand : lHand; bool okp = right ? rPalmOk : lPalmOk;
+            return hand && okp ? hand.rotation * ((right ? rPalm : lPalm) * (right ? Vector3.right : Vector3.left)) : Vector3.zero;
         }
         static void Bend(Finger f, float th, Vector3 A)
         {
@@ -278,7 +282,7 @@ namespace FreeBala
             ikW = Mathf.Lerp(ikW, wantIK ? 1 : 0, 1 - Mathf.Exp(-dt * 12));
             DbgHandsN++; if (ikW > .02f && wpVis) DbgIkN++;                                         // [parceiro] contadores do laboratório (FBLabFisica)
             fingW = Mathf.Lerp(fingW, wpVis && ch.alive && !spc && !busy ? 1 : 0, 1 - Mathf.Exp(-dt * 12));
-            if (armL <= 0) { armL = (lFore.position - lArm.position).magnitude + (lHand.position - lFore.position).magnitude; var lm = an.GetBoneTransform(HumanBodyBones.LeftMiddleProximal); meta = lm ? (lm.position - lHand.position).magnitude : .09f * S; }
+            if (armL <= 0) { armL = (lFore.position - lArm.position).magnitude + (lHand.position - lFore.position).magnitude; var lm = an.GetBoneTransform(HumanBodyBones.LeftMiddleProximal); if (!lm && lSimple) lm = an.GetBoneTransform(HumanBodyBones.LeftIndexProximal); meta = lm ? (lm.position - lHand.position).magnitude : .09f * S; }
             // [parceiro] v16: peso da patrulha em todo quadro (some junto com a IK no reload, saque, troca e reação a tiro)
             PatrolPeso(dt, wantIK);
             if (ikW > .02f && wpVis)

@@ -169,7 +169,17 @@ namespace FreeBala
             CombatOverrides(m);
             if (pol) PoliceOverrides(m);
             if (novo) NovoCombate(m);
+            if (FBAnimProfile.FonteIE && !pol && !UnarmedLocomotion && weapon != null) FonteUnicaIE(m);   // [fonte única 10/11] por último: vence a mistura
             SetOverrides(m);
+        }
+        // [fonte única 10/11] só os ajustes que mediram melhor que a mistura (cabeçalho em FBAnimProfile): pistola com parado e recarga
+        // do Invasão Elite, recarga da escopeta do Invasão Elite e mira agachado com o "Idle Aiming" (sai o clipe do Mixamo).
+        void FonteUnicaIE(Dictionary<string, string> m)
+        {
+            bool Tem(string k) => origByName.ContainsKey(k) || origByName.ContainsKey(FBRegistry.Safe(k));
+            if (IsPistol) { foreach (var kv in FBAnimProfile.IePistol) if (Tem(kv.Key) && Has(kv.Value)) m[kv.Key] = kv.Value; return; }
+            if (crouch && Tem("Rifle_Idle") && Has(FBAnimProfile.MiraParada)) m["Rifle_Idle"] = FBAnimProfile.MiraParada;
+            if (weapon.cls == "escopeta" && Tem("Rifle_Reload_2") && Has(FBAnimProfile.IeShotgunReload)) m["Rifle_Reload_2"] = FBAnimProfile.IeShotgunReload;
         }
         // r58: só mira/tiro/recarga/granada/reação. Nada de locomoção — ver o cabeçalho do NovoRifle no FBAnimProfile.
         static readonly Dictionary<string, string>[] NovoMaps = { FBAnimProfile.NovoRifle, FBAnimProfile.NovoPistol };
@@ -1089,7 +1099,14 @@ namespace FreeBala
             CombatStance = !bare && combat && !sprint && alive && !vehiclePose && sys == null && (Hot || !movingArmed); SB("InCombat", CombatStance);
             SB("IsShooting", alive && !bare && shooting && !IsPistol);
             if (lastShot < lastShotPrev - 1e-4f) kick = Mathf.Min(1, kick + (IsPistol ? .85f : .35f)); lastShotPrev = lastShot; kick = Mathf.Max(0, kick - dt * (IsPistol ? 9 : 12));
-            SB("IsRunning", sprint && !reloading); SB("IsAiming", !bare && aiming); SB("Tactical Sprint", false);
+            // [mãos 09/11] ANDANDO em postura de combate sem mirar (os 3 s depois de atirar/mirar/recarregar): a base é o andar de combate do
+            // Complexo (Rifle_WalkFwdLoop e vizinhos), que leva o fuzil ALTO e inclinado para cima. Para pôr o cano no alvo o FBRig dobrava a
+            // coluna ~22° para a frente e descia os braços no ombro: corpo corcunda, braços esticados retos e a coronha fora do ombro (fotos do
+            // laboratório, folha fuzil_andar_combate; com -fblabraw o clipe cru aparece com o cano ~25° acima). Mirando e andando a camada
+            // Upper Body entra com a pose de mira e fica certo (folha fuzil_mirando_andando). Então nesse estado a camada de cima usa a MESMA
+            // pose de mira — só o Animator; ch.aiming (zoom, precisão, cabeça) não muda. Pistola fica como estava (braços pelo IK das duas mãos).
+            bool poseMira = aiming || (CombatStance && movingArmed && !IsPistol && !reloading);
+            SB("IsRunning", sprint && !reloading); SB("IsAiming", !bare && poseMira); SB("Tactical Sprint", false);
             float brk = PUP("brakeSpeedThreshold", 1.5f);
             if (lastSpeed > brk * 2 && g < brk && !sprint && wasSprint) { ST("StopSprint"); ST("Brake"); }
             wasSprint = sprint; lastSpeed = g; hitCd = Mathf.Max(0, hitCd - dt); lastShot += dt;
@@ -1098,7 +1115,7 @@ namespace FreeBala
             {
                 var st = an.GetCurrentAnimatorStateInfo(LU); reloading = st.IsName("Reload Anim");
                 bool idleUp = st.IsName("Idle") || st.IsName("Tactical Sprint") || (bare && st.IsName("Relaxed Upper"));
-                bool want = (!bare && (aiming || (shooting && !IsPistol) || reloading)) || (inAir && !bare) || !idleUp;
+                bool want = (!bare && (poseMira || (shooting && !IsPistol) || reloading)) || (inAir && !bare) || !idleUp;
                 upperW = Mathf.Clamp01(upperW + (want ? PUP("upperBodyWeightUpSpeed", 20) : -PUP("upperBodyWeightDownSpeed", 8)) * dt); an.SetLayerWeight(LU, upperW);
             }
             // Finisher (morte / especiais)

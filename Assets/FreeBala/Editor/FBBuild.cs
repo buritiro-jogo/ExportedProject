@@ -14,7 +14,31 @@ namespace FreeBala.EditorTools
     public static class FBBuild
     {
         // Android: texturas ASTC; AAB divide o conteúdo em asset pack de instalação (Play Asset Delivery) — o módulo base da Play Store tem limite de 200 MB
-        static void Android(bool aab) { EditorUserBuildSettings.buildAppBundle = aab; EditorUserBuildSettings.androidBuildSubtarget = MobileTextureSubtarget.ASTC; PlayerSettings.Android.splitApplicationBinary = aab; }
+        static void Android(bool aab) { EditorUserBuildSettings.buildAppBundle = aab; EditorUserBuildSettings.androidBuildSubtarget = MobileTextureSubtarget.ASTC; PlayerSettings.Android.splitApplicationBinary = aab; Assinatura(); }
+        // [mobile 09/11] Assinatura da Play Store: a chave e as senhas NUNCA entram no repositório. Vêm de variáveis de ambiente do PC que gera o build:
+        //  FB_KEYSTORE (caminho do .keystore), FB_KEYSTORE_PASS, FB_KEY_ALIAS (padrão "buritiro"), FB_KEY_PASS (padrão: a mesma senha).
+        //  Sem FB_KEYSTORE o build sai com a assinatura de debug (serve para teste e instalação direta do APK, não para a Play Store).
+        static void Assinatura()
+        {
+            string E(string k) => System.Environment.GetEnvironmentVariable(k);
+            string ks = E("FB_KEYSTORE"), pass = E("FB_KEYSTORE_PASS");
+            if (string.IsNullOrEmpty(ks) || !File.Exists(ks) || string.IsNullOrEmpty(pass)) { PlayerSettings.Android.useCustomKeystore = false; Debug.Log("[FreeBala][build] Android: sem FB_KEYSTORE/FB_KEYSTORE_PASS, assinatura de debug"); return; }
+            string alias = E("FB_KEY_ALIAS"), kpass = E("FB_KEY_PASS");
+            PlayerSettings.Android.useCustomKeystore = true; PlayerSettings.Android.keystoreName = ks; PlayerSettings.Android.keystorePass = pass;
+            PlayerSettings.Android.keyaliasName = string.IsNullOrEmpty(alias) ? "buritiro" : alias; PlayerSettings.Android.keyaliasPass = string.IsNullOrEmpty(kpass) ? pass : kpass;
+            Debug.Log("[FreeBala][build] Android: assinando com " + ks);
+        }
+        // [mobile 09/11] Android/WebGL não leem StreamingAssets como arquivo: copia o servidor.txt para Resources antes do build (FBSession.ServidorPadrao lê de lá)
+        static void ServidorParaResources()
+        {
+            try
+            {
+                var src = Path.Combine(Application.streamingAssetsPath, "servidor.txt"); if (!File.Exists(src)) return;
+                Directory.CreateDirectory(Path.Combine(Application.dataPath, "Resources"));
+                File.Copy(src, Path.Combine(Application.dataPath, "Resources/servidor.txt"), true); AssetDatabase.ImportAsset("Assets/Resources/servidor.txt");
+            }
+            catch (System.Exception e) { Debug.LogWarning("[FreeBala][build] servidor.txt para Resources: " + e.Message); }
+        }
         // Compatibilidade por plataforma (Agente 9), aplicada antes de todo build — garante o que o FBProjectSetup não fixa:
         //  Android: só ARM64 (Play Store exige 64 bits; ARMv7 dobraria a lib), IL2CPP, ASTC, frame pacing otimizado (Swappy) contra engasgos de vsync.
         //  iOS: IL2CPP, mínimo iOS 15 (Metal), ARM64. WebGL: WebGL2, memória 512 MB → 4 GB com crescimento geométrico, gzip + descompressão
@@ -60,12 +84,27 @@ namespace FreeBala.EditorTools
         // cenas do Build Settings + cenas de teste que existirem (IKTest do Agente 3: o autoteste do executável abre pelo nome)
         static readonly string[] TestScenes = { FBImport.SceneDir + "/IKTest.unity" };
         static string[] Scenes => EditorBuildSettings.scenes.Where(s => s.enabled && File.Exists(s.path)).Select(s => s.path).Concat(TestScenes.Where(File.Exists)).Distinct().ToArray();
+        // [mobile 09/11] Android leve: o build com os 6 mapas deu 12 GB (o APK não fecha acima de ~4 GB). O celular leva só o Menu e os
+        //  mapas de FBAndroidLeve.Mapas (padrão: Praça das Águas e Vila Jardim; FB_ANDROID_MAPS=id1,id2 troca a lista). O menu já esconde
+        //  sozinho os mapas que não estão no build (FBMenu: Application.CanStreamedLevelBeLoaded).
+        static string[] ScenesFor(BuildTarget t)
+        {
+            if (t != BuildTarget.Android) return Scenes;
+            var mapas = FBAndroidLeve.Mapas;
+            return Scenes.Where(p => { var n = Path.GetFileNameWithoutExtension(p); return !n.StartsWith("Map_") || mapas.Contains(n.Substring(4)); }).ToArray();
+        }
         static bool Run(BuildTarget t, BuildTargetGroup g, string path, BuildOptions o = BuildOptions.None)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(path));
             if (EditorUserBuildSettings.activeBuildTarget != t) EditorUserBuildSettings.SwitchActiveBuildTarget(g, t);
-            Compat(t); FBOptimize.GpuSkinning();
-            var r = BuildPipeline.BuildPlayer(new BuildPlayerOptions { scenes = Scenes, locationPathName = path, target = t, targetGroup = g, options = o });
+            Compat(t); FBOptimize.GpuSkinning(); if (t == BuildTarget.Android || t == BuildTarget.WebGL) ServidorParaResources();
+            FBAndroidLeve.DesempacotarX171();                                                      // texturas dos objetos de rua comprimidas (vale para todas as plataformas)
+            var cenas = ScenesFor(t);
+            // [lab 09/11] FB_SO_MENU=1: build só com a cena do Menu. O laboratório de animação (-fbanimlab) monta a própria cena, então não
+            // precisa dos mapas: a build de laboratório cai de ~15 min e 13 GB para poucos minutos. Use com FB_LAB_OUT para não sobrescrever.
+            if (System.Environment.GetEnvironmentVariable("FB_SO_MENU") == "1") cenas = cenas.Take(1).ToArray();
+            Debug.Log($"[FreeBala][build] {t}: {cenas.Length} cenas · {string.Join(", ", cenas.Select(Path.GetFileNameWithoutExtension))}");
+            var r = BuildPipeline.BuildPlayer(new BuildPlayerOptions { scenes = cenas, locationPathName = path, target = t, targetGroup = g, options = o });
             var s = r.summary; Debug.Log($"[FreeBala][build] {t}: {s.result} · {s.totalSize / 1048576f:0} MB · {s.totalTime} · erros {s.totalErrors} · avisos {s.totalWarnings} → {path}");
             File.WriteAllText(path + ".build.txt", $"{t} {s.result} {s.totalSize} bytes {s.totalTime} erros={s.totalErrors}\n" + string.Join("\n", r.steps.SelectMany(st => st.messages).Where(m => m.type == LogType.Error || m.type == LogType.Exception).Select(m => m.content)));
             if (s.result == BuildResult.Succeeded) AssetReport(r, path);
