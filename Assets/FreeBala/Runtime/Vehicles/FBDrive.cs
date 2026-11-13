@@ -165,7 +165,7 @@ namespace FreeBala
         // ---- entrar / sair (usuário: direto no banco, sem animação de transição)
         public static bool Enter(FBCharacter p, FBCar car, bool instant = false)
         {
-            if (!p || !car || car.driver || car.remoteDriver >= 0 || cur || !FBVehicles.Allowed) return false; CancelApproach(p);
+            if (!p || !car || car.driver || car.remoteDriver >= 0 || car.netOwner >= 0 || cur || !FBVehicles.Allowed) return false; CancelApproach(p);
             p.StopDance(true); prevWeaponVisible = p.weapon != null;
             // [parceiro] Correção: o carro parado em rampa ou meio-fio guarda a inclinação ao entrar (antes nivelava de uma vez
             // e balançava de volta). Moto continua saindo do descanso em pé.

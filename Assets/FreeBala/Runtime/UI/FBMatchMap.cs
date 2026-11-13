@@ -646,7 +646,7 @@ namespace FreeBala
 
             {
 
-                var fallbackShot = Resources.Load<Texture2D>("MapShots/" + (FBMatch.I ? FBMatch.I.mapId : FBSession.map));
+                var fallbackShot = FBMapShot.Get((FBMatch.I ? FBMatch.I.mapId : FBSession.map));
 
                 if (fallbackShot) mapImg.texture = fallbackShot;
 

@@ -1,0 +1,181 @@
+{
+ "resumo": "Revisao independente da r28 com 26 vistas (25 do Street View + 1 fotoesfera de usuario descartada), capturas em C:/Users/Rodrigo/AppData/Local/Temp/claude/a0de669827628d24/6dd1e011-812b-4b4e-b90d-0ba9ee612670/scratchpad/revisor_r28/ (v01..v26, x no nome). Metodo: posicao da camera lida na URL de cada vista, raio por pixel (campo vertical 60, focal 764,7 px em 883 px de altura), triangulacao entre duas vistas onde houve sobreposicao, intersecao com o chao (camera a 2,2 m) e largura cadastral como conferencia. A geometria foi validada no ginasio (cantos caem em x -647,9/-615,2 contra -647,7/-615,5 do contorno) e a guia norte da ciclovia medida em 17 pontos fica 0,3 a 1,2 m ao norte da tabela BORDA, ou seja, o y do Street View bate com a planta dentro de ~1 m.\n\nConclusao geral: x e largura das unidades batem com o cadastro. Os erros principais sao (1) planta da sede administrativa (ala oeste 6 a 8 m recuada demais e bloco de 39 x ~19 m com 17,5 m de altura onde ha estacionamento), (2) FUNASA com 4 pavimentos quando sao 3, (3) muro de tijolo com 3,0 m quando tem 1,7 a 1,9 m (topo abaixo da linha do horizonte da camera), (4) volume provisorio gob 34H9 na calcada da Camara, que nao existe, (5) predio azul 5,6 m perto demais da rua. Padrao sistematico: as frentes dos contornos 'gob' entre x -385 e -160 (laboratorio, predio azul, CGU) estao 4 a 5,6 m mais ao sul do que o real; como o autor tirou a altura pela perspectiva supondo a distancia do cadastro, laboratorio e CGU ficaram ~15 % baixos. Os contornos OSM (Camara, ginasio, sede, FUNASA) batem em 1 a 2 m. A caixa cinza na frente do ginasio e o contorno W75M: no real e o corpo terreo azul que avanca ~2,5 a 3 m em toda a largura (nao uma caixa de 14 m), e a empena em arco e assimetrica, com eixo 3 m a oeste do centro. Alturas do ginasio, Camara, portico, sede (total), residencias A/B e muro das residencias conferem. Nenhum lado leste/oeste trocado.",
+ "achados": [
+  {
+   "unidade": "no_sede_administrativa_s001",
+   "gravidade": "grave",
+   "descricao": "Planta errada em dois pontos. (a) A ala oeste (w 0-20,4, x -1063,1..-1042,7) foi posta com sal -14,0 (frente em y -60,8); no real e um volume de fachada curva com janelas grandes, a frente em y ~-53, e o canto sudoeste e arredondado. (b) Os tres corpos tem fundo=40: o corpo principal vai ate y -86,8 e cobre com 17,5 m de altura uma area de ~39 x 19 m (x -1028..-989, y -68..-87) que e estacionamento; a ala dos fundos real (x -1063..-1030 ate y -114,5) fica cortada em y -91/-101.",
+   "evidencia": "v20 (camera 2.8320518,-60.6846799 = x -1048,3 y -30,8, rumo 65, pitch 20): base da porta de vidro da ala curva em (600,803) px -> chao em x -1039,6 y -52,9. contornos.json w549633647: aresta (-1059,5;-55,5)-(-1042,6;-53,0), fundo do bloco principal em y -64,7..-70,2, ala norte ate y -114,5. Aerea sat_sede.jpg: telhado em L, carros estacionados no quadrante nordeste, canto SO arredondado. Erro de 6 a 8 m na ala oeste e 17 a 21 m de fundo a mais.",
+   "correcao": "corpo(0, 20.4, ...) com sal ~-6,5 a -8,5 (frente y -53,0 em x -1042,6 ate -55,5 em x -1059,5; canto SO arredondado ate (-1063;-65)); corpo principal (34.9-73.8) com fundo ~20 (y -46,8 a -66/-70); corpo do meio (20.4-34.9) com fundo ~19; ala dos fundos x -1063,1..-1030 de y ~-55 ate -114,5 (fundo ~59). Altura mantida (ver confirmados)."
+  },
+  {
+   "unidade": "no_funasa_f001",
+   "gravidade": "grave",
+   "descricao": "Numero de pavimentos errado: o predio tem 3 fileiras de janelas (terreo + 2), nao 4. A faixa azul do topo e dupla (faixa + platibanda). Altura total modelada 12,5 m contra ~11,6 m medidos (+8 %, dentro da tolerancia; o erro e a composicao).",
+   "evidencia": "v23 (2.8327662,-60.6854876 = x -1167,9 y -29,8, pitch 10) e v24 (2.8329554,-60.685707 = x -1200,0 y -29,1, pitch 10), plano y -50,9 (d 21,1 a 21,8 m): janelas z 0,9-2,6 / 4,4-6,0 / 7,8-9,4; faixas azuis 2,6-3,5 / 6,0-6,9 / 9,5-11,6; topo 11,6 (v23) e 11,5 (v24). Porta de vidro do terreo com topo em z 1,8-2,1 alinhada com a fileira de baixo. Incerteza +-0,7 m (profundidade nao triangulada).",
+   "correcao": "pav=3; corpo(0, 57.2, 0, 11.6); 3 fileiras de janelas em z 0,9-2,6, 4,4-6,0, 7,8-9,4 (passo 3,45); frisos azuis 2,6-3,5, 6,0-6,9 e 9,5-11,6; aletas ate 11,6."
+  },
+  {
+   "unidade": "no_muro_tijolo_t001",
+   "gravidade": "grave",
+   "descricao": "Muro com 3,0 m no modelo; o real tem 1,7 a 1,9 m (55 a 75 % a mais). O topo do muro fica ABAIXO da linha do horizonte da camera nas duas vistas, logo e mais baixo que a camera (2,2 m) qualquer que seja a distancia. Passo das pilastras 3,0-3,1 m (modelo 4,0). Ponta oeste real em x -1152,8 (modelo -1156,0): os 3,2 m finais sao do muro de concreto com gradil azul da FUNASA.",
+   "evidencia": "v21 (2.8323907,-60.6850578 = x -1104,6 y -30,7): base em (900,792) -> y -38,1, d 7,8 m; topo em v=578 -> z 1,93. v22 (2.8326541,-60.6853591 = x -1149,0 y -30,1): base y -38,1; topo v=600 -> z 1,68; horizonte em v=549. Pilastras em x -1149,6/-1146,5/-1143,4 e -1102,9/-1099,9. Com camera a 2,5 m daria 2,0-2,2 m.",
+   "correcao": "frente('muro', 1.9, ...) com pilar_passo_m=3.1; x0 = -1152,8 (comprimento 72,8). Linha y -38,1 confere com o padrao (modelo -37,4)."
+  },
+  {
+   "unidade": "no_camara_municipal_m001 (volume provisorio gob_67JXR8HC_34H9)",
+   "gravidade": "grave",
+   "descricao": "O volume provisorio do contorno 34H9 (x -311,1..-304,8, y -43,0..-47,6, a caixa cinza na calcada em frente a Camara em r28_no_xm300.png e r28_no_camara_de_cima.png) nao existe: ali ha calcada, o gradil branco e o portao de correr da entrada.",
+   "evidencia": "v25 (2.8276192,-60.6796767 = x -307,0 y -36,7): gradil com base em y -45,65 e portao de x -311,6 a -305,9; atras, piso e o bloco do nome. Nada construido entre a guia (y -44,6) e o gradil. Aerea sat_camara.jpg tambem nao mostra telhado no local. Imagens de jul/2024.",
+   "correcao": "Retirar o volume provisorio de 34H9 (marcar como falso positivo em modelados.geojson)."
+  },
+  {
+   "unidade": "no_predio_azul_b001",
+   "gravidade": "grave",
+   "descricao": "Fachada 5,6 m perto demais da rua: modelo em y -54,4, real em y ~-60,0. A testeira azul fica mais baixa e mais alta em espessura (2,7 a 4,0 m; modelo 3,6 a 4,6) e o topo fica em ~4,0 a 4,2 m (modelo 4,6). O gradil azul existe so na metade oeste, em y ~-49 (modelo: frente toda em y ~-44,5), e volta para o predio em x ~-236; a leste e patio aberto. A guarita creme na frente (contorno W968) tem 2,1 m de largura (x -238,0..-235,9), frente em y ~-51, 2,5 m de altura, ligada ao predio por passarela coberta.",
+   "evidencia": "Triangulacao do canto leste da testeira: v06 (2.8271941,-60.6792076 = x -236,8 y -36,5) px (1053,490) x v07 (2.8270735,-60.6790683 = x -216,3 y -36,9, rumo 22) px (656,500) -> x -223,5 y -60,0, z topo 3,7-4,0, base da testeira 2,6-2,7. Largura em v06 no plano y -60: x -245,5..-223,4 (22,1 m) = contorno (-245,5..-222,7); no plano y -54,4 daria so 16,8 m. Gradil: base (300,690) -> y -49,0, topo z 1,2. Incerteza de y +-1 m.",
+   "correcao": "U(..., y_frente -60.0, ...); corpo ate 4,1; friso azul z 2,7-4,0; frente('mureta_grade', 1.2, ...) so de w 0 a ~9,5 com y_muro=-49,0; guarita 2,1 x ~4 m em x -238,0..-235,9, y -51..-55, h 2,5."
+  },
+  {
+   "unidade": "no_ginasio_guarnicao_y001 (e volume provisorio gob_67JXR8H9_W75M)",
+   "gravidade": "media",
+   "descricao": "A caixa cinza na frente do ginasio (contorno W75M, x -646..-632, y -56,2..-60,8) nao existe como caixa: o real e o corpo TERREO azul, que avanca ~2,5 a 3 m da empena em toda a largura, com beiral de telha em z ~4,3, e vai de x ~-652,6 a ~-615,5 (5 m a oeste do x0 do modelo). No modelo a caixa cobre o portao e metade do terreo.",
+   "evidencia": "Triangulacao v01 (2.8295496,-60.6818559 = x -629,8 y -34,1) x v04 (2.8297312,-60.6820609 = x -660,2 y -33,9, rumo 67): janelas da empena em y -62,7/-62,9 (z 9,6 nas duas vistas); portao em x -637,0..-631,5 y -59,2/-60,3; janelas do terreo em y -59,3/-59,5; ar-condicionado em y -58,4. Ponta oeste do terreo em v04 px (505,560) -> x -652,6. Incerteza +-1,5 m.",
+   "correcao": "Retirar o volume provisorio W75M; terreo (z 0-4,2, azul) como corpo avancado sal +2,7 (frente y ~-59,5) de x -652,6 a -615,5, com a marquise/beiral em 4,2-4,45 por cima; portao em x -637,0..-631,5 (w 10,3-15,8), topo 3,2."
+  },
+  {
+   "unidade": "no_ginasio_guarnicao_y001",
+   "gravidade": "media",
+   "descricao": "Empena em arco assimetrica e com o eixo deslocado: o apice fica em x -634,4 (w 12,9), nao no centro (w 15,9). A ponta oeste e uma aresta vertical ate ~10,7 m; o lado leste desce ate ~7,3 m. No modelo os degraus sao simetricos com 9,0 m nas duas pontas (oeste 1,7 m baixo, leste 1,7 m alto). Janelas, placa, letreiro e portao seguem o eixo real e estao 2,7 a 3,9 m a leste no modelo. No terreo ha 3 janelas a oeste do portao e 3 a leste; no modelo as do leste vao 4 a 6 m alem.",
+   "evidencia": "v01, plano y -62,8: pontos do arco (x;z) = (-646,6;11,0) (-643,6;12,2) (-640,6;12,9) (-637,3;13,3) (-634,4;13,5) (-631,4;13,4) (-628,4;13,0) (-625,2;11,9) (-622,2;10,9) (-619,1;9,4) (-616,6;7,6); base em z ~0,3. Simetrico em torno de -634,4 (11,0 a 12,2 m de cada lado), raio ~31 m. Ombro leste em v04: z 7,5, aresta vertical ate 4,6. Janelas altas de x -642,8 a -625,9 (6 por fileira, passo 2,9); placa x -638,9..-631,6, z 3,6-5,9; janelas do terreo leste x -631,1..-622,4.",
+   "correcao": "Arco de centro w 12,9, raio ~31 m, apice 13,2 m: degraus corpo(0.7,30.3,0,7.3), corpo(0.7,27.6,7.3,9.5), corpo(0.7,23.6,9.5,10.7), corpo(2.2,23.6,10.7,11.3), corpo(6.3,19.5,11.3,12.5), corpo(8.0,17.8,12.5,13.2). Basculantes em w 4,5+2,92k a 6,8+2,92k; placa w 8,6-15,7 z 3,6-5,9; letreiro superior w 10,3-15,4; janelas do terreo em w ~1,7-9,5 (3) e 16,2-24,9 (3), parede cega com ar-condicionado de 25 a 31,8."
+  },
+  {
+   "unidade": "no_laboratorio_l001",
+   "gravidade": "media",
+   "descricao": "Fachada 4 m perto demais da rua e ~1 m baixa. Real: frente em y ~-52 (modelo -47,9), com calcada/rampa de ~6,5 m entre a guia da ciclovia (y -45,4) e a fachada; altura ~6,7 m (modelo 5,7, -15 %). Faixa/marquise em z 2,9-3,9 (modelo 2,7-3,5). Porta de vidro em x -169,8..-166,8 (w 7,5-10,5; modelo w 10,5-12,75).",
+   "evidencia": "Triangulacao do logotipo inferior: v02 (2.8267669,-60.6787226 = x -165,1 y -37,3) px (68,568) x v05 (2.8268904,-60.678861 = x -185,6 y -37,2) px (1190,557) -> x -175,2 y -51,4 z 2,0. Pe da fachada no chao: y -52,4 (v02) e -52,6 (v05). Nesse plano os cantos caem em x -177,9 e -161,6 (contorno -177,8/-160,9). Topo: z 6,7-6,8 nas duas vistas; base 0,1. Incerteza: y +-0,7, altura +-0,5.",
+   "correcao": "U(..., y_frente -52.0, ...); corpo(0,16.4,0,6.7); friso 2,9-3,9; testeira 4,5-6,2; porta w 7,5-10,5 z 0-2,75."
+  },
+  {
+   "unidade": "no_cgu_g001",
+   "gravidade": "media",
+   "descricao": "Predio 4 m perto demais da rua e baixo: real em y ~-54,6 (modelo -50,5) e altura ~7,3 m (modelo 6,3, -14 %). Gradil azul real em y -47,1, 3,6 m atras da guia (modelo no padrao, y ~-42,8: 4,3 m perto demais); altura 2,0 confere. O gradil segue para leste alem da unidade (pelo menos ate x -366), fechando o patio da garagem.",
+   "evidencia": "v11 (2.8280245,-60.6801439 = x -375,6 y -35,5), uma vista so: base do predio em (420,640) -> chao y -54,6 (d 19,2); nesse plano o corpo vai de x -382,1 a -372,0 (10,1 m; contorno 7XHM 11,3 m), contra 7,9 m no plano y -50,5. Topo z 7,31, base da caixa azul 5,65, viga 2,9-3,7. Gradil: base (600,700) -> y -47,1, topo z 1,96; portao entre postes em x -378,1..-372,6. Incerteza: y +-1,5, altura +-0,7 (sem triangulacao).",
+   "correcao": "U(..., y_frente -54.6, ...); corpo(2.2,11.2,0,7.3); testeira do topo 5,65-7,3; painel/pilares 3,7-5,65; viga do nome 2,9-3,6; frente(..., y_muro=-47.1) com portao em w 5,5-11,0 e gradil prolongado ate x ~-366."
+  },
+  {
+   "unidade": "no_muro_concertina_w001",
+   "gravidade": "media",
+   "descricao": "Muro com 3,0 m no modelo; o topo real fica praticamente na altura da camera: 2,15 m (camera a 2,2) a 2,45 m (camera a 2,5), mais ~0,25 m de concertina. Erro de 22 a 40 %. Linha: real y ~-44,6, 1,6 m atras da guia norte da ciclovia (y -42,95); modelo em y -41,9 (2,7 m ao sul, em cima da ciclovia real).",
+   "evidencia": "v12 (2.8284194,-60.6805817 = x -440,9 y -35,5): base em v=745 -> y -44,6 (d 9,1); topo em v=553 (horizonte em v=549) -> z 2,15; concertina ate z 2,36. So a faixa x -448..-434 foi vista.",
+   "correcao": "frente('muro', 2.3, ..., y_muro=-44.6)."
+  },
+  {
+   "unidade": "no_residencias_muro_r001",
+   "gravidade": "media",
+   "descricao": "Pontas e portoes do muro deslocados. Ponta oeste real em x ~-930 (modelo -935: 5 m dentro da rua transversal); ponta leste em x ~-835,4, onde o muro vira para a rua lateral (modelo -838). Portoes reais (x): carro -926,2..-923,8; pedestre -917,6..-917,0; carro ate -900,8 (borda oeste fora do quadro); pedestre -894,6..-893,7 (nao esta no modelo); carro -869,0..-865,3; pedestre -861,5..-859,5. No modelo: -928,8..-926,2; -919,8..-919,0; -911,1..-908,7; -863,5..-860,6; -857,6..-856,6 (erros de 2,2 a ~7,5 m, em sentidos opostos nas duas metades: escala da distancia suposta).",
+   "evidencia": "v16 (2.8313166,-60.6838599 = x -926,2 y -31,1), v15 (2.8311341,-60.6836496 = x -895,3 y -31,6, rumo 60), v14 (2.8309487,-60.6834442 = x -864,6 y -31,6), v17 (2.8308262,-60.6833051 = x -844,0 y -31,8). Portao de carro leste triangulado v14 x v15: x -869,0..-865,3. Telhados das casas A e B caem nos contornos (centros a 0,4 e 1,2 m), logo nao ha desvio sistematico de x. Incerteza +-1 m.",
+   "correcao": "U x0=-930.0, x1=-835.4 (94,6 m); portoes relativos a x -930: (3.8,6.2), (12.4,13.0), (~26,29.2), (35.4,36.3), (61.0,64.7), (68.5,70.5). Altura 2,2 e y -51,2 mantidos."
+  },
+  {
+   "unidade": "no_residencia_d_rd04",
+   "gravidade": "media",
+   "descricao": "A residencia D nao e so terrea: tem um bloco central mais alto (provavelmente 2 pavimentos: parede branca com janelas pequenas e ar-condicionado no nivel de cima, telhado de barro proprio) de x ~-865 a ~-842,6, recuado (frente em y ~-63 a -69), com telhados terreos na frente. Cumeeira ~5,2 a 6,2 m e beiral ~4,6 a 5,3 m, contra 4,6 e 3,0 no modelo.",
+   "evidencia": "Triangulacao v14 x v17 (base 20,6 m): ponta oeste do telhado alto x -865,2 y -61,9 z 5,3-5,6; ponta leste x -842,6 y -63,9 z 5,2-5,8; ar-condicionado x -850,8 y -64,3 z 4,4. v14 x v15: ponta oeste x -865,4 y -69,3 z 6,1-6,2. Visto tambem em v15 e v17. Incerteza: z +-0,5, y +-3; nao foi possivel confirmar 2 pavimentos por dentro.",
+   "correcao": "Acrescentar corpo alto de x -865 a -842,6 (w 6,0-28,3), frente y ~-65, z 0-4,9, com telhado de barro ate ~5,7; manter os corpos de 3,0 m na frente."
+  },
+  {
+   "unidade": "no_camara_municipal_m001",
+   "gravidade": "media",
+   "descricao": "(a) O trecho branco a leste (w 52,4-57,1) tem 9,2 m no modelo; no real e a parede lateral sob a caixa cinza, com ~6,6 m, e o predio acaba em x ~-289,9 (modelo -287,5). (b) Portao: o real e de correr, x -311,6..-305,9, em frente ao bloco do nome; no modelo esta em x -294,6..-289,1, onde o gradil e continuo (visto de -304 a -291,2). (c) A ala tem 12 m de fundo no modelo; contorno e aerea mostram construcao ate y -79/-90 atras dela. (d) Caixa cinza comeca em x -312,0 (modelo -315,0) e tem ~22 x 23 m (modelo 30 de fundo); aletas e painel escuro vao so ate a base da caixa, z ~6,7 (modelo 7,6 e 7,2); aletas de x -300,5 a -291,5 com passo ~2,2 (modelo 1,5).",
+   "evidencia": "v08 (2.8275625,-60.6796114 = x -297,4 y -36,9), plano y -57,7: topo da caixa z 9,4-9,6, base da caixa 6,71, topo do volume branco 6,49, fim leste x -289,9. Canto NO da caixa triangulado v08 (100,285) x v09 (2.8277316,-60.6798078 = x -326,1 y -36,3, rumo 62) (800,322): x -312,0 y -57,6 z 9,5-9,7. v25: portao. Aerea sat_camara.jpg + contorno w549633659 para o fundo.",
+   "correcao": "corpo(52.4, 54.7, 0, 6.6, branco, sal=-7.9); x1 da unidade -289,9; portoes [(33.0, 38.7)] em vez de (50.0,55.5); pilares e painel ate z 6,7; caixa cinza de w 32,6 a 53,9 com fundo 23; acrescentar volume terreo atras da ala (x -344,4..-300,5, y -62 a -79/-90 pelo contorno)."
+  },
+  {
+   "unidade": "no_casa_antiga_c001",
+   "gravidade": "media",
+   "descricao": "Mureta com gradil 5 m perto demais da rua e alta demais: real em y ~-50,5 (alinhada com a fachada do laboratorio), mureta 0,7 m e topo do gradil 1,4 m (modelo no padrao y ~-45,5, mureta 1,0, total 1,9). O portao (carro + pedestre) fica a OESTE da casa, em x -160,6..-157,8, colado ao laboratorio; no modelo esta no meio (x -150,7..-149,3, ~9 m a leste). Telhado: fibrocimento claro de pouca inclinacao (cumeeira ~0,6 m acima do beiral), nao telha de barro com 1,5 m; ha varanda com pilares na frente. Beiral em z 2,9-3,0 confere.",
+   "evidencia": "v02 (2.8267669,-60.6787226): base da mureta (1100,680) -> chao y -50,6; topo da mureta z 0,70, do gradil 1,42; portao u 885-1048 -> x -160,6..-157,8; beiral v=520 -> z 2,87 (y -55,3) a 3,05 (y -60). Recorte c02a.jpg. Profundidade da casa nao medida.",
+   "correcao": "frente('mureta_grade', 1.4, ..., y_muro=-50.5, altura_mureta_m=0.7) comecando em x -160,6 com portao em x -160,6..-157,8; telhado material fibrocimento, cor clara (#c9c2ae), altura_m 0,6."
+  },
+  {
+   "unidade": "no_funasa_f001 (painel, entrada, gradil)",
+   "gravidade": "media",
+   "descricao": "(a) Painel central e bloco de entrada ~3 m a leste do real: real x -1195,7..-1184,1 (w 20,2-31,8; o contorno 6Q96 da -1195,8..-1185,3); modelo w 23,3-33,9. Topo do painel 13,35 (modelo 14,0), base 4,35 (4,7). (b) A 'marquise' real e uma faixa azul em z 2,4-3,4 sobre um bloco branco de entrada (modelo 3,7-4,6). (c) Porta em x -1194,0..-1192,3 (w 21,9-23,6), no lado oeste do bloco; modelo w 27,0-30,2 (~5,5 m a leste). (d) Mureta de concreto 1,0 m + gradil AZUL ate 1,55-1,65 m; modelo 2,2 m (mureta 1,3) com grade cinza. (e) Portao de veiculos real em x -1164,8..-1161,4. (f) Vaos entre aletas ~4,65-4,75 m (cerca de 12 vaos; modelo 13 de 4,4).",
+   "evidencia": "v24 (2.8329554,-60.685707), plano y -50,9: painel u 768-1160, v 207-500; faixa azul v 535-568; porta u 838-900. Mureta: base y -37,5, topo z 0,96, gradil 1,53. v23: mureta 1,02, gradil 1,65, portao u 915-1225. Incerteza x +-1,5 m (duas vistas sem sobreposicao).",
+   "correcao": "painel w 20,2-31,2, z 4,35-13,35; faixa azul w 20,2-31,8, z 2,4-3,4, sal ~3,5; porta w 21,9-23,6; frente('mureta_grade', 1.6, ..., altura_mureta_m=1.0, cor_grade azul #2f5fb0, y_muro=-37.9), portoes [(51.1, 54.5)] alem do da entrada (nao conferido)."
+  },
+  {
+   "unidade": "no_galpao_metalico_h001",
+   "gravidade": "media",
+   "descricao": "Planta nao segue o contorno: o modelo e uma caixa unica de x -1133..-1079,9 com frente em y -50,4; o contorno w549631766 so tem frente em y -50,3 de x -1132,9 a -1118,1; de x -1118,2 a -1079,9 a frente e y -59,6/-60,2. Sobram ~38 x 9,6 m na frente. Visto da rua e uma cobertura metalica sobre pilares, aberta por baixo, com fechamento de chapa so na faixa de cima.",
+   "evidencia": "contornos.json (vertices (-1118,1;-50,6) (-1118,2;-59,6) (-1079,9;-60,2)). v21 (2.8323907,-60.6850578): chapa ondulada entre arvores, u 640-890, v 458-520 -> z 3,3 a 5,7 no plano y -60,2. Uma vista so: profundidade real nao medida.",
+   "correcao": "Dois corpos: (0, 14.9) com frente y -50,4 e fundo 10; (4.2, 53.1) com frente y -60,0 (sal -9,6) e fundo 13,5; beiral ~5,7 em vez de 6,0; fechamento so acima de ~3,3 m se o gerador permitir."
+  },
+  {
+   "unidade": "no_sede_administrativa_s001 (portao e terreo)",
+   "gravidade": "media",
+   "descricao": "Portao: o real visto e de pedestre, 1,8 m, em x -1007,2..-1005,4 (w 55,9-57,7); o modelo tem portao de 6 m em w 60-66 (x -1003,1..-997,1). O terreo nao tem fileira de janelas: e base azul com portas de vidro e, acima, faixa clara com o nome em z ~2,9-4,3; o modelo poe janelas em z 1,1-2,5 e friso de 0,9 m.",
+   "evidencia": "v26 (2.8318076,-60.6844037 = x -1007,4 y -31,2): portao u 645-835 no plano da mureta (y -38,7); faixa do nome z 2,95-4,11 no plano y -46,8. v20: faixa 2,7-4,3, vidro do terreo 0,1-2,1. A faixa leste x -1000..-988 nao foi vista (pode haver portao de veiculos).",
+   "correcao": "portoes [(55.9, 57.7)]; terreo sem janelas, friso azul z 0-2,7 e faixa clara z 2,9-4,3 (nome sem logotipo)."
+  },
+  {
+   "unidade": "no_camara_municipal_m001 (ala)",
+   "gravidade": "leve",
+   "descricao": "A ala branca nao e um plano unico: sao tres blocos - oeste (x -345,5..-324,7), meio (x ~-322,5..-314, ligeiramente recuado) e o bloco do nome (x -312,3..-301,0), com fresta de ~2 m em x ~-324 e recuo curto em x ~-313. O nome ocupa so o bloco leste (~11 m), nao os 44 m. A abertura gradeada e uma porta de x -308,2..-306,2 do chao ate z 3,4 (modelo: janela em x -311,0..-308,7, z 0,8-2,9). Gradil real em y -45,65 (modelo ~-43,65).",
+   "evidencia": "v09 (rumo 62) plano y -51,6: fim do bloco oeste u=426 -> x -324,7; inicio do meio u=530 -> -322,5; inicio do bloco do nome u=923 -> -312,5. v25: bloco do nome e porta. Frente da ala triangulada v08 x v09 em y ~-51,6 (contorno -49,8). Recuos sem medida segura (+-1,5 m).",
+   "correcao": "Testeiras com texto so em w 32,3-43,6; porta gradeada w 36,4-38,4 z 0-3,4; se o gerador permitir, corpo do meio com sal ~-1,5 e vao de 2 m em w 19,9-22,1; y_muro=-45,65."
+  },
+  {
+   "unidade": "no_casa_borboleta_k001",
+   "gravidade": "leve",
+   "descricao": "Porta com toldo listrado em x ~-1149,2..-1147,7 (w 2,8-4,3) e janela a direita em x ~-1147..-1146; no modelo a porta esta em w 5,6-7,3 (~3 m a leste). Alturas conferem. Largura visivel 9 a 11 m contra 12,9 m do contorno (depende da profundidade, nao medida).",
+   "evidencia": "v22 (2.8326541,-60.6853591): no plano y -47: parede x -1153,3..-1142,5, pontas do telhado z 4,1-4,2, calha central 3,7, parede 3,5; toldo z 2,3.",
+   "correcao": "porta w 2,8-4,3; uma janela em w 5,0-6,0; se possivel, cobertura em V com pontas em 4,2 e centro em 3,7."
+  },
+  {
+   "unidade": "no_portico_tijolo_p001",
+   "gravidade": "leve",
+   "descricao": "O vao central e porta de vidro escuro (portaria), nao portao; as colunas tem revestimento marrom em reguas com moldura branca. Medidas conferem.",
+   "evidencia": "v13 (2.8303974,-60.6828196 = x -772,2 y -32,5), recorte c13a.jpg: porta u 660-745.",
+   "correcao": "Trocar 'portao' por 'porta' de vidro escuro em w 2,2-6,1; material das colunas marrom com moldura branca."
+  }
+ ],
+ "confirmados": [
+  "Geometria da consulta: campo vertical = 60 graus confirmado. Em v01 os cantos do ginasio caem em x -647,9 e -615,2 (contorno -647,7 e -615,5).",
+  "Posicao em y do Street View contra a planta: guia norte da ciclovia medida em 17 pontos de x -165 a -1169 fica 0,3 a 1,2 m ao norte da tabela BORDA (ex.: x -165: -45,5 x -45,0; x -865: -39,0 x -39,5; x -1009: -38,4 x -38,0).",
+  "Ginasio: empena em y -62,8 +-1,5 por triangulacao (modelo -62,0); apice 13,2 +-0,6 m acima do chao (modelo 13,2); duas fileiras de 6 basculantes em z ~6,6-7,5 e 8,9-9,8 (modelo 6,8-7,6 e 9,0-9,9); terreo azul ate ~4,2 e beiral 4,3 (modelo 4,2/4,45).",
+  "Camara: frente do volume cinza em y -57,6 (triangulado; modelo -57,7); altura da caixa cinza 9,4-9,6 (modelo 9,2); testeira verde da ala z 4,2-6,1 (modelo 4,2-6,2); pontas da ala x -345,5 e -301,5 (modelo -344,6 e -300,4); 5 aletas brancas; gradil 1,73 m (modelo 1,9).",
+  "Portico: x -772,7..-764,4 e y -64,6 a -67,8 (contorno -771,8..-764,3, y -64,2); altura 3,7 e testeira 2,9-3,7 (modelo 3,7 e 3,0-3,7).",
+  "Muro das residencias: altura 2,1-2,3 m (topo na linha do horizonte em v14, v15, v16 e v17; modelo 2,2); linha y -49,2 (v16), -50,0 (v15), -51,0 (v17) e -52,6 (v14) pela intersecao com o chao: compativel com o y -51,2 +-2 do autor.",
+  "Residencias A e B: terreas, beiral 2,9-3,1 e cumeeira 4,3-4,7 (modelo 3,0 e 4,6); telhados em x -923,9..-912,7 e -902,2..-890,8, dentro dos contornos. Residencia C: baixa, cumeeira ~3,5.",
+  "Sede administrativa: 5 pavimentos (terreo + 4); altura total 18,6 +-1,0 m na ala curva (v20) e fileiras coerentes no corpo principal (v26: faixa 2,95-4,1; janelas 4,3-6,0, 7,6-8,6, 10,5-11,4): modelo 17,5 fica 6 % abaixo, dentro da tolerancia. Quatro fileiras superiores de janelas do modelo (4,6-6,0 ... 15,1-16,5) batem com as medidas (4,75-6,75 ... 15,05-16,2) em ~0,3 m. Planos de frente y -46,8 e -51,0 coerentes com as arestas vistas.",
+  "Gradil da sede: base em y -38,7, mureta 0,67 m, topo do gradil 2,09 m, concertina ate 2,43 (modelo y ~-38,3, mureta 0,6, total 2,2).",
+  "FUNASA: ponta oeste em x -1215,2 (modelo -1215,9); frente compativel com y -50,9; cores (branco, faixas azuis, vidro verde, painel azul-escuro) corretas.",
+  "Muro de tijolo: linha em y -38,1, colado a ciclovia (modelo -37,4).",
+  "Casa borboleta: alturas 3,5 (parede), 3,7 (calha) e 4,1-4,2 (pontas) contra 4,2 do modelo.",
+  "CGU: corpo em x -382,1..-372,0 (modelo -381,4..-372,4); gradil 1,96 m (modelo 2,0); composicao (caixa azul, colunas brancas, viga com o nome, 2 pavimentos) correta.",
+  "Laboratorio: pontas em x -177,9 e -161,6 (contorno -177,8 e -160,9); cor e composicao em dois niveis corretas.",
+  "Predio azul: pontas em x -245,5 e -223,4 no plano real (contorno -245,5 e -222,7); terreo, creme com testeira azul.",
+  "Casa antiga: beiral em z 2,9-3,0 (modelo 3,0).",
+  "Nenhum lado leste/oeste trocado: volume cinza da Camara a leste da ala, garagem da CGU a leste, torre e parque atras/a leste do predio azul."
+ ],
+ "nao_conferido": [
+  "Parte de tras da sede administrativa pela rua: so pelo contorno e pela aerea antiga (sat_sede.jpg); alturas da ala dos fundos nao medidas.",
+  "v03 (ginasio pelo leste, pedido em 2.829413,-60.681713, rumo 17): a posicao real da camera nao foi anotada; usada so para ver o abrigo de onibus. v19 foi fotoesfera de usuario de 2019 no canteiro central: descartada.",
+  "Profundidade da FUNASA e da CGU por triangulacao (vistas sem sobreposicao ou vista unica): alturas com +-0,7 m. A largura da FUNASA somando as duas vistas deu 53,6 m contra 57,2 do contorno.",
+  "Conflito no y do muro das residencias: intersecao com o chao da -49,2 a -52,6; a triangulacao dos portoes (v14 x v15) da -55,3 a -57,1. Nao resolvido (+-3 m).",
+  "Se o bloco alto da residencia D e mesmo de 2 pavimentos; aberturas das residencias atras do muro.",
+  "Pontas do muro branco com concertina (x -456,8 e -420,8) e o que ha entre x -420 e -384 e entre x -615 e -457: so a faixa x -448..-434 foi vista.",
+  "Ponta leste do muro de tijolo (x -1080), forma real do galpao e os contornos X33V e 2XJQ na frente dele.",
+  "Portao da FUNASA em frente a entrada (fora do campo de v23 e v24) e numero exato de vaos entre aletas (11,5 a 12 estimados).",
+  "Profundidade da casa antiga e da casa borboleta (frente e ponta leste).",
+  "Posicao e altura da torre trelicada e do parque (so vistos em v06 e v07); garagem coberta da CGU (vista em v11, x ~-371..-366, cobertura ~3,4 m no plano y -58, estimativa).",
+  "Altura da camera: usei 2,2 m. Onde a distancia veio so da intersecao com o chao (CGU, muros, gradis) alturas e distancias escalam junto com esse valor (com 2,5 m, +14 %). O y absoluto depende do GPS do Street View (+-1 a 2 m).",
+  "Faixa leste da frente da sede (x -1000..-988) e texto completo do letreiro (lido em parte em v20 e v26; nao reproduzir brasoes).",
+  "Cena no Unity: nao abri o projeto; a comparacao com o modelo foi feita pela especificacao (bloco_1_frente_norte.txt), pelas fotos r28_no_*.png e por 07_comparacoes/r28.",
+  "Itens grandes que faltam, sem medida: campo de futebol com alambrado branco de pilares azuis a oeste do ginasio (cerca em y ~-52, x ~-700..-655, v04); abrigo de onibus de vidro perto de x -605 (v03) e outro com mural em x ~-1112..-1105 (v21); construcao atras da ala da Camara; rua transversal a oeste das residencias (x ~-945..-930, v16) e rua lateral de terra a leste (x ~-838..-830, v17), conferir se estao na planta; gradil branco de pilares azuis ao fundo do patio do portico (y ~-80) e quatro canteiros brancos (y ~-48 a -53,5); predio em obra em x ~-980..-950 (estrutura de concreto com laje e andaimes, gradil branco em y ~-38,9, v18); o volume provisorio gob M9F8 (x -973..-969, y -39..-51,5) cai entre esse gradil e o tapume, onde nao se ve construcao; anexo terreo de telha de barro e detalhes azuis a leste da FUNASA (v23); casa amarela de base azul e portao branco a oeste do laboratorio (x ~-186..-178, v05); arvores grandes do patio do ginasio e mangueiras do muro de tijolo."
+ ],
+ "vistas_consultadas": 26
+}

@@ -44,12 +44,13 @@ namespace FreeBala
             foreach (var root in UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects()) if (root.name.StartsWith("Map_")) FBStreetPoles.Clean(root);   // antes de achar as luminárias: poste na pista não acende
             string mapId = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name.Replace("Map_", ""); lampCct = mapId.Contains("praca_aguas") ? 5200 : 3000;
             FBVolumetric.Clear(); FBVolumetric.InScene = true; FBVolumetric.GroundY = groundY;
-            FindWet(); lamps = FindLamps(); FindLampMats();
+            MatSanity(); FindWet(); lamps = FindLamps(); FindLampMats();
             FBStreetLights.Build(lamps, go.transform, mapId); FBAccentLights.Build(go.transform, mapId);   // luz real em cada luminária + fontes/portal/palmeiras/letreiro (FBLightRig)
             BuildCones();
             heads.Clear(); FBCarLights.Reset(); FBWindowLights.Build();   // janelas acesas à noite (interior + luz vazando)
             LightVolume();
             // r64: horário do dia com sol/lua reais e céu físico (BuritiroEnvironmentManager); -fbluzantiga = sistema antigo abaixo
+            FBVisual.ApplyRenderer(); FBVisual.ApplyGlobals();                                            // r65: SSAO e poças do fb_visual.json
             if (!FBEnv.Legacy) { sun.useColorTemperature = false; FBEnvProbe.Build(go.transform); BuritiroEnvironmentManager.Begin(go, mapId, w.time, sun); }
             else Set(Night ? 1 : 0);
             FBAmbientFx.Start(go.transform, mb);
@@ -93,7 +94,7 @@ namespace FreeBala
             if (probes != null) for (int i = 0; i < probes.Length; i++) if (probes[i]) probes[i].intensity = probeI[i] * Mathf.Lerp(1, .12f, dk) * (1 - rainK * .3f);
             // reflexo do ambiente (skybox) e luz ambiente também apagam à noite — antes ficavam no nível do dia e carros/contêineres/grama brilhavam demais
             RenderSettings.reflectionIntensity = Mathf.Lerp(1, .02f, dk) * (1 - rainK * .2f); RenderSettings.ambientIntensity = Mathf.Lerp(1, .4f, dk);   // noite ESCURA: quem ilumina são os postes
-            NightGrade(dk); ApplyWet(Mathf.Max(rainK, Mathf.SmoothStep(0, .7f, Mathf.InverseLerp(.3f, 1, n))));
+            NightGrade(dk); WetTick(rainK, n);
             // a SONDA de luz ambiente (o que de fato ilumina os objetos) não é recalculada no player quando as cores mudam: os prédios
             // ficavam com a luz ambiente do DIA à noite. Monta a sonda direto das 3 cores (céu/horizonte/chão) × intensidade
             { var k = RenderSettings.ambientIntensity; var sh = new UnityEngine.Rendering.SphericalHarmonicsL2(); var eq = RenderSettings.ambientEquatorColor * k;
@@ -147,7 +148,7 @@ namespace FreeBala
             { var k = RenderSettings.ambientIntensity; var sh = new UnityEngine.Rendering.SphericalHarmonicsL2(); var eq = RenderSettings.ambientEquatorColor * k;
               sh.AddAmbientLight(eq); sh.AddDirectionalLight(Vector3.up, (RenderSettings.ambientSkyColor * k - eq) * .9f, 1); sh.AddDirectionalLight(Vector3.down, (RenderSettings.ambientGroundColor * k - eq) * .9f, 1);
               RenderSettings.ambientProbe = sh; }
-            EnvGrade(s, rainK); ApplyWet(Mathf.Max(rainK, Mathf.SmoothStep(0, .7f, Mathf.InverseLerp(.3f, 1, n))));
+            EnvGrade(s, rainK); WetTick(rainK, n);
             // volumétrica: raios de sol baixos no pôr do sol, bruma urbana e fachos dos postes à noite
             FBVolumetric.Density = Mathf.Lerp(.0016f * s.volumetric, .0105f, rainK); FBVolumetric.Falloff = Mathf.Lerp(.05f, .035f, dk);
             float lowSun = sunUp ? 1 - Mathf.InverseLerp(3, 28, s.sunEl) : 0;
@@ -181,6 +182,23 @@ namespace FreeBala
                     if (!prof.TryGet<UnityEngine.Rendering.Universal.WhiteBalance>(out var wb)) wb = prof.Add<UnityEngine.Rendering.Universal.WhiteBalance>(true);
                     wb.temperature.overrideState = wb.tint.overrideState = true; wb.temperature.value = s.whiteBalance * (1 - rainK); wb.tint.value = s.tint * (1 - rainK);
                     if (bl) { bl.intensity.overrideState = bl.threshold.overrideState = true; bl.intensity.value = FBQuality.Mobile ? s.bloom * .5f : s.bloom; bl.threshold.value = Mathf.Lerp(1.05f, .8f, s.night); }
+                    // r65 (fb_visual.json): tonemapping, split toning e sombras/altas do DIA — pesos pela elevação do sol (nada muda à noite)
+                    var V = FBVisual.C; float dk = FBVisual.DayK(s.sunEl) * (1 - rainK * .6f);
+                    if (V.tonemap != "" && prof.TryGet<UnityEngine.Rendering.Universal.Tonemapping>(out var tm))
+                    { tm.mode.overrideState = true; tm.mode.value = V.tonemap == "aces" ? UnityEngine.Rendering.Universal.TonemappingMode.ACES : UnityEngine.Rendering.Universal.TonemappingMode.Neutral; }
+                    bool split = V.splitShadows != new Color(.5f, .5f, .5f) || V.splitHighlights != new Color(.5f, .5f, .5f);
+                    if (split)
+                    {
+                        if (!prof.TryGet<UnityEngine.Rendering.Universal.SplitToning>(out var st)) st = prof.Add<UnityEngine.Rendering.Universal.SplitToning>(true);
+                        var g = new Color(.5f, .5f, .5f); st.shadows.overrideState = st.highlights.overrideState = st.balance.overrideState = true;
+                        st.shadows.value = Color.Lerp(g, V.splitShadows, dk); st.highlights.value = Color.Lerp(g, V.splitHighlights, dk); st.balance.value = V.splitBalance;
+                    }
+                    if (V.shmShadows != 0 || V.shmHighlights != 0)
+                    {
+                        if (!prof.TryGet<UnityEngine.Rendering.Universal.ShadowsMidtonesHighlights>(out var smh)) smh = prof.Add<UnityEngine.Rendering.Universal.ShadowsMidtonesHighlights>(true);
+                        smh.shadows.overrideState = smh.highlights.overrideState = true;
+                        smh.shadows.value = new Vector4(1, 1, 1, V.shmShadows * dk); smh.highlights.value = new Vector4(1, 1, 1, V.shmHighlights * dk);
+                    }
                 }
             }
         }
@@ -249,7 +267,7 @@ namespace FreeBala
         public static void RestoreLampMats() { foreach (var kv in lampMats) if (kv.Key) { kv.Key.SetColor("_EmissionColor", kv.Value.c); if (!kv.Value.on) kv.Key.DisableKeyword("_EMISSION"); } lampMats.Clear(); }
         static void LampGlow(float k)
         {
-            var c = Mathf.CorrelatedColorTemperatureToRGB(lampCct) * (3.5f * k);
+            var c = Mathf.CorrelatedColorTemperatureToRGB(lampCct) * (3.5f * k * FBVisual.C.lampHeadGlow);   // r65: cabeça mais acesa (fb_visual.json)
             foreach (var kv in lampMats) { if (!kv.Key) continue; if (k > .01f) { kv.Key.EnableKeyword("_EMISSION"); kv.Key.SetColor("_EmissionColor", kv.Value.c.maxColorComponent > .05f && !kv.Key.name.ToLower().Contains("lamp") ? Accent(kv.Value.c, k) : kv.Value.c + c); }   /* luz colorida (fonte): realça a própria cor */ else { kv.Key.SetColor("_EmissionColor", kv.Value.c); if (!kv.Value.on) kv.Key.DisableKeyword("_EMISSION"); } }
         }
         // luz colorida das fontes/refletores (*_light): a cor normalizada e um teto de brilho — antes ×6 sobre a emissão do glTF: as muretas e
@@ -279,14 +297,63 @@ namespace FreeBala
 
         // chão molhado na chuva: materiais de piso do mapa ficam mais escuros e lisos (restaurados ao trocar de cena/sair do Play)
         static readonly Dictionary<Material, (Color c, float s)> wet = new(); static readonly Dictionary<Material, bool> soilM = new(); static float wetK = -1;
-        // piso molhado com força k (chuva = 1; noite ≈ 0,7: reflexo das luzes no chão, como na referência)
+        // r65 (wetPbr = 1): o chão molha SÓ com chuva (pedido do usuário: "não transforme todas as ruas em cenários molhados permanentemente";
+        // antes a noite já valia 0,7 de chuva = rua oleosa toda noite). A umidade ACUMULA (~12 s até encharcar) e SECA devagar (~90 s);
+        // na primeira chamada da cena pega o valor certo direto (partida que já começa com chuva).
+        static float wetAcc = -1;
+        static void WetTick(float rainK, float n)
+        {
+            if (FBVisual.C.wetPbr <= .5f) { ApplyWet(Mathf.Max(rainK, Mathf.SmoothStep(0, .7f, Mathf.InverseLerp(.3f, 1, n)))); return; }
+            float tgt = Mathf.Clamp01(rainK);
+            wetAcc = wetAcc < 0 ? tgt : Mathf.MoveTowards(wetAcc, tgt, Time.deltaTime * (tgt > wetAcc ? 1 / 12f : 1 / 90f));
+            ApplyWet(wetAcc);
+        }
+        // POROSIDADE (Lagarde / Nguyenova): o poroso escurece muito e ganha pouco brilho (a água entra nos poros); o liso escurece pouco e
+        // vira espelho fino. (fator do albedo, lisura molhada, razão seco/molhado do mapa _ms -> _msw para a troca sem salto)
+        static readonly (float alb, float gloss, float ratio)[] Poro = { (.58f, .30f, .5f), (.68f, .58f, .35f), (.76f, .48f, .4f), (.93f, .72f, .6f) };   // terra, asfalto, concreto, quadra/cerâmica
+        static readonly Dictionary<Material, int> poroM = new(); static readonly Dictionary<Material, (Texture dry, Texture wetT)> mswM = new();
+        // piso molhado com força k (chuva = 1; r64: noite ~0,7)
         static void ApplyWet(float k)
         {
-            if (Mathf.Abs(k - wetK) < .02f) return; wetK = k;
+            if (Mathf.Abs(k - wetK) < .02f && !(k == 0 && wetK > 0)) return; wetK = k; bool pbr = FBVisual.C.wetPbr > .5f;
             foreach (var kv in wet) { var m = kv.Key; if (!m) continue; var (c, s) = kv.Value; bool soil = soilM.TryGetValue(m, out var so) && so;
-                m.SetColor("_BaseColor", Color.Lerp(c, new Color(c.r * .74f, c.g * .74f, c.b * .76f, c.a), k)); m.SetFloat("_Smoothness", Mathf.Lerp(s, Mathf.Max(s, soil ? .32f : .62f), k)); }
+                if (!pbr) { m.SetColor("_BaseColor", Color.Lerp(c, new Color(c.r * .74f, c.g * .74f, c.b * .76f, c.a), k)); m.SetFloat("_Smoothness", Mathf.Lerp(s, Mathf.Max(s, soil ? .32f : .62f), k)); continue; }
+                var p = Poro[poroM.TryGetValue(m, out var pc) ? pc : 2];
+                m.SetColor("_BaseColor", Color.Lerp(c, new Color(c.r * p.alb, c.g * p.alb, c.b * Mathf.Min(1, p.alb * 1.03f), c.a), k));
+                if (mswM.TryGetValue(m, out var mt))
+                {   // material com mapa _ms (lisura absoluta no alfa): acima de 0,5 troca pelo _msw (poros cheios, brilho onde a água empoça no
+                    // relevo da textura) e a lisura sobe da razão seco/molhado até 1 — sem salto na troca
+                    bool sw = k > .5f; m.SetTexture("_MetallicGlossMap", sw ? mt.wetT : mt.dry);
+                    m.SetFloat("_Smoothness", sw ? Mathf.Lerp(p.ratio, 1, (k - .5f) / .5f) : s);
+                }
+                else m.SetFloat("_Smoothness", Mathf.Lerp(s, Mathf.Max(s, p.gloss), k));
+            }
         }
-        static readonly System.Text.RegularExpressions.Regex WetRx = new("asphalt|asfalto|road|sidewalk|calcada|paver|pav_|piso|concrete|concreto|conc|curb|meiofio|slab|laje|dirt|terra|sand|areia|granite|tile_floor|quadra|court", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        // r65 (matSanity): materiais do mapa com METÁLICO alto sem mapa e sem ser metal (parede, chão, plástico, tecido...) viram "óleo"/espelho
+        // escuro (pedido: corrigir Metallic/Smoothness incorretos). Zera o metálico e limita a lisura de quem não é vidro/água/metal. Uma vez por
+        // material (os materiais são do projeto, valem para a sessão); log com a lista.
+        static readonly HashSet<Material> sane = new();
+        static readonly System.Text.RegularExpressions.Regex MetalRx = new("metal|steel|a[cç]o|ferro|iron|chrome|cromo|alum|zinc|galv|grade|port[aã]o|lata|poste|placa|tapume|telha_?met|corrim|guard|cerca|vidro|glass|janela|window|agua|water|espelho|mirror|lente|lens|carro|car_|veic|moto|farol|neon|led", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        static void MatSanity()
+        {
+            if (FBVisual.C.matSanity <= .5f) return; int nm = 0, ns = 0; var nomes = new List<string>();
+            foreach (var r in Object.FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None))
+            {
+                if (r.gameObject.layer != FBWorld.LMap) continue;
+                foreach (var m in r.sharedMaterials)
+                {
+                    if (!m || !sane.Add(m) || MetalRx.IsMatch(m.name) || m.renderQueue >= 2450 || !m.HasProperty("_Metallic") || !m.HasProperty("_Smoothness")) continue;
+                    bool map = m.IsKeywordEnabled("_METALLICSPECGLOSSMAP") && m.HasProperty("_MetallicGlossMap") && m.GetTexture("_MetallicGlossMap");
+                    if (map) continue;                                                             // mapa do FBPbrMaps (r64): já medido
+                    float me = m.GetFloat("_Metallic"), sm = m.GetFloat("_Smoothness"); bool ch = false;
+                    if (me > .25f) { m.SetFloat("_Metallic", 0); nm++; ch = true; }
+                    if (sm > .72f) { m.SetFloat("_Smoothness", .5f); ns++; ch = true; }
+                    if (ch && nomes.Count < 40) nomes.Add($"{m.name}(m{me:0.00} s{sm:0.00})");
+                }
+            }
+            if (nm + ns > 0) Debug.Log($"[FreeBala][materiais] corrigidos: {nm} metálico->0, {ns} lisura->0,5 · {string.Join(", ", nomes)}");
+        }
+        static readonly System.Text.RegularExpressions.Regex WetRx = new("asphalt|asfalto|road|sidewalk|calcada|paver|pav_|piso|concrete|concreto|conc|curb|meiofio|slab|laje|dirt|terra|sand|areia|granite|tile_floor|quadra|court|bloquete|laterita|chao_|rua_", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
         static void FindWet()
         {
             foreach (var r in Object.FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None))
@@ -296,15 +363,25 @@ namespace FreeBala
                 {
                     if (!m || wet.ContainsKey(m) || !WetRx.IsMatch(m.name) || !m.HasProperty("_Smoothness") || !m.HasProperty("_BaseColor") || m.renderQueue >= 2450) continue;
                     var c = m.GetColor("_BaseColor"); float s = m.GetFloat("_Smoothness"); wet[m] = (c, s);
-                    bool soil = System.Text.RegularExpressions.Regex.IsMatch(m.name, "dirt|terra|sand|areia", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                    bool soil = System.Text.RegularExpressions.Regex.IsMatch(m.name, "dirt|terra|sand|areia|laterita", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
                     soilM[m] = soil;
+                    var ic = System.Text.RegularExpressions.RegexOptions.IgnoreCase;
+                    poroM[m] = soil ? 0 : System.Text.RegularExpressions.Regex.IsMatch(m.name, "quadra|court|tile_floor|ceram", ic) ? 3
+                             : System.Text.RegularExpressions.Regex.IsMatch(m.name, "asphalt|asfalto|road", ic) ? 1 : 2;
+                    if (m.HasProperty("_MetallicGlossMap") && m.GetTexture("_MetallicGlossMap") is Texture dry && dry)
+                    { var wt = Resources.Load<Texture2D>("PBRWet/" + m.name + "_msw"); if (wt) mswM[m] = (dry, wt); }
                 }
             }
         }
         // globais de shader da partida (névoa de altura) sobrevivem à troca de cena: no menu o passe de tela cheia continuava ligado com a névoa
         // do mapa — o fundo (UI, sem profundidade) virava "céu" e a borda do personagem (profundidade resolvida do MSAA) ganhava contorno
         public static void ResetGlobals() { Shader.SetGlobalVector("_FBFogParams", Vector4.zero); Shader.SetGlobalVector("_FBFogSun", Vector4.zero); }
-        public static void RestoreWet() { foreach (var kv in wet) if (kv.Key) { kv.Key.SetColor("_BaseColor", kv.Value.c); kv.Key.SetFloat("_Smoothness", kv.Value.s); } wet.Clear(); soilM.Clear(); wetK = -1; }
+        public static void RestoreWet()
+        {
+            foreach (var kv in wet) if (kv.Key) { kv.Key.SetColor("_BaseColor", kv.Value.c); kv.Key.SetFloat("_Smoothness", kv.Value.s); }
+            foreach (var kv in mswM) if (kv.Key) kv.Key.SetTexture("_MetallicGlossMap", kv.Value.dry);
+            wet.Clear(); soilM.Clear(); poroM.Clear(); mswM.Clear(); wetK = -1; wetAcc = -1;
+        }
 
         // luminárias: posição da CABEÇA de cada poste (vértices do topo, no fim do braço — não o centro do poste). Malha que junta vários
         // postes (VJ_Postes_Fios) é separada por grade de 3 m: cada coluna com mais de 3 m de altura é um poste; fios (baixos) ficam de fora

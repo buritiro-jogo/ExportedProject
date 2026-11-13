@@ -1,0 +1,195 @@
+{
+ "achados": [
+  {
+   "unidade": "sul_01_clinica",
+   "gravidade": "alta",
+   "descricao": "A clinica esta esticada: no real o predio da clinica tem ~10,5 m de frente, nao 16,5 m. O contorno do cadastro (-90,7 a -74,2) junta a clinica (oeste) e uma parede cinza recuada com emblema dourado e cerca-viva (leste, ~5,5 m), que na cena virou o 'bloco branco' sul_02 colocado mais a leste.",
+   "evidencia": "Street View x=-86,6 e x=-65,8 (jan/2025, lida em x=-55,4; mesma passagem): a clinica ocupa a mesma largura de tela nas duas vistas (263 px) e a paralaxe do cobogo entre os dois pontos (20,8 m de deslocamento) da 0,0405 m/px no plano da fachada -> 10,6 m, de x~-91,2 a -80,6. Proporcao largura/altura no real ~1,9; na foto do Unity r21_sul_xm82.png e ~2,95 (577 px x 195 px).",
+   "correcao": "Manter U(-90.7,-74.2) mas dividir: corpo(0,10.4,0,6.0) = clinica; corpo(10.4,16.5,0,4.5,'#b9b9b5', sal=-1.8) = parede cinza lisa recuada, sem porta, com floreira/cerca-viva de 1 m na frente. Dentro da clinica (w a partir da ponta oeste): ripado de madeira '#b08a62' em w 0,4-4,7, z 1,4-4,1; marquise/laje em z 4,1-4,5; faixa de cima cinza-clara '#cfcac2' em w 0-6,2, z 4,5-6,4 com letreiro em w 1,0-5,0, z 5,15-5,85; porta de vidro em w 5,3-6,3, z 0-2,6; portico bege '#c8a882' em w 6,4-10,4, z 0-6,0 com cobogo bege-claro '#d9c7a6' em w 7,0-9,95, z 0,6-5,3."
+  },
+  {
+   "unidade": "sul_02_bloco_branco",
+   "gravidade": "alta",
+   "descricao": "Unidade na posicao errada e com aparencia errada. No trecho x -74,2 a -70,0 fica, no real, a loja de acai (testeira rosa/branca, toldo bordo), nao um bloco branco com porta. A parede cinza com emblema fica a oeste (dentro do contorno da sul_01) e nao tem porta visivel.",
+   "evidencia": "Street View x=-86,6, -65,8 e -55,4 (jan/2025): paralaxe da placa do acai nas tres vistas -> x -75,0 a -70,2, a ~16 m da camera. A parede cinza aparece entre o totem preto e o portico da clinica, x ~-80,6 a -75. Unity r21_sul_xm82.png/xm62.png: bloco branco de 4,2 m com porta escura entre a clinica e o acai.",
+   "correcao": "Trocar o conteudo: U('sul_02', -74.2, -70.0) passa a receber as pecas da loja de acai (corpo 4,3 m '#b3262c', toldo bordo z 2,5-2,7 saliencia 2 m, testeira clara z 3,3-4,4 com 'ACAI', vitrine/porta de vidro em w 0,9-4,0 e parede vermelha com janela em w 0-0,9). O 'bloco' cinza vai para sul_01 (w 10,4-16,5)."
+  },
+  {
+   "unidade": "sul_03_acai",
+   "gravidade": "alta",
+   "descricao": "O acai esta ~4,5 m a leste do lugar real: o trecho x -70,0 a -65,5 pertence a loja de decoracao, cuja testeira bege e continua.",
+   "evidencia": "Street View x=-65,8 e x=-55,4 (jan/2025): a testeira bege da Decor vai de x~-70,3 a -60,2 (paralaxe nas duas vistas, profundidade 16,7 m); o acai termina em -70,2. Unity r21_sul_xm62.png: ACAI vermelho ocupando esse trecho, entre 'Decor' e o bloco branco.",
+   "correcao": "Remover a unidade sul_03 deste contorno e fundir o contorno com o da sul_04: uma so unidade Decor de x -70,0 a -59,7 (W=10,3)."
+  },
+  {
+   "unidade": "sul_04_decor",
+   "gravidade": "alta",
+   "descricao": "Loja de decoracao com quase metade da largura real (5,8 m na cena, ~10 m no real). Em jan/2025 a frente abaixo da testeira esta fechada com tapume de zinco (vitrine nao confirmada).",
+   "evidencia": "Street View x=-65,8 e x=-55,4 (jan/2025): testeira bege unica de ~10,1 m (x -70,3 a -60,2), topo ~4,8 m, base ~3,3 m; embaixo, faixa escura e chapas de zinco. Unity r21_sul_xm62.png: testeira de 5,8 m.",
+   "correcao": "U('sul_04_decor', -70.0, -59.7): corpo(0,10.3,0,4.8,'#d8cdb8'); testeira(0,10.3,3.3,4.8,'#b9a57e','DECOR RORAIMA','#4a3222'); vitrine em w 0,3-10,0, z 0-2,8 (ou tapume de zinco '#b9bcc0' se quiser o estado de 2025)."
+  },
+  {
+   "unidade": "sul_05_espetaria",
+   "gravidade": "media",
+   "descricao": "Alta demais e com as cores trocadas de lugar. No real e uma passagem coberta baixa: testeira de chapa ondulada VERMELHA com placa redonda escura, e embaixo um vao aberto escuro (sem parede vermelha, sem faixa marrom). O topo fica na altura da BASE da testeira da Decor; na cena a espetaria e a mais alta das tres lojas.",
+   "evidencia": "Street View x=-65,8 e x=-55,4 (jan/2025): testeira vermelha em z ~2,2-3,3 m, x ~-60,3 a -57; topo abaixo da placa da Decor (3,3-4,8 m). Unity r21_sul_xm62.png: bloco de 4,4 m com faixa cinza-marrom em cima e parede vermelha embaixo, mais alto que a Decor.",
+   "correcao": "corpo(0,4.0,0,3.3,'#3a2a28'); fx('testeira',0,4.0,2.2,3.3,'#c2473f','ESPETARIA','#f0e2c8', sal=0.1) em chapa ondulada; abertura escura em w 0,3-3,7, z 0-2,2 ('#2a2020'); parede lateral branca a leste."
+  },
+  {
+   "unidade": "sul_06_roraima_energia",
+   "gravidade": "alta",
+   "descricao": "Altura errada em ~45 %: o predio tem ~7,4 m (parede ate ~5,3 m + faixa branca do letreiro de ~2 m), nao 5,0 m. A faixa de cima e as letras do SAC sao bem maiores que na cena.",
+   "evidencia": "Street View x=-55,4, -34,8 (jan/2025) e x=-0,9, 29,6 (data nao lida): paralaxe do logotipo e do QR code em tres pares de vistas da 27,6-28,6 m de profundidade (y~64, confere com o cadastro); com isso o topo fica 4,8-5,1 m acima da camera (2,5 m) -> 7,3-7,6 m; base da faixa a 5,3-5,5 m. Conferido pelo carro estacionado (1,42 m) e pelo gradil (2,0-2,1 m) na mesma conta. Unity r21_sul_xm40.png/xm12.png: 5,0 m.",
+   "correcao": "re.corpo(0,80.8,0,7.4); friso azul em z 5,30-5,40 e outro no topo 7,30-7,40; letreiros (SAC e nome) em z 5,7-7,0 (letras ~1 m); cobogos em z 1,6-5,2; pilares azuis ate z 5,3."
+  },
+  {
+   "unidade": "sul_06_roraima_energia",
+   "gravidade": "media",
+   "descricao": "Ponta leste e detalhes fora do lugar: as aletas verticais brancas ficam ~6 m mais a oeste; a fita de janelas altas e de caixilho de MADEIRA e fica a 4,1-5,0 m; ha tres janelinhas com ar-condicionado e rodape azul-escuro; entre as aletas e o cobogo ha duas janelas escuras empilhadas e um painel azul-acinzentado quadriculado. Os pilares azuis grossos a cada 6 m nao existem assim: o real e quase todo branco, com filetes azuis finos em poucos pontos e coifas azuis grandes de ar-condicionado.",
+   "evidencia": "Street View x=-0,9 e x=29,6 (data nao lida, dia nublado): aletas em x~3,0 a 8,3 (w 58,5-64); fita de madeira em x~13,8 a 26 (w 69,3-81,5), em dois grupos; janelinhas em w 71,1-72,1, 75,9-77,0 e 79,0-80,2 (z 1,4-2,5); janelas empilhadas em w 54,9-56,4; painel quadriculado em w 51,1-54,6; segundo logotipo em w ~45-50. Na cena as aletas estao em w 66-70,3 e os basculantes em z 3,1-3,75. (A foto r21_sul_x18.png esta tapada por um onibus; conferi pela x45 e pela xm12.)",
+   "correcao": "Aletas: for k in range(7): pilar branco em w 58,5+0,8k, z 0-5,2, sal 0,5 (tirar as de 66-70 e a porta 67-69,2, que nao vi). Basculantes '#8a6a4a' (madeira) em w 69,3-75,0 e 75,4-81,0, z 4,1-5,0. Janelas pequenas z 1,4-2,5 nos tres w acima. Janelas escuras w 54,9-56,4 em z 1,2-2,3 e 3,8-5,1. Painel '#5c6f8f' w 51,1-54,6, z 0,8-5,2 (ha outro igual em w 2,5-5,5). Rodape '#22304e' z 0-0,6 de w 64 a 80,8. Pilares azuis: reduzir a largura para 0,12 m e deixar so em pares esparsos."
+  },
+  {
+   "unidade": "sul_06_roraima_energia",
+   "gravidade": "media",
+   "descricao": "Mureta/gradil da frente mais alto e de outro tipo: base de cobogo branco (~0,9 m) entre pilaretes brancos e grade branca de barras ate ~2,1 m; na cena, mureta de 0,5 m e total de 1,5 m. Falta o abrigo de onibus na calcada em frente a ponta leste.",
+   "evidencia": "Street View x=-34,8 (jan/2025): topo da grade 0,4-0,5 m abaixo da camera, a 18 m (y~54) -> 2,0-2,1 m; base vazada branca. Street View x=29,6: abrigo de onibus com paineis em x~28-32, na calcada. Unity r21_sul_xm40.png: grade de 1,5 m.",
+   "correcao": "frente('mureta_grade', 2.1, '#f0f0ec', 0, 80.8, ..., altura_mureta_m=0.9) com a mureta em cobogo. Acrescentar em 'mobiliario' um abrigo de onibus em x 28-32, y~46."
+  },
+  {
+   "unidade": "sul_07_predio_branco_jardim",
+   "gravidade": "media",
+   "descricao": "Predio mais comprido para leste (~20 m, nao 15,7 m) e portao no lado errado: o portao azul de correr fica no extremo OESTE do lote, colado ao lote da Roraima Energia; na cena esta a leste. O gradil real e de tela com postes azuis, ~2,0 m, sem pilares de concreto. Ha um portico de entrada com colunas brancas na ponta oeste e tres mastros de bandeira no gramado.",
+   "evidencia": "Street View x=29,6 e x=49,9 (data nao lida): predio de x~34 a ~55 (ponta leste 5 m a leste da camera em x=49,9, a ~23 m); fita de janelas quase de ponta a ponta, z ~1,5-3,0; portao em x~33-37. Unity r21_sul_x45.png: predio de ~33,6 a 51,7 com beiral; portao a leste; gradil com pilares de concreto. Duvida: a ponta leste tem +-2 m; nao sei se ha tambem um portao de pedestre perto de x~52.",
+   "correcao": "corpo(0,20.0,0,3.7); ab('janela',1.0,17.5,1.5,3.0, div=12); porta em w 18,5-19,6; portico de colunas brancas em w -1,0 a 1,0; frente('mureta_grade',2.0,..., [(-1.5,2.5)], altura_mureta_m=0.1, cor_grade='#2f5fb0'). Recuo: o predio parece ~3-4 m mais para tras (y~59) que os 55,5 do cadastro (em duvida)."
+  },
+  {
+   "unidade": "sul_08_posto",
+   "gravidade": "baixa",
+   "descricao": "Proporcao das cores da testeira e o totem. No real: branco com o nome nos ~26 % de oeste, amarelo no meio (~43 %, com faixas de transicao) e verde nos ~31 % de leste. O 'totem' verde alto na frente nao existe assim: e uma coluna BRANCA da propria cobertura, com uma caixa verde/amarela perto do topo, sem passar da cobertura.",
+   "evidencia": "Street View x=78,6 (data nao lida; camera na esquina) e x=100,0 (fev/2025): verde 100-460 px, amarelo 460-960, branco 960-1260; testeira em z ~5,6-6,65 m. Coluna com a caixa em x~95,8-96,6. Unity r21_sul_x88.png/x104.png: amarelo curto (2,5 m), verde longo (9,5 m) e pilar verde de 6,4 m mais alto que a cobertura.",
+   "correcao": "testeiras: branco w 0-5,2; amarelo w 5,2-13,8; verde w 13,8-20,0; z 5,6-6,65 (corpo da cobertura z 5,6-6,65). Totem: corpo(17.2,17.9,0,5.6,'#f0f0ec','concreto') + fx('painel',17.1,18.0,3.6,5.3,'#1e8a4a', sal=0.15)."
+  },
+  {
+   "unidade": "sul_09_conveniencia",
+   "gravidade": "media",
+   "descricao": "A face para a avenida e CEGA no real (so placas claras e avisos pequenos): a porta escura da cena nao existe ali; a entrada envidracada fica na face oeste, debaixo da cobertura do posto. Falta a faixa escura com filete amarelo no alto. Altura ~5,1 m (cena 4,6).",
+   "evidencia": "Street View x=100,0 e x=120,6 (fev/2025): parede de placas cinza-claras de x~97,3 a 110,7 (paralaxe), topo 5,1 m; faixa escura em z ~4,05-4,6 com filete amarelo; placa verde arredondada em x~102,2-105,7, z 3,3-3,9. Em x=78,6 ve-se a vitrine e a placa verde na face oeste. Unity r21_sul_x104.png: porta dupla escura na face norte, sem faixa escura.",
+   "correcao": "corpo(0,11.9,0,5.1,'#dcdcd8','ceramica'); tirar ab('porta',0.6,2.8,...); fx('faixa',0,11.9,4.05,4.6,'#3a3a36') + fx('friso',0,11.9,4.35,4.42,'#e8c23a'); letreiro em w 3,6-7,1, z 3,3-3,9. Se o gerador aceitar face lateral: vitrine e placa verde na face oeste."
+  },
+  {
+   "unidade": "sul_10_clinica_branca",
+   "gravidade": "media",
+   "descricao": "Bloco alto de placas tipo marmore mais largo que na cena: vai ate x~128,8 (16 m), nao ate 124,3 (11,6 m). Altura ~5,0 m (cena 5,6); fica praticamente na mesma altura da conveniencia, e nao 1 m mais alto. As faixas bege verticais sao mais largas (~1,2 m, tres aletas) e ha uma porta de enrolar branca na ponta oeste.",
+   "evidencia": "Street View x=120,6 e x=141,0 (fev/2025): quina leste do bloco alto em x 128,5-128,8 nas duas vistas (profundidade 18,5 m); ponta oeste 112,2; topo 4,9-5,1 m; faixas bege em x~120,6-121,8. Unity r21_sul_x120.png: bloco de 11,6 m.",
+   "correcao": "U('sul_10_clinica_branca', 112.7, 128.8, ...): corpo(0,16.1,0,5.0,'#e3e3e1','ceramica'); faixas bege '#c9bfa6' em w 7,9-9,1; porta de enrolar branca w 0-1,1, z 0-2,6."
+  },
+  {
+   "unidade": "sul_10b_ala_bege",
+   "gravidade": "media",
+   "descricao": "A 'ala bege' e, no real, uma MARQUISE bege em caixa (z ~2,9-4,0) que avanca na frente; a parede debaixo dela e de placas brancas tipo marmore, nao bege. A ordem das aberturas esta espelhada: a porta de vidro fica a OESTE (junto ao bloco alto) e as duas janelas estreitas e altas a leste; na cena a janela esta a oeste e a porta a leste. So a ponta leste (pilar) e bege.",
+   "evidencia": "Street View x=120,6 e x=141,0 (fev/2025): marquise de x~124 a 134; porta de vidro escuro em x~125,8-128,6; janelas em x~129,5-130,4 e 130,9-131,9; pilar bege em x~132,3-134. Unity r21_sul_x120.png: bloco todo bege de 3,3 m, porta a leste (350-437 px) e janela a oeste dela.",
+   "correcao": "U('sul_10b', 128.8, 133.9): corpo(0,5.1,0,4.0,'#e3e3e1','ceramica'); janelas w 0,7-1,6 e 2,1-3,1, z 0,6-2,6, vidro escuro; pilar bege '#cdbfa6' w 3,5-5,1. Marquise em caixa '#cdbfa6' z 2,9-4,0, saliencia 1,5, de x 124,3 a 133,9 (cobre tambem os 4,5 m finais da sul_10); porta de vidro escuro na sul_10 em w 13,1-15,9, z 0-2,5."
+  },
+  {
+   "unidade": "sul_11_casa_muro",
+   "gravidade": "baixa",
+   "descricao": "O muro branco real tem dois paineis de cobogo de concreto cinza e cerca eletrica; nao vi portao de barras. Altura ~2,6 m (cena 2,3).",
+   "evidencia": "Street View x=120,6 e x=141,0 (fev/2025): muro de x~132,2 a 139,7, paineis de cobogo em x~132,8-134,4 e 136,2-138,7, trecho liso no meio (pode ser portao de chapa branca: em duvida); telhado de barro atras confere. Unity r21_sul_x148.png: muro branco com portao de barras.",
+   "correcao": "frente('muro', 2.6, '#e6e4de', 0, 7.3, []) + ab('cobogo', 0.2,1.6, 0.4,2.2, '#b9b4a8') e ab('cobogo', 3.0,5.4, 0.4,2.2, '#b9b4a8'); trocar o portao de barras por chapa lisa branca em w 1,7-2,9 se quiser manter um acesso."
+  },
+  {
+   "unidade": "sul_12_predio_creme",
+   "gravidade": "alta",
+   "descricao": "Na foto do Unity ha um bloco bege liso de ~3 m de altura e ~13 m de frente (x~141 a 154, junto a calcada) na frente do predio creme, tapando a porta gradeada, a placa e a metade de baixo do painel cinza. No real nao ha nada na frente: a fachada do CAPS fica rente a calcada. Parece bloco generico do mapa base que nao foi retirado (nao esta no monta_spec_sul.py nem no render do Blender).",
+   "evidencia": "Unity r21_sul_x148.png e folha sul_x148.jpg: caixa bege de 468 a 1198 px, topo em y=390, na frente do corpo creme; no render 08_renders/fs3d_sul_12_predio_creme.png a fachada aparece inteira. Street View x=141,0 e x=161,1 (fev/2025): fachada livre, com grama e calcada na frente.",
+   "correcao": "Remover do mapa base o bloco generico que ocupa x~141-154, y~49-56 (ou excluir esse contorno do cadastro da lista de blocos genericos)."
+  },
+  {
+   "unidade": "sul_12_predio_creme",
+   "gravidade": "media",
+   "descricao": "Recuo e altura: a fachada real fica ~6,5 m mais perto da avenida (y~50, nao 56,5) e o predio tem ~5,6 m, nao 7,2 m (cena 29 % mais alta). A fita de janelas e mais baixa e mais curta (5 folhas).",
+   "evidencia": "Street View x=141,0 e x=161,1 (fev/2025): paralaxe do painel de ceramica cinza -> 11,6-11,9 m da camera (y~49,7), x 150,4-154,0; topo 5,5-5,7 m; fita em z 3,0-3,5, x 141,3-145,7; porta 2,7 m de largura com topo a 2,55 m; placa branca z 2,75-3,35; painel cinza ate 4,7 m; predio de x~139,8 a 155,5. Sentidos (18,5 m) e conveniencia (13,7 m), medidos do mesmo jeito, batem com o cadastro, entao a diferenca e deste predio.",
+   "correcao": "U('sul_12_predio_creme', 139.8, 155.5, 49.8, 81.5): corpo(0,15.7,0,5.6,'#e3d9b8'); basculante w 1,5-5,9, z 3,0-3,5, 5 divisoes; placa w 7,1-9,3, z 2,75-3,35; porta w 7,6-10,3, z 0-2,55 (grade branca); painel cinza w 10,6-14,2, z 0-4,7; ar-condicionado w 9,4-10,3, z 2,9-3,5."
+  },
+  {
+   "unidade": "sul_14_centro_espirita",
+   "gravidade": "baixa",
+   "descricao": "Predio um pouco mais curto e mais alto; grade mais alta. O predio termina ~3 m antes da esquina (ha um quintal lateral gradeado). Sao 4 janelas iguais e uma abertura larga na ponta oeste, nao 5 iguais. Portao de pedestre perto da ponta oeste. A face lateral para a rua transversal tem o nome em letras VERDES em arco.",
+   "evidencia": "Street View x=161,1 e x=193,8 (fev/2025): predio de x~161,6 a 176,8, topo ~5,0 m; janelas em w 5,2-6,5, 7,7-9,0, 10,2-11,6, 12,8-14,2 e abertura larga em w 0,9-3,1; grade com mureta ~0,8 m e topo ~2,1 m; portao de pedestre em w ~3-4,5. Unity r21_sul_x171.png: 18,1 m, 4,3 m de altura, grade de 1,6 m.",
+   "correcao": "corpo(0,15.2,0,5.0); janelas nos w acima, z 1,3-2,6; letreiro w 5,5-10,5, z 3,1-4,5; frente('mureta_grade',2.1,..., [(3.0,4.5),(15.5,17.8)], altura_mureta_m=0.8). Opcional: letreiro verde '#3f7f3a' na face leste."
+  },
+  {
+   "unidade": "sul_15_portal_hotel",
+   "gravidade": "alta",
+   "descricao": "Composicao trocada e portal ~4,5 m a oeste do lugar. No real, de oeste para leste: (1) loja de estetica de esquina, (2) parede cinza de placas, CHEIA do chao ao topo, com o nome do hotel, (3) pilar de pedra, (4) porta de entrada, (5) parede branca curva com vazados redondos, avancada, sob marquise fina; a faixa cinza de cima segue ate encostar na loja de dois pisos. Na cena: pedra a oeste, vao escuro sob o portal, e uma 'lojinha' branca a LESTE que nao existe ali (a loja real fica a OESTE, na esquina). O portal real tem ~5,5 m (cena 4,4).",
+   "evidencia": "Street View x=193,8, 208,5 e 234,5 (fev/2025): letras em x 208,9-212,7 (paralaxe: 16,7 m, y~54); parede cinza cheia de 208,1 a 213,5, topo 5,5 m; pedra 213,5-215,3; porta 215,3-216,4; parede curva com furos 214,5-220; faixa cinza de cima (z 3,9-5,5) ate ~220,5. Unity r21_sul_x208.png: portal de 203,5 a 212,5 com vao escuro, pedra na ponta oeste, bloco branco com porta dupla a leste, e vazio entre 215,8 e 220,5.",
+   "correcao": "U('sul_15_portal_hotel', 200.5, 220.5, ...): corpo(7.6,13.0,0,5.5,'#77797a','metal') com letreiro w 8,4-12,4, z 4,3-5,0; corpo(13.0,20.0,3.9,5.5,'#77797a','metal', fundo=6); pedra corpo(13.0,14.8,0,3.9,'#b79a78','ceramica'); porta escura w 14,8-15,9, z 0-2,6 com parede bordo '#6b2a2e' acima; parede branca curva w 14,5-19,5, z 0-3,7, saliencia 2,5, com dois vazados redondos de ~1,3 m; marquise fina z 3,7-3,9 de w 14 a 20. Tirar a lojinha de w 12-15,3."
+  },
+  {
+   "unidade": "sul_16_loja_dois_pisos",
+   "gravidade": "media",
+   "descricao": "Aberturas espelhadas no sentido leste-oeste (a empena branca esta do lado certo). No real o pano de vidro MAIOR fica a leste e a porta fica deslocada para oeste; na cena o pano maior esta a oeste e a porta a leste do centro. A empena branca e uma aleta inclinada de ~2,2 m na base, nao um pilar de 0,7 m. Os vidros de cima ficam em z ~5,1-7,6 e os de baixo vao ate ~3,6 m.",
+   "evidencia": "Street View x=234,5 (fev/2025), fachada a 14,3 m: aleta branca w 0-2,2; vitrine oeste w 1,7-5,6; porta de madeira escura com ferragem w 6,3-8,2 sob marquise preta w 4,3-8,9; vitrine leste w 9,0-15,7; panos de cima w 2,2-6,0 e 9,1-15,7. Unity r21_sul_x228.png: pano de cima largo (3 folhas) a oeste, estreito a leste, porta a leste do centro. Tambem: o abrigo de onibus que aparece na frente (mapa base) nao existe nas imagens de fev/2025.",
+   "correcao": "ab('janela',1.7,5.6,0.5,3.6,...,2,1); ab('janela',9.0,15.7,0.5,3.6,...,4,1); ab('porta',6.3,8.2,0,3.0,'#1c1c1c','#232628'); ab('janela',2.2,6.0,5.1,7.6,...,2,1); ab('janela',9.1,15.7,5.1,7.6,...,3,1); marquise w 4,3-8,9, z 3,6-3,8; fx('pilar',0,2.2,0,8.4,'#e6e4de'); floreiras w 1,5-5,8 e 9,0-15,7."
+  },
+  {
+   "unidade": "sul_17_casa_portao",
+   "gravidade": "baixa",
+   "descricao": "Muro cinza um pouco mais alto (~2,85 m) e, entre o portao e as lojas, ha um trecho de muro velho esbranquicado com caixa de medidores que na cena e vao. Portao de chapa escura confere com a posicao.",
+   "evidencia": "Street View x=234,5 e x=254,8 (fev/2025): paralaxe do portao -> x 242,5-245,3, a 10,9 m (y~48,3); muro cinza de 236,0 a 242,5, topo 2,85 m; muro velho com medidores de 245,3 a ~248,5.",
+   "correcao": "frente('muro', 2.85, '#b8b8b6', 0, 9.2, [(5.7,8.5)]); acrescentar muro '#cfcbc2' de 2,8 m de x 246,0 a 247,5 com caixa de medidores."
+  },
+  {
+   "unidade": "sul_18_lojas_imobiliarias",
+   "gravidade": "media",
+   "descricao": "Divisao das testeiras: a da primeira loja (oeste) ocupa ~13,3 m e a do meio so ~6,6 m; na cena 10,5 e 9,3. O terco oeste da primeira loja nao e vitrine: tem uma porta de enrolar pequena e parede branca.",
+   "evidencia": "Street View x=254,8 (fev/2025): em tangentes, oeste 0,860, meio 0,424, preta 0,583 (total 1,867 = 28,9 m) -> 13,3 / 6,6 / 9,0 m; porta de enrolar em w ~0,5-1,7, parede branca w 1,7-4,2, vitrines de w 4,2 em diante com pilares brancos. Unity r21_sul_x262.png: divisao em 10,5.",
+   "correcao": "testeira oeste (0,13.3), meio (13.3,19.9), preta (19.9,28.9); corpo claro (0,19.9) e preto (19.9,28.9); janelas: (4.2,12.8) com 4 divisoes, (13.8,19.4), (20.3,28.4); porta de enrolar '#8a4a3a' w 0,5-1,7, z 0-2,4."
+  },
+  {
+   "unidade": "sul_19_predio_cinza_laranja",
+   "gravidade": "media",
+   "descricao": "Frente errada: os ~11 m de oeste (x 276,4-287,7) sao outro lote, com muro AZUL-MARINHO de ~2,5 m e uma abertura de entrada, nao muro branco com dois portoes. No lote do predio a frente nao e muro cheio: pilares brancos de ~3 m, grade branca de barras, entrada recuada com muro bege ao fundo, totem laranja, portao de barras cinza e portinha; concertina em cima. Falta o pilone branco vertical (~5,5 m) com o nome.",
+   "evidencia": "Street View x=284,7 e x=304,4 (fev/2025), paralaxe do pilar '349' -> 11,2 m (y~48,5): muro marinho 279,6-281,7, abertura 281,7-283,8, muro marinho 283,8-287,7; pilar branco 287,7-289,0; grade branca 289,0-292,6; pilar 292,6-293,8; entrada recuada 293,8-297,4; totem laranja 297,4-298,5; portao de barras 298,5-302,0; parede clara com portinha 302,1-303,2. Unity r21_sul_x290.png: muro branco continuo com dois portoes de barras.",
+   "correcao": "Trocar a frente por trechos (w a partir de 276,4): muro '#1f2a44' 2,5 m em w 3,2-5,3 e 7,4-11,3 (abertura 5,3-7,4); pilares brancos '#ecebe6' 3,0 m em w 11,3-12,6 e 16,2-17,4; grade branca 2,2 m em w 12,6-16,2; vao em w 17,4-21,0 com muro bege '#d9cdb8' recuado 5 m; totem '#d2603a' w 21,0-22,1, z 0,5-2,6; portao de barras cinza w 22,1-25,6; parede clara com porta w 25,7-26,8. Pilone branco 0,7 x 5,5 m em w ~17,2."
+  },
+  {
+   "unidade": "sul_19_predio_cinza_laranja",
+   "gravidade": "media",
+   "descricao": "Predio mais alto que na cena e sem o volume curvo: tem dois pavimentos de janelas e, por cima, uma coroa cinza curva e cega. Estimo 8,5-9,5 m no bloco principal e 9,5-11 m no topo curvo (cena 7,5 m, caixa reta). Em duvida quanto ao valor exato (profundidade entre 24 e 30 m), mas a falta e clara.",
+   "evidencia": "Street View x=284,7 e x=304,4 (fev/2025): predio de x~288,1 a 303,7 (confere); topo curvo 9,5 m se a fachada estiver em y=61,6 (cadastro) e 11,1 m pela paralaxe (y~67); panos laranja ate ~7-8 m. Unity r21_sul_x290.png/x316.png: caixa de 7,5 m.",
+   "correcao": "mo.corpo(12.0,27.6,0,8.6,'#b9bbbd'); acrescentar corpo curvo (ou reto, se o gerador nao fizer curva) em w 15,0-24,5, z 8,6-10,0, '#b4b6b8', saliencia 0,8; paineis laranja ate z 7,2; segunda fila de janelas em z 2,0-3,4."
+  }
+ ],
+ "unidades_ok": [
+  "sul_13_loja_verde (parede verde-clara, placa preta larga, porta de vidro esverdeado; largura real ~4,8 m contra 5,7 m, dentro da tolerancia)",
+  "sul_20_terreno_esquina (terreno vazio com mureta de concreto, pilaretes e gradil branco; total real ~1,75 m contra 1,5 m)",
+  "Ordem geral das unidades de oeste para leste: confere, salvo o trecho clinica/parede cinza/acai/Decor (sul_01 a sul_04) e o lado da lojinha no portal do hotel (sul_15)",
+  "Posicao e largura pelo cadastro conferem (+-1,5 m) em: ponta oeste da clinica, Roraima Energia (-55,5 a 25,3; recuo y~64), cobertura do posto (78,6 a ~99), conveniencia (97,3 a 110,7), loja de dois pisos (220,4 a 236,5), conjunto das imobiliarias (ponta leste ~276), predio cinza e laranja (288 a 304), inicio do terreno de esquina (~303,5)",
+  "Recuos coerentes: Roraima Energia atras de gramado, sul_07 atras de jardim, predio cinza e laranja atras de patio, lojas do posto e imobiliarias junto ao patio da frente"
+ ],
+ "faltando_na_cena": [
+  "Loja de estetica na esquina leste da rua transversal (x~199 a 208, y~54 a 62): terrea, ~4,3 m, paredes claras com platibanda cinza (z 3,5-4,3); face norte de x 205 a 208,1 com painel de placa branca entre dois paineis de trelica dourada; chanfro a 45 graus de (205; 53,8) a (201; 57,4) com duas janelas altas de moldura dourada e porta de vidro sob toldo escuro. Na cena o trecho de x 192 a 203,5 esta vazio.",
+  "Trecho x~215,8 a 220,5 (entre o portal do hotel e a loja de dois pisos): no real e ocupado pela parede branca curva com vazados e pela faixa cinza do portal; na cena e vao.",
+  "Parede cinza recuada com cerca-viva entre a clinica e o acai (x~-80,6 a -75): existe so como 'bloco branco' deslocado para x -74,2 a -70,0.",
+  "Lote com muro azul-marinho entre as imobiliarias e o predio cinza e laranja (x~279,6 a 287,7): na cena virou muro branco da sul_19.",
+  "Muro velho com caixa de medidores entre o portao da casa e as lojas (x~245,3 a 248,5).",
+  "Abrigo de onibus na calcada em frente a ponta leste da Roraima Energia (x~28 a 32).",
+  "Totem preto de placas (~4,5 m de altura, ~1,2 m de largura) na frente da parede cinza, em x~-76, e pilone branco vertical (~5,5 m) na entrada do predio cinza e laranja, em x~293,5."
+ ],
+ "nao_julgavel": [
+  "Datas: li 'jan. de 2025' em x=-55,4 e 'fev. de 2025' em x=120,6, 193,8, 284,7, 304,4 e ~325. Nos pontos x=-86,6, -65,8 e -34,8 nao consegui ler (mesma luz de fim de tarde de x=-55,4, assumi jan/2025); em x=-0,9, 29,6, 49,9 e 78,6 a data nao foi lida.",
+  "Todas as medidas saem de paralaxe entre pontos do Street View e da altura da camera (assumida 2,5 m): erro de +-1 m em x, +-1,5 m em profundidade e +-10 % em altura; nos pontos mais obliquos (ponta leste da sul_07, predio cinza e laranja) o erro e maior.",
+  "A foto r21_sul_x18.png esta tapada por um onibus do jogo: a ponta leste da Roraima Energia na cena so foi vista de lado (x45 e xm12).",
+  "Loja de decoracao: em jan/2025 a frente esta fechada com tapume de zinco; nao da para confirmar vitrine, porta nem cor da parede.",
+  "Espetaria: o interior da passagem e escuro; nao vi o que ha embaixo da testeira alem de uma parede lateral branca.",
+  "Portoes da mureta da Roraima Energia (cena: w 30-34 e 64-68): nao localizei portoes no Street View por causa de arvores e carros; a porta entre as aletas tambem nao foi vista.",
+  "Altura total da loja de dois pisos (topo cortado nas capturas; parece ~8,5-9 m, cena 8,4) e casas atras dos muros (sul_11 e sul_17): so se ve o telhado de barro.",
+  "Recuo real das lojas sul_02 a sul_05: as placas ficam a ~16-17 m da camera (y~52), 4-5 m a frente do cadastro (56,9), mas podem ser marquises avancadas; nao confirmei a linha da parede.",
+  "Faces laterais para as ruas transversais nao foram conferidas, salvo o letreiro verde do centro espirita e o chanfro da loja de estetica.",
+  "O bloco bege na frente do predio creme: afirmo que aparece na foto do Unity e que nao existe no real; a origem (bloco generico do mapa base) e hipotese, nao abri o Unity.",
+  "O ponto do Street View na esquina de x~192 traz o endereco 'R. Barao do Rio Branco', enquanto a especificacao chama a transversal de R. Ajuricaba; nao verifiquei o nome.",
+  "Na aba ja existente do grupo (que travou nas capturas) cheguei a navegar uma vez para o ponto x=-82; usei e fechei uma aba nova para o resto."
+ ]
+}

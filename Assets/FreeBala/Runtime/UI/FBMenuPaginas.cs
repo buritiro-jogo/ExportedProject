@@ -104,7 +104,16 @@ namespace FreeBala
 
         // ================================================================ SQUAD / SOCIAL
         static string sqTab = "amigos"; static bool sqVsBots; System.Action matchBack;
-        RectTransform sqParty, sqList, sqStatus, sqAction, sqTabs; InputField sqFriend;
+        RectTransform sqParty, sqList, sqStatus, sqAction, sqTabs, sqModes, sqMic; InputField sqFriend;
+        // r69: modo online escolhido no squad. DE ROLÊ e ROLÊ ARMADO usam a cidade do mapa (modo "role"); TIMES e 2 × 2 usam o mata-mata.
+        // modo online que vai valer de fato (o mesmo cálculo do FBNet.Start): o modo do jogo escolhido no ALTERAR manda no par rolê/times
+        static string EffNet() => FBSession.mode == "role" ? (FBSession.netMode == "rolex" ? "rolex" : "role") : (FBSession.netMode == "x2" ? "x2" : "tdm");
+        void SetNetMode(string m)
+        {
+            FBSession.netMode = m;
+            if (m == "role" || m == "rolex") FBSession.mode = "role"; else if (FBSession.mode == "role") FBSession.mode = "classico";
+            FBSession.Save(); Squad();
+        }
         void Squad()
         {
             var net = FBLobbyNet.Ensure();
@@ -117,24 +126,32 @@ namespace FreeBala
             // partida
             var pc = Panel(b, "partida", 0, 418, LW, 390).transform;
             Head(pc, "COMO JOGAR", 24, 20, 300);
+            // r69: cartões mais baixos (64) para caber a fileira dos modos online
             void Vs(bool bots, float x)
             {
-                bool on = sqVsBots == bots; var t = FBKit.Tile(pc, bots ? "vs_bots" : "vs_jogadores", x, 52, 478, 92, on, () => { sqVsBots = bots; SquadRefresh(); });
-                Icon(t.transform, bots ? "ic_bot" : "ic_swords", 22, 26, 40, on ? Color.white : FBKit.Dim);
-                FBKit.T(t.transform, bots ? "CONTRA BOTS" : "CONTRA JOGADORES", 20, 80, 18, 380, 28, TextAnchor.MiddleLeft, true, Color.white);
-                FBKit.T(t.transform, bots ? "Você contra a inteligência artificial · modo e mapa escolhidos" : "Seu squad no mesmo time · sala online do mapa", 12, 80, 50, 390, 20, TextAnchor.MiddleLeft, false, FBKit.Dim);
+                bool on = sqVsBots == bots; var t = FBKit.Tile(pc, bots ? "vs_bots" : "vs_jogadores", x, 52, 478, 64, on, () => { sqVsBots = bots; Squad(); });
+                Icon(t.transform, bots ? "ic_bot" : "ic_swords", 18, 14, 36, on ? Color.white : FBKit.Dim);
+                FBKit.T(t.transform, bots ? "CONTRA BOTS" : "CONTRA JOGADORES", 19, 70, 8, 390, 26, TextAnchor.MiddleLeft, true, Color.white);
+                FBKit.T(t.transform, bots ? "Você contra a inteligência artificial · modo e mapa escolhidos" : "Rolê, rolê armado, times ou 2 × 2 (squad de 4 sorteado)", 12, 70, 36, 400, 20, TextAnchor.MiddleLeft, false, FBKit.Dim);
             }
             Vs(false, 24); Vs(true, 518);
+            sqModes = FBKit.At(pc, "modos", 24, 128, 972, 40);
             // modo + mapa
             var M = MODES.FirstOrDefault(m => m.id == FBSession.mode); if (M.id == null) M = MODES[0];
             var mp = GameData.Maps.TryGetValue(FBSession.map, out var mm) ? mm.name : FBSession.map;
-            var info = FBKit.Tile(pc, "partida_info", 24, 160, 972, 92, false, () => { matchBack = Squad; MatchPicker(); }); info.GetComponent<Image>().color = new Color(.04f, .1f, .21f, .85f);
+            var info = FBKit.Tile(pc, "partida_info", 24, 180, 972, 92, false, () => { matchBack = Squad; MatchPicker(); }); info.GetComponent<Image>().color = new Color(.04f, .1f, .21f, .85f);
             var th = FBKit.At(info.transform, "mini", 10, 10, 128, 72).gameObject.AddComponent<Image>(); th.color = Color.white; FBKit.Round(th, 6); th.gameObject.AddComponent<Mask>().showMaskGraphic = true; th.raycastTarget = false;
-            var shot = FBKit.Cover(th.transform, Resources.Load<Texture2D>("MapShots/" + FBSession.map), 0, 0, 128, 72);
-            FBKit.T(info.transform, (sqVsBots ? M.name : "TIMES ONLINE") + "  ·  " + (mp ?? "").ToUpper(), 20, 156, 16, 640, 28, TextAnchor.MiddleLeft, true, Color.white);
-            FBKit.T(info.transform, sqVsBots ? M.desc : "Mata-mata em times na sala online do mapa (até 10 jogadores). O squad entra junto e do mesmo lado.", 12, 156, 46, 640, 36, TextAnchor.UpperLeft, false, FBKit.Dim);
-            FBKit.T(info.transform, "ALTERAR  ›", 13, 972 - 140, 0, 120, 92, TextAnchor.MiddleRight, true, FBKit.Blue);
-            sqAction = FBKit.At(pc, "acao", 24, 268, 972, 100);
+            var shot = FBKit.Cover(th.transform, FBMapShot.Get(FBSession.map), 0, 0, 128, 72);
+            var nm = EffNet();
+            string nmDesc = nm == "rolex" ? "A mesma cidade livre, mas todo mundo entra armado e os jogadores podem se enfrentar. Morreu, volta em 3 s longe dos outros. Loja de armas aberta."
+                : nm == "x2" ? "Os 4 do squad são sorteados 2 contra 2 numa área de combate do mapa. Primeiro time a 20 abates (ou 10 min). O microfone só chega na sua dupla."
+                : nm == "tdm" ? "Mata-mata em times na sala online do mapa (até 10 jogadores). O squad entra junto e do mesmo lado."
+                : "Cidade livre com todo mundo na mesma sala (até 16 jogadores), sem armas: carros, paredão e loja de armas sincronizados.";
+            FBKit.T(info.transform, (sqVsBots ? M.name : FBSession.NetModeName(nm) + " ONLINE") + "  ·  " + (mp ?? "").ToUpper(), 20, 156, 16, 640, 28, TextAnchor.MiddleLeft, true, Color.white);
+            FBKit.T(info.transform, sqVsBots ? M.desc : nmDesc, 12, 156, 46, 660, 40, TextAnchor.UpperLeft, false, FBKit.Dim);
+            FBKit.T(info.transform, sqVsBots ? "ALTERAR  ›" : "MAPA  ›", 13, 972 - 140, 0, 120, 92, TextAnchor.MiddleRight, true, FBKit.Blue);
+            sqAction = FBKit.At(pc, "acao", 24, 284, 972, 100);
+            sqMic = FBKit.At(b, "mic", LW - 300, 0, 300, 28);
             // ---------- direita: social
             var sc = Panel(b, "social", RX, 0, RW, BH).transform;
             Head(sc, "SOCIAL", 24, 20, 200);
@@ -160,7 +177,27 @@ namespace FreeBala
             if (!sqParty) return; var net = FBLobbyNet.I; if (!net) return;
             foreach (Transform t in sqParty) Destroy(t.gameObject); foreach (Transform t in sqList) Destroy(t.gameObject); foreach (Transform t in sqStatus) Destroy(t.gameObject);
             foreach (Transform t in sqAction) Destroy(t.gameObject); foreach (Transform t in sqTabs) Destroy(t.gameObject);
+            if (sqModes) foreach (Transform t in sqModes) Destroy(t.gameObject); if (sqMic) foreach (Transform t in sqMic) Destroy(t.gameObject);
             bool on = net.status == FBLobbyNet.St.On;
+            string nmNow = EffNet(); int nParty = net.InParty ? net.party.Count : 1;
+            // ---- r69: modos online (só o líder escolhe; quem não é líder vê o que o líder vai iniciar quando ele mandar)
+            if (sqModes && !sqVsBots)
+            {
+                var ms = new (string id, string l, bool ok)[] { ("role", "DE ROLÊ", true), ("rolex", "ROLÊ ARMADO", !on || net.capRolex), ("tdm", "TIMES", true), ("x2", "2 × 2", (!on || net.capX2) && nParty == 4) };
+                for (int i = 0; i < ms.Length; i++)
+                {
+                    var mi = ms[i]; bool sel = nmNow == mi.id, can = mi.ok && net.IsLeader;
+                    var tb = FBKit.TextTile(sqModes, mi.l + (mi.id == "x2" ? $"  ({nParty}/4)" : ""), i * 246, 0, 234, 40, sel, () => { if (can) SetNetMode(mi.id); else if (net.IsLeader) { net.toast = mi.id == "x2" && nParty != 4 ? "2 × 2 precisa de 4 no squad: convide mais amigos" : "O servidor conectado é antigo e não tem esse modo"; net.toastT = Time.unscaledTime; net.version++; } }, 13);
+                    if (!mi.ok && !sel) tb.GetComponent<Image>().color = new Color(.03f, .07f, .14f, .5f);
+                }
+            }
+            // ---- r69: microfone (Caps Lock também liga/desliga; a voz vai para o squad no menu e para o time/sala na partida)
+            if (sqMic && FBVoiceChat.Supported)
+            {
+                var vc = FBVoiceChat.Ensure(); bool mon = vc.on;
+                string ml = !string.IsNullOrEmpty(vc.erro) ? vc.erro : mon ? "● MIC LIGADO  ·  CAPS" : "○ LIGAR MICROFONE  ·  CAPS";
+                Btn(sqMic, ml, 0, 0, 300, 28, () => { vc.Toggle(); SquadRefresh(); }, mon ? FBKit.Flag : new Color(.12f, .32f, .65f, .95f), Color.white, 11);
+            }
             // ---- lugares do squad
             var members = net.InParty ? net.party.ToList() : new List<FBLobbyNet.Person> { new() { pid = FBLobbyNet.Pid, name = FBSession.name, skin = FBSession.skin } };
             var me = members.FirstOrDefault(x => x.pid == FBLobbyNet.Pid); if (me != null) { members.Remove(me); members.Insert(0, me); me.skin = FBSession.skin; }
@@ -199,9 +236,12 @@ namespace FreeBala
             {
                 Color dc = on ? new Color(.35f, .95f, .5f) : net.status == FBLobbyNet.St.Connecting ? new Color(1, .8f, .3f) : new Color(1, .4f, .35f);
                 var dot = FBKit.Box(sqStatus, "luz", 2, 14, 12, 12, dc, false); FBKit.Pill(dot);
-                string s = on ? "ONLINE  ·  " + ShortServer() : net.status == FBLobbyNet.St.Connecting ? "CONECTANDO…  ·  " + ShortServer() : "SERVIDOR OFFLINE  ·  " + ShortServer();
-                FBKit.T(sqStatus, s, 11, 22, 0, 330, 40, TextAnchor.MiddleLeft, true, on ? FBKit.Txt : dc);
-                Btn(sqStatus, "SERVIDOR", 450 - 116, 4, 116, 32, ServerDialog, new Color(.08f, .16f, .3f, .9f), Color.white, 11);
+                // r68: mostra onde está ligado de verdade (servidor online, Host da rede ou este PC hospedando)
+                string where = FBLanHost.Hosting ? "HOST · " + LanAddr() : FBLanHost.OnLan ? "REDE · " + ShortServer() : ShortServer();
+                string s = on ? "ONLINE  ·  " + where : net.status == FBLobbyNet.St.Connecting ? "CONECTANDO…  ·  " + where : (FBLanHost.OnLan ? "HOST FORA DO AR  ·  " : "SERVIDOR OFFLINE  ·  ") + where;
+                FBKit.T(sqStatus, s, 11, 22, 0, 214, 40, TextAnchor.MiddleLeft, true, on ? FBKit.Txt : dc).FitTo(11, 8);
+                if (FBLanHost.Supported) Btn(sqStatus, "REDE LOCAL", 450 - 104 - 8 - 104, 4, 104, 32, LanDialog, FBLanHost.OnLan ? FBKit.Flag : new Color(.12f, .32f, .65f, .95f), Color.white, 11);
+                Btn(sqStatus, "SERVIDOR", 450 - 104, 4, 104, 32, ServerDialog, new Color(.08f, .16f, .3f, .9f), Color.white, 11);
             }
             // ---- abas
             var fr = FBLobbyNet.Friends; int onF = fr.Count(f => net.StatusOf(f.pid) != "offline");
@@ -216,7 +256,7 @@ namespace FreeBala
             float lw = 450, lh = sqList.rect.height > 10 ? sqList.rect.height : 500;
             if (rows.Count == 0)
             {
-                string e = !on ? "Sem conexão com o servidor.\nAbra o INICIAR_FREE_BALA.bat no PC do servidor ou ajuste o endereço em SERVIDOR." :
+                string e = !on ? (FBLanHost.Supported ? "Sem conexão com o servidor.\nNa mesma rede, sem internet: REDE LOCAL (um PC hospeda, os outros procuram na rede ou digitam o IP)." : "Sem conexão com o servidor.\nAjuste o endereço em SERVIDOR.") :
                     sqTab == "amigos" ? "Nenhum amigo ainda.\nMande o SEU CÓDIGO para um amigo ou digite o código dele acima." : sqTab == "online" ? "Ninguém mais no menu agora." : "Nenhum convite.\nQuando alguém te chamar para o squad, aparece aqui.";
                 FBKit.T(sqList, e, 13, 10, 30, lw - 20, 120, TextAnchor.UpperCenter, false, FBKit.Dim);
             }
@@ -255,7 +295,11 @@ namespace FreeBala
                 else Big(sqAction, "JOGAR CONTRA BOTS", (MODES.FirstOrDefault(m => m.id == FBSession.mode).name ?? "") + "  ·  SOZINHO", true, Play);
                 return;
             }
-            if (!on) { Big(sqAction, "SERVIDOR OFFLINE", "Tentando conectar de novo… (ou ajuste em SERVIDOR)", false, () => net.Reconnect()); return; }
+            if (!on)
+            {
+                if (FBLanHost.Supported && !FBLanHost.OnLan) { Big(sqAction, "JOGAR NA REDE LOCAL", "Servidor online fora do ar · um PC hospeda e os outros entram pela rede (Wi-Fi ou cabo)", true, LanDialog); return; }
+                Big(sqAction, FBLanHost.OnLan ? "HOST DA REDE FORA DO AR" : "SERVIDOR OFFLINE", FBLanHost.OnLan ? "Tentando de novo… · confira o Host em REDE LOCAL" : "Tentando conectar de novo… (ou ajuste em SERVIDOR)", false, () => net.Reconnect()); return;
+            }
             if (net.InParty && !net.IsLeader)
             {
                 bool rd = net.MeReady;
@@ -264,11 +308,17 @@ namespace FreeBala
                 return;
             }
             int notReady = net.InParty ? net.party.Count(x => x.pid != net.leader && !x.ready) : 0;
-            string sub = net.InParty ? (notReady > 0 ? $"Aguardando {notReady} jogador{(notReady > 1 ? "es" : "")} ficar PRONTO" : $"Squad de {net.party.Count} pronto · todos no mesmo time") : "Sozinho na sala online do mapa · convide amigos para o squad";
-            Big(sqAction, "INICIAR PARTIDA", sub, notReady == 0, () => { if (notReady == 0) net.StartParty(FBSession.map, FBSession.mode); }, net.InParty ? AW - 256 : AW);
+            // r69: 2 × 2 só com exatamente 4; servidor antigo sem o modo escolhido não deixa iniciar (cairia em outro modo sem avisar)
+            string bloqueio = nmNow == "x2" && nParty != 4 ? $"2 × 2 precisa de exatamente 4 no squad (agora {nParty})" : nmNow == "x2" && !net.capX2 ? "Servidor antigo: não tem 2 × 2 (atualize o server.mjs ou use REDE LOCAL)" : nmNow == "rolex" && !net.capRolex ? "Servidor antigo: não tem ROLÊ ARMADO (atualize o server.mjs ou use REDE LOCAL)" : null;
+            string lado = nmNow == "x2" ? "os 4 serão sorteados 2 contra 2" : nmNow == "tdm" ? "todos no mesmo time" : "todos na mesma cidade";
+            string sub = bloqueio ?? (net.InParty ? (notReady > 0 ? $"Aguardando {notReady} jogador{(notReady > 1 ? "es" : "")} ficar PRONTO" : $"Squad de {net.party.Count} pronto · {FBSession.NetModeName(nmNow)} · {lado}") : $"Sozinho na sala online do mapa · {FBSession.NetModeName(nmNow)} · convide amigos para o squad");
+            bool pode = notReady == 0 && bloqueio == null;
+            Big(sqAction, "INICIAR PARTIDA", sub, pode, () => { if (pode) { FBSession.netMode = nmNow; net.StartParty(FBSession.map, FBSession.mode); } }, net.InParty ? AW - 256 : AW);
             if (net.InParty) Btn(sqAction, "SAIR DO SQUAD", AW - 240, 22, 240, 56, () => net.LeaveParty(), new Color(.1f, .18f, .32f, .95f), Color.white, 15);
         }
-        static string ShortServer() { var s = FBSession.server ?? ""; s = s.Replace("ws://", "").Replace("wss://", ""); int i = s.IndexOf('/'); return (i > 0 ? s.Substring(0, i) : s).ToUpper(); }
+        static string ShortServer() { var s = FBSession.Server ?? ""; s = s.Replace("ws://", "").Replace("wss://", ""); int i = s.IndexOf('/'); return (i > 0 ? s.Substring(0, i) : s).ToUpper(); }
+        static string LanAddr() { var ips = FBLanHost.LocalIPs(); return (ips.Count > 0 ? ips[0].ip : "127.0.0.1") + (FBLanHost.Port != FBLanServerPort ? ":" + FBLanHost.Port : ""); }
+        const int FBLanServerPort = 8123;   // porta padrão (com ela o IP basta; outra porta aparece junto)
         // botão grande (JOGAR/INICIAR): verde quando dá para clicar, azul-escuro quando está esperando
         static void Big(Transform p, string title, string sub, bool go, System.Action a, float w = 972)
         {
@@ -288,7 +338,101 @@ namespace FreeBala
             var t = FBKit.T(bg.transform, FBSession.server, 16, 14, 0, W - 88, 48, TextAnchor.MiddleLeft, false, Color.white); var f = bg.gameObject.AddComponent<InputField>(); f.textComponent = t; f.text = FBSession.server;
             Btn(box.transform, "CANCELAR", 30, H - 30 - 52, 180, 52, () => Destroy(dlg), new Color(.08f, .16f, .3f, .9f), Color.white, 15);
             Btn(box.transform, "SALVAR E CONECTAR", W - 30 - 290, H - 30 - 52, 290, 52, () =>
-            { var s = f.text.Trim(); if (s.StartsWith("ws://") || s.StartsWith("wss://")) { FBSession.server = s; FBSession.Save(); FBLobbyNet.I?.Reconnect(); } Destroy(dlg); SquadRefresh(); }, FBKit.Flag, Color.white, 15);
+            { var s = f.text.Trim(); if (s.StartsWith("ws://") || s.StartsWith("wss://")) { if (FBLanHost.Hosting) FBLanHost.StopHost(); else FBLanHost.LeaveLan(); FBSession.server = s; FBSession.Save(); FBLobbyNet.I?.Reconnect(); } Destroy(dlg); SquadRefresh(); }, FBKit.Flag, Color.white, 15);
+        }
+
+        // r68 REDE LOCAL: HOSPEDAR neste PC, PROCURAR NA REDE (descoberta UDP 8125) ou CONECTAR POR IP. Redesenha sozinha quando a conexão,
+        // a procura ou o número de jogadores do Host mudam. O campo do IP fica fora do redesenho (o texto digitado não some).
+        void LanDialog()
+        {
+            var ov = FBUI.Panel(root, "rede_local", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, new Color(0, .01f, .04f, .78f)); ov.raycastTarget = true; var dlg = ov.gameObject;
+            const float W = 700, H = 640, CW = W - 60; var box = FBKit.Box(ov.transform, "caixa", 0, 0, W, H, new Color(.025f, .06f, .13f, .98f)); var br = box.rectTransform; br.anchorMin = br.anchorMax = br.pivot = new Vector2(.5f, .5f); br.anchoredPosition = Vector2.zero; FBKit.Frame(box, 14); box.raycastTarget = true;
+            FlagTick(box.transform, new Vector2(0, 1), new Vector2(0, 1), Vector2.zero, W, 3, .95f);
+            FBKit.T(box.transform, "REDE LOCAL", 22, 30, 24, CW, 30, TextAnchor.MiddleLeft, true, Color.white);
+            FBKit.T(box.transform, "Jogue com quem está na mesma rede (Wi-Fi ou cabo), sem servidor na internet. Um PC HOSPEDA; os outros procuram na rede ou digitam o IP dele.", 13, 30, 58, CW, 40, TextAnchor.UpperLeft, false, FBKit.Dim);
+            // conectar por IP
+            const float IY = H - 30 - 52 - 70;
+            FBKit.T(box.transform, "CONECTAR POR IP", 11, 30, IY - 20, 300, 16, TextAnchor.MiddleLeft, true, FBKit.Dim);
+            var ipBg = FBKit.Box(box.transform, "campo_ip", 30, IY, CW - 190, 48, new Color(.01f, .04f, .1f, .95f)); FBKit.Round(ipBg, 8); ipBg.raycastTarget = true;
+            var ipT = FBKit.T(ipBg.transform, "", 17, 14, 0, CW - 220, 48, TextAnchor.MiddleLeft, true, Color.white);
+            var ipPh = FBKit.T(ipBg.transform, "IP do Host (ex.: 192.168.0.10)", 14, 14, 0, CW - 220, 48, TextAnchor.MiddleLeft, false, new Color(1, 1, 1, .32f));
+            var ipF = ipBg.gameObject.AddComponent<InputField>(); ipF.textComponent = ipT; ipF.placeholder = ipPh; ipF.characterLimit = 64;
+            var msg = FBKit.T(box.transform, "", 12, 30, IY + 52, CW, 18, TextAnchor.MiddleLeft, true, new Color(1, .5f, .45f));
+            void Entrar(string addr, string nome)
+            {
+                // r68b: confere ANTES de parar o Host (endereço errado não derruba mais a sala de quem já está jogando aqui)
+                if (!FBLanHost.ValidAddr(addr)) { msg.color = new Color(1, .5f, .45f); msg.text = "ENDEREÇO INVÁLIDO · USE O IP QUE APARECE NA TELA DO HOST (EX.: 192.168.0.10)"; return; }
+                if (FBLanHost.IsSelf(addr)) { msg.color = new Color(.45f, .95f, .6f); msg.text = "ESSE É O SEU PRÓPRIO IP: VOCÊ JÁ É O HOST · FECHE E CLIQUE EM INICIAR PARTIDA"; return; }
+                if (FBLanHost.Hosting) FBLanHost.StopHost();
+                if (!FBLanHost.Join(addr)) { msg.color = new Color(1, .5f, .45f); msg.text = "ENDEREÇO INVÁLIDO · USE O IP QUE APARECE NA TELA DO HOST (EX.: 192.168.0.10)"; return; }
+                var n = FBLobbyNet.I; if (n) { n.toast = "Entrando no Host " + nome + " · depois é só INICIAR PARTIDA"; n.toastT = Time.unscaledTime; n.version++; }
+                Destroy(dlg); SquadRefresh();
+            }
+            Btn(box.transform, "CONECTAR", W - 30 - 176, IY, 176, 48, () => Entrar(ipF.text, ipF.text.Trim()), new Color(.12f, .32f, .65f, .95f), Color.white, 14);
+            // rodapé
+            Btn(box.transform, "FECHAR", 30, H - 30 - 52, 180, 52, () => { Destroy(dlg); SquadRefresh(); }, new Color(.08f, .16f, .3f, .9f), Color.white, 15);
+            var holder = FBKit.At(box.transform, "conteudo", 30, 110, CW, IY - 20 - 12 - 110);
+            var foot = FBKit.At(box.transform, "rodape", W - 30 - 330, H - 30 - 52, 330, 52);
+            void Fill()
+            {
+                foreach (Transform t in holder) Destroy(t.gameObject); foreach (Transform t in foot) Destroy(t.gameObject);
+                var net = FBLobbyNet.I; bool on = net && net.status == FBLobbyNet.St.On;
+                // ---- este PC
+                var hc = FBKit.Box(holder, "este_pc", 0, 0, CW, 176, new Color(.04f, .1f, .22f, .9f)); FBKit.Round(hc, 12);
+                if (FBLanHost.Hosting)
+                {
+                    var ips = FBLanHost.LocalIPs(); string ip0 = ips.Count > 0 ? ips[0].ip : "127.0.0.1"; string porta = FBLanHost.Port != FBLanServerPort ? ":" + FBLanHost.Port : "";
+                    var d = FBKit.Box(hc.transform, "luz", 18, 22, 12, 12, on ? new Color(.35f, .95f, .5f) : new Color(1, .8f, .3f), false); FBKit.Pill(d);
+                    FBKit.T(hc.transform, $"VOCÊ É O HOST  ·  {FBLanHost.Clients} CONECTADO{(FBLanHost.Clients == 1 ? "" : "S")} (VOCÊ INCLUSO)", 13, 38, 12, CW - 200, 30, TextAnchor.MiddleLeft, true, Color.white);
+                    FBKit.T(hc.transform, "OS OUTROS ENTRAM COM O IP", 10, 18, 46, 300, 14, TextAnchor.MiddleLeft, true, FBKit.Dim);
+                    FBKit.T(hc.transform, ip0 + porta, 34, 18, 60, CW - 200, 46, TextAnchor.MiddleLeft, true, FBKit.Blue);
+                    string outros = ips.Count > 1 ? "Outros IPs deste PC: " + string.Join(", ", ips.Skip(1).Take(3).Select(x => x.ip)) + "  ·  " : "";
+                    FBKit.T(hc.transform, outros + "Se o Windows perguntar, marque REDES PRIVADAS e clique em PERMITIR (senão os outros PCs não acham este Host).", 11, 18, 110, CW - 36, 56, TextAnchor.UpperLeft, false, FBKit.Dim);
+                    Btn(hc.transform, "PARAR", CW - 18 - 150, 18, 150, 40, () => { FBLanHost.StopHost(); Fill(); }, new Color(.6f, .12f, .1f, .9f), Color.white, 13);
+                    Btn(hc.transform, "COPIAR IP", CW - 18 - 150, 64, 150, 36, () => { GUIUtility.systemCopyBuffer = ip0 + porta; msg.color = new Color(.45f, .95f, .6f); msg.text = "IP COPIADO: " + ip0 + porta; }, new Color(.12f, .32f, .65f, .95f), Color.white, 12);
+                }
+                else if (FBLanHost.OnLan)
+                {
+                    var d = FBKit.Box(hc.transform, "luz", 18, 22, 12, 12, on ? new Color(.35f, .95f, .5f) : net && net.status == FBLobbyNet.St.Connecting ? new Color(1, .8f, .3f) : new Color(1, .4f, .35f), false); FBKit.Pill(d);
+                    FBKit.T(hc.transform, on ? "CONECTADO AO HOST DA REDE" : net && net.status == FBLobbyNet.St.Connecting ? "CONECTANDO AO HOST…" : "HOST FORA DO AR (TENTANDO DE NOVO)", 13, 38, 12, CW - 200, 30, TextAnchor.MiddleLeft, true, Color.white);
+                    FBKit.T(hc.transform, ShortServer(), 30, 18, 52, CW - 200, 44, TextAnchor.MiddleLeft, true, FBKit.Blue);
+                    FBKit.T(hc.transform, on ? "Feche esta janela e clique em INICIAR PARTIDA: todos que entrarem no mesmo mapa e modo caem na mesma sala." : "Confira se o Host continua aberto e na mesma rede.", 11, 18, 104, CW - 36, 56, TextAnchor.UpperLeft, false, FBKit.Dim);
+                    Btn(hc.transform, "SAIR DA REDE", CW - 18 - 170, 18, 170, 40, () => { FBLanHost.LeaveLan(); Fill(); }, new Color(.1f, .18f, .32f, .95f), Color.white, 13);
+                }
+                else
+                {
+                    var hb = FBKit.Box(hc.transform, "hospedar", 18, 18, CW - 36, 80, FBKit.Flag, false); FBKit.Round(hb, 10);
+                    Click(hb, () => { if (!FBLanHost.StartHost()) { msg.color = new Color(1, .5f, .45f); msg.text = "NÃO DEU PARA HOSPEDAR: " + (FBLanHost.LastError ?? "").ToUpper(); } Fill(); }, .12f, 1.015f);
+                    var ht = FBKit.T(hb.transform, "HOSPEDAR NESTE PC", 26, 22, 8, CW - 80, 40, TextAnchor.MiddleLeft, true, Color.white); ht.fontStyle = FontStyle.Italic;
+                    FBKit.T(hb.transform, "Abre a sala na rede: até 16 no De Rolê, 10 no mata-mata · os outros procuram ou digitam o seu IP", 12, 24, 50, CW - 80, 20, TextAnchor.MiddleLeft, true, new Color(1, 1, 1, .8f));
+                    FBKit.T(hc.transform, "Quem hospeda precisa deixar o jogo aberto até o fim da partida. Não precisa de internet nem de instalar nada.", 11, 18, 110, CW - 36, 50, TextAnchor.UpperLeft, false, FBKit.Dim);
+                }
+                // ---- procurar na rede
+                float y0 = 192;
+                FBKit.T(holder, "HOSTS NA REDE", 13, 0, y0, 300, 32, TextAnchor.MiddleLeft, true, Color.white);
+                if (FBLanHost.Scanning) FBKit.T(holder, "PROCURANDO…", 12, CW - 170, y0, 170, 32, TextAnchor.MiddleCenter, true, FBKit.Blue);
+                else Btn(holder, "PROCURAR DE NOVO", CW - 170, y0, 170, 32, () => { FBLanHost.Scan(); Fill(); }, new Color(.12f, .32f, .65f, .95f), Color.white, 11);
+                var lst = FBLanHost.Found.Where(f => !(FBLanHost.Hosting && f.port == FBLanHost.Port && FBLanHost.LocalIPs().Any(x => x.ip == f.ip))).Take(3).ToList();
+                if (lst.Count == 0)
+                    FBKit.T(holder, FBLanHost.Scanning ? "Perguntando a todos os PCs da rede…" : FBLanHost.ScanVersion == 0 ? "Clique em PROCURAR DE NOVO." :
+                        "Nenhum Host respondeu. Confira se estão na mesma rede e se o Host permitiu o jogo no firewall; ou digite o IP dele abaixo.", 12, 0, y0 + 40, CW, 44, TextAnchor.UpperLeft, false, FBKit.Dim);
+                for (int i = 0; i < lst.Count; i++)
+                {
+                    var f = lst[i]; float ry = y0 + 40 + i * 58;
+                    var row = FBKit.Box(holder, "host", 0, ry, CW, 52, new Color(.05f, .12f, .25f, .7f)); FBKit.Round(row, 10);
+                    FBKit.T(row.transform, (f.name ?? f.ip).ToUpper(), 15, 16, 6, CW - 220, 22, TextAnchor.MiddleLeft, true, Color.white).FitTo(15);
+                    FBKit.T(row.transform, $"{f.ip}{(f.port != FBLanServerPort ? ":" + f.port : "")}  ·  {f.players} NA REDE  ·  {f.rooms} SALA{(f.rooms == 1 ? "" : "S")}", 10, 16, 30, CW - 220, 16, TextAnchor.MiddleLeft, true, FBKit.Dim);
+                    bool cur = FBSession.lanServer == f.url && !FBLanHost.Hosting;
+                    if (cur) FBKit.T(row.transform, on ? "CONECTADO" : "CONECTANDO…", 12, CW - 160, 0, 150, 52, TextAnchor.MiddleCenter, true, new Color(.45f, .95f, .6f));
+                    else { var addr = f.ip + ":" + f.port; var nm = f.name ?? f.ip; Btn(row.transform, "ENTRAR", CW - 150, 8, 140, 36, () => Entrar(addr, nm), FBKit.Flag, Color.white, 13); }
+                }
+                // ---- rodapé: volta ao servidor online
+                if (FBLanHost.OnLan && !FBLanHost.Hosting) Btn(foot, "VOLTAR AO SERVIDOR ONLINE", 0, 0, 330, 52, () => { FBLanHost.LeaveLan(); Fill(); }, new Color(.08f, .16f, .3f, .9f), Color.white, 13);
+            }
+            var w = dlg.AddComponent<FBKeyWatch>(); w.rebuild = Fill;
+            w.key = () => (FBLobbyNet.I ? FBLobbyNet.I.version : 0) * 131 + FBLanHost.ScanVersion * 17 + FBLanHost.Clients * 5 + (FBLanHost.Hosting ? 1 : 0) + (FBLanHost.OnLan ? 2 : 0);
+            if (!FBLanHost.Hosting && !FBLanHost.Scanning) FBLanHost.Scan();   // já abre procurando
+            Fill();
         }
 
         // cartão do SQUAD no INÍCIO (embaixo do passe): rostos dos 4 lugares e estado; atualiza sozinho
@@ -440,7 +584,7 @@ namespace FreeBala
             var b = Box1548(p); int tier = FBPass.Tier; FBPass.Claimed = Mathf.Min(FBPass.TIERS, tier + 1); int into = FBSession.passXp % FBPass.PER_TIER;
             // ---- faixa do topo: temporada, nível, barra
             var hd = Panel(b, "temporada", 0, 0, BW, 180).transform; hd.gameObject.AddComponent<Mask>().showMaskGraphic = true;
-            var art = FBKit.Cover(hd, Resources.Load<Texture2D>("MapShots/praca_aguas"), 0, 0, BW, 180, .6f); art.color = new Color(.55f, .7f, 1f, .45f);
+            var art = FBKit.Cover(hd, FBMapShot.Get("praca_aguas"), 0, 0, BW, 180, .6f); art.color = new Color(.55f, .7f, 1f, .45f);
             var sh = FBKit.At(hd, "sombra", 0, 0, BW * .7f, 180).gameObject.AddComponent<RawImage>(); sh.texture = FBLobbyStage.GradH; sh.color = new Color(1, 1, 1, .95f); sh.raycastTarget = false;
             FlagTick(hd, new Vector2(0, 1), new Vector2(0, 1), Vector2.zero, 300, 3, .95f);
             FBKit.T(hd, "TEMPORADA 1  ·  BOA VISTA", 13, 32, 28, 500, 20, TextAnchor.MiddleLeft, true, FBKit.Blue);
@@ -501,6 +645,18 @@ namespace FreeBala
         {
             var n = FBLobbyNet.I; int cur = n ? n.version : -1; t += Time.unscaledDeltaTime;
             if (cur == v || t < .25f) return; v = cur; t = 0; rebuild?.Invoke();
+        }
+    }
+
+    // r68: redesenha quando a chave muda (tela REDE LOCAL: conexão, procura na rede, jogadores no Host)
+    public class FBKeyWatch : MonoBehaviour
+    {
+        public System.Func<int> key; public System.Action rebuild; int v; float t;
+        void Start() { v = key != null ? key() : 0; }   // o primeiro desenho é feito por quem cria
+        void Update()
+        {
+            t += Time.unscaledDeltaTime; if (key == null || t < .25f) return; t = 0;
+            int cur = key(); if (cur == v) return; v = cur; rebuild?.Invoke();
         }
     }
 

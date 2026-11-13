@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace FreeBala
 {
@@ -75,13 +76,17 @@ namespace FreeBala
             // lâmpadas de teto (pool fixo: nada é criado no meio da partida)
             bool mob = FBQuality.Mobile; var L = FBQuality.Level;
             int nl = mob ? 0 : L == FBQLevel.Ultra ? 12 : L == FBQLevel.Alto ? 8 : L == FBQLevel.Medio ? 5 : 2;
-            maxShadow = mob ? 0 : L == FBQLevel.Ultra ? 6 : L == FBQLevel.Alto ? 4 : L == FBQLevel.Medio ? 2 : 0;
+            // r65: TODA lâmpada de cômodo acesa tem sombra (print do usuário: luz da janela atravessando a parede e acendendo o chão do lado de
+            // fora); as mais longe em 256 px. Baixo continua sem (2 lâmpadas, alcance curto).
+            maxShadow = mob ? 0 : L == FBQLevel.Baixo ? 0 : L == FBQLevel.Medio ? Mathf.Min(nl, 8) : nl;
             for (int i = 0; i < nl; i++)
             {
                 var s = new Slot();
                 s.spot = new GameObject("LampadaJanela" + i).AddComponent<Light>(); s.spot.type = LightType.Spot; s.spot.range = 16; s.spot.useColorTemperature = true; s.spot.color = Color.white;
                 s.spot.shadows = LightShadows.None; s.spot.shadowStrength = .95f; s.spot.shadowBias = .05f; s.spot.shadowNormalBias = .4f; s.spot.shadowNearPlane = .15f; FBLightUtil.MediumShadows(s.spot); s.spot.enabled = false;
-                s.fill = new GameObject("LampadaComodo" + i).AddComponent<Light>(); s.fill.type = LightType.Point; s.fill.useColorTemperature = true; s.fill.color = Color.white; s.fill.shadows = LightShadows.None; s.fill.enabled = false;
+                // r65: preenchimento do cômodo era um PONTO de até 4,2 m sem sombra a ~1 m da janela — a esfera passava a parede da frente e
+                // acendia a calçada; agora é um SPOT de 150° voltado para DENTRO (fundo e piso do cômodo, o que se vê pela janela)
+                s.fill = new GameObject("LampadaComodo" + i).AddComponent<Light>(); s.fill.type = LightType.Spot; s.fill.spotAngle = 150; s.fill.innerSpotAngle = 90; s.fill.useColorTemperature = true; s.fill.color = Color.white; s.fill.shadows = LightShadows.None; s.fill.enabled = false;
                 slots.Add(s); FBVolumetric.Sources.Add(s.spot);
             }
             Debug.Log($"[FreeBala] janelas: {wins.Count} · acesas {litIdx.Count} · lâmpadas de cômodo {nl} ({maxShadow} com sombra)");
@@ -153,7 +158,8 @@ namespace FreeBala
                 }
             }
             // fade e sombra nas mais próximas já acesas
-            var shadowed = slots.Where(s => s.win >= 0 && s.wgt > .9f).OrderBy(s => (wins[s.win].c - cp).sqrMagnitude).Take(maxShadow).ToHashSet();
+            var shadowedL = slots.Where(s => s.win >= 0).OrderBy(s => (wins[s.win].c - cp).sqrMagnitude).Take(maxShadow).ToList();
+            var shadowed = shadowedL.ToHashSet(); var near4 = shadowedL.Take(4).ToHashSet();
             foreach (var s in slots)
             {
                 if (s.win < 0) continue;
@@ -162,6 +168,9 @@ namespace FreeBala
                 var w = wins[s.win]; float area = Mathf.Clamp(w.w * w.h, .6f, 3f);
                 s.spot.intensity = 9f * k * s.wgt * Mathf.Sqrt(area); s.fill.intensity = 2.4f * k * s.wgt; s.spot.enabled = s.fill.enabled = true; RealLights++;
                 var sh = shadowed.Contains(s) ? LightShadows.Soft : LightShadows.None; if (s.spot.shadows != sh) s.spot.shadows = sh;
+                if (sh == LightShadows.None) s.spot.intensity *= .25f;                           // sem sombra (fora da cota): fraca, não vaza
+                var ad = s.spot.GetUniversalAdditionalLightData(); int tier = near4.Contains(s) ? UniversalAdditionalLightData.AdditionalLightsShadowResolutionTierMedium : UniversalAdditionalLightData.AdditionalLightsShadowResolutionTierLow;
+                if (ad && ad.additionalLightsShadowResolutionTier != tier) ad.additionalLightsShadowResolutionTier = tier;
             }
         }
         static void Assign(Slot s, int i)
@@ -174,7 +183,8 @@ namespace FreeBala
             float ang = 2 * Mathf.Atan(Mathf.Max(w.w, w.h) * .5f / Mathf.Max(.3f, dist)) * Mathf.Rad2Deg;
             s.spot.transform.SetPositionAndRotation(r.lp, Quaternion.LookRotation(dir)); s.spot.spotAngle = Mathf.Clamp(ang * 1.5f + 25, 70, 135); s.spot.innerSpotAngle = s.spot.spotAngle * .5f;
             s.spot.colorTemperature = w.cct; s.fill.colorTemperature = w.cct;
-            s.fill.transform.position = r.lp - n * .2f; s.fill.range = Mathf.Clamp(r.depth * .85f, 2.2f, 4.2f);
+            // preenchimento: no ponto da lâmpada, olhando para o fundo do cômodo e um pouco para baixo; alcance = fundo do cômodo
+            s.fill.transform.SetPositionAndRotation(r.lp, Quaternion.LookRotation((-n + Vector3.down * .55f).normalized)); s.fill.range = Mathf.Clamp(r.depth * .8f + .6f, 2.2f, 4.2f);
         }
     }
 }

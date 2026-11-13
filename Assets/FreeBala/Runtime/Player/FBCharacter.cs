@@ -183,6 +183,8 @@ namespace FreeBala
             if (IsPistol) { P(FBAnimProfile.NovoPistol); if (crouch && Has(FBAnimProfile.NovoPistolCrouch)) m["Rifle_Idle"] = FBAnimProfile.NovoPistolCrouch; return; }
             P(FBAnimProfile.NovoRifle);
             if (crouch && Has(FBAnimProfile.NovoCrouchAim)) m["Rifle_Idle"] = FBAnimProfile.NovoCrouchAim;
+            // r65: o tiro toca o MESMO clipe da mira (em pé ou agachado) — ver FBAnimProfile.TiroNaMira
+            if (FBAnimProfile.TiroNaMira && m.TryGetValue("Rifle_Idle", out var mira) && mira != "Rifle_Idle" && Has(mira)) m["Rifle_ShootOnce"] = mira;
         }
         // rodada 55: policiais (categoria "policia" do elenco) com os pacotes táticos do Mixamo (FBAnimProfile.Pol*); só com -fbpoliciatatica desde a r56
         static readonly Dictionary<string, string>[] PolMaps = { FBAnimProfile.PolRifle, FBAnimProfile.PolRifleSprint, FBAnimProfile.PolPistol, FBAnimProfile.PolPistolSprint, FBAnimProfile.PolUnarmed, FBAnimProfile.PolCompact };
@@ -216,6 +218,9 @@ namespace FreeBala
         {
             var target = automatic ? "Rifle_ShootLoop_Additive" : FBAnimProfile.Fire(weapon) ?? "Rifle_ShootOnce";
             if ((IsPolice || FBAnimProfile.CombateNovo(skinId)) && weapon != null && !IsPistol) target = automatic ? FBAnimProfile.PolFireAuto : FBAnimProfile.PolFireSemi;
+            // r65: combate novo (não policial) — o tiro fica no clipe da mira (o Rebind chama isto DEPOIS do LocoOverrides)
+            if (FBAnimProfile.TiroNaMira && !IsPolice && FBAnimProfile.CombateNovo(skinId) && weapon != null && !IsPistol && !UnarmedLocomotion)
+            { var mira = OverrideOf("Rifle_Idle"); if (mira != "Rifle_Idle" && Has(mira)) target = mira; }
             SetOverride("Rifle_ShootOnce", Has(target) ? target : "Rifle_ShootOnce");
         }
         // ações por classe (FBAnimProfile): recarga do Complexo para fuzil/SMG; pistola/escopeta/sniper do IE (o Complexo não tem em 3ª pessoa);
@@ -269,6 +274,7 @@ namespace FreeBala
         }
         Quaternion handCorr = Quaternion.identity; float palmK = 1; [System.NonSerialized] public float HandDeg;   // desvio do osso da mão deste rig (graus)
         public Vector3 ProxyLocalPos => proxyP; public Quaternion ProxyLocalRot => proxyQ;
+        public float KickNow => kick;                                                  // r65: tranco do último tiro (0..1), lido pelo FBRig.KickRifle
         Quaternion proxyQ; Vector3 proxyP; (Transform node, Vector3 dir)? barrel;
         readonly List<GameObject> ownWeapon = new();
         // rodada 39 (retorno: "ao puxar a arma das costas aparecem duas armas"): FBPlayer/FBBot chamam isto TODO quadro e religavam a arma da
@@ -1207,7 +1213,9 @@ namespace FreeBala
             rig?.Aim(dt);
             if (!LeanFirst) Lean(dt, spc);
             // recuo procedural: braço direito sobe e volta (pistola: estalo curto; fuzil: só um tranco leve)
-            if (kick > .01f && rFore && alive && !spc) rFore.Rotate(transform.right, -kick * kick * (IsPistol ? .22f : .06f) * Mathf.Rad2Deg, Space.World);
+            // r65: arma longa com FBRig.CoiceArma = coice pelo FBRig.KickRifle (depois do punho mirar; antes, o AimWrist desfazia este giro
+            // do antebraço e o coice do fuzil não aparecia — ≈0,4° no pico)
+            if (kick > .01f && rFore && alive && !spc && (IsPistol || !FBRig.CoiceArma)) rFore.Rotate(transform.right, -kick * kick * (IsPistol ? .22f : .06f) * Mathf.Rad2Deg, Space.World);
             // (rodada 37) saiu o "low ready" que girava a ARMA solta na mão (arma atravessada, mão esquerda longe): o descanso agora é a própria
             // postura de combate com os braços baixando no ombro (FBRig.Aim, lowerS) — as duas mãos continuam na arma
             // deitado: fuzil alinhado à frente do corpo, quase rente ao chão

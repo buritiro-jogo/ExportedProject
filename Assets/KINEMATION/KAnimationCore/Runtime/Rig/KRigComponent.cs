@@ -1,4 +1,4 @@
-﻿// Designed by KINEMATION, 2024.
+// Designed by KINEMATION, 2024.
 
 using System.Collections.Generic;
 using KINEMATION.KAnimationCore.Runtime.Core;

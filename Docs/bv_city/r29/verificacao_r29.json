@@ -1,0 +1,1084 @@
+{
+ "resumo": "Conferi os 58 pares (29 N + 29 S), um a um, em pilhas real-sobre-cena com regua de pixels e, nos casos duvidosos, em recortes em tamanho cheio com medida pela geometria do levantador (camera a 2,3 m, fov vertical 90, rumo 42/222). Nao ha espelhamento no lado sul: a ordem leste-oeste das lojas e das pecas dentro de cada loja bate em todas as vistas de perto. As posicoes em x das lojas no plano da parede batem em geral em 0,3 a 0,7 m. Os erros graves vem quase todos do PLANO dos paineis (o levantador avisou que varios eram estimativa): (1) Homem Street: painel preto triangulado em y -7,2 (nao -5,4), entao ele avanca 2,2 m e vai so ate z 6,75 (nao 9,0); (2) loja alta de ACM cinza (N22, que e a 'Neo'): o painel e uma tela escura em y -30,6, de z 2,95 a 8,0, e nao um predio de 12 m no plano -33,1; a cena tem ali um bloco de 12 m x 15 m que nao existe; (3) trecho N 1423,8 a 1432,5: a 'loja de azulejo azul', o 'painel cinza sem letreiro' e a 'loja do toldo azul' estao trocados de lugar; e uma loja so (agibank, 1425,9-1432,5, com painel azul em y -30,2) e o painel cinza fica sobre a porta de vidro escuro da ON TECH (1423,8-1425,8); (4) letreiro SHOPPING CENTER HUM comprimido: na cena ocupa 1257,6-1272,9, no real 1251,7-1278,6 (as pontas erram ~6 m); (5) sobrado amarelo N02 esta ~3,5 m a leste do lugar (real 1247,9-1258,4); (6) Junta Comercial sem os brises dos pavimentos de cima (de z ~7,7 para cima em toda a largura); (7) Lojas Americanas: o toldo/beiral branco vai de 1499,3 a 1512,5 (modelado 1505,5-1511,8) e as linhas horizontais do predio sao niveladas enquanto a calcada desce ~1,4 m para leste entre x 1502 e 1537; (8) sobrado historico sem a varanda de colunas e balaustres. Erros de conversao: 'Live!' fica escondido atras do portal verde-agua; 'porta' sem observacao vira porta cinza fechada; cor do painel aplicada aos pilares do terreo; aletas da Associacao ~1,2 m mais altas que o z1 da spec. Falta todo o mobiliario do canteiro (5 quiosques, estacionamento a 45 graus, arvores, postes): na cena o canteiro e grama. TAREFA B: 12 navegacoes (2 cairam numa fotoesfera interna de terceiro de jun/2021 e foram descartadas; 10 vistas oficiais de fev/2025 gravadas em consulta/rev_*.jpg). Resultados: o 'predio branco de toldo verde-agua' e O Boticario (1414,0-1418,4; o 'toldo' e um painel de ACM verde-agua em y -8,3) e a 'Design Calcados' e Design CELULARES e comeca em 1418,4 (nao 1421,1); entre TIM e iClass ha uma casa estreita branca de dois pavimentos com porta de madeira (1412,8-1414,5); o predio bege termina em 1492,7 e ha um muro baixo com portinha ate as Americanas (quina oeste das Americanas confirmada em 1494,5-1494,8); a quina oeste da mureta do sobrado foi triangulada em x 1324,7 (a leitura 1318-1321 da v28 era o lado oeste da mureta visto em fuga); o largo do mercado e uma baia de asfalto com TAXI entre guias em x ~1300,6 e ~1316; laterais das duas transversais levantadas (com incerteza de plano). Nada foi editado no projeto alem das 10 imagens novas; a aba do Chrome foi fechada.",
+ "achados": [
+  {
+   "unidade": "S06_homem_street",
+   "gravidade": "grave",
+   "origem": "levantamento",
+   "o_que": "Painel preto no plano errado: esta 1,8 m mais para a rua do que o levantado, e por isso a altura dele saiu 2,2 m maior. Na cena o painel fica colado na parede e sobe ate 9 m.",
+   "evidencia": "Triangulacao entre v06 e v26 (capturas cheias) de tres pontos do letreiro: fim do T de STREET (v06 px 130,300 / v26 px 1160,340) -> x 1276,74 y -7,27; fim da linha de cima -> x 1276,55 y -7,30; fim do sublinhado -> x 1276,78 y -7,08. Sensibilidade a +-8 px: y -7,21 a -7,33. O levantamento tem y -5,4 (parede -5,0 + saliencia 0,4). Na v06 a cena mostra o painel passando por tras e por cima do painel da Milano; no real ele some atras da Milano.",
+   "correcao": "MEDIDO (triangulado): painel no plano y -7,2 (saliencia 2,2 m a partir da parede em -5,0), x 1276,3 a 1284,3, z 2,6 a 6,75 (lido na v26 nesse plano: topo 6,4-7,0, base 2,55-2,58). Letreiro HOMEM STREET de x 1276,4 a 1283,5, z ~4,3 a 5,0. Predio cinza aparece acima de 6,75 (nao de 9,0)."
+  },
+  {
+   "unidade": "N22_loja_acm_cinza_alta",
+   "gravidade": "grave",
+   "origem": "levantamento",
+   "o_que": "Nao e um predio de 12 m: e uma tela/painel escuro pendurado ~2,8 m a frente da loja, de z 2,95 a 8,0. A cena tem um bloco cinza de 12 m de altura por 15 m de fundo que nao existe (aparece nas vistas v16, v18, v56, v57). Cor tambem errada (real grafite quase preto).",
+   "evidencia": "Vista nova rev_N_x1432 (camera x 1432,29 y -26,84) x v17: borda leste do painel triangulada em x 1440,75-1440,87, y -30,56 a -30,88 (tres pontos da borda). Na vista nova o topo do painel esta em py 38: z 7,94 no plano -30,5 (daria 11,95 no plano -33,1 do levantamento). Conferencia independente: na v57 (a 40 m) o topo do painel escuro esta em py ~305-320 = z ~8,5, com ceu acima; no plano -33,1 o painel passaria 6 m por cima do predio de concreto vizinho (x 1446,9), o que e impossivel. Na v18 real ha ceu e um telhado marrom onde a cena tem a lateral de 12 m.",
+   "correcao": "MEDIDO: painel x 1432,6 a 1440,8, plano y -30,6 (+-0,3), z 2,95 a 8,0, cor #3a3c40, texto 'Neo' (azul-claro #6fb7e8, x ~1434,6-1439,0, z ~5,2-7,2) + 'Centro de Servico' e 'Revendedor Autorizado' brancos. ESTIMADO: corpo da loja atras com ~6,5 m (so vi telhado marrom a z 7-9 mais ao fundo). Vitrine de vidro escuro no plano -33,4 como no levantamento. Borda oeste em 1432,6 (levantamento 1433,6)."
+  },
+  {
+   "unidade": "N20_on_tech / N21_loja_azulejo_azul / provisorio loja_do_toldo_azul (x 1419,7 a 1433,6)",
+   "gravidade": "grave",
+   "origem": "levantamento",
+   "o_que": "Tres pecas no lugar errado. O 'painel cinza sem letreiro' foi posto em 1425,1-1428,2 e o 'toldo azul' em 1428,2-1432; no real o painel cinza fica em 1423,8-1425,8 (sobre a porta de vidro escuro da ON TECH) e de 1425,9 a 1432,5 ha UMA loja (agibank) com painel azul grande. A cena tem ali um painel cinza unico de 1415 a 1428, uma parede lisa provisoria e um toldo.",
+   "evidencia": "Borda oeste do painel azul triangulada entre v16 (px 1085,380) e a vista nova (px 78,345): x 1425,93 y -30,13, z 3,65/3,56 (as duas vistas concordam). Borda oeste da parede azul do terreo triangulada: x 1425,78 y -33,08. Na v16, no plano -30,2: painel ON TECH de px 250 a 815 = x 1419,4-1423,8; painel cinza de px 820 a 1080 = x 1423,8-1425,8. O levantador projetou esses paineis com saliencia 0,5 (erro de plano de 2,5 m visto fora do eixo = 2,4 m em x).",
+   "correcao": "MEDIDO: ON TECH: painel cinza com moldura verde-limao so ate x 1423,8 (nao 1425,0); painel cinza liso x 1423,8-1425,8, z ~3,0-5,3, plano y -30,2; agibank conforme unidades_novas (R03). ESTIMADO: moldura verde #7ac943 com ~0,35 m em volta do painel ON TECH e colunas verdes do terreo em 1419,7-1420,4 e 1423,1-1423,5 (hoje a parede do terreo sai cinza)."
+  },
+  {
+   "unidade": "N01_shopping_center_hum",
+   "gravidade": "grave",
+   "origem": "conversao",
+   "o_que": "Letreiro da testeira comprimido no meio: o texto unico em fonte generica ocupa ~15 m e o real ocupa 27 m; o S esta 5,9 m a leste do lugar e o M 5,7 m a oeste. Alem disso ha um painel liso azul-escuro inventado atras das letras (no real elas ficam direto na chapa ondulada).",
+   "evidencia": "Real (v01, v02, v04, plano -29,1): S comeca em 1251,7; G termina em 1262,8 (v01) / 1262,6 (v02); C de CENTER em 1265,6; R termina em 1274,1; H comeca em 1274,3; M termina em 1278,7; letras de z 3,65 a 4,63. Cena: SHOPPING comeca em x ~1257,6 (v01 px ~952), CENTER 1264,5-1269,6 e HUM 1270,0-1272,9 (v02).",
+   "correcao": "MEDIDO (real) / ESTIMADO (cena, +-0,4): tres textos separados, esticados na largura medida: 'SHOPPING' x 1251,7-1262,8; 'CENTER' 1265,7-1274,1; 'HUM' 1274,3-1278,6; z 3,6-4,7 (passo de ~1,4 m por letra, fonte larga). Tirar o painel liso de fundo. OBSERVADO: a oeste do S ha mais um caractere grande (parece '7') de x ~1247,5 a 1250,1, dentro do trecho, que nao foi posto."
+  },
+  {
+   "unidade": "N02_sobrado_amarelo_fundo",
+   "gravidade": "grave",
+   "origem": "levantamento",
+   "o_que": "Volume amarelo de cima esta ~3,5 m a leste do lugar e 0,7 m baixo.",
+   "evidencia": "Quina leste do corpo amarelo: v01 px 905 -> x 1258,4; v05 px 345 -> x 1258,5 (as duas no plano -31,5, de perto e de longe, concordam; o levantamento tem 1261,9, que e o pe do telhado inclinado da lateral em fuga). Borda oeste visivel na v01 em px 360 -> x 1247,9 (levantamento 1253, onde a arvore tapa na v05). Topo: z 9,7 (v01) e 9,6 (v05). Na cena o bloco aparece na v01 de px 630 a 1080; no real de 365 a 905.",
+   "correcao": "MEDIDO: x0 1247,9 (ou o limite 1247), x1 1258,4, altura 9,6-9,7 (levantamento 9,0), plano -31,5 confirmado pelas duas vistas. Faixa de janelas de x 1253,4 a 1258,4. A leste da quina fica a lateral em fuga com telhado metalico inclinado, nao fachada."
+  },
+  {
+   "unidade": "S16_junta_comercial",
+   "gravidade": "grave",
+   "origem": "levantamento",
+   "o_que": "Faltam os brises azuis dos pavimentos de cima: no real eles cobrem TODA a largura do predio a partir de ~7,7 m; na cena so existe o pano leste (1409-1414) e o resto e parede branca lisa.",
+   "evidencia": "v34: borda de baixo dos brises na parte oeste em py 179 = z 7,74 (plano -7,0) a 8,26 (plano -6,5); acima disso brises ate o topo do quadro em toda a largura (px 0 a 1249). v48 (de longe): topo do predio em py 234 = z 13,8 e brises visiveis na parte oeste do topo. Vista nova rev_S_x1409 (h177): o pano leste e uma caixa com moldura azul e laminas curvas, de x 1409,2 a 1414,2.",
+   "correcao": "MEDIDO (v34/v48, +-0,4): acrescentar brises horizontais azuis #2b3f9e de x 1400,8 a 1409,0, z 7,7 ate o topo; altura total 13,8 m (levantamento 15, nao medido). OBSERVADO: o pano leste tem moldura azul de ~0,25 m em volta."
+  },
+  {
+   "unidade": "S26_lojas_americanas",
+   "gravidade": "grave",
+   "origem": "levantamento",
+   "o_que": "O toldo/beiral branco da entrada tem o dobro do comprimento modelado (comeca 6 m mais a oeste e cobre tambem as portas de vidro) e fica ~0,4 m mais alto.",
+   "evidencia": "Ponta oeste triangulada entre v42 (px 835,485) e a vista nova rev_S_x1492 (px 322,400): x 1499,31 y -7,42. Ponta leste na v43 (px 1005,450): x 1512,5-1512,9 no plano -8,5/-9,0 (ponta em chanfro, topo em 1511,3-1511,8). Na cena o toldo vai de 1505,5 a 1511,8. Na v43 o toldo real vai de py 362 a 450 e a cena de ~396 a 496.",
+   "correcao": "MEDIDO: toldo de x 1499,3 a 1512,5, saliencia ~1,5 m, z ~3,0-3,4 (base) a 4,7-5,0 (topo junto a parede); pontas em chanfro. A placa do nome sob o toldo fica como esta (1505,2-1511,8)."
+  },
+  {
+   "unidade": "S26_lojas_americanas",
+   "gravidade": "media",
+   "origem": "modelagem",
+   "o_que": "As linhas horizontais do predio (topo da barra vermelha, platibanda) sao niveladas e a calcada desce para leste; na cena elas acompanham o chao com altura constante (3,5 e 9,5).",
+   "evidencia": "Topo da barra vermelha acima da calcada local: 3,1 m na v42 (x ~1500), 3,7 m na v43 (x ~1517), 4,4 m na v44 (x ~1537). Platibanda: 8,5-8,9 m na quina oeste (vista nova), 9,05 (v42), 10,0 (v43), 10,6 (v44). A mesma quina da faixa de lona da z 7,88 pela v42 e 8,40 pela v43 (0,5 m de desnivel entre as duas cameras em 15 m).",
+   "correcao": "MEDIDO (+-0,3): dividir a unidade em 3 ou 4 trechos em degrau ou dar cota absoluta: barra vermelha 3,0 m em x 1495, 3,7 em 1517, 4,4 em 1537; topo 8,9 / 10,0 / 10,6. Declive da calcada ~3,7 % descendo para leste neste trecho (nao conferi se o chao da cena tem o mesmo declive)."
+  },
+  {
+   "unidade": "S08_sobrado_historico",
+   "gravidade": "grave",
+   "origem": "falta",
+   "o_que": "O sobrado e uma caixa bege lisa com duas janelas: falta a varanda de dois pavimentos com colunas e balaustres na face oeste (voltada ao jardim), a quina arredondada e as janelas salientes com trelica. A quina leste esta 0,7 m a leste do real, estreitando a passagem lateral.",
+   "evidencia": "v29 e vista nova rev_S_x1321: varanda com 4 colunas por pavimento e guarda-corpo de balaustres brancos ocupando toda a face oeste; na cena, parede cega. v30: quina nordeste real em px 750 -> x 1344,1 (cena 1344,85; cadastro 1343,9).",
+   "correcao": "OBSERVADO: modelar a varanda oeste (dois pavimentos, guarda-corpo de balaustres a z ~4,2-5,1) e as janelas salientes. MEDIDO (uma vista): x1 do sobrado = 1344,1; passagem com portao de 1344,1 a 1345,2 (1,1 m, nao 0,5)."
+  },
+  {
+   "unidade": "canteiro central (x 1247 a 1541)",
+   "gravidade": "grave",
+   "origem": "falta",
+   "o_que": "Na cena o canteiro e um gramado vazio. No real e pavimentado, com estacionamento a 45 graus dos dois lados, cinco quiosques, bancos e arvores grandes; tambem faltam os postes de concreto das duas calcadas.",
+   "evidencia": "Vistas distantes v05, v46, v47, v49, v54, v55, v64: quiosque octogonal lilas/branco de telha (x ~1271-1274), de tijolo vermelho (x ~1279-1283 e ~1385-1388), metalico vermelho (x ~1342-1344), amarelo e preto (x ~1262-1266), preto (visto na v49, x ~1436-1440, nao listado pelo levantador); copas continuas de 1330 a 1440 e de 1467 em diante.",
+   "correcao": "ESTIMADO (posicoes do levantador, +-1,5 m): por os quiosques (beiral 3,1-3,4 m, topo ~4 m), piso pavimentado com vagas a 45 graus em y -20 a -24 e -15 a -18, arvores nas faixas de x listadas no levantamento e postes em x ~1268, 1290, 1300, 1531 (norte) e 1268, 1293, 1360, 1388, 1503 (sul). OBSERVADO: sexto quiosque (preto) em x ~1436-1440."
+  },
+  {
+   "unidade": "N26_live",
+   "gravidade": "media",
+   "origem": "conversao",
+   "o_que": "O letreiro 'Live!' nao aparece na cena: o portal verde-agua (saliencia 0,08) foi acrescentado por cima do friso do nome (saliencia 0,05).",
+   "evidencia": "v21: real tem 'Live!' dourado no alto do portal (py 320-365); cena mostra o portal liso. No conversor o painel do portal entra depois do friso e fica 3 cm a frente dele.",
+   "correcao": "OBSERVADO na cena / lido no conversor: por o friso do nome com saliencia maior que a do portal (ex. 0,12) ou inverter a ordem."
+  },
+  {
+   "unidade": "N26_live",
+   "gravidade": "media",
+   "origem": "levantamento",
+   "o_que": "O pano de vidro verde-agua vai so ate 6,3 m; de 6,3 a 7,45 ha apenas uma moldura de tubos vazada. Na cena o vidro sobe ate 7,4.",
+   "evidencia": "v21 (captura cheia, plano -33,8): topo do vidro em py 299 = z 6,31; topo da moldura tubular em py 238 = z 7,45; marquise em z 3,9. Cena: vidro ate py ~240.",
+   "correcao": "MEDIDO: vidro z 3,9 a 6,3 (x 1483,5-1488,9); moldura de tubos brancos finos de 6,3 a 7,45, vazada."
+  },
+  {
+   "unidade": "N06_importadora_dinelly",
+   "gravidade": "media",
+   "origem": "levantamento",
+   "o_que": "Parede cor de tijolo acima da testeira 1,2 m alta demais.",
+   "evidencia": "v08 (captura cheia): topo da parede em py 333 = z 5,7 no plano -32,0 (4,6 se estiver no plano da testeira); testeira z 2,5-3,6 confere. Cena: topo acima de py 250 (6,9 m).",
+   "correcao": "MEDIDO (uma vista): altura_m 5,7 (maximo). Atras continua o predio branco de 3 pavimentos (1322,8-1331,4) ja descrito."
+  },
+  {
+   "unidade": "N08_rei_das_novidades_norte",
+   "gravidade": "media",
+   "origem": "levantamento",
+   "o_que": "O corpo de chapa branca de cima avanca sobre a calcada (nao esta no plano da parede) e acima dele o predio e MARROM com arcos; na cena ha um bloco branco liso de 10 m no plano da parede.",
+   "evidencia": "v11: a chapa branca ocupa px 350-880; no plano -32,2 isso daria x 1336,4-1344,6 e a borda leste teria de aparecer na v10 em px 221-273, onde ha parede laranja-marrom; no plano -30,5 da x 1337,5-1343,6 (igual ao painel do nome) e a borda cai fora da v10, como se observa. z 4,6 a 7,4 nesse plano.",
+   "correcao": "ESTIMADO (plano por largura + coerencia com a v10): caixa branca de chapa x 1337,5-1343,6, plano y -30,5, z 4,6-7,4; acima/atras, corpo marrom #a0522d com arcos ate ~11,8 m (altura do levantador, nao medida por mim)."
+  },
+  {
+   "unidade": "N07_oticas_carol",
+   "gravidade": "media",
+   "origem": "levantamento",
+   "o_que": "Parte alta sai toda branca; no real, de x 1331,7 em diante o predio de cima e marrom com arcos no topo.",
+   "evidencia": "v53 (de longe) e v11: predio branco de 3 pavimentos so ate x ~1331,4; depois predio marrom com coroamento de arcos. Cena: bloco branco-acinzentado continuo de 1327,3 a 1344.",
+   "correcao": "OBSERVADO: dividir o corpo alto em 1331,7 e pintar o trecho leste de marrom #a0522d (topo ~11,8 m, do levantador)."
+  },
+  {
+   "unidade": "N31_academico_news",
+   "gravidade": "media",
+   "origem": "levantamento",
+   "o_que": "Os dois paineis azuis sao em degraus e mais largos do que o modelado; o painel branco e ~0,6 m mais baixo.",
+   "evidencia": "v22 (captura cheia, plano -33,2): azul oeste com borda leste em 1505,45 (z 3,4-4,9), 1504,0 (z 4,9-6,3) e 1502,7 (z 6,3-7,3); azul leste com borda oeste em 1514,0 (base), 1515,3 (meio) e 1516,6 (parte alta ate z 7,4). v24 e v23 dao 1504,9 e 1513,5 para as bordas da base. Topo do painel branco z 7,3-7,5 (levantamento 8,1). Levantamento: azuis 1501-1503,5 e 1515,5-1518.",
+   "correcao": "MEDIDO (uma vista de frente, plano suposto -33,2): azul oeste = tres caixas 1501-1505,4 (z 3,4-4,9), 1501-1504,0 (4,9-6,3), 1501-1502,7 (6,3-7,3); azul leste = 1514,0-1518,3 (3,4-4,9), 1515,3-1518,1 (4,9-6,1), 1516,6-1517,6 (6,1-7,4); painel branco entre eles de 1505,4 a 1514,0, topo 7,4."
+  },
+  {
+   "unidade": "N32_academico_anexo",
+   "gravidade": "media",
+   "origem": "falta",
+   "o_que": "Falta a reentrancia escura alta (descrita no texto do levantamento, sem peca) e a porta de entrada desce ate o chao; faltam degraus e corrimao.",
+   "evidencia": "v23: faixa escura vertical de py ~210 a 530 entre x ~1525,4 e 1528 (parede lisa na cena). v63: soleira da porta de entrada elevada (py 365 no real, 395 na cena).",
+   "correcao": "OBSERVADO: abertura escura x 1525,4-1528,0, z 0 a ~6; porta de entrada com z0 ~0,5 e patamar com corrimao na frente."
+  },
+  {
+   "unidade": "N23_predio_concreto_janela_oval",
+   "gravidade": "media",
+   "origem": "falta",
+   "o_que": "A lateral voltada para a segunda transversal sai em concreto cinza com uma tira laranja; no real ela e toda laranja com tres paineis publicitarios.",
+   "evidencia": "v57: lateral real laranja de ponta a ponta com 3 paineis verticais; cena cinza. Descrito no texto do levantamento, sem peca.",
+   "correcao": "OBSERVADO: lateral leste (plano x 1452,7) cor #f08a1c, com tres paineis retangulares claros de ~1,5 x 2,5 m a z ~2,5-5 (posicoes ESTIMADAS; so vista de longe)."
+  },
+  {
+   "unidade": "S12_associacao_comercial",
+   "gravidade": "media",
+   "origem": "modelagem",
+   "o_que": "As aletas brancas sobem ~1,2 m acima do que a spec pede (z1 9,6) e passam muito do topo; no real passam so ~0,1-0,3 m da parede.",
+   "evidencia": "v32 (capturas cheias): real - topo da parede em py 150-160 = z 9,0-9,2 e topo das aletas em py 135-140 = z 9,1-9,2; cena - parede em py ~140 (9,3, certo) e aletas em py ~80 = z ~10,4. A spec (sul/fachadas_spec.json) tem 'pilar' z0 1,0 z1 9,6 saliencia 0,35.",
+   "correcao": "MEDIDO: aletas com topo em 9,3-9,4. Ver no gerador por que a peca 'pilar' passa do z1 (nao li frente_norte_3d.py a fundo). OBSERVADO: no real as aletas descem ate o chao; na spec comecam em z 1,0."
+  },
+  {
+   "unidade": "S23_casa_antiga_primetech / S24_click_cell",
+   "gravidade": "media",
+   "origem": "levantamento",
+   "o_que": "A cumeeira da casa antiga esta 0,8 m a leste do centro modelado: a casa e mais larga e continua por tras da Click Cell. A caixa da Click Cell avanca mais do que o modelado.",
+   "evidencia": "v40 (plano -5,0): cumeeira em px 526 = x 1473,4, z 7,36; quina oeste em 1470,0; empena simetrica -> quina leste ~1476,8 (modelado 1470,2-1475,0, centro 1472,6). Click Cell: canto frente-oeste da caixa triangulado entre v40 e v41 (leitura nas pilhas reduzidas): x ~1475,4, y ~-9,2.",
+   "correcao": "MEDIDO (cumeeira e quina oeste, uma vista) / ESTIMADO (resto): casa antiga de 1470,0 a ~1476,8 com cumeeira em 1473,4; a Click Cell (parede em -7,1) fica na frente do trecho 1475-1476,8. Caixa da Click Cell com saliencia ~2,1 (nao 1,5) e, nesse plano, z ~3,0-4,9."
+  },
+  {
+   "unidade": "S25_predio_bege_antigo",
+   "gravidade": "media",
+   "origem": "levantamento",
+   "o_que": "O predio bege termina em 1492,7, nao em 1494,6; entre ele e as Americanas ha um muro baixo com portinha e concertina. A metade leste tem mais uma janela e uma porta. Uma das janelas ja modeladas saiu de vidro em vez de veneziana.",
+   "evidencia": "Vista nova rev_S_x1492 (camera x 1491,65, de frente, plano -7,1): quina leste do bege em px 722 = x 1492,7; muro baixo 1492,7-1494,0 com topo 2,5; quina das Americanas 1494,5-1494,7. Aberturas novas: janela 1488,9-1490,0 e porta 1491,0-1492,0. As quatro ja levantadas conferem em 0,3 m. v41: janela 1485-1485,9 e veneziana no real e vidro na cena (o conversor so faz veneziana quando a observacao diz).",
+   "correcao": "MEDIDO: ver unidades_novas R06 e R07. Platibanda 5,85 nesta vista (levantamento 5,5), cornija 4,7, friso 3,6, peitoril 1,6, embasamento 0,65. Trocar a janela 1485-1485,9 para veneziana #8f9aa0."
+  },
+  {
+   "unidade": "provisorio predio_branco_toldo + S17_design_calcados (x 1414 a 1424,2)",
+   "gravidade": "media",
+   "origem": "levantamento",
+   "o_que": "A divisa entre as duas lojas esta 2,7 m errada e o nome da segunda esta errado: e 'Design celulares', nao 'Design Calcados'. O 'toldo verde-agua' e um painel rigido de ACM com o nome da loja (O Boticario).",
+   "evidencia": "Duas vistas novas obliquas dos panoramas da v34 e da v39 (h177 e h267): divisa Boticario/Design triangulada em x 1418,35 y -8,52; ponta oeste do painel verde-agua em x 1413,0 y -8,2. No letreiro le-se 'Design' em vermelho e 'celulares' em preto por baixo. O 1421,1 do levantamento era so a borda da captura v39.",
+   "correcao": "MEDIDO (triangulado, +-0,5): ver unidades_novas R01 e R02. Trocar o texto para 'Design / celulares'."
+  },
+  {
+   "unidade": "S07_rei_das_novidades_sul",
+   "gravidade": "media",
+   "origem": "falta",
+   "o_que": "A lateral leste (voltada para o largo do mercado) sai em azulejo cinza liso; no real ela repete a frente: marquise azul continua, vidro azul em cima, faixa branca com o nome e vitrines.",
+   "evidencia": "v46 e vista nova rev_S_x1302: lateral com marquise azul, panos azuis entre pilares brancos e letreiros 'Rei das Novidades'; cena: parede cinza quadriculada.",
+   "correcao": "OBSERVADO: estender para a lateral (plano x 1295,2, de y -6,1 para o sul por pelo menos 20 m) a marquise azul z 3,3-4,3, o vidro azul z 4,7-6,3 e a faixa branca z 6,4-8,6 com o nome. Comprimento NAO medido."
+  },
+  {
+   "unidade": "S20_big_cell",
+   "gravidade": "leve",
+   "origem": "levantamento",
+   "o_que": "Bloco de cima 0,8 m baixo e sem os cinco quadros brancos; a entrada a leste da vitrine virou porta cinza fechada.",
+   "evidencia": "v36 (captura cheia, plano -6,6): topo real em py 255 = z 6,8; cena py 303 = 5,97. v49 (de longe) da 6,8. Bloco de cima de x 1434,2 a 1441,0.",
+   "correcao": "MEDIDO (duas vistas): altura_m 6,8. OBSERVADO: cinco quadros brancos de ~0,8 m entre z 6,0 e 6,7; porta 1438,8-1440 como vao aberto."
+  },
+  {
+   "unidade": "regra do conversor: abertura 'porta' sem observacao",
+   "gravidade": "leve",
+   "origem": "conversao",
+   "o_que": "'porta' sem palavra-chave vira porta cinza fechada (#8a8d90); nas lojas o real e vao aberto.",
+   "evidencia": "v04: N01 porta 1274,9-1276,8 e loja aberta com manequins (real px ~345-655), cinza fechada na cena. v36: S20 porta 1438,8-1440.",
+   "correcao": "OBSERVADO: tratar 'porta' sem observacao em unidade de loja como vao escuro; na N01 o vao aberto parece ir de ~1273,0 a 1276,8 (ESTIMADO na pilha reduzida)."
+  },
+  {
+   "unidade": "regra do conversor: cor_parede = cor do painel",
+   "gravidade": "leve",
+   "origem": "conversao",
+   "o_que": "A cor do painel de cima e aplicada ao terreo inteiro: pilares que no real sao brancos, bege ou verdes saem da cor do painel.",
+   "evidencia": "v06: pilares da Milano brancos no real, vermelhos na cena. v16: colunas verdes da ON TECH saem cinza. v03: pilares bege sob o sobrado de concreto saem cinza-concreto. v31/v61: lateral da Associacao sai verde (real clara).",
+   "correcao": "OBSERVADO: terreo com cor propria: Milano #f0efe9; ON TECH colunas #7ac943; N04/N05 pilares #d9cdb4; Baratao e Freire estao certos (colunas vermelhas)."
+  },
+  {
+   "unidade": "letreiros em fonte generica (varias unidades)",
+   "gravidade": "leve",
+   "origem": "conversao",
+   "o_que": "Varios nomes ocupam o painel inteiro quando o real e pequeno, ou saem numa linha/cor so.",
+   "evidencia": "v39: 'Maria Flor' real de x 1430,9 a 1432,9 (2,0 m), cena no painel todo. v12: 'Claro / REVENDA / AUTORIZADA' em tres linhas gigantes; real tem o nome pequeno. v12/v13: 'LOJA BOA VISTA' real em duas linhas de ~1 m de altura. v14: 'Shopping' preto e 'FORTALEZA' vermelho no real; cena tudo vermelho e deslocado ~1,5 letra a oeste. v36: painel de esportes sem nenhum texto (le-se SPORTS). v25: placa 'Otica Mido' real em 1247,0-1249,6 (levantamento 1246,5-1248,8).",
+   "correcao": "MEDIDO (Maria Flor, Otica Mido) / OBSERVADO (demais): limitar a largura do texto; 'LOJA / BOA VISTA' em duas linhas; separar 'Shopping' (#1a1a1a, x ~1387,0-1392,3) de 'FORTALEZA' (#d23a36); por 'SPORTS' no painel preto; nome da loja de celulares na v104 parece 'iPhone Class' (poste tapa o meio), nao 'iClass'."
+  },
+  {
+   "unidade": "S02_explosao_modas / S05_milano",
+   "gravidade": "leve",
+   "origem": "levantamento",
+   "o_que": "Saliencia dos paineis com erro de 0,6 m em sentidos opostos (dentro da margem que o levantador declarou).",
+   "evidencia": "Triangulacao v25 x v60 (Explosao, tres pontos): y -6,74 a -6,82 (levantamento -7,4). v06 x v60 (Milano, dois pontos): y -7,42 e -7,44 (levantamento -6,8). Lojas Best: y -7,4 (levantamento -7,6, confere).",
+   "correcao": "MEDIDO: Explosao saliencia 1,4 (nao 2,0); Milano saliencia 2,5 (nao 1,9). As alturas dos dois paineis mudam na mesma proporcao (Explosao topo ~6,6; Milano topo ~6,4)."
+  },
+  {
+   "unidade": "S18_loja_brasil / S19_maria_flor",
+   "gravidade": "leve",
+   "origem": "levantamento",
+   "o_que": "A divisa entre os dois paineis esta 0,9 m a leste do real: o painel da Maria Flor cobre a coluna branca e o da Loja Brasil comeca antes.",
+   "evidencia": "v39 (camera em x 1428,7): a divisa dos paineis aparece em px ~714, a direita do centro, portanto a oeste da camera para qualquer plano; no plano dos paineis da x ~1427,8-1427,9. O terreo confere com o levantamento.",
+   "correcao": "ESTIMADO (pilha reduzida, +-0,3): painel Maria Flor x 1427,8-1434,6; painel Loja Brasil x 1423,3-1427,8."
+  },
+  {
+   "unidade": "N01_shopping_center_hum (placa pendurada)",
+   "gravidade": "leve",
+   "origem": "levantamento",
+   "o_que": "A plaquinha 'SHOPPING CENTER' pendurada esta na linha da testeira, nao na parede.",
+   "evidencia": "v02 (de frente) bate; na v01 (obliqua) a placa real aparece em px ~1330 e a da cena em ~1140, o que da distancia ~4,0 m em vez de 6,1 m.",
+   "correcao": "ESTIMADO: saliencia ~2,3 (y ~-29,7) em vez de 0,2."
+  },
+  {
+   "unidade": "N19 a N12 (paineis do norte nao triangulados)",
+   "gravidade": "leve",
+   "origem": "levantamento",
+   "o_que": "Topos de alguns paineis ~0,5 m mais altos no real; trelica do Shopping Fortaleza recuada.",
+   "evidencia": "Leituras nas pilhas reduzidas: Baratao topo z ~6,8 (modelo 6,3); Claro revenda ~6,3 (5,8). Trelica branca do Fortaleza triangulada entre v14 e v15: x 1395,8-1397,2, y -33,4 (levantamento 1395,3-1396,2 no plano -32,2).",
+   "correcao": "ESTIMADO (+-0,3): Baratao z1 6,8; Claro revenda z1 6,3; trelica 1395,8-1397,2 recuada 1,2 m."
+  },
+  {
+   "unidade": "S01_otica_mido (limite oeste do trecho)",
+   "gravidade": "leve",
+   "origem": "falta",
+   "o_que": "A oeste de x 1246,5 a cena mostra uma casa de telha e muros laranja; no real a testeira verde continua sob um predio alto de vidro escuro.",
+   "evidencia": "v25 e v64: na cena a testeira e cortada e aparece uma casa branca de telhado de barro; no real, testeira continua e predio cinza de 5+ pavimentos.",
+   "correcao": "OBSERVADO: fora do trecho da rodada, mas visivel de dentro dele; prolongar a testeira e trocar o volume vizinho quando o trecho a oeste for refeito."
+  }
+ ],
+ "unidades_novas": [
+  {
+   "id": "R01_o_boticario",
+   "lado": "S",
+   "x0": 1414,
+   "x1": 1418.4,
+   "y_frente": -6.8,
+   "altura_m": 8.6,
+   "pavimentos": 2,
+   "cor_parede": "#eeeeea",
+   "material": "reboco branco; painel de ACM verde-agua",
+   "descricao": "Predio branco de dois pavimentos entre a Junta Comercial e a Design Celulares. O que o levantamento chamou de toldo e um painel rigido verde-agua com o nome da loja, que avanca ~1,5 m. Em cima, parede branca com janela larga de tijolo de vidro/cobogo e uma janelinha. Terreo com porta de vidro. Nome so em fonte generica (sem o logotipo).",
+   "faixas": [
+    {
+     "tipo": "painel",
+     "x0": 1413.5,
+     "x1": 1418.4,
+     "z0": 2.65,
+     "z1": 4.05,
+     "cor": "#7ec8b4",
+     "saliencia_m": 1.5,
+     "texto": "oBoticário",
+     "cor_texto": "#ffffff",
+     "material": "ACM"
+    }
+   ],
+   "aberturas": [
+    {
+     "tipo": "vitrine",
+     "x0": 1414.5,
+     "x1": 1417.1,
+     "z0": 0,
+     "z1": 2.5,
+     "obs": "porta de vidro e vitrine; plano da parede suposto -6,8"
+    },
+    {
+     "tipo": "janela",
+     "x0": 1414.6,
+     "x1": 1416.9,
+     "z0": 4.4,
+     "z1": 6.3,
+     "obs": "2o pav, tijolo de vidro em quadricula"
+    },
+    {
+     "tipo": "janela",
+     "x0": 1417.5,
+     "x1": 1418,
+     "z0": 5.2,
+     "z1": 5.8,
+     "obs": "janelinha; posicao ESTIMADA"
+    }
+   ],
+   "confianca": "media",
+   "incerteza": "Divisas em x TRIANGULADAS entre duas vistas obliquas (leste 1418,35 +-0,5; ponta oeste do painel 1413,0-1414,0). Plano do painel triangulado em y -8,2 a -8,5. Plano da parede NAO medido (suposto -6,8): por isso altura (8,6, pode ser 7,5 a 9) e x das aberturas tem +-0,6. Texto do painel e pequeno, na metade leste, z ~2,8-3,2.",
+   "vistas": "rev_S_x1409_predio_toldo_obliqua_h177.jpg, rev_S_x1429_predio_toldo_obliqua_h267.jpg, borda da v34"
+  },
+  {
+   "id": "R02_design_celulares",
+   "lado": "S",
+   "x0": 1418.4,
+   "x1": 1424.2,
+   "y_frente": -7,
+   "altura_m": 6,
+   "pavimentos": 2,
+   "cor_parede": "#f1f0ec",
+   "material": "painel branco em cima; marquise/painel vermelho",
+   "descricao": "Substitui a S17: a loja comeca em 1418,4 (nao 1421,1) e o nome e 'Design celulares'. Painel branco alto com o nome (Design em vermelho, celulares em preto) sobre um painel vermelho em marquise com o nome repetido em branco; vitrine com cartaz de promocao a leste, coluna branca e vermelha e entrada a oeste.",
+   "faixas": [
+    {
+     "tipo": "painel",
+     "x0": 1418.4,
+     "x1": 1422.9,
+     "z0": 3.9,
+     "z1": 6,
+     "cor": "#f1f0ec",
+     "saliencia_m": 1.5,
+     "texto": "Design / celulares",
+     "cor_texto": "#d8262c"
+    },
+    {
+     "tipo": "painel",
+     "x0": 1418.4,
+     "x1": 1424.2,
+     "z0": 2.3,
+     "z1": 3.85,
+     "cor": "#d8262c",
+     "saliencia_m": 1.5,
+     "texto": "Design",
+     "cor_texto": "#ffffff"
+    }
+   ],
+   "aberturas": [
+    {
+     "tipo": "vitrine",
+     "x0": 1421.3,
+     "x1": 1424,
+     "z0": 0,
+     "z1": 2.3,
+     "obs": "vitrine com cartaz; do levantamento"
+    },
+    {
+     "tipo": "portao",
+     "x0": 1418.9,
+     "x1": 1420.6,
+     "z0": 0,
+     "z1": 2.3,
+     "obs": "entrada aberta; posicao ESTIMADA"
+    }
+   ],
+   "confianca": "media",
+   "incerteza": "x0 triangulado (+-0,5). Alturas lidas numa vista a ~70 graus do eixo: z com +-0,6; o topo do painel branco deu 6,0 numa ponta e 7,5 na outra. Divisa com a Loja Brasil nao resolvida (1423,3 a 1425,0).",
+   "vistas": "rev_S_x1429_predio_toldo_obliqua_h267.jpg, rev_S_x1409_predio_toldo_obliqua_h177.jpg, v39"
+  },
+  {
+   "id": "R03_agibank",
+   "lado": "N",
+   "x0": 1425.9,
+   "x1": 1432.5,
+   "y_frente": -33.1,
+   "altura_m": 7,
+   "pavimentos": 1,
+   "cor_parede": "#2456b8",
+   "material": "terreo de parede azul e vidro; painel azul de ACM/lona na linha da marquise",
+   "descricao": "Substitui a N21 e o provisorio 'loja do toldo azul': e uma loja so, de correspondente bancario, com terreo azul (duas vitrines com cartazes e porta de vidro no meio) e um painel azul grande com o nome, ~2,9 m a frente da parede. Por tras, platibanda velha clara.",
+   "faixas": [
+    {
+     "tipo": "painel",
+     "x0": 1425.9,
+     "x1": 1432.5,
+     "z0": 2.87,
+     "z1": 4.5,
+     "cor": "#1e88e5",
+     "saliencia_m": 2.9,
+     "texto": "agibank",
+     "cor_texto": "#ffffff",
+     "material": "ACM"
+    }
+   ],
+   "aberturas": [
+    {
+     "tipo": "vitrine",
+     "x0": 1426.6,
+     "x1": 1427.6,
+     "z0": 0.3,
+     "z1": 2.3,
+     "obs": "com cartazes"
+    },
+    {
+     "tipo": "porta",
+     "x0": 1428.7,
+     "x1": 1430.2,
+     "z0": 0,
+     "z1": 2.45,
+     "obs": "vidro, duas folhas"
+    },
+    {
+     "tipo": "vitrine",
+     "x0": 1430.9,
+     "x1": 1432,
+     "z0": 0.3,
+     "z1": 2.3,
+     "obs": "com cartazes"
+    }
+   ],
+   "confianca": "alta",
+   "incerteza": "Borda oeste do painel e da parede TRIANGULADAS (v16 x vista nova): painel em y -30,1, parede em y -33,1. Aberturas lidas numa vista, +-0,3. Altura do corpo ESTIMADA pela platibanda velha (z 6,6 a 7,6 conforme o plano). Texto: x 1427,4-1430,5, z ~3,4-4,0.",
+   "vistas": "rev_N_x1432_toldo_azul.jpg, v16"
+  },
+  {
+   "id": "R04_neo",
+   "lado": "N",
+   "x0": 1432.6,
+   "x1": 1440.8,
+   "y_frente": -33.4,
+   "altura_m": 6.5,
+   "pavimentos": 1,
+   "cor_parede": "#2b2d31",
+   "material": "frente de vidro escuro; tela/painel grafite pendurado na linha da marquise",
+   "descricao": "Substitui a N22: loja de celulares com frente de vidro escuro e uma tela grafite grande, de borda inferior ondulada, pendurada ~2,8 m a frente da parede, com o nome em azul-claro e dizeres brancos. Placa perpendicular na quina leste. Nao ha corpo de 12 m.",
+   "faixas": [
+    {
+     "tipo": "painel",
+     "x0": 1432.6,
+     "x1": 1440.8,
+     "z0": 2.95,
+     "z1": 8,
+     "cor": "#3a3c40",
+     "saliencia_m": 2.8,
+     "texto": "Neo",
+     "cor_texto": "#6fb7e8",
+     "material": "tela"
+    },
+    {
+     "tipo": "painel",
+     "x0": 1440.3,
+     "x1": 1440.8,
+     "z0": 3.3,
+     "z1": 4.3,
+     "cor": "#2b2d31",
+     "saliencia_m": 3.3,
+     "texto": "Neo",
+     "cor_texto": "#6fb7e8",
+     "material": "placa perpendicular (ESTIMADA)"
+    }
+   ],
+   "aberturas": [
+    {
+     "tipo": "vitrine",
+     "x0": 1432.9,
+     "x1": 1439.1,
+     "z0": 0,
+     "z1": 3,
+     "obs": "pano de vidro escuro; coluna de 1439,1 a 1440,3 (do levantamento)"
+    }
+   ],
+   "confianca": "alta",
+   "incerteza": "Plano e borda leste do painel TRIANGULADOS (y -30,6 +-0,3; x 1440,8); topo 8,0 lido na vista nova nesse plano e ~8,5 pela v57. Altura do corpo atras ESTIMADA. Texto 'Neo' em x ~1434,6-1439,0, z ~5,2-7,2; abaixo 'Centro de Servico' e 'Revendedor Autorizado' (brancos).",
+   "vistas": "rev_N_x1432_toldo_azul.jpg, v17, v57"
+  },
+  {
+   "id": "R05_casa_estreita_entre_tim_e_iclass",
+   "lado": "N",
+   "x0": 1412.8,
+   "x1": 1414.5,
+   "y_frente": -32.2,
+   "altura_m": 6.6,
+   "pavimentos": 2,
+   "cor_parede": "#ecebe6",
+   "material": "reboco branco",
+   "descricao": "Frente estreita antiga de dois pavimentos entre a TIM e a iPhone Class: porta de madeira sobre degrau no terreo, plaquinha de escritorio por cima e porta-balcao de veneziana de madeira no 2o pavimento. A testeira azul da TIM termina em 1412,9 e a caixa cinza da loja vizinha comeca em ~1415,4 (a lateral inclinada dela nasce em 1414,5).",
+   "faixas": [
+    {
+     "tipo": "painel",
+     "x0": 1413.4,
+     "x1": 1414.4,
+     "z0": 2.55,
+     "z1": 3.07,
+     "cor": "#5a6a6a",
+     "saliencia_m": 0.03,
+     "material": "placa pequena (texto nao lido)"
+    }
+   ],
+   "aberturas": [
+    {
+     "tipo": "porta",
+     "x0": 1413.4,
+     "x1": 1414.35,
+     "z0": 0.4,
+     "z1": 2.2,
+     "obs": "madeira, cor #7a4a2a, sobre degrau"
+    },
+    {
+     "tipo": "janela",
+     "x0": 1413.45,
+     "x1": 1414.4,
+     "z0": 3.2,
+     "z1": 5.5,
+     "obs": "veneziana de madeira #7a4a2a, com grade de balcao"
+    }
+   ],
+   "confianca": "media",
+   "incerteza": "Uma vista de frente (camera em x 1412,06), plano suposto -32,2: x +-0,2, z +-0,2. Topo (6,6) parcialmente tapado pela fiacao. De passagem: TIM com vidro de 1406,5 a 1411,2, painel de azulejo branco 1411,2-1412,4 e parede branca de cima com topo em z ~8,7 se estiver no plano da parede (levantamento 7,5) - NAO resolvido.",
+   "vistas": "rev_N_x1413_tim_iclass.jpg"
+  },
+  {
+   "id": "R06_predio_bege_metade_leste",
+   "lado": "S",
+   "x0": 1489.7,
+   "x1": 1492.7,
+   "y_frente": -7.1,
+   "altura_m": 5.85,
+   "pavimentos": 1,
+   "cor_parede": "#e6dcc0",
+   "material": "reboco bege com frisos; embasamento cinza-esverdeado",
+   "descricao": "Complemento da S25: o predio bege termina em 1492,7. O ritmo de aberturas continua igual (janela, porta) com venezianas cinza-azuladas de bandeira envidracada. Platibanda com tres grupos de frisos horizontais e aletas verticais curtas.",
+   "faixas": [
+    {
+     "tipo": "friso",
+     "x0": 1480.2,
+     "x1": 1492.7,
+     "z0": 4.6,
+     "z1": 4.8,
+     "cor": "#cfc5a4",
+     "saliencia_m": 0.12
+    },
+    {
+     "tipo": "friso",
+     "x0": 1480.2,
+     "x1": 1492.7,
+     "z0": 3.5,
+     "z1": 3.65,
+     "cor": "#cfc5a4",
+     "saliencia_m": 0.06
+    },
+    {
+     "tipo": "friso",
+     "x0": 1480.2,
+     "x1": 1492.7,
+     "z0": 0,
+     "z1": 0.65,
+     "cor": "#9a9f8f",
+     "saliencia_m": 0.03
+    }
+   ],
+   "aberturas": [
+    {
+     "tipo": "janela",
+     "x0": 1488.9,
+     "x1": 1490,
+     "z0": 1.7,
+     "z1": 3.46,
+     "obs": "veneziana #8f9aa0 com bandeira"
+    },
+    {
+     "tipo": "porta",
+     "x0": 1491,
+     "x1": 1492,
+     "z0": 0.25,
+     "z1": 3.46,
+     "obs": "veneziana #8f9aa0 com bandeira"
+    }
+   ],
+   "confianca": "alta",
+   "incerteza": "Uma vista de frente a 6,6 m: x +-0,15, z +-0,2. Platibanda 5,85 aqui contra 5,5 do levantamento na metade oeste (pode ser o declive da calcada). As quatro aberturas ja levantadas conferem: 1480,5-1481,7; 1482,4-1484,0; 1484,7-1485,9; 1486,7-1488,0.",
+   "vistas": "rev_S_x1492_bege_leste.jpg, v52"
+  },
+  {
+   "id": "R07_muro_com_portinha",
+   "lado": "S",
+   "x0": 1492.7,
+   "x1": 1494.6,
+   "y_frente": -7.1,
+   "altura_m": 2.5,
+   "pavimentos": 0,
+   "cor_parede": "#e6dcc0",
+   "material": "muro de alvenaria com concertina",
+   "descricao": "Muro baixo entre o predio bege e as Lojas Americanas, com uma portinha branca sobre tres degraus e concertina em espiral por cima (ate ~3,0 m). A quina oeste das Americanas fica em 1494,5-1494,8 (confirma o levantamento).",
+   "faixas": [],
+   "aberturas": [
+    {
+     "tipo": "porta",
+     "x0": 1492.8,
+     "x1": 1493.5,
+     "z0": 0.3,
+     "z1": 2.05,
+     "obs": "chapa branca, sobre degraus"
+    }
+   ],
+   "confianca": "alta",
+   "incerteza": "Uma vista de frente; x +-0,15. O trecho 1494,0-1494,6 e a lateral cinza das Americanas em fuga.",
+   "vistas": "rev_S_x1492_bege_leste.jpg"
+  },
+  {
+   "id": "R08_jardim_do_sobrado_mureta",
+   "lado": "S",
+   "x0": 1324.7,
+   "x1": 1335.3,
+   "y_frente": -5.3,
+   "altura_m": 0.85,
+   "pavimentos": 0,
+   "cor_parede": "#d9b99a",
+   "material": "mureta rebocada com paineis vazados brancos e pilaretes de ponta",
+   "descricao": "Mureta do jardim do sobrado historico. A quina oeste fica em x 1324,7; dali a mureta dobra para o sul (lado oeste do jardim, com portao mais ao fundo). A leitura de 1318-1321 da v28 era esse lado oeste visto em fuga. Entre a quina e a ilha de arvores ha um calcadao de pedestres com faixa amarela que segue para o sul.",
+   "faixas": [
+    {
+     "tipo": "pilar",
+     "x0": 1324.5,
+     "x1": 1324.9,
+     "z0": 0,
+     "z1": 1.15,
+     "cor": "#d9b99a",
+     "saliencia_m": 0.05,
+     "material": "pilarete de ponta; repetir a cada ~1,55 m"
+    }
+   ],
+   "aberturas": [
+    {
+     "tipo": "janela",
+     "x0": 1325.1,
+     "x1": 1326.2,
+     "z0": 0.35,
+     "z1": 0.75,
+     "obs": "painel vazado branco com losango; um por vao"
+    }
+   ],
+   "confianca": "alta",
+   "incerteza": "Quina TRIANGULADA entre v29 e a vista nova: pe em (1324,68; -4,60), topo do pilarete em (1324,65; -4,90), com z coerente nas duas vistas (+-0,5 m). O y da mureta fica entre -4,7 e -5,9 (levantamento -5,9). Comprimento do lado oeste NAO medido.",
+   "vistas": "rev_S_x1321_mureta_quina.jpg, v29, v28"
+  },
+  {
+   "id": "R09_largo_do_mercado",
+   "lado": "S",
+   "x0": 1295.2,
+   "x1": 1324.7,
+   "y_frente": 5,
+   "altura_m": 7,
+   "pavimentos": 1,
+   "cor_parede": "#f1f0ec",
+   "material": "galpao de mercado de estrutura metalica verde e fechamento branco",
+   "descricao": "Vazio na linha das lojas. De oeste para leste: calcada do Rei das Novidades com barracas e guarda-sol (x 1295,2 a ~1300,6); baia de asfalto com TAXI pintado e ponto de taxi (guias em x ~1300,6 e ~1316), faixa de pedestres ao longo da avenida em y ~-6,8; ilha pavimentada com arvores e bancas (x ~1316 a ~1319); calcadao com faixa amarela (ate 1324,7). Ao fundo, o mercado: galpao de empena com trelica aparente e o nome CAXAMBU, colunas verdes, alas mais baixas dos dois lados, frente em y ~+5.",
+   "faixas": [
+    {
+     "tipo": "painel",
+     "x0": 1307,
+     "x1": 1311,
+     "z0": 5,
+     "z1": 6,
+     "cor": "#f1f0ec",
+     "saliencia_m": 0.05,
+     "texto": "CAXAMBU",
+     "cor_texto": "#8a8f96"
+    }
+   ],
+   "aberturas": [
+    {
+     "tipo": "portao",
+     "x0": 1304.5,
+     "x1": 1313.5,
+     "z0": 0,
+     "z1": 3.5,
+     "obs": "frente aberta do mercado entre colunas verdes; larguras ESTIMADAS"
+    }
+   ],
+   "confianca": "baixa",
+   "incerteza": "Tudo por pontos de chao a 7-25 m (chao suposto plano): +-1,5 m, pior ao fundo. Pe de coluna central do mercado em (1306,4; +5,2); guia oeste em (1300,6; -4,6); guia da ilha em (1316,2; -7,0). Altura, largura e posicao do letreiro do galpao sao ESTIMATIVA.",
+   "vistas": "rev_S_x1302_largo_mercado.jpg, rev_S_x1321_mureta_quina.jpg, v28"
+  },
+  {
+   "id": "R10_transversal1_lateral_oeste",
+   "lado": "N",
+   "x0": 1297,
+   "x1": 1297,
+   "y_frente": -32,
+   "altura_m": 5,
+   "pavimentos": 1,
+   "cor_parede": "#d9cdb4",
+   "material": "lojas abertas sob paineis de lona, com toldos sobre a calcada",
+   "descricao": "ATENCAO: fachada LATERAL (voltada para leste, ao longo da Av. Sebastiao Diniz). Nos campos x0/x1 das faixas estao valores de Y do corredor (negativo = norte); o plano e x ~1298,5. Da esquina para o norte: continuacao do painel vermelho com fotos, depois quatro lojas com painel proprio e uma quinta que segue. Por tras, parede velha e predio branco de dois pavimentos.",
+   "faixas": [
+    {
+     "tipo": "painel",
+     "x0": -41.1,
+     "x1": -33,
+     "z0": 2.6,
+     "z1": 4.7,
+     "cor": "#e23a52",
+     "saliencia_m": 1.5,
+     "material": "lona (painel publicitario com fotos na maior parte)"
+    },
+    {
+     "tipo": "painel",
+     "x0": -44.8,
+     "x1": -41.1,
+     "z0": 2.6,
+     "z1": 4.7,
+     "cor": "#f0703a",
+     "saliencia_m": 1.5,
+     "texto": "smartpoint",
+     "cor_texto": "#ffffff"
+    },
+    {
+     "tipo": "painel",
+     "x0": -47.4,
+     "x1": -44.8,
+     "z0": 2.6,
+     "z1": 4.3,
+     "cor": "#8f7fd0",
+     "saliencia_m": 1.5,
+     "texto": "Capas e Acessórios",
+     "cor_texto": "#ffffff"
+    },
+    {
+     "tipo": "painel",
+     "x0": -51,
+     "x1": -47.4,
+     "z0": 2.6,
+     "z1": 4.8,
+     "cor": "#17181c",
+     "saliencia_m": 1.5,
+     "texto": "BARÃO dos eletrônicos",
+     "cor_texto": "#e0a520"
+    },
+    {
+     "tipo": "painel",
+     "x0": -55.1,
+     "x1": -51,
+     "z0": 2.6,
+     "z1": 4.9,
+     "cor": "#1c2a30",
+     "saliencia_m": 1.5,
+     "texto": "ONE Assistência Técnica",
+     "cor_texto": "#ffffff",
+     "material": "moldura verde-agua #3fc7a8"
+    },
+    {
+     "tipo": "painel",
+     "x0": -60,
+     "x1": -55.1,
+     "z0": 2.8,
+     "z1": 4.9,
+     "cor": "#e0262c",
+     "saliencia_m": 1.5,
+     "texto": "TechCell",
+     "cor_texto": "#ffffff",
+     "material": "segue ao norte, fim nao visto"
+    }
+   ],
+   "aberturas": [
+    {
+     "tipo": "portao",
+     "x0": -55,
+     "x1": -34,
+     "z0": 0,
+     "z1": 2.4,
+     "obs": "lojas abertas de ponta a ponta; pilares nao medidos"
+    }
+   ],
+   "confianca": "baixa",
+   "incerteza": "Uma vista de frente a ~8 m (camera x 1305,6 y -45,5). O PLANO dos paineis nao foi medido: entre x 1297,0 (parede) e 1299,0 as divisas mudam ate 1,5 m em y e as alturas 0,7 m (usei 1298,5). Divisas no plano 1297,0: -40,2 / -44,6 / -47,9 / -52,1 / -57,1; no plano 1299,0: -41,4 / -44,8 / -47,3 / -50,6 / -54,4.",
+   "vistas": "rev_N_x1306_transversal1_lado_oeste_h312.jpg, v53"
+  },
+  {
+   "id": "R11_transversal1_lateral_leste",
+   "lado": "N",
+   "x0": 1319.6,
+   "x1": 1319.6,
+   "y_frente": -32,
+   "altura_m": 5.7,
+   "pavimentos": 1,
+   "cor_parede": "#b5553a",
+   "material": "testeiras de lona e chapa; sobrado amarelo atras",
+   "descricao": "ATENCAO: fachada LATERAL (voltada para oeste, ao longo da Av. Sebastiao Diniz). Nos campos x0/x1 das faixas estao valores de Y do corredor; o plano e x ~1318,5. Da esquina para o norte: retorno da testeira vermelha da Importadora Dinelly, painel branco pequeno, loja de fotografia com painel preto e amarelo, e uma loja comprida de calcados sob testeira amarela de chapa ondulada com letras escuras, seguida de paineis azul e branco. Atras da loja de calcados, sobrado amarelo de ~10 m com faixa de janelas.",
+   "faixas": [
+    {
+     "tipo": "testeira",
+     "x0": -37.6,
+     "x1": -31,
+     "z0": 2.8,
+     "z1": 4.4,
+     "cor": "#e0261c",
+     "saliencia_m": 1.5,
+     "texto": "IMPORTADORA DINELLY",
+     "cor_texto": "#ffffff"
+    },
+    {
+     "tipo": "painel",
+     "x0": -39.5,
+     "x1": -37.6,
+     "z0": 3,
+     "z1": 4.2,
+     "cor": "#f1f0ec",
+     "saliencia_m": 1.5
+    },
+    {
+     "tipo": "painel",
+     "x0": -46.6,
+     "x1": -39.5,
+     "z0": 3.4,
+     "z1": 6.6,
+     "cor": "#17181c",
+     "saliencia_m": 1.5,
+     "texto": "FOTO RORAIMA",
+     "cor_texto": "#ffffff",
+     "material": "faixa amarela #f2b21e no topo e na ponta sul"
+    },
+    {
+     "tipo": "testeira",
+     "x0": -60.7,
+     "x1": -46.6,
+     "z0": 3.1,
+     "z1": 5.4,
+     "cor": "#f2b21e",
+     "saliencia_m": 1.5,
+     "texto": "Big Center Calçados",
+     "cor_texto": "#2a2a2a",
+     "material": "chapa metalica ondulada"
+    },
+    {
+     "tipo": "painel",
+     "x0": -66,
+     "x1": -60.7,
+     "z0": 3,
+     "z1": 4.6,
+     "cor": "#1f3fa0",
+     "saliencia_m": 1.5,
+     "texto": "Big Center Sport",
+     "cor_texto": "#f2d21e"
+    }
+   ],
+   "aberturas": [
+    {
+     "tipo": "portao",
+     "x0": -60,
+     "x1": -33,
+     "z0": 0,
+     "z1": 2.6,
+     "obs": "lojas abertas; pilares nao medidos"
+    },
+    {
+     "tipo": "janela",
+     "x0": -58,
+     "x1": -50,
+     "z0": 8.2,
+     "z1": 9,
+     "obs": "faixa de janelas escuras do sobrado amarelo; ESTIMADA"
+    }
+   ],
+   "confianca": "baixa",
+   "incerteza": "Uma vista a 12-18 m (mesma camera da R10, rumo 132). Plano nao medido: entre x 1319,6 e 1317,5 as divisas mudam ate 2,5 m em y. Divisas no plano 1319,6: -37,0 / -39,0 / -46,7 / -61,9; no plano 1317,5: -38,2 / -40,0 / -46,5 / -59,5. Parede cor de tijolo acima da testeira da esquina com topo 5,5-6,1.",
+   "vistas": "rev_N_x1306_transversal1_lado_leste_h132.jpg, v53"
+  },
+  {
+   "id": "R12_transversal2_lateral_leste_mrtur",
+   "lado": "N",
+   "x0": 1470.1,
+   "x1": 1470.1,
+   "y_frente": -33.8,
+   "altura_m": 7.7,
+   "pavimentos": 2,
+   "cor_parede": "#f1f0ec",
+   "material": "reboco branco com frisos horizontais e pilastras; floreiras de pedra",
+   "descricao": "ATENCAO: fachada LATERAL do predio da agencia de viagens (voltada para oeste, ao longo da Av. Bento Brasil). Nos campos x0/x1 estao valores de Y do corredor; o plano e x 1470,1. Parede branca cega em cima, com quatro pilastras inclinadas e platibanda em degraus; perto da esquina, dois panos verdes com janela de veneziana branca, letreiro do nome e placas de companhias aereas (nao reproduzir); floreiras de pedra no pe. O predio vai de y -34,7 a -50,9 (16 m de fundo). Ao norte dele, anexo bege baixo com rampa e corrimao e uma casa antiga bege de empena.",
+   "faixas": [
+    {
+     "tipo": "pilar",
+     "x0": -48.5,
+     "x1": -47.9,
+     "z0": 0,
+     "z1": 7.7,
+     "cor": "#f1f0ec",
+     "saliencia_m": 0.2,
+     "material": "repetir em y -44,8, -41,4 e -38,0"
+    },
+    {
+     "tipo": "painel",
+     "x0": -43.5,
+     "x1": -41.35,
+     "z0": 1.3,
+     "z1": 3.5,
+     "cor": "#1f6f3a",
+     "saliencia_m": 0.03
+    },
+    {
+     "tipo": "painel",
+     "x0": -39.85,
+     "x1": -37.55,
+     "z0": 1.3,
+     "z1": 3.5,
+     "cor": "#1f6f3a",
+     "saliencia_m": 0.03
+    },
+    {
+     "tipo": "painel",
+     "x0": -39.7,
+     "x1": -37.5,
+     "z0": 4.5,
+     "z1": 5.3,
+     "cor": "#f1f0ec",
+     "saliencia_m": 0.03,
+     "texto": "MRTUR",
+     "cor_texto": "#1f6f3a"
+    },
+    {
+     "tipo": "friso",
+     "x0": -43.6,
+     "x1": -37.4,
+     "z0": 0,
+     "z1": 1.1,
+     "cor": "#8a7f72",
+     "saliencia_m": 0.5,
+     "material": "floreira de pedra"
+    }
+   ],
+   "aberturas": [
+    {
+     "tipo": "janela",
+     "x0": -43.4,
+     "x1": -41.7,
+     "z0": 1.5,
+     "z1": 3.1,
+     "obs": "veneziana branca"
+    },
+    {
+     "tipo": "janela",
+     "x0": -39.7,
+     "x1": -38,
+     "z0": 1.5,
+     "z1": 3.1,
+     "obs": "veneziana branca"
+    }
+   ],
+   "confianca": "media",
+   "incerteza": "Uma vista a 9-16 m (camera x 1461,0 y -48,7, rumo 132), plano suposto x 1470,1: y +-0,4, z +-0,3. Topo 7,6-7,8 (o levantamento da 7,0 para a frente). A quina com a avenida parece chanfrada e leva uma placa amarela de operadora de viagens; nao medi o chanfro. A lateral OESTE desta transversal (laranja com tres paineis) nao foi fotografada de perto.",
+   "vistas": "rev_N_x1461_transversal2_lado_leste_h132.jpg, v57, v18"
+  }
+ ],
+ "vistas_novas": [
+  {
+   "arquivo": "(nao gravada) fotoesfera interna de terceiro, jun/2021",
+   "lat": 2.8170511,
+   "lon": -60.6682625,
+   "heading": 222,
+   "pitch": 15,
+   "fov": 90,
+   "para_que": "Tentativa 1 do item 1 (S x 1414-1421): o ponto pedido (2.8170536,-60.6682669) caiu numa fotoesfera de interior de loja; descartada."
+  },
+  {
+   "arquivo": "(nao gravada) mesma fotoesfera",
+   "lat": 2.8170511,
+   "lon": -60.6682625,
+   "heading": 222,
+   "pitch": 15,
+   "fov": 90,
+   "para_que": "Tentativa 2 do item 1, pedindo um ponto 5 m para dentro do canteiro (2.8170795,-60.6682282): caiu na mesma fotoesfera; descartada."
+  },
+  {
+   "arquivo": "C:/Users/Rodrigo/Desktop/favela/game/tools/bv_city/02_referencias/jaime_brasil_20261112/consulta/rev_S_x1409_predio_toldo_obliqua_h177.jpg",
+   "lat": 2.8171036,
+   "lon": -60.6683252,
+   "heading": 177,
+   "pitch": 15,
+   "fov": 90,
+   "para_que": "Item 1: predio branco do painel verde-agua visto em obliqua do panorama da v34 (x 1408,86 y -12,29); par de triangulacao com a seguinte."
+  },
+  {
+   "arquivo": "C:/Users/Rodrigo/Desktop/favela/game/tools/bv_city/02_referencias/jaime_brasil_20261112/consulta/rev_S_x1429_predio_toldo_obliqua_h267.jpg",
+   "lat": 2.8169873,
+   "lon": -60.6681896,
+   "heading": 267,
+   "pitch": 15,
+   "fov": 90,
+   "para_que": "Item 1: mesma frente vista do panorama da v39 (x 1428,67 y -12,77); nome correto da Design Celulares."
+  },
+  {
+   "arquivo": "C:/Users/Rodrigo/Desktop/favela/game/tools/bv_city/02_referencias/jaime_brasil_20261112/consulta/rev_N_x1432_toldo_azul.jpg",
+   "lat": 2.8170603,
+   "lon": -60.6680809,
+   "heading": 42,
+   "pitch": 15,
+   "fov": 90,
+   "para_que": "Item 2: loja do 'toldo azul' (agibank) e ponta oeste da loja alta (Neo), de frente (x 1432,29 y -26,84)."
+  },
+  {
+   "arquivo": "C:/Users/Rodrigo/Desktop/favela/game/tools/bv_city/02_referencias/jaime_brasil_20261112/consulta/rev_N_x1413_tim_iclass.jpg",
+   "lat": 2.8171827,
+   "lon": -60.6682162,
+   "heading": 42,
+   "pitch": 15,
+   "fov": 90,
+   "para_que": "Item 2: trecho entre a TIM e a loja de celulares, de frente (x 1412,06 y -26,89)."
+  },
+  {
+   "arquivo": "C:/Users/Rodrigo/Desktop/favela/game/tools/bv_city/02_referencias/jaime_brasil_20261112/consulta/rev_S_x1492_bege_leste.jpg",
+   "lat": 2.8166137,
+   "lon": -60.667762,
+   "heading": 222,
+   "pitch": 15,
+   "fov": 90,
+   "para_que": "Item 3: metade leste do predio bege, muro com portinha e quina das Americanas, de frente (x 1491,65 y -13,70)."
+  },
+  {
+   "arquivo": "C:/Users/Rodrigo/Desktop/favela/game/tools/bv_city/02_referencias/jaime_brasil_20261112/consulta/rev_S_x1321_mureta_quina.jpg",
+   "lat": 2.8176356,
+   "lon": -60.6689183,
+   "heading": 222,
+   "pitch": 15,
+   "fov": 90,
+   "para_que": "Item 4: quina oeste da mureta do jardim do sobrado e calcadao ao lado (x 1320,50 y -12,13)."
+  },
+  {
+   "arquivo": "C:/Users/Rodrigo/Desktop/favela/game/tools/bv_city/02_referencias/jaime_brasil_20261112/consulta/rev_S_x1302_largo_mercado.jpg",
+   "lat": 2.8177382,
+   "lon": -60.6690459,
+   "heading": 222,
+   "pitch": 15,
+   "fov": 90,
+   "para_que": "Item 4: largo do mercado, galpao CAXAMBU, guias e lateral do Rei das Novidades (x 1302,36 y -11,12)."
+  },
+  {
+   "arquivo": "C:/Users/Rodrigo/Desktop/favela/game/tools/bv_city/02_referencias/jaime_brasil_20261112/consulta/rev_N_x1306_transversal1_lado_oeste_h312.jpg",
+   "lat": 2.8179502,
+   "lon": -60.6688179,
+   "heading": 312,
+   "pitch": 15,
+   "fov": 90,
+   "para_que": "Item 5: lateral oeste da primeira transversal, de dentro dela (x 1305,61 y -45,49)."
+  },
+  {
+   "arquivo": "C:/Users/Rodrigo/Desktop/favela/game/tools/bv_city/02_referencias/jaime_brasil_20261112/consulta/rev_N_x1306_transversal1_lado_leste_h132.jpg",
+   "lat": 2.8179502,
+   "lon": -60.6688179,
+   "heading": 132,
+   "pitch": 15,
+   "fov": 90,
+   "para_que": "Item 5: lateral leste da primeira transversal (mesmo panorama, rumo oposto)."
+  },
+  {
+   "arquivo": "C:/Users/Rodrigo/Desktop/favela/game/tools/bv_city/02_referencias/jaime_brasil_20261112/consulta/rev_N_x1461_transversal2_lado_leste_h132.jpg",
+   "lat": 2.8170347,
+   "lon": -60.6677571,
+   "heading": 132,
+   "pitch": 15,
+   "fov": 90,
+   "para_que": "Item 5: lateral leste da segunda transversal (predio branco da agencia), de dentro dela (x 1461,00 y -48,75)."
+  }
+ ],
+ "pares_conferidos": 58,
+ "nao_conferido": [
+  "Vistas distantes v54, v56, v58, v47, v51, v64 e parte da v48/v49/v55: o real esta quase todo tapado por arvores, quiosques e carros; nelas so conferi silhuetas, esquinas e a presenca do mobiliario do canteiro.",
+  "Cores: comparei so por leitura visual; a foto da cena escurece e dessatura (o verde-limao da Explosao e o branco das testeiras saem bem mais escuros), entao nao apontei diferenca de tom como erro, so troca de cor.",
+  "Plano e altura dos paineis do norte que o levantador nao triangulou (YS Jeans, Baratao, Foto Roraima, Claro revenda, Loja Boa Vista, otica da caixa azul, FAMA, iClass, FOCO) e, no sul, Grifestock, Rei das Novidades, Freire, Oticas Diniz, Otica Veja, SVK, Big Cell, Aracati: so triangulei Homem Street, Explosao, Milano, Lojas Best, Click Cell, Neo e agibank. Os demais podem ter erro de ate 0,6 m (ou mais, como na Homem Street).",
+  "Varias medidas marcadas ESTIMADO foram lidas nas pilhas reduzidas (escala 0,62-0,7), com +-10 px; so as marcadas MEDIDO vieram de recortes em tamanho cheio.",
+  "Altura e plano da parede branca de cima da TIM (z 8,7 se estiver no plano da parede, contra 7,5 do levantamento): nao resolvido com uma vista so.",
+  "Lateral OESTE da segunda transversal (laranja com tres paineis) e chanfro da esquina da agencia: sem vista de perto (as 12 navegacoes acabaram; duas foram perdidas numa fotoesfera).",
+  "Comprimento da lateral do Rei das Novidades para o largo, lado oeste da mureta do jardim e planta do mercado: so pontos de chao grosseiros (+-1,5 m).",
+  "Declive da calcada: medi so no trecho das Lojas Americanas (x 1502-1537); nao verifiquei se o chao da cena tem o mesmo declive nem se outros predios longos (anexo do curso, Associacao) tem o mesmo problema.",
+  "Coberturas e fundos dos lotes: nao sao visiveis nas capturas; nao conferidos.",
+  "Nao li o gerador (frente_norte_3d.py) alem do necessario: a causa das aletas mais altas que o z1 da spec nao foi confirmada no codigo. Nao conferi os JSON de saida peca por peca (so a Associacao); conferi o resultado na cena.",
+  "Nao abri o Unity nem o Blender: tudo o que digo da cena vem das 58 fotos r29c_*.png.",
+  "Trechos fora de x 1247-1541 (a oeste da Otica Mido e a leste do curso/Americanas): so anotei o que aparece de dentro do trecho.",
+  "Pisos e guias (pedra portuguesa em ondas, calcadas pintadas, faixa de pedestres, largura das pistas): nao conferidos.",
+  "Posicao das cameras do Street View: assumi a da URL; a coerencia entre vizinhas foi verificada so em dois pares (v42 x v43 pela faixa das Americanas, plano -7,5/-7,3; v16 x vista nova pelo painel azul), e ha um caso sem explicacao (quina oeste das Americanas da 1497,0 pela v42 e 1494,5-1494,8 pela v52 e pela vista nova; fiquei com a segunda)."
+ ]
+}

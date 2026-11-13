@@ -21,7 +21,12 @@ namespace FreeBala
         public static bool Open => go && go.activeSelf;
         public static string TimeText => timeT ? timeT.text : ""; public static float BarFill => timeBar ? timeBar.anchorMax.x : -1;   // r51: teste da compra no exe
         static GameObject go; static CanvasGroup cg; static RectTransform frame, tabsR, gridR, detailR, loadR; static ScrollRect gridScroll;
-        static Text moneyT, timeT, phaseT; static RectTransform timeBar; static float timeMax, openT;
+        static Text moneyT, timeT, phaseT, titleT, rulesT; static RectTransform timeBar; static GameObject timeBox; static float timeMax, openT; static Image frameImg;
+        // r68: LOJA DE ARMAS do De Rolê (FBGunShop) usa esta mesma tela: saldo = créditos do perfil, sem fase nem tempo, compra pelo Host na rede
+        public static bool Store { get; private set; }
+        public static void ShowStore(bool on) { if (on) { Store = true; selCat = null; selId = null; } Show(on); }
+        public static void TestSelect(string cat, string id) { selCat = cat; selId = id; Refresh(); }   // r68: teste da loja (-fblojas) escolhe categoria/arma
+        static int Money(FBCharacter p) => Store ? FBGunShop.Money : FBEconomy.Money(p);
         static string selCat, selId, hoverId;
         static List<(string cat, string icon, List<FBEconomy.Item> items)> cats;
 
@@ -31,13 +36,14 @@ namespace FreeBala
         static readonly Dictionary<string, string> CLS = new() { ["pistola"] = "PISTOLAS", ["submetralhadora"] = "SUBMETRALHADORAS", ["escopeta"] = "ESCOPETAS", ["fuzil"] = "FUZIS", ["sniper"] = "SNIPERS", ["explosivo"] = "EXPLOSIVOS" };
         static readonly Dictionary<string, string> CLS1 = new() { ["pistola"] = "PISTOLA", ["submetralhadora"] = "SUBMETRALHADORA", ["escopeta"] = "ESCOPETA", ["fuzil"] = "FUZIL", ["sniper"] = "SNIPER", ["explosivo"] = "EXPLOSIVO" };
 
-        static bool Arsenal => FBMatch.I && FBMatch.I.mode != null && FBMatch.I.mode.arsenal;
+        static bool Arsenal => !Store && FBMatch.I && FBMatch.I.mode != null && FBMatch.I.mode.arsenal;
 
         public static void Show(bool on)
         {
-            if (on && (!FBMatch.Player || !FBMatch.Player.alive)) return;
+            if (on && (!FBMatch.Player || !FBMatch.Player.alive)) { Store = false; return; }
             if (on && !go) Build();
             if (go) go.SetActive(on);
+            if (!on) Store = false;
             if (on)
             {
                 timeMax = Mathf.Max(1, FBEconomy.buyTotal > 0 ? FBEconomy.buyTotal : FBEconomy.buyT); openT = 0; if (cg) cg.alpha = 0;
@@ -60,14 +66,14 @@ namespace FreeBala
             FBUI.Panel(c.transform, "fundo", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, new Color(0, 0, 0, .62f));
             var fr = FBUI.Panel(c.transform, "moldura", new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, new Vector2(FW, FH), FBKit.Bg);
             var o = fr.gameObject.AddComponent<Outline>(); o.effectColor = FBKit.Line; o.effectDistance = new Vector2(1, -1);
-            frame = fr.rectTransform;
+            frame = fr.rectTransform; frameImg = fr;
             var top = FBKit.At(frame, "acento", 0, 0, FW, 3).gameObject.AddComponent<Image>(); top.color = FBKit.Gold; top.raycastTarget = false;
 
             // topo
-            FBKit.T(frame, "LOJA", 36, 28, 14, 300, 44, TextAnchor.MiddleLeft, true, FBKit.Gold);
-            phaseT = FBKit.T(frame, "", 12, 30, 56, 420, 18, TextAnchor.MiddleLeft, true, FBKit.Dim);
+            titleT = FBKit.T(frame, "LOJA", 36, 28, 14, 520, 44, TextAnchor.MiddleLeft, true, FBKit.Gold);
+            phaseT = FBKit.T(frame, "", 12, 30, 56, 620, 18, TextAnchor.MiddleLeft, true, FBKit.Dim);
             timeT = FBKit.T(frame, "", 28, FW / 2 - 150, 12, 300, 38, TextAnchor.MiddleCenter, true);
-            var tb = FBKit.Box(frame, "tempo", FW / 2 - 150, 54, 300, 6, new Color(1, 1, 1, .1f), false);
+            var tb = FBKit.Box(frame, "tempo", FW / 2 - 150, 54, 300, 6, new Color(1, 1, 1, .1f), false); timeBox = tb.gameObject;
             timeBar = FBUI.Rect(tb.transform, "barra", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero); timeBar.gameObject.AddComponent<Image>().color = FBKit.Gold; timeBar.GetComponent<Image>().raycastTarget = false;
             FBKit.T(frame, "SALDO", 12, FW - 330, 12, 300, 18, TextAnchor.MiddleRight, true, FBKit.Dim);
             moneyT = FBKit.T(frame, "", 34, FW - 430, 28, 400, 40, TextAnchor.MiddleRight, true, Green);
@@ -86,20 +92,29 @@ namespace FreeBala
             loadR = FBKit.At(frame, "equipamento", 24, 706, 1112, 88);
 
             FBKit.TextTile(frame, "FECHAR   [B]", 1152, 706, 304, 88, false, () => Show(false), 18);
+            rulesT = FBKit.T(frame, Rules(), 11, 24, 798, FW - 48, 18, TextAnchor.MiddleCenter, true, FBKit.Dim);
+        }
+        static string Rules()
+        {
+            if (Store) return $"SALDO = CRÉDITOS DO SEU PERFIL  ·  ARMA COMPRADA É SUA PARA SEMPRE (EQUIPAR É GRÁTIS)  ·  MUNIÇÃO, COLETE E KIT MÉDICO SE COMPRAM DE NOVO  ·  ATIRAR EM CIVIL CUSTA $150";
             // [parceiro] 10x10 paga diferente do 4X4 (FBModo10x10: vitória 2500, derrota 1400 + 500 por derrota seguida, até 3400)
             string fimRodada = FBSession.mode == "10x10" ? $"VITÓRIA +${2500}  ·  DERROTA +${1400} A ${3400}" : $"FIM DA RODADA +${FBEconomy.BASE} OU MAIS";
-            FBKit.T(frame, $"ABATE +${FBEconomy.KILL}  ·  HEADSHOT +${FBEconomy.KILL + FBEconomy.HEAD}  ·  {fimRodada}  ·  QUEM SOBREVIVE MANTÉM AS ARMAS  ·  QUEM MORRE PERDE TUDO",
-                11, 24, 798, FW - 48, 18, TextAnchor.MiddleCenter, true, FBKit.Dim);
+            return $"ABATE +${FBEconomy.KILL}  ·  HEADSHOT +${FBEconomy.KILL + FBEconomy.HEAD}  ·  {fimRodada}  ·  QUEM SOBREVIVE MANTÉM AS ARMAS  ·  QUEM MORRE PERDE TUDO";
         }
 
         // ---------------------------------------------------------------- conteúdo (refeito a cada compra / mudança de saldo)
         public static void Refresh()
         {
             if (!go || !FBMatch.Player || FBMatch.I == null) return;
-            var p = FBMatch.Player; bool ars = Arsenal;
-            moneyT.text = ars ? "GRÁTIS" : $"$ {FBEconomy.Money(p)}";
-            phaseT.text = ars ? "ARSENAL DO TREINO · PEGUE QUALQUER ARMA" : FBEconomy.buying ? "FASE DE COMPRA · ESCOLHA SEU EQUIPAMENTO" : "FORA DA FASE DE COMPRA";
-            cats = ars ? FBEconomy.ArsenalItems().GroupBy(i => i.cls).Select(g => (CLS.TryGetValue(g.Key ?? "", out var n) ? n : (g.Key ?? "").ToUpper(), "", g.ToList())).ToList() : FBEconomy.ShopData();
+            var p = FBMatch.Player; bool ars = Arsenal && !Store;
+            titleT.text = Store ? "LOJA DE ARMAS" : "LOJA"; rulesT.text = Rules();
+            // r68d: a loja do rolê abre com a placa clara do prédio atrás do título; com a moldura a 95% ela aparecia "fantasma" (mistura linear
+            // num fundo quase preto). No rolê a moldura fica opaca; a compra do 4v4/Clássico/Tático continua igual
+            if (frameImg) frameImg.color = Store ? new Color(FBKit.Bg.r, FBKit.Bg.g, FBKit.Bg.b, 1f) : FBKit.Bg;
+            if (timeBox) timeBox.SetActive(!Store); if (Store && timeT) timeT.text = "";
+            moneyT.text = ars ? "GRÁTIS" : $"$ {Money(p)}";
+            phaseT.text = Store ? FBGunShop.Status : ars ? "ARSENAL DO TREINO · PEGUE QUALQUER ARMA" : FBEconomy.buying ? "FASE DE COMPRA · ESCOLHA SEU EQUIPAMENTO" : "FORA DA FASE DE COMPRA";
+            cats = Store ? FBGunShop.ShopData(p) : ars ? FBEconomy.ArsenalItems().GroupBy(i => i.cls).Select(g => (CLS.TryGetValue(g.Key ?? "", out var n) ? n : (g.Key ?? "").ToUpper(), "", g.ToList())).ToList() : FBEconomy.ShopData();
             if (cats.Count == 0) return;
             if (selCat == null || !cats.Any(c => c.cat == selCat)) selCat = cats[0].cat;
             var items = cats.First(c => c.cat == selCat).items;
@@ -112,27 +127,29 @@ namespace FreeBala
         }
         static void Clear(Transform t) { for (int i = t.childCount - 1; i >= 0; i--) Object.Destroy(t.GetChild(i).gameObject); }
         static FBEconomy.Item Find(string id) { if (cats == null || id == null) return null; foreach (var c in cats) foreach (var i in c.items) if (i.id == id) return i; return null; }
-        static bool Afford(FBEconomy.Item it) => Arsenal || FBEconomy.Money(FBMatch.Player) >= it.price;
+        static bool Afford(FBEconomy.Item it) => Arsenal || Money(FBMatch.Player) >= it.price;
         // a arma mais cara que cabe no bolso e você ainda não tem (selo "MELHOR P/ SEU SALDO")
         static FBEconomy.Item Best(List<FBEconomy.Item> items) => Arsenal ? null : items.Where(i => !i.gear && !i.own && Afford(i)).OrderByDescending(i => i.price).FirstOrDefault();
 
         static void Tabs(FBCharacter p)
         {
-            float y = 0;
+            // r68: até 6 categorias cabem com 84 px; com 7 (loja do De Rolê, ou 4V4 com ACESSORIOS) as abas encolhem para não invadir
+            // a faixa do equipamento embaixo (590 px de coluna)
+            float y = 0, th = cats.Count > 6 ? Mathf.Floor((590 - 8 * (cats.Count - 1)) / (float)cats.Count) : 84;
             foreach (var (cat, _, items) in cats)
             {
                 bool sel = cat == selCat; string c2 = cat;
-                var b = FBKit.Tile(tabsR, "cat_" + cat, 0, y, 220, 84, sel, () => { selCat = c2; selId = null; if (gridR) gridR.anchoredPosition = Vector2.zero; Refresh(); });
-                if (sel) { var a = FBKit.At(b.transform, "acento", 0, 0, 4, 84).gameObject.AddComponent<Image>(); a.color = FBKit.Gold; a.raycastTarget = false; }
+                var b = FBKit.Tile(tabsR, "cat_" + cat, 0, y, 220, th, sel, () => { selCat = c2; selId = null; if (gridR) gridR.anchoredPosition = Vector2.zero; Refresh(); });
+                if (sel) { var a = FBKit.At(b.transform, "acento", 0, 0, 4, th).gameObject.AddComponent<Image>(); a.color = FBKit.Gold; a.raycastTarget = false; }
                 FBKit.T(b.transform, cat, 14, 16, 12, 200, 20, TextAnchor.MiddleLeft, true, sel ? Color.white : FBKit.Txt);
                 bool has = items.Any(i => i.own);
                 FBKit.T(b.transform, $"{items.Count} ITENS", 10, 16, 32, 120, 16, TextAnchor.MiddleLeft, true, FBKit.Dim);
                 if (has) { var dot = FBKit.Box(b.transform, "tem", 196, 14, 8, 8, Green, false); dot.sprite = FBUI.CircleSprite; }
                 var top = items.Where(i => !i.gear).OrderByDescending(i => i.price).FirstOrDefault();
                 var tex = top != null ? FBIcons.Weapon(top.id) : null;
-                if (tex) { var ri = FBKit.At(b.transform, "img", 100, 40, 110, 40).gameObject.AddComponent<RawImage>(); ri.texture = tex; ri.raycastTarget = false; ri.color = sel ? Color.white : new Color(1, 1, 1, .55f); }
-                else FBKit.T(b.transform, cat == "EQUIPAMENTO" ? "COLETE · CAPACETE · KIT" : "", 10, 16, 52, 200, 16, TextAnchor.MiddleLeft, true, FBKit.Dim);
-                y += 92;
+                if (tex) { var ri = FBKit.At(b.transform, "img", 100, th - 44, 110, 40).gameObject.AddComponent<RawImage>(); ri.texture = tex; ri.raycastTarget = false; ri.color = sel ? Color.white : new Color(1, 1, 1, .55f); }
+                else FBKit.T(b.transform, cat == "EQUIPAMENTO" ? (Store ? "MUNIÇÃO · COLETE · KIT" : "COLETE · CAPACETE · KIT") : "", 10, 16, th - 32, 200, 16, TextAnchor.MiddleLeft, true, FBKit.Dim);
+                y += th + 8;
             }
         }
 
@@ -149,7 +166,8 @@ namespace FreeBala
                 var t = g.transform;
                 FBKit.T(t, it.name, 15, 12, 10, 208, 20, TextAnchor.MiddleLeft, true);
                 FBKit.T(t, it.gear ? "EQUIPAMENTO" : CLS1.TryGetValue(it.cls ?? "", out var cn) ? cn : it.sub, 10, 12, 30, 140, 14, TextAnchor.MiddleLeft, true, FBKit.Dim);
-                string badge = inHand ? "NA MÃO" : it.own && !it.rebuy ? (it.gear ? "COMPLETO" : "NO SLOT") : it == best ? "MELHOR P/ SEU SALDO" : it.best && !it.own ? "ECONOMIZE" : null;
+                // r68: na loja do De Rolê a arma comprada que não está em nenhum slot é "SUA" (equipar é grátis)
+                string badge = inHand ? "NA MÃO" : it.own && !it.rebuy ? (it.gear ? "COMPLETO" : Store && !wu.Has(it.id) ? "SUA" : "NO SLOT") : it == best ? "MELHOR P/ SEU SALDO" : it.best && !it.own ? "ECONOMIZE" : null;
                 if (badge != null)
                 {
                     var bc = inHand ? FBKit.Gold : it.own ? Green : new Color(.45f, .7f, 1f);
@@ -172,11 +190,12 @@ namespace FreeBala
                 E(EventTriggerType.PointerExit, () => { im.color = baseC; if (hoverId == item.id) { hoverId = null; Detail(FBMatch.Player); } });
             }
         }
-        static string GearGlyph(string id) => id == "colete" ? "COLETE" : id == "capacete" ? "CAPACETE" : id == "kit" ? "COLETE + CAPACETE" : id == "medkit" ? "+ KIT MÉDICO" : "";
+        static string GearGlyph(string id) => id == "colete" ? "COLETE" : id == "capacete" ? "CAPACETE" : id == "kit" ? "COLETE + CAPACETE" : id == "medkit" ? "+ KIT MÉDICO" : id == "ammo" ? "MUNIÇÃO" : "";
 
         static void DoBuy(FBEconomy.Item it)
         {
             if (it == null) return; var p = FBMatch.Player; if (!p || !p.alive) return;
+            if (Store) { FBGunShop.Buy(it); Refresh(); return; }                          // r68: De Rolê — a loja confere saldo/posse e fala com o Host
             if (!Arsenal && !FBEconomy.buying) { FBAudio.Synth("deny"); return; }
             if (!Arsenal && !(it.own && !it.rebuy) && !Afford(it)) { FBAudio.Synth("deny"); return; }
             FBEconomy.Buy(it); Refresh();
@@ -218,7 +237,10 @@ namespace FreeBala
                 int slot = Mathf.Clamp(d.slot, 0, 2); var cur = wu.slots[slot]; bool same = cur != null && cur.id == it.id;
                 string line = $"{(CLS1.TryGetValue(d.cls ?? "", out var cn) ? cn : d.cls?.ToUpper())}  ·  SLOT {slot + 1} ({SLOT[slot]})  ·  {(d.auto ? "AUTOMÁTICA" : "SEMIAUTOMÁTICA")}";
                 FBKit.T(detailR, line, 11, 14, y, W - 28, 16, TextAnchor.MiddleLeft, true, FBKit.Dim); y += 20;
-                FBKit.T(detailR, same ? "VOCÊ JÁ TEM ESTA ARMA" : cur != null ? $"SUBSTITUI: {cur.name.ToUpper()}" : "SLOT VAZIO", 11, 14, y, W - 28, 16, TextAnchor.MiddleLeft, true, same ? Green : cur != null ? FBKit.Gold : FBKit.Dim); y += 28;
+                string swap = same ? "VOCÊ JÁ TEM ESTA ARMA" : cur != null ? $"SUBSTITUI: {cur.name.ToUpper()}" : "SLOT VAZIO";
+                if (Store && !same && it.own) swap = "COMPRADA · EQUIPAR É GRÁTIS" + (cur != null ? $" · SAI {cur.name.ToUpper()} (CONTINUA SUA)" : "");
+                else if (Store && !same && cur != null && FBGunShop.Owns(cur.id)) swap += " (CONTINUA SUA)";
+                FBKit.T(detailR, swap, 11, 14, y, W - 28, 16, TextAnchor.MiddleLeft, true, same || (Store && it.own) ? Green : cur != null ? FBKit.Gold : FBKit.Dim); y += 28;
                 var s = Stats(it.id); WS? c = cur != null && !same ? Stats(cur.id) : null;
                 Stat("DANO", s.dmg, c?.dmg, 130, "0", ref y); Stat("CADÊNCIA", s.rpm, c?.rpm, 1000, "0' RPM'", ref y); Stat("PRECISÃO", s.prec, c?.prec, 100, "0'%'", ref y);
                 Stat("MOBILIDADE", s.mob, c?.mob, 115, "0'%'", ref y); Stat("PENTE", s.mag, c?.mag, 100, "0", ref y);
@@ -234,6 +256,7 @@ namespace FreeBala
                     "capacete" => "Protege a cabeça pela mesma regra: tiro de pistola ou M4 na cabeça deixa de matar de uma vez; AK, fuzil de batalha e Desert Eagle ainda matam.",
                     "kit" => "Colete completo + capacete de uma vez, mais barato do que comprar separado.",
                     "medkit" => $"Cura {FBMed.Heal} de vida (tecla H). Leva alguns segundos e cancela se você correr, pular ou atirar.",
+                    "ammo" => $"Enche o pente e põe mais {FBGunShop.AMMO_MAGS} pentes de reserva em cada arma que você carrega (até {FBGunShop.AMMO_MAX_MAGS} pentes).",
                     _ => "",
                 };
                 FBKit.T(detailR, desc, 14, 14, y, W - 28, 80, TextAnchor.UpperLeft, false, FBKit.Txt); y += 90;
@@ -242,16 +265,18 @@ namespace FreeBala
 
             // compra
             bool can = Afford(it), owned = it.own && !it.rebuy;
-            string label; bool active;
+            string label; bool active; string why = Store && !owned ? FBGunShop.WhyNot(p, it.id) : null, pend = Store ? FBGunShop.Pending : null;
             if (Arsenal) { label = it.gear ? "INDISPONÍVEL NO ARSENAL" : "PEGAR ARMA"; active = !it.gear; }
-            else if (owned) { label = it.gear ? "JÁ EQUIPADO" : "EQUIPAR"; active = !it.gear; }
-            else if (!FBEconomy.buying) { label = "FORA DA FASE DE COMPRA"; active = false; }
-            else if (!can) { label = $"FALTAM $ {it.price - FBEconomy.Money(p)}"; active = false; }
+            else if (pend != null) { label = pend == it.id ? "PROCESSANDO NO HOST…" : "AGUARDE A COMPRA ANTERIOR"; active = false; }
+            else if (owned) { label = it.gear ? "JÁ EQUIPADO" : Store && wu.Cur != null && wu.Cur.id == it.id ? "NA MÃO" : "EQUIPAR"; active = !it.gear && !(Store && wu.Cur != null && wu.Cur.id == it.id); }
+            else if (!Store && !FBEconomy.buying) { label = "FORA DA FASE DE COMPRA"; active = false; }
+            else if (why != null) { label = why; active = false; }
+            else if (!can) { label = $"FALTAM $ {it.price - Money(p)}"; active = false; }
             else { label = $"COMPRAR  ·  $ {it.price}"; active = true; }
-            if (!Arsenal && !owned) FBKit.T(detailR, can ? $"SALDO DEPOIS: $ {FBEconomy.Money(p) - it.price}" : "SALDO INSUFICIENTE", 11, 14, 500, W - 28, 16, TextAnchor.MiddleRight, true, can ? FBKit.Dim : RedT);
+            if (!Arsenal && !owned) FBKit.T(detailR, can ? $"SALDO DEPOIS: $ {Money(p) - it.price}" : "SALDO INSUFICIENTE", 11, 14, 500, W - 28, 16, TextAnchor.MiddleRight, true, can ? FBKit.Dim : RedT);
             var buyIt = it;
             if (active) FBKit.Primary(detailR, label, 14, 520, W - 28, 56, () => DoBuy(buyIt));
-            else { var bx = FBKit.Box(detailR, "bloq", 14, 520, W - 28, 56, new Color(1, 1, 1, .05f)); FBKit.T(bx.transform, label, 16, 0, 0, W - 28, 56, TextAnchor.MiddleCenter, true, owned ? Green : RedT); }
+            else { var bx = FBKit.Box(detailR, "bloq", 14, 520, W - 28, 56, new Color(1, 1, 1, .05f)); FBKit.T(bx.transform, label, 16, 0, 0, W - 28, 56, TextAnchor.MiddleCenter, true, owned ? Green : pend != null ? FBKit.Gold : RedT); }
         }
         static void Stat(string name, float v, float? cur, float max, string fmt, ref float y)
         {

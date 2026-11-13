@@ -1,4 +1,4 @@
-// BURITIRO ENVIRONMENT MANAGER (rodada 64) — horário do dia, sol e lua reais de Boa Vista, céu físico e luz coerente com ele.
+﻿// BURITIRO ENVIRONMENT MANAGER (rodada 64) — horário do dia, sol e lua reais de Boa Vista, céu físico e luz coerente com ele.
 //
 // Como funciona (uma passada por mudança de horário, ~0,3 ms):
 //  1. FBSolar: posição do sol e da lua para a data/hora/lugar do preset (Boa Vista, 2,82° N) — rumo e elevação reais.
@@ -151,9 +151,10 @@ namespace FreeBala
             float night = Mathf.Clamp01(p.night.Evaluate(el));
             s.night = night; s.skyNight = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(-4, -15, el));
             s.windows = Mathf.Clamp01(p.windowsOn.Evaluate(Mathf.Repeat(hour, 24)));
-            s.exposure = p.exposure.Evaluate(el) + (ov?.exposureBias ?? 0); s.contrast = p.contrast.Evaluate(el); s.saturation = p.saturation.Evaluate(el);
+            { var V0 = FBVisual.C; float d0 = FBVisual.DayK(el);
+              s.exposure = p.exposure.Evaluate(el) + (ov?.exposureBias ?? 0) + V0.dayExposure * d0; s.contrast = p.contrast.Evaluate(el) + V0.dayContrast * d0; s.saturation = p.saturation.Evaluate(el) + V0.daySaturation * d0; }
             s.whiteBalance = p.whiteBalance.Evaluate(el); s.tint = p.tint.Evaluate(el); s.bloom = p.bloom.Evaluate(el);
-            s.fogMul = p.fogDensity.Evaluate(el) * (ov?.fogMul ?? 1); s.volumetric = p.volumetric.Evaluate(el) * (ov?.volumetricMul ?? 1);
+            s.fogMul = p.fogDensity.Evaluate(el) * (ov?.fogMul ?? 1) * Mathf.Lerp(1, FBVisual.C.fogDayMul, FBVisual.DayK(el)); s.volumetric = p.volumetric.Evaluate(el) * (ov?.volumetricMul ?? 1);
             s.lightPollution = ov != null && ov.lightPollution >= 0 ? ov.lightPollution : p.lightPollution;
             s.bakedProbeK = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(6, 22, el));
 
@@ -165,15 +166,19 @@ namespace FreeBala
             // lua: força pela fase e pela altura; cor fria
             float moonUp = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(-1, 14, moon.elevation));
             float moonI = p.moonIntensity * Mathf.Pow(illum, 1.4f) * moonUp * Mathf.SmoothStep(0, 1, Mathf.InverseLerp(-2, -10, el));
+            // r65 (fb_visual.json): razão sol:sombra do DIA — a r64 deixou o dia igual ao aprovado (por isso "não mudou nada")
+            var V = FBVisual.C; float dk = FBVisual.DayK(el); sunI *= Mathf.Lerp(1, V.sunMul, dk);
             if (sunI >= moonI || sunI > .02f) { s.moonLight = false; s.lightDir = sun.dir; s.lightColor = sunCol; s.lightIntensity = sunI; }
             else { s.moonLight = true; s.lightDir = moon.dir; s.lightColor = p.moonColor; s.lightIntensity = moonI; }
             s.shadowStrength = s.moonLight ? .55f : p.shadowStrength.Evaluate(el);
+            if (!s.moonLight && V.sunShadow >= 0) s.shadowStrength = Mathf.Lerp(s.shadowStrength, V.sunShadow, dk);
 
             // ambiente: COR física (um pouco dessaturada) × luminância do dia aprovado × curva skyAmbient; + piso da noite. Linear → gama.
             float ambK = Mathf.Max(0, p.skyAmbient.Evaluate(el)) * (ov?.ambientMul ?? 1);
             Vector3 Desat(Vector3 v, float k) { float l = FBAtmosphere.Lum(v); return Vector3.Lerp(new Vector3(l, l, l), v, k); }
             float gK = Mathf.Lerp(.45f, 1, Mathf.Sin(Mathf.Clamp(el, 0, 90) * Mathf.Deg2Rad));                 // rebatido do chão cai com o sol baixo
-            var aSky = Unit(Desat(zn, .62f)) * (lumSkyL * ambK); var aEq = Unit(Desat(hz, .7f)) * (lumEqL * ambK); var aGr = Unit(gr) * (lumGrL * ambK * gK);
+            float am = Mathf.Lerp(1, V.ambMul, dk);
+            var aSky = Unit(Desat(zn, .62f)) * (lumSkyL * ambK * am); var aEq = Unit(Desat(hz, .7f)) * (lumEqL * ambK * am); var aGr = Unit(gr) * (lumGrL * ambK * gK * am * Mathf.Lerp(1, V.groundMul, dk));
             float fl = night * p.nightAmbientIntensity;                                              // piso da noite (visibilidade do combate)
             s.ambSky = Gam(aSky + Vec(p.nightAmbientSky.linear) * fl); s.ambEq = Gam(aEq + Vec(p.nightAmbientEquator.linear) * fl); s.ambGround = Gam(aGr + Vec(p.nightAmbientGround.linear) * fl);
             s.ambIntensity = 1;

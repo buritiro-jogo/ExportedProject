@@ -1,0 +1,189 @@
+{
+ "resumo": "Revisao so de leitura do r27 (nada do projeto foi alterado; meus scripts e recortes estao em C:/Users/Rodrigo/AppData/Local/Temp/claude/a0de669827628d24/6dd1e011-812b-4b4e-b90d-0ba9ee612670/scratchpad/revisor_r27/). Reproduzi o trecho r27 construcao a construcao a partir de 03_planta/malhas e a contagem de triangulos bateu com os GLB nos 160 setores x 3 classes (480 de 480), entao as medidas por predio abaixo valem para o que foi exportado.\n\nO QUE BATE: os numeros declarados (14.811 inclinados = 4.596 BARRO + 10.215 CINZA; 6.331 CLARA planos), a regra (25 e 12 graus, beiral, tetos de recuo), o cache das classes (1.500 de 1.500 recalculados iguais) e a ausencia de buraco entre parede e telhado. Nao ha pico fora da regra (maximo 2,80 m acima da parede). Na amostra visual de 8 areas (552 contornos olhados) a CLASSE bate em 464, erra em 23, fica duvidosa em 30 e 35 nao sao predios (tumulos).\n\nO QUE NAO BATE:\n1) FORMA do CINZA (69 % dos inclinados): um teste de iluminacao na propria aerea, em 3.204 telhados quase retangulares, da indice de quatro aguas 0,85 +- 0,14 no BARRO e 0,38 +- 0,10 no CINZA; o controle CLARA mostra que cerca de metade do sinal e artefato igual nos dois eixos, o que deixa o CINZA perto de zero. O quatro-aguas e compativel com o barro e nao e a forma dominante do fibrocimento. Na amostra visual a forma so se deixa ver em 48 dos 552 e ai fica 25 plausiveis x 23 erradas.\n2) Cemiterio Nossa Senhora da Conceicao (poligono do OSM do proprio projeto): 266 volumes de tumulo, 210 ganharam telhado inclinado.\n3) O telhado foi SOMADO em cima da caixa: a parede ficou com a altura antiga e a cumeeira passa do topo estimado em 0,86 m na mediana (ate 2,80 m).\n4) Contorno em L/U/alas: o recuo unico deixa as alas estreitas planas na altura do beiral, com a parede 6 a 16 cm acima do telhado (1.900 predios com mais de 5 % da area assim).\n5) Geminados: 55 % dos inclinados encostam num vizinho e cada contorno ganha a sua piramide, com rincao na parede comum.\n6) Custo: +257.732 triangulos (+39,3 %) e +50 % de vertices; mais da metade do aumento (135.688) e forro de beiral.\n7) 'Classe medida' vale no conjunto, mas 1.108 CINZA sao copa de arvore, ha BARRO lido em chao de terra e 2 m de erro de registro mudam ~11 % das classes.\n\nNas 8 fotos de fachada que abri nao vi telhado novo atravessando fachada; 13 telhados entram em contorno modelado (ate 11,6 m2) e merecem olhar.",
+ "amostra": [
+  {
+   "area": "A centro comercial (x 1000..1200, y -1000..-800)",
+   "predios_vistos": 70,
+   "classe_bate": 62,
+   "classe_errada": 3,
+   "forma_plausivel": 1,
+   "forma_errada": 3,
+   "observacao": "93 contornos na area (41 CINZA, 41 CLARA, 11 BARRO). Erradas: n.18 telhado claro lido como CINZA; n.14 copa de arvore (CINZA por omissao); n.83 BARRO em cima do que parece terreno de terra. Duvidosas 5 (telhados bege 29, 46, 67, 75 repartidos entre BARRO e CLARA sem criterio visivel; 66 e patio com carros). Forma visivel em 4: n.62 ceramica com aguas (plausivel); 65, 72 e 76 sao predios comerciais compostos, com platibanda e varios corpos, que viram um quatro-aguas unico. Quadra de predios colados (7-10, 28-30-31, 46-47-49): cada contorno ganha a sua piramide. Contagem visual a 0,6 m/px, aproximada."
+  },
+  {
+   "area": "B radial residencial (x -400..-200, y -800..-600)",
+   "predios_vistos": 95,
+   "classe_bate": 87,
+   "classe_errada": 4,
+   "forma_plausivel": 3,
+   "forma_errada": 3,
+   "observacao": "124 contornos (71 CINZA, 28 CLARA, 25 BARRO). Erradas: n.44 metalico claro listrado lido como CINZA; 3, 47 e 57 sao copa. Duvidosas 4 (56, 76, 106, 116). Forma visivel em 6: 16, 83 e 74 (barro com varias aguas, plausivel); 10 e 28 (cinza com duas metades de tom diferente ao longo do eixo maior = duas aguas) e 49 (barro grande, um plano so)."
+  },
+  {
+   "area": "C norte residencial (x 0..200, y -1600..-1400)",
+   "predios_vistos": 90,
+   "classe_bate": 83,
+   "classe_errada": 4,
+   "forma_plausivel": 2,
+   "forma_errada": 5,
+   "observacao": "161 contornos (97 CINZA, 34 CLARA, 30 BARRO). Erradas: n.38 telhado alaranjado claro lido como CLARA; 12, 14 e 17 copa. Duvidosas 3 (43, 60, 123 bege). Forma visivel em 7: n.106 (barro) tem cumeeira reta ao longo do comprimento e pontas cortadas retas = duas aguas; 113, 127, 129 e 131 (cinza) idem; 94 e 49 (barro) plausiveis."
+  },
+  {
+   "area": "D extremo norte, casas maiores (x 800..1000, y -2400..-2200)",
+   "predios_vistos": 60,
+   "classe_bate": 52,
+   "classe_errada": 2,
+   "forma_plausivel": 6,
+   "forma_errada": 1,
+   "observacao": "75 contornos (30 CLARA, 23 BARRO, 22 CINZA). Erradas: 33 e 38 sob copa. Duvidosas 6 (7, 8, 24 no limiar cinza/claro; 18, 19, 29 marrons, telhado empoeirado ou terra). Forma visivel em 7: 4, 27 e 41 (barro com aguas multiplas) e as lajes brancas 31, 43 e 60 planas (plausivel); n.39 e metalico de duas aguas que ficou plano."
+  },
+  {
+   "area": "E sudoeste residencial (x -1000..-800, y 1200..1400)",
+   "predios_vistos": 90,
+   "classe_bate": 84,
+   "classe_errada": 2,
+   "forma_plausivel": 8,
+   "forma_errada": 0,
+   "observacao": "125 contornos (54 CINZA, 37 CLARA, 34 BARRO). Erradas: n.46 (metade alaranjada lida como CLARA) e 1 copa. Duvidosas 4 (34, 47, 59, 76 bege). Forma visivel em 8, todas BARRO com varias aguas (20/21, 28, 62, 78, 84, 94, 116, 74): aqui o quatro-aguas do barro e plausivel. Nos CINZA escuros (14, 23, 41, 77, 91...) a forma nao se deixa ver."
+  },
+  {
+   "area": "F galpoes (x -600..-400, y 2000..2200)",
+   "predios_vistos": 12,
+   "classe_bate": 10,
+   "classe_errada": 1,
+   "forma_plausivel": 3,
+   "forma_errada": 5,
+   "observacao": "12 contornos (8 CLARA, 2 BARRO, 2 CINZA). Errada: n.3 e cobertura metalica enferrujada/listrada lida como BARRO, que ganha telha de barro a 25 graus. Duvidosa: n.10 (octogono sob copa). Forma visivel em 8: 4, 5 e 9 planos aceitaveis; 2, 6 e 8 sao galpoes de duas aguas que ficaram planos (6 e 8 sao as duas aguas do MESMO galpao, partidas na cumeeira pelo cadastro); n.11 (cinza) e duas aguas comprido e virou quatro; n.3 errado pela classe."
+  },
+  {
+   "area": "G sudeste residencial (x 1200..1400, y 1400..1600)",
+   "predios_vistos": 75,
+   "classe_bate": 67,
+   "classe_errada": 3,
+   "forma_plausivel": 2,
+   "forma_errada": 4,
+   "observacao": "98 contornos (40 CINZA, 35 CLARA, 23 BARRO). Erradas: n.13 e um LOTE DE TERRA sem construcao na aerea (contorno de ~28 x 50 m) lido como BARRO; n.39 metade terra; n.30 copa. Duvidosas 5 (5, 32, 34, 70, 86). Forma visivel em 6: n.17 (barro) com faixas paralelas = duas aguas; 84 e 85 sao as duas aguas de um mesmo telhado partidas em dois contornos (viram duas piramides); 13 nao tem predio; 51 e 24 plausiveis."
+  },
+  {
+   "area": "H cemiterio e entorno (x 400..600, y 1300..1500)",
+   "predios_vistos": 60,
+   "classe_bate": 19,
+   "classe_errada": 4,
+   "forma_plausivel": 0,
+   "forma_errada": 2,
+   "observacao": "156 contornos (68 BARRO, 61 CINZA, 27 CLARA). Dos 60 olhados, 35 estao dentro do cemiterio e sao TUMULOS (area mediana 15 m2), nao predios: nao contei como acerto nem erro de classe. Fora do cemiterio: 25 olhados, 19 batem, 4 erradas (16, 17, 30 e 31 sao contornos grandes inteiros sob copa, CINZA por omissao), 2 duvidosas. 26 e 27 sao as duas aguas de um mesmo telhado de barro partidas na cumeeira."
+  }
+ ],
+ "achados": [
+  {
+   "gravidade": "grave",
+   "onde": "Regra de forma do CINZA (10.215 telhados, 69 % dos inclinados) - tools/bv_city/06_unity/telhado_forma.py",
+   "descricao": "O quatro-aguas nao e a forma dominante do telhado cinza (fibrocimento). A evidencia na propria aerea aponta para duas aguas com cumeeira no eixo maior; no barro o quatro-aguas se sustenta.",
+   "evidencia": "Teste de iluminacao (sombra.py na minha pasta) em 3.204 telhados inclinados quase retangulares (lado menor >= 8 m, area/retangulo >= 0,92, proporcao 1,25 a 3,5). Para cada um medi o contraste entre as duas aguas principais (a) e entre os triangulos das pontas (c), onde um quatro-aguas tem aguas de topo e um duas-aguas nao. A direcao do sol ajustada sai coerente em todas as regioes e classes (azimute -17 a -38 graus no referencial). Indice h (1 = pontas com agua propria, 0 = sem): BARRO 0,85 +- 0,14 (n 925); CINZA 0,38 +- 0,10 (n 2.035); por regiao CINZA 0,20 / 0,33 / 0,53. Controle nos CLARA (n 1.331): contraste total 0,039 contra 0,078 a 0,084 nos inclinados, com h 1,04 +- 0,26, ou seja, ha um artefato de borda/sombra igual nos dois eixos de mais ou menos metade do sinal; descontado, o CINZA fica perto de zero. E medida de POPULACAO (por telhado o ruido e 3 vezes o sinal) e a aerea e antiga. Amostra visual: forma visivel em 48 de 552; 23 erradas, das quais a maioria e cinza ou galpao de duas aguas (C 106, 113, 127, 129, 131; B 10, 28; F 2, 6, 8, 11).",
+   "correcao": "CINZA: duas aguas com cumeeira ao longo do eixo maior do menor retangulo envolvente, oitao fechado com parede, a mesma inclinacao de 12 graus (ou a que o autor justificar). BARRO: manter quatro aguas. Continuar declarando a forma como estimada, agora por classe com base nesse teste, e nao como regra unica."
+  },
+  {
+   "gravidade": "grave",
+   "onde": "Cemiterio Nossa Senhora da Conceicao, x 409..622, y 1378..1695 (setores BVC_S_X1_Y3 e X1_Y4)",
+   "descricao": "Os tumulos entraram no cadastro como construcoes: sao caixas de ~3,8 m de parede e agora 210 delas tem telhado inclinado, a maioria de 'telha de barro'. De cima e do chao vira um bairro de casinhas dentro do cemiterio. O volume e anterior ao r27; o r27 acrescentou os telhados.",
+   "evidencia": "O poligono landuse=cemetery esta em tools/bv_city/01_georef/osm_bvcity.json (57.967 m2). Dentro dele ha 266 volumes exportados, area mediana 15 m2: 145 BARRO, 65 CINZA, 56 CLARA; 210 inclinados. Na aerea (am_H_miudo.jpg) sao fileiras de tumulos brancos e alaranjados. BVC_S_X1_Y3 e tambem o setor mais pesado do mapa (19.037 triangulos).",
+   "correcao": "Tirar do 3D (ou reduzir a lapide baixa e plana, sem telhado) todo contorno com centro dentro de landuse=cemetery do OSM. O dado ja existe no projeto."
+  },
+  {
+   "gravidade": "media",
+   "onde": "Todos os 14.811 inclinados - trecho r27 de exporta_unity.py",
+   "descricao": "O telhado foi somado em cima da caixa sem baixar a parede. A altura do cadastro (4,0 m = '1 pav alto', estimada como altura total) virou altura de BEIRAL, e a construcao cresceu a altura do telhado. Casa terrea fica com beiral a ~3,65 m do chao e cumeeira entre 4,5 e 6,5 m.",
+   "evidencia": "Parede (topo menos base) de 3,8 m em 11.450 dos 14.811 inclinados. Cumeeira acima do topo antigo: mediana 0,86 m, p90 2,09 m, maximo 2,80 m (BARRO mediana 1,56 m; CINZA 0,69 m). Telhado com mais de 50 % da altura da parede em 1.654 (11,2 %); mais de 70 % em 463. A comparacao do proprio autor (07_comparacoes/r27/rua_c.jpg) mostra a parede identica e o telhado por cima.",
+   "correcao": "Manter a altura total estimada: beiral = altura do cadastro menos a altura do telhado, com piso de ~2,6 a 2,8 m. E coerencia com a estimativa que ja existia, nao medida nova; declarar assim."
+  },
+  {
+   "gravidade": "media",
+   "onde": "Contornos em L, U, T, com alas ou patio - telhado_forma.py (recuo unico d)",
+   "descricao": "O recuo d sai do trecho MAIS LARGO do contorno. Onde a ala e mais estreita que 2d nao sobra crista: o telhado ali fica plano na cota do beiral, abaixo do topo da parede (16 cm no barro, 6 cm no cinza), e a parede aparece como mureta em volta de um telhado chato. Em conjuntos de pavilhoes (escolas, hospital) uma ala ganha piramide e as outras ficam planas.",
+   "evidencia": "Area do telhado plana na cota do beiral: mais de 5 % em 1.900 predios (12,8 %), mais de 15 % em 612, mais de 30 % em 177. Entre os 1.302 contornos nao retangulares (area/retangulo < 0,85), 493 (38 %) tem mais de 15 % assim. Na linha da parede (655.267 pontos medidos) o telhado esta mais de 5 cm ABAIXO do topo da parede em 6,6 %; 2.310 predios tem isso em mais de 10 % do perimetro (856 BARRO, onde o degrau e de 16 cm). Piores: PROV_w550453964 (X3_Y-4, 2.254 m2, 84 % plano), PROV_w549548745 (X-4_Y-1, 1.941 m2, 73 %), PROV_r11480515 (X1_Y-1, 4.739 m2 com patio, 57 %), PROV_r9433136 (X2_Y-5, 8.150 m2, 4 patios, 33 %), PROV_w549548733 (X-5_Y-1, contorno em estrela de 140 m2 com piramide no meio). Figura: exemplos.png na minha pasta. Dos 6 contornos com patio, 4 ficaram inclinados e todos caem aqui.",
+   "correcao": "Altura do telhado = inclinacao x distancia ao contorno (esqueleto reto), limitada ao teto de recuo: cada ala ganha a sua cumeeira. Sem biblioteca de esqueleto, aproximar com 2 ou 3 recuos encaixados (buffer negativo em niveis) em vez de um so, ou decompor o contorno em retangulos. No minimo, onde nao ha crista, por o plano na cota do topo da parede e nao 6 a 16 cm abaixo."
+  },
+  {
+   "gravidade": "media",
+   "onde": "Construcoes encostadas (geminadas, casa + edicula, quadras do centro) - mapa todo",
+   "descricao": "Cada contorno do cadastro ganha a sua piramide e o seu beiral, mesmo colado no vizinho: aparece um rincao na parede comum e o beiral de um entra no outro. O cadastro automatico tambem parte um mesmo telhado de duas aguas na cumeeira (as duas aguas tem brilho diferente) e cada metade vira uma piramide.",
+   "evidencia": "Dos 14.811 inclinados, 9.260 (62,5 %) tem vizinho a menos do beiral, 8.166 (55 %) encostam (menos de 5 cm) e 2.039 (13,8 %) se sobrepoem em mais de 1 m2 (10.041 pares). O beiral entra no vizinho em 15.710 casos: em 14.651 fica escondido dentro do volume do vizinho e em 1.059 fica pendurado a vista acima do topo da parede do vizinho mais baixo. Exemplos de telhado unico partido: G 84/85, H 26/27, F 6/8 (am_*.jpg). Nas obliquas do autor (r27_telhados_d.png, r25_so_cine_de_cima.png) ve-se a fileira de piramides coladas. Nao medi quantos pares sao de fato um telhado so.",
+   "correcao": "Antes de gerar o telhado, unir os contornos da mesma classe que se tocam (distancia < 0,3 m) e tem a mesma altura, e cobrir a uniao com um telhado so; nao gerar beiral nem forro nas arestas compartilhadas. Usa so os contornos que ja existem."
+  },
+  {
+   "gravidade": "media",
+   "onde": "Classe de cobertura - telhados.py / telhados_cache.json",
+   "descricao": "'Classe medida' vale no conjunto, mas nao para todo contorno: (a) copa de arvore vira CINZA e ganha telhado de 12 graus; (b) contorno mais novo que a aerea e medido no chao: terra alaranjada vira BARRO e ganha telha de barro; (c) o limiar claro/cinza decide tambem a FORMA (plano ou inclinado) e um quinto dos predios esta colado nele; (d) a classe e sensivel ao registro do contorno.",
+   "evidencia": "Cache reproduzido: 1.500 de 1.500 iguais. (a) 1.108 CINZA tem cor mediana de vegetacao (matiz 60 a 170, saturacao >= 0,15): 10,8 % dos CINZA, 5,2 % do total; mais 474 CINZA com valor < 0,30 (sombra). (b) G n.13 e um lote de terra de ~28 x 50 m classificado BARRO; G 39 e A 83 parecidos; 910 BARRO (19,8 %) tem saturacao fraca (0,20 a 0,26), faixa onde caem terra, bege e fibrocimento empoeirado. (c) 1.950 CINZA com valor 0,60 a 0,68 e 2.275 CLARA com 0,68 a 0,76. (d) Deslocando a amostragem 2 m, a classe muda em 9,9 a 11,5 % (as trocas mais comuns sao CLARA->CINZA e CINZA->BARRO); sem a correcao do deslocamento da aerea mudaria em 38,9 %. A conferencia do proprio projeto (conf_aerea) da CONFERE (<= 2 m) em so 2.049 dos 21.142 contornos, DIVERGE em 1.293, SEM_PICO_NITIDO em 12.792. Amostra visual: 464 batem, 23 erram, 30 duvidosas em 517 predios (fora os tumulos).",
+   "correcao": "Marcar a classe como NAO MEDIDA quando a cor mediana e vegetacao ou sombra, ou quando conf_aerea = DIVERGE, e dar a esses um padrao neutro declarado. BARRO de saturacao fraca em contorno sem CONFERE: tratar como duvidoso (nao por telha de barro em lote vazio). Separar a decisao de forma do limiar claro/cinza: o controle de iluminacao mostra contraste menor nos CLARA (0,039 contra 0,08), o que sustenta o plano como media, nao caso a caso."
+  },
+  {
+   "gravidade": "media",
+   "onde": "Custo - 06_unity/glb (160 setores)",
+   "descricao": "O r27 aumentou a malha em 39 % de triangulos e 50 % de vertices; mais da metade do aumento e o forro debaixo de um beiral de 0,30 a 0,35 m, quase nunca visto. O 'tri_antes' de setores_unity.json (686.020) e a planta antes do recorte da mascara, nao o GLB anterior.",
+   "evidencia": "Lendo os GLB: antes 656.626 triangulos, agora 914.358 (+257.732, +39,3 %); vertices 1.056.289 -> 1.584.660 (+50,0 %). O que nao e volume provisorio ficou identico (407.043). Telhas BARRO 12.734 -> 51.422; CINZA 25.476 -> 108.832; CLARA 16.505 igual; M_PROV 193.976 -> 329.664, e os +135.688 sao todos faces para baixo (forro) = 52,6 % do aumento. Mediana de 10 triangulos de telhado + 8 de forro por predio. Setores mais pesados (agora / antes): X1_Y3 19.037 / 13.633; X-3_Y2 16.653 / 11.119; X2_Y1 15.861 / 11.385; X-4_Y2 14.827 / 9.013; X-1_Y6 14.503 / 9.291; X1_Y4 14.470 / 10.226. Maior aumento relativo: X-1_Y-3 +70 % (7.735 -> 13.121).",
+   "correcao": "Tirar o forro (ou deixa-lo so nos volumes a menos de ~150 m das zonas jogaveis) economiza ~135 mil triangulos. Unir geminados e tirar o cemiterio reduz mais. Se for manter, medir o custo real no Unity (lotes e quadros por segundo), que eu nao medi."
+  },
+  {
+   "gravidade": "leve",
+   "onde": "Predios grandes no teto de recuo (6 m barro, 12 m cinza)",
+   "descricao": "Em contorno grande o telhado vira um tronco com plato plano no topo, texturizado com telha de barro deitada, forma que nao existe. O contorno redondo vira tronco de cone.",
+   "evidencia": "521 telhados no teto de recuo (483 BARRO, 38 CINZA). Plato maior que 15 % da area em 88, maior que 30 % em 26, maior que 50 % em 9. Exemplos: PROV_w773555907 (X4_Y3, 5.577 m2 BARRO, 69 % plato), PROV_w550460316 (X1_Y1, 3.450 m2 BARRO, 60 %). Visiveis em r27_telhados_a.png e r27_telhados_f.png.",
+   "correcao": "Acima de ~25 m de lado menor: varias aguas paralelas (cumeeiras repetidas) ou tratar como galpao de duas aguas baixo. BARRO acima de ~1.000 m2 e suspeito pela classe (terra, metal pintado): revisar um a um; sao 86 inclinados acima de 1.000 m2."
+  },
+  {
+   "gravidade": "leve",
+   "onde": "Predios altos e especiais",
+   "descricao": "Torre, hotel de 11 andares, igrejas e galpoes receberam o mesmo quatro-aguas de casa.",
+   "evidencia": "13 inclinados com parede acima de 7 m, 8 acima de 9,5 m, 2 acima de 13 m. PROV_w549990090 Eco Hotel (X0_Y2): parede 30,8 m com quatro-aguas cinza de 2,46 m. PROV_w887290828 Mirante Edileusa Loz (X4_Y1): caixa de 225 m2 com parede de 80,8 m e telhado ate 82,4 m (a caixa e anterior ao r27). 4 igrejas com cumeeira a 12,8 a 12,95 m. Tipos do OSM entre os de parede > 7 m: church 4, yes 3, warehouse 2, college 2, temple 1, school 1.",
+   "correcao": "Usar o que o cadastro ja tem: andares >= 3 ou parede > 7 m -> plano com platibanda; tipo church/temple/warehouse -> duas aguas; mirante/torre fora da regra."
+  },
+  {
+   "gravidade": "leve",
+   "onde": "PROV_gob_67JXR8JJ_HWGJ, setor BVC_S_X1_Y-4, x 405..412, y -1239..-1231",
+   "descricao": "Volume cujo topo e dois poligonos: o telhado novo cobre so o maior e a tampa plana do menor foi removida. Ficou uma caixa aberta em cima.",
+   "evidencia": "Medido no GLB: faces para cima sobre a parte menor (53,0 m2): 53,0 m2 antes, 0,0 m2 agora. E o unico caso inclinado entre 3 topos MultiPolygon. Nos outros 14.810 a cobertura do telhado sobre contorno + beiral e 1,000.",
+   "correcao": "Em telhado_forma.forma, gerar telhado para cada parte do MultiPolygon, ou no exportador manter a tampa plana das partes que nao receberam telhado."
+  },
+  {
+   "gravidade": "leve",
+   "onde": "Triangulacao das aguas",
+   "descricao": "Poucos triangulos sem area ou com normal nao voltada para cima depois da gravacao em float32, e facetas mais ingremes que a regra em cantos de contorno irregular.",
+   "evidencia": "Nos GLB: 7 triangulos de telha inclinada com area < 1e-4 m2 (6 BARRO, 1 CINZA) e 4 BARRO com normal horizontal ou para baixo, em 160.254; 322 lascas (176 + 146). Na replica em precisao dupla nenhum sai virado. Faceta acima de 45 graus em 29 predios e acima de 60 em 3; mais de 5 % da area com declive acima do nominal + 10 graus em 92 predios.",
+   "correcao": "Descartar triangulo com area < 1e-3 m2 antes de soldar e simplificar o contorno (tolerancia ~0,15 m) antes do recuo."
+  },
+  {
+   "gravidade": "leve",
+   "onde": "Fachadas modeladas da Ene Garcez e zonas mantidas",
+   "descricao": "Volumes provisorios que ja se sobrepunham em parte a contornos modelados agora tem telhado e beiral entrando neles. Nas fotos que abri nao ha telhado atravessando fachada.",
+   "evidencia": "29 inclinados a menos de 6 m de contorno modelado; 13 com telhado ou beiral dentro dele: PROV_w549545253 (atras do Cine Super K, 11,6 m2), PROV_gob_67JXR8FF_M29P (7,9 m2), PROV_gob_67JXR8FF_J3HR (BARRO, 5,6 m2, cumeeira 5,0 m), PROV_gob_67JXR8GF_84CC (5,1 m2, colado na casa modelada da frente norte, visivel em r22_faixa_de_cima_x30.png), PROV_gob_67JXR8FF_C7XR (BARRO, cumeeira 6,45 m, aparece por cima do muro em r21_sul_x228.png, sem cruzar a fachada). 5 beirais entram nas zonas mantidas (ate 2,4 m2). Fotos abertas: r21_sul_x120, x148, x171, x228, r25_so_cine_de_cima, r25_so_xm1222, r22_faixa_de_cima_x30, r19_corretora_xm24.",
+   "correcao": "Para volume que toca contorno modelado: recortar o contorno pelo modelado antes de gerar o telhado, ou deixa-lo plano."
+  }
+ ],
+ "confirmados": [
+  "Replica do r27 a partir de 03_planta/malhas + telhado_forma.py bate com os GLB: contagem de triangulos igual nos 160 setores para as 3 classes (480 de 480)",
+  "Totais declarados: 21.142 volumes com cobertura classificada (21.176 volumes exportados no setores_unity.json), 14.811 inclinados (4.596 BARRO + 10.215 CINZA), 6.331 CLARA planos; nenhum BARRO/CINZA ficou plano",
+  "Cache das classes reproduzivel: 1.500 de 1.500 contornos recalculados com a mesma regra deram a classe do cache; a amostragem usa a correcao do deslocamento da aerea",
+  "Sem pico fora da regra: cumeeira no maximo 2,80 m acima da parede no barro (489 no teto) e 2,56 m no cinza (38 no teto); mediana 0,86 m",
+  "Sem buraco entre parede e telhado: em 655.267 pontos da linha da parede o telhado fica mais de 5 cm acima do topo em 161 e nunca mais de 0,26 m; a fresta entre telha e forro e de 3 cm e da para a parede",
+  "Telhado cobre contorno + beiral inteiro (razao 1,000) em 14.810 dos 14.811 inclinados",
+  "Normais: nas telhas CLARA 16.505 de 16.505 para cima; nas inclinadas so 4 de 160.254 nao apontam para cima; forro todo para baixo (135.688 faces)",
+  "Inclinacoes de 25 e 12 graus, beiral 0,35 / 0,30 m e tetos de recuo 6 / 12 m conferem com o codigo e com a geometria (declive fora do nominal em mais de 5 % da area so em 92 predios)",
+  "O que nao e volume provisorio nao mudou: 407.043 triangulos antes e depois",
+  "Todas as fotos r19 a r27 de 06_unity foram refeitas as 22:14 de 12/11, depois dos GLB (22:11): mostram os telhados novos",
+  "No barro o quatro-aguas e compativel com a aerea (indice 0,85 +- 0,14 e facetas visiveis nas areas D e E)",
+  "Classe na amostra visual: 464 batem em 517 predios olhados (fora 35 tumulos); 23 erradas, 30 duvidosas"
+ ],
+ "nao_conferido": [
+  "Forma predio a predio: a 0,6 m/px so deu para ver em 48 dos 552 olhados; para os outros vale so o teste de populacao",
+  "Inclinacao real (25 e 12 graus) e largura real de beiral: a aerea nao mede; o contraste de iluminacao parecido entre BARRO e CINZA nao basta para concluir",
+  "Data da aerea contra a data do cadastro: sei que ha contornos sobre lote vazio (G n.13), nao sei quantos",
+  "Quantos pares encostados sao de fato um telhado unico partido pelo cadastro (vi 3 exemplos, nao contei no mapa todo)",
+  "Fotos de fachada: abri 8 das ~52 (r19, r20, r21_sul, r24_sul, r25_so); nao ha fotos de ANTES das fachadas em 07_comparacoes/r27/antes para comparar",
+  "r11_corredor.png (vista de cima do corredor) e as comparacoes 07_comparacoes/r27 alem de rua_c.jpg nao foram examinadas em detalhe",
+  "Custo no jogo (lotes, quadros por segundo, colisores, LOD): nao abri o Unity; medi so triangulos e vertices nos GLB",
+  "Beiral sobre calcada/rua e sobre agua: nao medi",
+  "Os 34 volumes exportados sem cobertura classificada (21.176 - 21.142) nao foram examinados",
+  "Aparencia no chao dos degraus de 6 a 16 cm e dos beirais pendurados sobre vizinho: medidos na geometria, nao vistos em foto"
+ ]
+}

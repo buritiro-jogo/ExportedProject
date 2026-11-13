@@ -225,7 +225,7 @@ namespace BuritiroEditor
         }
 
         // ------------------------------------------------------------------
-        static int MontaLODs(Transform raiz)
+        internal static int MontaLODs(Transform raiz)
         {
             int n = 0;
             foreach (var grupo in new[] { "Celulas", "Grandes" })
@@ -325,7 +325,9 @@ namespace BuritiroEditor
             return true;
         }
 
-        static int MontaColisores(Transform raiz)
+        // [BV City 10/11] visibilidade aberta para o FBMontaBVCity reaproveitar os mesmos passos
+        // (sem isso a geometria de colisao do GLB continua sendo desenhada, em rosa).
+        internal static int MontaColisores(Transform raiz)
         {
             var g = Acha(raiz, "Colisao"); if (!g) return 0;
             int n = 0;
@@ -569,7 +571,7 @@ namespace BuritiroEditor
 
         static GameObject RaizMapa() => SceneManager.GetActiveScene().GetRootGameObjects().FirstOrDefault(g => g.name.StartsWith("Map_"));
 
-        static Transform Acha(Transform t, string nome)
+        internal static Transform Acha(Transform t, string nome)
         {
             if (t.name == nome) return t;
             foreach (Transform c in t) { var r = Acha(c, nome); if (r) return r; }

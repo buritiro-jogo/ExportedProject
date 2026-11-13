@@ -88,6 +88,11 @@ namespace FreeBala
                 "praca_pt" => new Bounds(new Vector3(-32f, 0, 14f), new Vector3(790f, 60f, 600f)),
                 "orla" => new Bounds(new Vector3(31f, 0, -83f), new Vector3(430f, 60f, 410f)),
                 "morro_sacola" => new Bounds(Vector3.zero, new Vector3(612f, 80f, 612f)),   // arena 600 x 600 (paredes em ±300)
+                // r68: centro_civico e bv_city caíam no padrão em volta de (0,0,0). O Centro Cívico fica em x -117..467 / z -1337..-753
+                // (pontos do fb_data, mesmo centro que o minimapa acha pela NavMesh): sem isto o De Rolê nascia a 1 km do mapa e a loja não achava lugar.
+                // BV City = corredor x -175..1095 / y -250..215 do referencial -> Unity (-x, h, +y).
+                "centro_civico" => new Bounds(new Vector3(175f, 0, -1045f), new Vector3(612f, 80f, 612f)),
+                "bv_city" => new Bounds(new Vector3(-460f, 0, -17.5f), new Vector3(1290f, 80f, 485f)),
                 "estande" => new Bounds(new Vector3(2f, 0, 30f), new Vector3(64f, 40f, 70f)),
                 "bermuda" => new Bounds(new Vector3(42f, 0, 225f), new Vector3(1550f, 150f, 1520f)),
                 _ => new Bounds(Vector3.zero, new Vector3(500f, 60f, 500f))

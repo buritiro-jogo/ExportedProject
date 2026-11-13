@@ -15,12 +15,34 @@ namespace FreeBala.EditorTools
             // testes PlayMode em lote (-runTests): o Play tem de abrir a cena de teste do Test Framework. Com o Menu forçado aqui, a cena
             // de teste era trocada pelo Menu, nenhum teste começava e o editor ficava no menu para sempre (o Timeout nunca dispara).
             if (System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-runTests") >= 0) { EditorSceneManager.playModeStartScene = null; return; }
+            AplicaCenaDoPlay();
+        }
+
+        // r64: chave para testar uma cena avulsa (ex.: montagem manual de animações) sem o Play pular para o Menu.
+        const string ChaveCenaAtual = "FB_PlayNaCenaAtual";
+        const string MenuCenaAtual = "FreeBala/Play na cena atual (liga-desliga)";
+
+        static void AplicaCenaDoPlay()
+        {
+            if (EditorPrefs.GetBool(ChaveCenaAtual, false)) { EditorSceneManager.playModeStartScene = null; return; }
             var menuScene = AssetDatabase.LoadAssetAtPath<SceneAsset>("Assets/FreeBala/Scenes/Menu.unity");
             if (menuScene != null && EditorSceneManager.playModeStartScene != menuScene)
             {
                 EditorSceneManager.playModeStartScene = menuScene;
             }
         }
+
+        [MenuItem(MenuCenaAtual)]
+        static void AlternaCenaAtual()
+        {
+            bool liga = !EditorPrefs.GetBool(ChaveCenaAtual, false);
+            EditorPrefs.SetBool(ChaveCenaAtual, liga);
+            AplicaCenaDoPlay();
+            Debug.Log("[FreeBala] Play " + (liga ? "na CENA ATUAL (o Menu não abre)" : "pelo MENU (normal)"));
+        }
+
+        [MenuItem(MenuCenaAtual, true)]
+        static bool AlternaCenaAtualCheck() { Menu.SetChecked(MenuCenaAtual, EditorPrefs.GetBool(ChaveCenaAtual, false)); return true; }
 
         [MenuItem("FreeBala/Mobile/Gerar APK Mobile (Beta)")]
         public static void BuildMobileApk()

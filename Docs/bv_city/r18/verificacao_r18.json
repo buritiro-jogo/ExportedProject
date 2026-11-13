@@ -1,0 +1,516 @@
+{
+ "a": {
+  "achados": [
+   {
+    "arquivo": "obra_esquina.jpg",
+    "elemento": "Obra - profundidade ao longo da R. Pedrinho Filho",
+    "real": "A estrutura segue funda pela rua lateral: dois pavimentos de laje em balanço sobre uma fileira de pilares, guarda-corpo corrido nos dois níveis, três vãos em arco no térreo e tapume de chapa ao longo de toda a lateral (q_02320; também aparece atrás do sobrado em q_02262 e q_02230).",
+    "cena": "A obra é um bloco curto junto da esquina. O tapume dobra a esquina, anda poucos metros e vira um muro bege liso sem nada em cima (r18_obra_esquina.png; em r16_video_x28.png só aparece uma ponta de guarda-corpo no canto esquerdo e muro bege onde o real tem obra e tapume).",
+    "tipo": "falta",
+    "gravidade": "alta",
+    "correcao_sugerida": "Estender a estrutura (laje do 1o piso, pilares, laje de cobertura com guarda-corpo) e o tapume por toda a lateral da R. Pedrinho Filho, medindo o comprimento em q_02320; trocar o muro bege por tapume nesse trecho."
+   },
+   {
+    "arquivo": "obra_x4.jpg",
+    "elemento": "Obra - guarda-corpos e tela de proteção",
+    "real": "Guarda-corpos cobertos por tela plástica laranja-rosada, formando painéis semitransparentes cor salmão desbotado; é o que mais marca a silhueta (q_02417, q_02380).",
+    "cena": "Só tubos finos em vermelho saturado, vazados, sem tela. A obra lê como grade vermelha, não como painéis rosados.",
+    "tipo": "cor",
+    "gravidade": "media",
+    "correcao_sugerida": "Pôr um plano de tela semitransparente salmão/laranja desbotado em cada pano de guarda-corpo e dessaturar o vermelho dos tubos para rosa-avermelhado."
+   },
+   {
+    "arquivo": "obra_x4.jpg",
+    "elemento": "Obra - escada e escoramento de madeira do lado esquerdo",
+    "real": "O lado esquerdo tem um lance inclinado de escada/rampa de concreto com guarda-corpo rosa subindo em diagonal até a cobertura, mais muitas escoras e tábuas de fôrma (q_02455, q_02417).",
+    "cena": "Dois pilares com espera de ferro, um X de madeira e duas tábuas. Não há lance inclinado nem guarda-corpo em diagonal.",
+    "tipo": "falta",
+    "gravidade": "media",
+    "correcao_sugerida": "Modelar o lance de escada inclinado com guarda-corpo em diagonal entre o 1o piso e a cobertura e adensar escoras e tábuas nesse canto."
+   },
+   {
+    "arquivo": "obra_x4.jpg",
+    "elemento": "Obra - material empilhado no 1o piso",
+    "real": "Atrás da tela há pilhas marrom-escuras irregulares (fôrmas/madeira), sem leitura de parede acabada.",
+    "cena": "Um pano de alvenaria de tijolo laranja vivo, limpo e regular, que lê como mureta acabada.",
+    "tipo": "cor",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Escurecer e dessaturar para marrom, quebrar em pilhas irregulares e deixar atrás da tela."
+   },
+   {
+    "arquivo": "obra_x4.jpg",
+    "elemento": "Obra - bloco térreo e vão",
+    "real": "Bloco térreo de cantos arredondados com vão largo em arco abatido, cerca de 3/4 da largura do bloco (q_02417, q_02380).",
+    "cena": "Bloco de cantos vivos com um vão pequeno trapezoidal, cerca de 1/3 da largura.",
+    "tipo": "forma",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Alargar o vão para ~3/4 do bloco, com cantos superiores arredondados."
+   },
+   {
+    "arquivo": "obra_esquina.jpg",
+    "elemento": "Tapume - canto e pichação",
+    "real": "O tapume faz a esquina em curva e tem a pichação preta 'NG3G' à direita da placa do CREA-RR; há um poste de concreto com luminária colado ao canto.",
+    "cena": "Canto vivo a 90 graus, chapa limpa sem pichação e nenhum poste no canto.",
+    "tipo": "falta",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Arredondar o canto do tapume, pintar a pichação preta e pôr o poste com braço de luminária na esquina."
+   },
+   {
+    "arquivo": "casa_obra_xm9.jpg",
+    "elemento": "Casa branca - portão da garagem",
+    "real": "Portão de barras brancas ocupando quase toda a metade direita da frente, até o limite com o tapume (~57% da largura do lote). Lê como branco, com fundo cinza-claro e o carro visível (q_02455).",
+    "cena": "Portão vazado mais estreito (~40% da largura), seguido de um pano de parede cego à direita que não existe no real. O vão lê preto, com barras pouco visíveis.",
+    "tipo": "proporcao",
+    "gravidade": "media",
+    "correcao_sugerida": "Levar o portão até a divisa do tapume, eliminando o pano cego; engrossar e clarear as barras e clarear o fundo da garagem (piso e parede cinza-claros) para o conjunto ler branco."
+   },
+   {
+    "arquivo": "casa_obra_xm9.jpg",
+    "elemento": "Casa branca - pórtico",
+    "real": "Casca esbelta: parede lateral fina (~6% da largura do pórtico), laje de topo fina, interior fundo todo em sombra cinza com o vidro escuro só ao fundo, à direita.",
+    "cena": "Moldura grossa: perna esquerda ~17% da largura e testeira alta. O interior tem quase o mesmo tom claro da fachada, com um retângulo escuro solto à direita.",
+    "tipo": "forma",
+    "gravidade": "media",
+    "correcao_sugerida": "Afinar a parede lateral e a laje de topo, aprofundar o pórtico e escurecer teto e parede internos para cinza de sombra."
+   },
+   {
+    "arquivo": "casa_obra_xm9.jpg",
+    "elemento": "Casa branca - guarda-corpo de vidro",
+    "real": "Vidro transparente levemente esverdeado, com montantes e corrimão de inox visíveis; vê-se o terraço através dele.",
+    "cena": "Faixa leitosa azul-clara opaca, sem montantes nem corrimão.",
+    "tipo": "cor",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Vidro mais transparente e esverdeado, com 5 ou 6 montantes e corrimão metálico."
+   },
+   {
+    "arquivo": "casa_obra_xm9.jpg",
+    "elemento": "Brancos da casa branca e do muro da casa térrea",
+    "real": "Branco limpo, levemente quente.",
+    "cena": "Bege-acinzentado (casa branca) e cinza-claro (muro da térrea), ainda visivelmente mais escuros que no vídeo.",
+    "tipo": "cor",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Subir o albedo dos brancos ou a luz ambiente da cena (registrado uma vez só)."
+   },
+   {
+    "arquivo": "casas_x36.jpg",
+    "elemento": "Casa térrea - desenho das grades",
+    "real": "Cada pano é dividido em 3 ou 4 faixas verticais, com diagonais alternadas em espinha de peixe, barras brancas grossas sobre fundo escuro de varanda (q_02230, q_02190).",
+    "cena": "Um único 'V' grande por pano, barras finas, e em vários panos o fundo é bege claro, o que apaga o desenho.",
+    "tipo": "forma",
+    "gravidade": "media",
+    "correcao_sugerida": "Subdividir cada pano em 3 ou 4 módulos verticais com diagonais alternadas, engrossar as barras e escurecer o fundo atrás da grade."
+   },
+   {
+    "arquivo": "casas_x36.jpg",
+    "elemento": "Casa térrea - cor dos portões",
+    "real": "Azul-gelo muito pálido, quase branco azulado; chapa na metade de baixo e grade diagonal em cima (q_02190).",
+    "cena": "Azul-acinzentado médio, bem mais saturado e escuro que o real.",
+    "tipo": "cor",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Clarear e dessaturar o azul dos portões para um tom gelo."
+   },
+   {
+    "arquivo": "casas_x28.jpg",
+    "elemento": "Casa térrea - telhado e topo do muro",
+    "real": "Telhado de fibrocimento cinza ondulado, com caimento visível da rua e beiral fino. Sobre o muro há hastes de cerca elétrica com plaquinhas amarelas e concertina; número 598 no pilar.",
+    "cena": "Lê como laje plana cinza com testeira grossa, sem ondulação. Sem cerca elétrica, concertina nem número.",
+    "tipo": "forma",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Dar caimento e textura ondulada ao telhado, afinar a borda, e acrescentar hastes de cerca elétrica e o número 598."
+   },
+   {
+    "arquivo": "casas_x28.jpg",
+    "elemento": "Sobrado - telhado",
+    "real": "Três telhados escalonados em alturas diferentes (ala da varanda mais baixa, corpo central mais alto, corpo direito intermediário), com beirais de telha (q_02262, q_02230).",
+    "cena": "Um único telhado escuro de beiral largo cobrindo tudo; em r18_casas_x36.png aparece como um grande plano inclinado para a direita.",
+    "tipo": "forma",
+    "gravidade": "media",
+    "correcao_sugerida": "Dividir em três águas escalonadas seguindo os três volumes e reduzir o beiral lateral."
+   },
+   {
+    "arquivo": "casas_x36.jpg",
+    "elemento": "Sobrado - volumes e cor da fachada",
+    "real": "Creme claro (amarelo bem pálido). O corpo central avança e é mais alto; o corpo direito é recuado e mais baixo; a varanda da esquerda é aberta, com parapeito.",
+    "cena": "Caixa quase única com um ressalto pequeno, em amarelo-cáqui mais saturado e mais escuro (puxa para o oliva em r16_video_x28.png).",
+    "tipo": "cor",
+    "gravidade": "media",
+    "correcao_sugerida": "Clarear e dessaturar para creme; avançar e elevar o corpo central e rebaixar o direito."
+   },
+   {
+    "arquivo": "casas_x36.jpg",
+    "elemento": "Sobrado - tijolo de vidro",
+    "real": "Duas faixas verticais cinza-esverdeadas, translúcidas, com a malha dos blocos visível (q_02262, q_02320).",
+    "cena": "Duas faixas verde-petróleo chapadas e saturadas, sem malha; leem como faixa pintada.",
+    "tipo": "cor",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Textura quadriculada de blocos, verde bem mais acinzentado e claro, com leve brilho."
+   },
+   {
+    "arquivo": "casas_x28.jpg",
+    "elemento": "Sobrado - muro de tijolo aparente",
+    "real": "Tijolo laranja-salmão claro com manchas escuras na base. O trecho da esquerda é um pano contínuo sem pilar no meio; no canto da esquina há um trecho rebocado branco (q_02262, q_02320).",
+    "cena": "Tijolo vermelho-escuro saturado com rejunte branco muito marcado e um pilar extra no meio do pano esquerdo; o canto rebocado quase não aparece.",
+    "tipo": "cor",
+    "gravidade": "media",
+    "correcao_sugerida": "Clarear o tijolo para laranja-salmão, suavizar o rejunte, tirar o pilar intermediário do pano esquerdo e marcar o trecho rebocado branco na esquina."
+   },
+   {
+    "arquivo": "lojas_x50.jpg",
+    "elemento": "Lojas - vitrine do Domino's",
+    "real": "A vitrine tem uma tela quadriculada fina e clara sobre o vidro escuro, bem visível em q_02100 e perceptível em q_02123.",
+    "cena": "Vidro liso, sem malha nenhuma. A r17 tinha grade pesada demais; a r18 tirou tudo.",
+    "tipo": "falta",
+    "gravidade": "media",
+    "correcao_sugerida": "Devolver uma malha quadriculada fina, de linhas claras e delgadas, sobre a vitrine; não a grade grossa da r17."
+   },
+   {
+    "arquivo": "lojas_x50.jpg",
+    "elemento": "Lojas - arte do '2X1'",
+    "real": "'2' e '1' brancos com o 'X' vermelho, direto sobre o vidro escuro, com uma caixa clara de texto e 'SEMPRE' em vermelho abaixo (q_02100).",
+    "cena": "'2X1' todo branco dentro de um retângulo preto destacado do vidro cinza; só o 'SEMPRE TODA' em vermelho.",
+    "tipo": "cor",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Pintar o X de vermelho, tirar o retângulo preto de fundo (ou igualar ao tom do vidro) e pôr a caixa clara de texto sob o número."
+   },
+   {
+    "arquivo": "lojas_x50.jpg",
+    "elemento": "Lojas - cor do tijolo (painel e mureta)",
+    "real": "Tijolo cor de mel/laranja-claro no painel do cartaz e na mureta sob a vitrine; a mureta avança um pouco além da quina direita do prédio (q_02100).",
+    "cena": "Tijolo vermelho-escuro, igual ao do muro do sobrado; a mureta termina rente à quina.",
+    "tipo": "cor",
+    "gravidade": "media",
+    "correcao_sugerida": "Usar um tijolo caramelo claro nas lojas e prolongar a mureta ~0,5 m além da quina direita."
+   },
+   {
+    "arquivo": "lojas_x50.jpg",
+    "elemento": "Lojas - cartaz de comida",
+    "real": "Cartaz em caixa de moldura escura, fundo bege-rosado, com fotos de tigelas e um selo vermelho de preço.",
+    "cena": "Cartaz de fundo branco com três círculos esquemáticos e uma faixa 'COMBO'; lê como ícone, mais claro que o real.",
+    "tipo": "cor",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Fundo bege-rosado, moldura escura mais grossa e tigelas com mais massa de cor."
+   },
+   {
+    "arquivo": "lojas_x50.jpg",
+    "elemento": "Lojas - retângulo cinza-claro entre a faixa do Spoleto e a vitrine",
+    "real": "Nada nesse ponto; a faixa colorida termina na divisa com a vitrine.",
+    "cena": "Um retângulo cinza-claro solto sobre a ponta direita da faixa do Spoleto, no alto da vitrine (r16_video_x50.png, por volta de x 930-985, y 435-465).",
+    "tipo": "sobra",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Remover a peça ou conferir se é um plano deslocado."
+   },
+   {
+    "arquivo": "casas_x28.jpg",
+    "elemento": "Vizinho de tijolo entre a casa térrea e as lojas",
+    "real": "Atrás da ponta direita da casa térrea sobe uma parede alta de tijolo aparente com telhado e um condensador de ar no alto (q_02230, q_02190).",
+    "cena": "Não há esse volume; vê-se direto a lateral preta das lojas.",
+    "tipo": "falta",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Acrescentar o volume de tijolo com telhado ao fundo, entre a térrea e as lojas."
+   }
+  ],
+  "corrigido_desde_r17": [
+   "Obra: os volumes sólidos rosa/magenta viraram esqueleto de concreto cinza com pilares, lajes, esperas de ferro e guarda-corpos. A leitura de 'prédio em construção' agora existe (casa_obra_xm9.jpg, ANTES x AGORA).",
+   "Obra: alturas relativas conferem. Altura total ~3x o tapume, fundo da laje do 1o piso ~1,4x o tapume, e obra ~1,45x o pórtico da casa branca, como no vídeo.",
+   "Obra: a laje do 1o piso tem a ponta em curva com fôrma de madeira na borda e guarda-corpo curvo acompanhando, do lado da esquina, como em q_02417.",
+   "Tapume: chapa ondulada clara na altura do portão da casa branca, com a placa azul do CREA-RR no tamanho e na posição certos (~15% do comprimento). Antes era um 'CRE' grande cortado.",
+   "Casa branca: o pórtico deixou de ser alto demais. A relação pórtico/portão ficou ~2,1 contra ~1,9 no vídeo; o topo do vidro ficou em ~1,6x o portão, igual ao real.",
+   "Casa branca: o portão da garagem deixou de ser uma chapa cinza cega e passou a ser vazado com barras; o pilar revestido de pedra com medidor está no lugar.",
+   "Casa térrea: as janelas quadriculadas escuras viraram grades brancas com diagonais, e apareceram os portões azuis (pedestre e garagem).",
+   "Sobrado: o muro passou a pano de tijolo com pilares e gradil branco em cima (antes havia uma treliça avermelhada); surgiram as duas faixas verticais verdes e o telhado ficou escuro.",
+   "Lojas: o painel de tijolo ganhou cartaz com conteúdo (antes era uma placa marrom vazia) e o '2X1' ficou grande, na proporção do vídeo (antes era minúsculo e vermelho).",
+   "Lojas: a proporção geral do bloco preto (largura/altura ~2,7 contra ~2,6) e a posição e largura dos três letreiros conferem."
+  ],
+  "o_que_esta_certo": [
+   "Obra: composição da cobertura (bloco mais alto à esquerda com guarda-corpo, trecho mais baixo à direita) e os dois pilares com espera de ferro à esquerda.",
+   "Obra: largura da estrutura em relação ao tapume na frente da avenida (~90% contra ~87%).",
+   "Casa branca: sequência pilar de pedra, portão de pedestres, pilaretes, portão de garagem, e faixa de parede sob o vidro.",
+   "Sobrado: largura em relação ao lote (~46% contra ~47%), duas janelinhas escuras no alto à direita, duas janelinhas gradeadas no térreo e cobertura cinza baixa do anexo à esquerda.",
+   "Sobrado: sequência do muro (pano alto de tijolo com gradil curto, portão de pedestres, mureta baixa com gradil alto, portão duplo branco, pilar largo de tijolo).",
+   "Casa térrea: muro com base cega em cerca de metade da altura e grades em cima, pilares brancos entre os panos, altura do muro em relação às lojas (~0,45 contra ~0,41).",
+   "Lojas: fachada preta, painel de tijolo com cartaz à esquerda, faixa colorida com 'ABERTO TODOS OS DIAS' sobre a porta de vidro, vitrine escura com mureta de tijolo embaixo e pilarete rosado na divisa com a térrea.",
+   "SABIO (aparece em casa_obra_xm9.jpg): faixa roxa/branca/vermelha, totem azul e fachada branca com porta preta e janelas quadriculadas conferem na leitura geral."
+  ],
+  "nao_deu_para_julgar": [
+   "casas_x36.jpg: o contêiner amarelo do mapa de base tapa todo o lado direito (metade da casa térrea e as lojas), e a árvore do jogo tapa o canto superior esquerdo, onde no vídeo aparece a obra ao fundo.",
+   "casas_x28.jpg: a árvore do jogo fica na frente do sobrado e cobre o centro da fachada e parte do telhado; as faixas de tijolo de vidro e o telhado foram julgados por r18_casas_x36.png.",
+   "casa_obra_xm9.jpg e casas_x28.jpg: o título do painel REAL não traz o número do quadro. Usei q_02455 e q_02262 como quadros equivalentes; também abri q_02190, q_02100 e q_02320 para tirar dúvidas.",
+   "lojas_x50.jpg: o poste do jogo cobre parte do letreiro SPOLETO e da porta de vidro; no quadro q_02123 o poste real cobre parte do '2X1' (conferi em q_02100).",
+   "Obra: o térreo fica quase todo atrás do tapume nos dois lados; a quantidade e a forma dos vãos em arco na frente da avenida não dá para conferir além do que aparece por cima da chapa.",
+   "Obra: se o material empilhado no 1o piso é madeira, telha ou tijolo não dá para afirmar pelo vídeo; só que é marrom-escuro e irregular.",
+   "Casa branca: a moto do jogo e os sacos de lixo ficam na frente do tapume; o tambor preto fica entre os pilaretes do portão. A quantidade exata de pilaretes (3 no real) não ficou clara na cena.",
+   "Lado leste da R. Pedrinho Filho (muro bege, casas, árvore) e o entorno à direita das lojas (árvore, lixeiras verdes, prédio cinza): na cena são caixas bege lisas; não avaliei por não fazerem parte da frente norte listada.",
+   "Fundo do pórtico da casa branca: parte da diferença de tom pode ser só a direção da luz da cena; o que dá para afirmar é que o interior não lê como sombra."
+  ]
+ },
+ "b": {
+  "achados": [
+   {
+    "arquivo": "tce_x112.jpg",
+    "elemento": "TCE - estrutura metalica na face leste da torre (a 'escada de incendio')",
+    "real": "Nos quadros q_01730, q_01760 e q_01790 (E:/BURITIRO IMAGENS/PRAÇA DAS AGUAS/quadros/IMG_4194/) a peca e uma passarela/sacada metalica azul de UM nivel so: plataforma reta com guarda-corpo de 3 barras, apoiada em maos-francesas diagonais, saindo da quina sudeste e correndo ao longo da face leste na altura da laje entre a 1a e a 2a fita de janelas. Nao ha lances entre andares nem quadro vertical. As diagonais que parecem zigue-zague no quadro pequeno sao as maos-francesas.",
+    "cena": "Escada de 3 andares em zigue-zague dentro de um quadro vertical alto, indo do coroamento ate a faixa azul do muro, concentrada junto a quina.",
+    "tipo": "forma",
+    "gravidade": "alta",
+    "correcao_sugerida": "Trocar a escada em zigue-zague por uma passarela horizontal unica (piso + guarda-corpo de 3 barras + 5 ou 6 maos-francesas diagonais por baixo), na altura do piso do 2o pavimento superior, comecando na quina sudeste e seguindo para o fundo por cerca de 2/3 da face leste."
+   },
+   {
+    "arquivo": "tce_x112.jpg",
+    "elemento": "TCE - coroamento da torre",
+    "real": "q_01760/q_01790: sobre a ultima fita de vidro ha um volume azul alto (com uma janelinha) que sobe alem do quadro; a faixa azul de beiral segue so pela lateral leste; abaixo do vidro do ultimo andar vem direto o peitoril branco. So existe uma laje azul em balanco no canto ESQUERDO (oeste), nao uma linha atravessando a frente. O vidro do ultimo andar tem a mesma altura das outras fitas.",
+    "cena": "Continuam DOIS elementos azuis identicos ao painel ANTES: laje grossa no topo e um filete azul fino atravessando toda a frente e sobrando dos dois lados; entre eles a faixa escura do ultimo andar tem menos da metade da altura das outras fitas. Nao se ve diferenca entre ANTES e AGORA nesse ponto.",
+    "tipo": "sobra",
+    "gravidade": "media",
+    "correcao_sugerida": "Remover o filete azul inferior da frente (deixar so o balanco azul no canto oeste), dar ao vidro do ultimo andar a mesma altura das outras fitas e subir o volume azul do topo (caixa com janelinha) em vez de laje chata."
+   },
+   {
+    "arquivo": "tce_x112.jpg",
+    "elemento": "TCE - fachada frontal da torre (fitas de janela)",
+    "real": "q_01790: a esquerda duas tiras verticais escuras estreitas (~18 % da largura); o resto (~80 %) sao fitas horizontais continuas de vidro ESCURO alternadas com peitoris brancos, e o vidro dobra a quina sudeste tambem escuro.",
+    "cena": "Tiras escuras + um painel vertical azul-claro ocupam ~45-50 % da largura; as fitas de janela ficam so nos ~35 % da direita; o retorno na face leste junto a quina aparece azul-claro, nao escuro.",
+    "tipo": "forma",
+    "gravidade": "media",
+    "correcao_sugerida": "Eliminar o painel vertical azul-claro, estreitar as duas tiras escuras e estender as fitas de vidro escuro das tiras ate a quina, dobrando a esquina com o mesmo vidro escuro."
+   },
+   {
+    "arquivo": "tce_x112.jpg",
+    "elemento": "Faixa azul sobre o muro entre TCE e DIPLE",
+    "real": "q_01760/q_01790: a faixa sobre o portao de enrolar e o muro corre numa altura so, do pilar a oeste do portao ate o fim do muro junto ao DIPLE; o degrau fica a OESTE do portao (a testeira da entrada do TCE e um pouco mais baixa). A faixa ocupa ~31-37 % da altura do muro.",
+    "cena": "A faixa alta cobre a entrada e o portao e, a leste do portao, cai para uma faixa mais baixa e mais fina (~26 % da altura) ate o DIPLE: degrau no lado errado e no sentido contrario.",
+    "tipo": "posicao",
+    "gravidade": "media",
+    "correcao_sugerida": "Manter a faixa do muro numa altura unica do portao de enrolar ate o DIPLE, um pouco mais alta que a testeira da entrada do TCE, e engrossa-la para ~1/3 da altura total do muro."
+   },
+   {
+    "arquivo": "tce_x112.jpg",
+    "elemento": "Trecho branco entre o vidro da entrada do TCE e o portao de enrolar",
+    "real": "q_01790: entre o vidro da entrada e o portao ha um pano de muro branco com ~0,55 da largura do portao.",
+    "cena": "O vidro escuro quase encosta no portao (pilar de ~0,15 da largura do portao).",
+    "tipo": "proporcao",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Encurtar o vidro da entrada ou deslocar o portao para deixar um pano branco de cerca de meia largura de portao entre os dois."
+   },
+   {
+    "arquivo": "tce_x112.jpg",
+    "elemento": "Totem do DIPLE",
+    "real": "q_01730/q_01679: o topo do disco fica abaixo do topo da faixa azul do muro ao lado; altura do totem ~0,8 da altura do muro com faixa (mesmo estando mais perto da camera).",
+    "cena": "O totem passa do topo da faixa azul do muro e do topo da faixa do DIPLE: ~1,14 da altura do muro (visto tambem em r16_video_x134.png).",
+    "tipo": "proporcao",
+    "gravidade": "media",
+    "correcao_sugerida": "Reduzir a altura do totem em ~30 % para que o topo do disco fique um pouco abaixo do topo da faixa azul do muro."
+   },
+   {
+    "arquivo": "escon_x134.jpg",
+    "elemento": "DIPLE - trecho leste entre o bloco principal e o ESCON",
+    "real": "q_01730/q_01760: a leste do bloco de dois pavimentos ha um anexo branco mais BAIXO (~70 % da altura) e RECUADO, com duas janelas estreitas de grade azul, rampa com guarda-corpo azul ornamentado e gradil no terraco; a faixa azul do bloco principal e continua e ainda sobra um pouco alem da quina leste. Visto de q_01679 quase nao aparece nada entre a quina do DIPLE e a parede azul do ESCON.",
+    "cena": "O trecho leste tem a MESMA altura do bloco principal e esta no mesmo plano; a faixa azul para antes dele, ha um pano branco de alto a baixo e depois uma caixa azul solta na altura da faixa; esse trecho ocupa ~1/3 da largura visivel entre DIPLE e ESCON.",
+    "tipo": "forma",
+    "gravidade": "media",
+    "correcao_sugerida": "Baixar o anexo leste para ~70 % da altura do bloco principal e recua-lo; levar a faixa azul continua ate (e um pouco alem de) a quina leste do bloco principal; remover a caixa azul solta; acrescentar a rampa com guarda-corpo azul."
+   },
+   {
+    "arquivo": "escon_x134.jpg",
+    "elemento": "DIPLE - faixa azul da fachada",
+    "real": "q_01730/q_01790: a faixa ocupa ~29-31 % da altura do predio.",
+    "cena": "Faixa com ~21 % da altura do predio (cerca de 30 % mais fina).",
+    "tipo": "proporcao",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Aumentar a altura da faixa azul para ~30 % da altura da fachada, mantendo as janelas de cima apoiadas nela."
+   },
+   {
+    "arquivo": "escon_x134.jpg",
+    "elemento": "DIPLE - cobogo",
+    "real": "q_01730/q_01760: painel de cobogo voltado para a rua, 4 pecas de largura por 5 de altura, com ~metade da largura da porta de vidro, do chao ate a faixa azul.",
+    "cena": "Tira de trelica muito estreita (~13 % da largura da porta em r16_video_x134.png).",
+    "tipo": "proporcao",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Alargar o painel de cobogo para ~metade da largura da porta (4 modulos), de frente para a rua, entre o fim do muro e a porta."
+   },
+   {
+    "arquivo": "tce_x112.jpg",
+    "elemento": "DIPLE - fachada do bloco principal",
+    "real": "Fachada lisa num plano so (q_01730).",
+    "cena": "Em r17_tce_x112.png aparecem duas juntas verticais (entre as duas janelas de cima e no fim da faixa), com mancha de luz diferente de um lado e de outro, como se fossem caixas em planos diferentes.",
+    "tipo": "forma",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Unificar o bloco principal num volume unico, sem ressalto entre as duas janelas."
+   },
+   {
+    "arquivo": "escon_x147.jpg",
+    "elemento": "ESCON - furo do pilone",
+    "real": "q_01617 e q_01679: o furo tem ~20-22 % da altura total do pilone, comeca a ~5 % do topo e ocupa mais da metade da largura da lamina naquela altura.",
+    "cena": "Furo com ~12-13 % da altura do pilone (medido em r18_escon_x147.png, r18_escon_x134.png e r16_video_x134.png), comecando a ~16 % do topo e ocupando ~44 % da largura.",
+    "tipo": "proporcao",
+    "gravidade": "media",
+    "correcao_sugerida": "Aumentar o diametro do furo em ~1,6x (ou torna-lo oval na vertical) e subi-lo para que a borda de cima fique quase no topo da lamina."
+   },
+   {
+    "arquivo": "escon_x147.jpg",
+    "elemento": "ESCON - muro branco n. 402 e portao",
+    "real": "q_01617/q_01679: altura do muro ~55-57 % da altura do volume azul; portao ~49 %; pilone ~2,9-3,15x a altura do muro.",
+    "cena": "Muro com ~39-50 % da altura do volume azul; portao ~40 %; pilone ~3,65-4,0x a altura do muro. Como a relacao volume azul x DIPLE esta certa, quem ficou baixo foi o conjunto muro+portao.",
+    "tipo": "proporcao",
+    "gravidade": "media",
+    "correcao_sugerida": "Subir muro e portao em ~20-25 % (ate pouco mais da metade da altura do volume azul), mantendo o muro ligeiramente mais alto que o portao."
+   },
+   {
+    "arquivo": "escon_x147.jpg",
+    "elemento": "ESCON - lateral leste do volume azul sob a marquise",
+    "real": "q_01617: a direita do pilone, sob a marquise, aparece parede branca recuada e vidro escuro da entrada; o azul termina no pilone.",
+    "cena": "Em r18_escon_x147.png ha uma faixa azul do volume a direita do pilone, acima do portao (volume azul profundo demais ou avancando para leste).",
+    "tipo": "cor",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Encurtar a profundidade/limite leste do volume azul para que termine atras do pilone, deixando parede branca recuada sob a marquise."
+   },
+   {
+    "arquivo": "escon_x147.jpg",
+    "elemento": "ESCON - portinholas do muro",
+    "real": "q_01617: uma portinhola azul saturada perto do numero 402 e tres paineis estreitos azul-acinzentados, juntos.",
+    "cena": "Quatro retangulos cinza, o primeiro largo e os outros tres bem espacados.",
+    "tipo": "cor",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Pintar as portinholas de azul (a primeira azul forte), deixar as tres ultimas estreitas e proximas entre si."
+   },
+   {
+    "arquivo": "escon_x147.jpg",
+    "elemento": "ESCON - jardineira, concertina e gradil",
+    "real": "q_01617/q_01679: jardineira branca baixa com plantas floridas ao pe do muro; concertina sobre o muro; gradil azul no topo do predio de tras.",
+    "cena": "So um degrau baixo liso ao pe do muro; sem plantas, sem concertina, sem gradil.",
+    "tipo": "falta",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Acrescentar plantas na jardineira, rolo de concertina sobre o muro e o pequeno gradil no topo do predio de tras."
+   },
+   {
+    "arquivo": "escon_x147.jpg",
+    "elemento": "ESCON - marquise e fuste do pilone (detalhes)",
+    "real": "q_01617: testeira da marquise em ~7 paineis verticais com juntas visiveis; no fuste do pilone, abaixo da marquise, plaquinha e 4 linhas de diretorio nas duas faces.",
+    "cena": "Testeira lisa sem juntas; fuste sem nenhuma placa.",
+    "tipo": "falta",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Marcar as juntas verticais dos paineis na testeira e por uma plaquinha generica com linhas de diretorio no fuste."
+   },
+   {
+    "arquivo": "escon_frente.jpg",
+    "elemento": "ESCON - letreiro na parede azul",
+    "real": "q_01679/q_01617: a palavra ESCON ocupa ~35-50 % da largura da parede, letras brancas aplicadas direto no azul.",
+    "cena": "Texto com ~20 % da largura da parede, sobre uma placa retangular azul mais clara bem visivel.",
+    "tipo": "proporcao",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Aumentar o letreiro para ~40 % da largura da parede e tirar a placa de fundo (letras direto no azul)."
+   },
+   {
+    "arquivo": "escon_frente.jpg",
+    "elemento": "ESCON - tom do azul",
+    "real": "Azul cobalto medio, mais esverdeado e claro (aprox. #1F4F9F; pilone um pouco mais claro); so a faixa do DIPLE/TCE e azul royal mais violeta.",
+    "cena": "Parede, pilone e marquise no mesmo ultramar violaceo e escuro (aprox. #1B2B9B) da faixa do DIPLE.",
+    "tipo": "cor",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Usar no ESCON um azul cobalto proprio (menos violeta, mais claro), diferente do azul royal das faixas do TCE/DIPLE."
+   },
+   {
+    "arquivo": "escon_frente.jpg",
+    "elemento": "Brancos das fachadas (ESCON, DIPLE, muro) - registro unico",
+    "real": "Branco limpo, levemente creme.",
+    "cena": "Cinza-bege medio, ainda bem visivel em todas as fotos do lote.",
+    "tipo": "cor",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Clarear o albedo do branco ou a luz ambiente nesses lotes."
+   },
+   {
+    "arquivo": "oi_x547.jpg",
+    "elemento": "Oi - piso do patio",
+    "real": "q_00110: cimento/asfalto envelhecido cinza-amarronzado, manchado e rachado; e a superficie mais ESCURA do conjunto.",
+    "cena": "Piso quase branco e limpo, mais claro que as paredes do predio (r17_oi_x547.png e r17_oi_de_cima.png).",
+    "tipo": "cor",
+    "gravidade": "media",
+    "correcao_sugerida": "Escurecer o cimento para cinza medio levemente amarronzado, com manchas e trincas."
+   },
+   {
+    "arquivo": "oi_de_cima.jpg",
+    "elemento": "Oi - restos do patio vermelho",
+    "real": "q_00110: nenhum piso vermelho dentro do lote; atras do portao a leste o chao e cimento cinza.",
+    "cena": "Ainda ha vermelho-tijolo na parte norte do lote (em volta da torre) e numa faixa na borda leste; em r17_oi_x547.png essa faixa vermelha aparece a direita do pilar.",
+    "tipo": "sobra",
+    "gravidade": "media",
+    "correcao_sugerida": "Cobrir tambem a parte norte e a faixa leste do lote com o mesmo cimento."
+   },
+   {
+    "arquivo": "oi_x547.jpg",
+    "elemento": "Oi - fechamento a leste do pilar",
+    "real": "q_00110: depois do pilar de alvenaria ha portao branco e, em seguida, um longo portao/gradil branco de correr ate a borda do quadro; concertina sobre o muro junto ao pilar.",
+    "cena": "A direita do pilar o lote fica aberto (ve-se o fundo e predios distantes); sem concertina.",
+    "tipo": "falta",
+    "gravidade": "media",
+    "correcao_sugerida": "Continuar o gradil/portao de correr branco para leste a partir do pilar e por concertina no trecho de muro junto a ele."
+   },
+   {
+    "arquivo": "oi_x547.jpg",
+    "elemento": "Oi - cores de janelas e da base da torre",
+    "real": "q_00110: janelas do predio principal com vidro e caixilho esverdeados; faixa de baixo da torre marrom-acinzentada apagada; borda da laje do anexo escurecida de sujeira.",
+    "cena": "Janelas azul-claro com caixilho branco; base da torre terracota saturada; laje do anexo cinza limpa.",
+    "tipo": "cor",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Vidro/caixilho esverdeados, base da torre em marrom-acinzentado dessaturado, sujeira escura na borda da laje do anexo."
+   },
+   {
+    "arquivo": "rest_norte.jpg",
+    "elemento": "Restaurante - fundo do terraco de cima",
+    "real": "Fundo quase preto (sombra, madeira escura).",
+    "cena": "Ficou mais escuro que no ANTES, mas ainda marrom-avermelhado com tijolo legivel.",
+    "tipo": "cor",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Escurecer mais e dessaturar o fundo do terraco (marrom quase preto)."
+   },
+   {
+    "arquivo": "rest_norte.jpg",
+    "elemento": "Restaurante - terreo e frente",
+    "real": "Pela foto de consulta (pequena): terreo com trecho de parede azul-acinzentada a esquerda, vidro no centro/direita e mesas e cadeiras vermelhas na frente; sob o guarda-corpo nao se ve viga amarela.",
+    "cena": "Terreo todo em caixa de vidro escuro; viga amarela com blocos lilas nas pontas; sem mesas/cadeiras.",
+    "tipo": "falta",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Pintar o trecho esquerdo do terreo de azul-acinzentado, rever a viga amarela/pontas lilas e, se couber, por mesas e cadeiras vermelhas."
+   },
+   {
+    "arquivo": "rest_norte.jpg",
+    "elemento": "Restaurante - canteiro com sebe",
+    "real": "Na foto de consulta a frente da mureta de tijolo com sebe e reta em toda a largura visivel, com quina viva a esquerda.",
+    "cena": "Sebe e mureta em arco facetado.",
+    "tipo": "forma",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Conferir a planta do canteiro; a referencia indica frente reta com canto, nao arco."
+   }
+  ],
+  "corrigido_desde_r17": [
+   "ESCON: o pilone deixou de ser prisma reto com braco em cruz e virou lamina que alarga no topo, com furo circular (escon_x134.jpg, ANTES x AGORA)",
+   "ESCON: a marquise deixou de ser caixa retangular e virou testeira curva com fundo branco",
+   "ESCON: o volume azul agora fica abaixo do topo do DIPLE (~0,80 da altura dele; no real ~0,80-0,84); antes estava na mesma altura ou acima",
+   "ESCON: o bloco alto azul-escuro a direita do pilone foi reduzido; o predio de tras ficou em ~0,57 da altura do pilone (real ~0,61)",
+   "DIPLE: o topo do bloco principal agora esta numa altura so (antes havia um trecho mais alto)",
+   "DIPLE: o totem ganhou o disco no topo (tce_x112.jpg, ANTES sem disco)",
+   "TCE: a escada deixou de ser lajes macicas e ficou vazada com corrimao (mas a forma em zigue-zague nao corresponde ao real - ver achados)",
+   "Oi: a maior parte do patio passou de vermelho para cimento; surgiram os fios de cerca sobre o gradil e o pilar alto no fim do gradil",
+   "Restaurante: o fundo do terraco de cima ficou mais escuro que no r17"
+  ],
+  "o_que_esta_certo": [
+   "ESCON: silhueta geral do pilone (topo ~1,6-1,7x a cintura, fuste reto abaixo da marquise) e topo da marquise a ~65 % da altura do pilone, como no real",
+   "ESCON: topo da marquise alinhado com o topo do volume azul; a marquise cobre o portao e curva de volta para o predio",
+   "ESCON: portao com barras diagonais em cima e barras verticais na faixa de baixo; numero 402 no muro; mureta branca baixa a esquerda do volume azul",
+   "DIPLE: duas janelas largas em cima apoiadas na faixa azul, porta de vidro e janela larga no terreo, mureta da rampa, totem com disco e placa DIPLE na posicao certa",
+   "Muro entre TCE e DIPLE com faixa azul no topo e portao de enrolar claro de laminas horizontais; comprimento do muro coerente (~1,8-2x a largura do portao)",
+   "TCE: tres niveis de vidro acima da faixa azul, duas tiras verticais escuras a esquerda, mastros com bandeira, faixa azul de beiral",
+   "Oi: laje grande em balanco com pilares brancos e panos marrom-bege, anexo baixo com laje plana, gradil branco de barras, torre de concreto com faixa branca e base mais escura e uma coluna de janelinhas, torre trelicada com antenas; pilar ~1,35x a altura do gradil (real ~1,37)",
+   "Restaurante: telhado de duas aguas marrom-escuro, empena com letreiro, terraco com guarda-corpo de madeira, proporcao largura/altura ~1,5 (real ~1,45)"
+  ],
+  "nao_deu_para_julgar": [
+   "escon_x134.jpg: o conteiner (mapa de base) tapa portao, muro e metade da marquise; a arvore tapa a janela de cima a direita do DIPLE",
+   "Se o furo do pilone esta mesmo vazado em r18_escon_x147.png: o interior aparece esbranquicado (pode ser so contraste com o azul); em r18_escon_x134.png parece ceu",
+   "Sentido das diagonais em cada folha do portao do ESCON (no real pode ser espinha de peixe) e curvatura exata da borda do pilone",
+   "Altura absoluta do pilone (1,56x o volume azul no jogo contra ~1,7x no real, mas as cameras diferem demais)",
+   "Se o muro continuo a leste do n. 402 (onde o real tem terreno de terra aberto) e do modelo ou do mapa de base",
+   "TCE: o topo real da torre sai do quadro em todos os quadros consultados; as fileiras de janelinhas da face leste nao aparecem no angulo do jogo; volume cilindrico azulejado e letreiro da entrada ficam fora da foto do jogo",
+   "Oi: o portao azul nao aparece em r17_oi_x547.png (so um ponto azul em r17_oi_de_cima.png, no canto do gradil junto ao predio); oi_de_cima.jpg nao tem referencia real; base da torre no real fica escondida atras do anexo; nao da para afirmar se o portao de correr longo a leste pertence ao lote da Oi",
+   "Restaurante: a referencia e pequena e de outro angulo; o arquivo cheio r15_rest_norte_frente.png parece ser o render antigo (fundo do terraco claro), entao o r18 foi julgado so pelo painel reduzido",
+   "Quadro exato usado como REAL em tce_x112.jpg nao esta identificado; usei q_01730, q_01760 e q_01790 da mesma pasta"
+  ]
+ }
+}

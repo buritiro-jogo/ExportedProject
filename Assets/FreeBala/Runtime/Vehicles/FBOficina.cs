@@ -194,6 +194,7 @@ namespace FreeBala
         static void Close()
         {
             on = false; FBDrive.hold = false; FBDrive.rev = false; if (car) FBTune.Save(car.id, T); if (ui) UnityEngine.Object.Destroy(ui); ui = null;
+            if (car) FBNet.I?.ShareCar(car, true);                                               // r68: pintura/peças novas chegam aos outros jogadores
             if (!FBInput.Touch) { Cursor.lockState = CursorLockMode.Locked; Cursor.visible = false; }
         }
         static void Changed() { FBTune.Apply(car, T); FBTune.Save(car.id, T); }

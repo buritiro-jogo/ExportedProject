@@ -260,7 +260,7 @@ namespace FreeBala
         // ---- 2) mãos (depois de inclinar/recuo/descanso/deitado: a mão esquerda pega a arma onde ela realmente está)
         public void Hands(float dt)
         {
-            LeftTargetValid = false; if (bypass) return;
+            LeftTargetValid = false; LeftLocalOk = false; if (bypass) return;
             if (!built || !ch || !lArm || !lFore || !lHand || !rHand) return;
             if (Far) { DbgFar++; return; }
             bool spc = ch.Special || !ch.alive || ch.vehiclePose, busy = ch.HandsBusy;
@@ -286,18 +286,48 @@ namespace FreeBala
                 if (pistol) PistolHands(ikW);
                 else if (ch.hasAim && aimW > .9f)
                 {
-                    DbgN++; DbgRaw += ErrNow(); DbgLower += lowerS; AimWrist(); DbgWrist += ErrNow(); Patrol(); ClearBody(ikW); DbgClear += ErrNow(); RifleLeftHand(ikW); DbgLeft += ErrNow();
+                    DbgN++; DbgRaw += ErrNow(); DbgLower += lowerS; AimWrist(); DbgWrist += ErrNow(); Patrol(); ClearBody(ikW); DbgClear += ErrNow(); KickRifle(ikW); RifleLeftHand(ikW); DbgLeft += ErrNow();
                     if (TorsoClear && KeepOutOfTorso(ikW)) RifleLeftHand(ikW, follow: true);   // [parceiro] arma saiu do peito: a esquerda volta para ela
                 }
                 else
                 {
-                    AimWrist(); Patrol(); ClearBody(ikW); RifleLeftHand(ikW);
+                    AimWrist(); Patrol(); ClearBody(ikW); KickRifle(ikW); RifleLeftHand(ikW);
                     if (TorsoClear && KeepOutOfTorso(ikW)) RifleLeftHand(ikW, follow: true);
                 }
             }
             // mão direita fechada no punho, indicador no gatilho (os clipes de 3ª pessoa trazem a mão aberta)
             if (fingW > .02f && wpVis && Hd) Curl(true, 1f, TriggerBend(), fingW);
         }
+
+        // ---- r65: coice da arma longa e mão esquerda depois do rig novo
+        // Coice (Ruan: tiro contínuo sem inclinar). No Complexo o tranco do tiro é procedural (PuppetAimRig: fireKickAngle,
+        // fireKickDecaySpeed, fireKickMaxAccumulated — campos lidos no dump; o APK não está mais no disco, então o CORPO do LateUpdate dele
+        // não foi recuperado, só os nomes). No KINEMATION (r59) é a RecoilAnimation: a arma recua no eixo do cano e o cano sobe, e volta.
+        // Aqui: depois do punho mirar (AimWrist) e do ClearBody, ANTES da mão esquerda — a mão direita recua por IK e gira o cano para
+        // cima em volta da palma; a esquerda pega a arma já no lugar do coice. O tronco não gira (sem rolagem). Some com o kick do
+        // FBCharacter (+0,35 por tiro, −12/s). Antes o coice do fuzil era um giro de antebraço que o AimWrist desfazia no mesmo quadro.
+        // -fbcoiceantigo = como antes.
+        public static bool CoiceArma = System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-fbcoiceantigo") < 0;
+        public static float CoiceRecuo = .04f, CoiceSobe = 7f;                     // por unidade de kick: metros (× S) e graus
+        void KickRifle(float w)
+        {
+            if (!CoiceArma || pistol || !rArm || !rFore || !rHand || !weapon) return;
+            float k = ch.KickNow * w; if (k < .005f) return;
+            var bar = ch.BarrelDir(); if (bar.sqrMagnitude < 1e-6f) return; bar.Normalize();
+            var rq = rHand.rotation; float s = S;
+            FBIK.TwoBonePole(rArm, rFore, rHand, rHand.position - bar * CoiceRecuo * k * s, rFore.position, 1);
+            var up = Vector3.RotateTowards(bar, Vector3.up, CoiceSobe * k * Mathf.Deg2Rad, 0);
+            rHand.rotation = Quaternion.FromToRotation(bar, up) * rq;
+        }
+        // r65: o rig novo (FBFpsaf, balanço da arma) mexe na arma DEPOIS deste FBRig; ele chama isto para a mão esquerda voltar à arma
+        // no mesmo quadro (antes ia para o alvo do quadro anterior + o desvio do quadro anterior)
+        public void RegrabLeft()
+        {
+            if (!built || bypass || pistol || !weapon || !weapon.activeSelf || ikW < .02f || !LeftTargetValid || !lArm || !lFore || !lHand || Far) return;
+            RifleLeftHand(ikW, follow: true);
+        }
+        // r65 (laboratório): alvo da mão esquerda no espaço da ARMA — mede se a mão ficou na arma depois de tudo o que mexe nela
+        [System.NonSerialized] public Vector3 LeftLocal; [System.NonSerialized] public bool LeftLocalOk;
 
         public bool PistolLowReady { get; private set; }
         // pistola com as duas mãos (antes: âncora do SetTwoHandedPistolMode do PuppetAimRig do Complexo, Chest + raiz·(0,10; 0,05; 0,40))
@@ -863,6 +893,7 @@ namespace FreeBala
             FBIK.TwoBonePole(lArm, lFore, lHand, W, pole, w);
             LeftGap = (lHand.position - W).magnitude; LeftSec = hg != null;
             LeftTarget = W; LeftTargetValid = true; GripCenter = C0; GripAxis = bar; GripRadius = e;
+            LeftLocal = wt.InverseTransformPoint(W); LeftLocalOk = true;
             if (lPalmOk)
             {
                 // palma pelo referencial anatômico; metade da torção vai para o antebraço (sem "embrulho de bala" no punho)
@@ -874,6 +905,9 @@ namespace FreeBala
                 lHand.rotation = after;
             }
             if (Hd) Wrap(inside, w);                                                                  // dedos abraçando o guarda-mão
+            // r65: sem detalhe fino (bots/remotos com hdOnlyLocal, presets 0–2) ficavam os dedos DO CLIPE — o "Idle Aiming" do Complexo
+            // tem a mão esquerda aberta e reta (filme do laboratório: palma aberta ao lado do guarda-mão). Fechamento fixo, barato (sem busca).
+            else Curl(false, 1.05f, 1f, w);
         }
 
         // dedos da mão esquerda (indicador..mínimo): cada um parte reto e fecha junta por junta até a ponta encostar no guarda-mão

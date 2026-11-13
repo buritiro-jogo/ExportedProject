@@ -17,6 +17,7 @@ namespace FreeBala
     {
         static int seq; public readonly int uid = ++seq;
         public string id, syncId, soundMod, kind = "car"; public Transform soundWallNode; public FBCharacter driver; public int remoteDriver = -1;
+        public int netOwner = -1;   // r68: cópia local do carro de OUTRO jogador (garagem/trânsito dele): só o dono dirige
         public bool ie, heavy, grau, armored, wallOn; public Dictionary<string, object> def, meta;
         public readonly List<FBWheel> wheels = new(); public readonly List<(Transform obj, Quaternion bas)> steerNodes = new(); public Vector3? steerAxis;
         public float wheelbase = 2.6f, track = 1.4f, scale = 1, gripSide, footSide = .22f; public Vector3 seat = new(-.38f, .55f, .1f); public Vector3? feet, grip;
@@ -487,7 +488,7 @@ namespace FreeBala
             FBCar best = null; float bd = r;
             foreach (var c in list)
             {
-                if (!c || c.driver || c.remoteDriver >= 0) continue; var lp = c.transform.InverseTransformPoint(p);
+                if (!c || c.driver || c.remoteDriver >= 0 || c.netOwner >= 0) continue; var lp = c.transform.InverseTransformPoint(p);
                 var q = c.lbox.ClosestPoint(lp); float d = Vector3.Distance(c.transform.TransformPoint(q), p); if (d < bd) { bd = d; best = c; }
             }
             return best;
@@ -497,6 +498,8 @@ namespace FreeBala
             if (Driving(ch)) { FBDrive.Exit(ch, false); return; }
             if (FBDrive.Approaching(ch)) { FBDrive.CancelApproach(ch); return; }                  // r50: F de novo enquanto anda até a porta = desiste
             if (!Allowed) return; var car = Nearest(ch.Pos, 2.2f); if (car && !FBDrive.BeginApproach(ch, car)) FBDrive.Enter(ch, car);
+            if (!car && ch.isPlayer && FBNet.I)                                                     // r68: carro de outro jogador (só o dono dirige)
+                foreach (var o in list) if (o && o.netOwner >= 0 && Vector3.Distance(o.transform.TransformPoint(o.lbox.ClosestPoint(o.transform.InverseTransformPoint(ch.Pos))), ch.Pos) < 2.2f) { FBHUD.I?.Center("CARRO DE " + (FBNet.I.NameOf(o.netOwner) ?? "OUTRO JOGADOR").ToUpper(), 1.6f); break; }
         }
         public static void Exit(FBCharacter ch, bool force) => FBDrive.Exit(ch, force);
         public static void ExitIfDriving(FBCharacter ch) { if (Driving(ch)) FBDrive.Exit(ch, true); }

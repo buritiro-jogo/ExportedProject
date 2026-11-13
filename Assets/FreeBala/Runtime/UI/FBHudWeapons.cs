@@ -84,8 +84,10 @@ namespace FreeBala
         }
         void Update__fbt()
         {
-            var pl = FBPlayer.I; var ch = pl ? pl.ch : null; bool show = ch && ch.alive && !pl.Driving && !(FBMatch.I && FBMatch.I.mode != null && FBMatch.I.mode.role);
-            big.gameObject.SetActive(show); row.gameObject.SetActive(show); life.gameObject.SetActive(ch && ch.alive && !(FBMatch.I && FBMatch.I.mode != null && FBMatch.I.mode.role)); if (!ch) return;
+            // r68: no De Rolê só aparece com arma da loja (FBGunShop.Armed); desarmado o rolê continua sem HUD de combate
+            bool roleHide = FBMatch.I && FBMatch.I.mode != null && FBMatch.I.mode.role && !FBGunShop.Armed;
+            var pl = FBPlayer.I; var ch = pl ? pl.ch : null; bool show = ch && ch.alive && !pl.Driving && !roleHide;
+            big.gameObject.SetActive(show); row.gameObject.SetActive(show); life.gameObject.SetActive(ch && ch.alive && !roleHide); if (!ch) return;
             // vida e colete
             float hp = Mathf.Max(0, ch.hp), mx = Mathf.Max(1, ch.maxHp), k = Mathf.Clamp01(hp / mx); hpFill.fillAmount = k; lag = Mathf.Max(k, Mathf.MoveTowards(lag, k, Time.deltaTime * .5f)); hpLag.fillAmount = lag;
             hpFill.color = ch.knocked ? new Color(1, .5f, .25f) : k < .3f ? new Color(1, .35f, .3f) : W; hpT.text = $"HP {Mathf.CeilToInt(hp)}/{Mathf.RoundToInt(mx)}"; kitT.text = (FBMed.Busy ? "<color=#9be7b1>CURANDO</color>  " : "") + $"KIT ✚ {(FBMed.inf ? "∞" : FBMed.kits.ToString())}  <color=#ffffff99>[H]</color>";

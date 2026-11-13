@@ -1,0 +1,144 @@
+{
+ "resumo": "Revisão independente do r25 (x -1249 a -176) e do r24 (x -175 a -116 e 341 a 604), só leitura. Usei 21 vistas próprias do Street View (20 do Google, jan/fev 2025, e 1 fotoesfera de usuário), 6 recortes da aérea z18, os blocos do autor e as fotos da cena. Minha aba foi fechada; a outra aba aberta não foi tocada. Capturas e scripts de medição estão em C:/Users/Rodrigo/AppData/Local/Temp/claude/a0de669827628d24/6dd1e011-812b-4b4e-b90d-0ba9ee612670/scratchpad/revisor_r25/.\n\nMétodo: distância pelo pé do muro e altura pelo topo (campo vertical 60°, inclinação 8°), mais triangulação entre duas vistas onde havia o mesmo detalhe.\n\nEscala: a câmera a 2,1 m parece baixa. A largura cadastral do quartel (36,6 m) dá 2,23 m e a triangulação da fachada do cinema dá 2,27 m. Os números abaixo usam 2,1 m; o valor provável é até 8 % maior. Incerteza típica: ±10 % nas alturas e ±2 a 3 m em x e y (posição da câmera).\n\nO que está bom (r25): cinema, quartel da PM, sobrado, muro rosa e muro do terreno batem em posição (até 3 m) e altura (até 10 %). A linha do gradil do batalhão no limite do OSM confere em 7 pontos (até 2,5 m). O vão do igarapé está no lugar e não precisa ir 8 m para oeste.\n\nErros principais:\n1. Batalhão: a mureta azul e a tela estão cerca de 50 a 65 % altas demais. Medi mureta de 0,65 a 1,0 m e topo da tela de 1,1 a 1,65 m em 5 pontos; o modelo tem 1,4 e 2,1 m.\n2. Prédio cinza de brises (r24): o real é girado uns 19 a 25° em relação à avenida, com a ponta oeste cerca de 20 m mais ao sul, e tem cerca de 16 m de altura (modelo: paralelo em y 58,4 e 12 m).\n3. Escola (r24): é um prédio único de cerca de 89 x 40 m, girado uns 19°; o modelo tem dois blocos paralelos em y 65.\n\nA causa provável dos itens 2 e 3 é a mesma: a caixa envolvente do contorno cadastral foi usada como se fosse o prédio.\n\nErros médios: boca da portaria cerca de 9 m estreita; portão do anexo da PM 5 a 10 m a leste; muro azul 20 a 30 % alto, com o prédio cobrindo a área da piscina; trecho leste do batalhão é muro cheio sem tela; lanchonete uns 5 m ao sul do real; gradil branco baixo. Nas fotos da cena do r24 há duas caixas que não existem no real.\n\nNão abri o Unity: o que digo da cena vem das fotos do autor.",
+ "achados": [
+  {
+   "unidade": "so_bec_a / so_bec_b / so_bec_c / so_bec_d (gradil_bec)",
+   "gravidade": "grave",
+   "descricao": "Mureta azul e tela do batalhão altas demais: o modelo tem mureta de 1,4 m e tela até 2,1 m. No real a mureta de tijolo pintado tem 0,65 a 1,0 m e o topo do quadro da tela fica em 1,1 a 1,65 m, com concertina em cima em vários trechos. Erro de +40 a +100 % na mureta e +27 a +90 % no total. Na foto da cena r25_so_xm930 a faixa azul parece um muro cheio; no real é um murinho baixo que deixa ver o campo.",
+   "evidencia": "Cinco vistas próprias, câmera a 2,1 m (somar ~8 % se for 2,27 m). x -945: pé v=458, topo da mureta 426, tela 406 -> 0,67 / 1,10 m. x -844: 461 / 429,5 / 409 -> 0,65 / 1,07 m. x -681: 455 / 417 / 396 -> 0,83 / 1,29 m. Portaria (muro oeste, x -582): 0,95 / 1,57 m. x -422: 447 / 407 / 386 -> 0,95 / 1,46 m. Pela razão independente da altura da câmera, a mureta vale 0,315 x o vão entre postes; com vão de 2,2 a 2,6 m dá 0,7 a 0,8 m. O próprio autor cita câmera a 14 m em x -600: com essa distância os ângulos dão 0,83 / 1,38 m, não 1,4 / 2,1.",
+   "correcao": "altura_mureta_m = 0,85 (0,7 para x < -800; 1,0 entre x -600 e -296). Altura total (primeiro argumento de frente) = 1,4 (1,15 para x < -800; 1,65 entre -600 e -296). passo_m de 2,3 a 2,6 está certo (medi 2,2 a 2,6). Opcional: concertina de 0,15 a 0,2 m no topo."
+  },
+  {
+   "unidade": "sul_e5_predio_cinza_brises",
+   "gravidade": "grave",
+   "descricao": "Prédio cinza com orientação, posição e altura erradas. O modelo é uma caixa paralela à avenida (x 553 a 604, frente em y 58,4, 12 m). No real a fachada de aletas é girada uns 19 a 25° (ponta leste perto da avenida, ponta oeste longe) e tem cerca de 16 m: 4 fileiras de janelas-fresta sobre o térreo. A metade oeste do modelo fica uns 20 m perto demais da avenida. O bloco branco térreo também está deslocado. Na foto da cena r24_sul_x578 o prédio aparece colado atrás do gradil; no real há gramado em rampa e o bloco branco na frente.",
+   "evidencia": "Triangulação do canto NE da fachada entre x 571,8 (u=368) e x 613,8 (u=1150), base de 42 m: (593,6; 59,9). Canto NO entre x 520,8 (u=420) e x 571,8 (u=995): (553; 78,7), ±4 m. O cadastro (542 a 603,9; 58,4 a 101,9) lido como caixa envolvente de um retângulo de 56 x 27 m girado 19° dá canto NE (595; 58,4) e canto O (542; 77): coincide. Altura: topo leste a 0,503 x 26 m + câmera = 15,2 m; topo oeste a 0,335 x 44,8 m + câmera = 17,1 m. As fileiras de janelas convergem para oeste, o que confirma o giro. Bloco branco (vista x 571,8): pé v=395, topo v=337, u 913 a 1136 -> x 550,6 a 564, y 64,5 a 67, 13,5 m de largura, 3,5 m de altura.",
+   "correcao": "Corpo principal girado: fachada norte do canto NE (594,5; 59) ao canto NO (548; 78), ±4 m, cerca de 50 m de frente por 26 m de fundo, altura 16 m (±1,5). Aletas inclinadas em toda essa face. Bloco branco: x 550,5 a 564, frente em y 65 a 67, 3,5 m (modelo: x 542 a 556, y 53,4 a 59,4, 3,2 m). Na ponta leste há volume verde alto, painel azul e marquise laranja com escada externa (só volumes e cores; o brasão fica de fora). Gradil branco: ver sul_e4."
+  },
+  {
+   "unidade": "sul_e2_escola",
+   "gravidade": "grave",
+   "descricao": "Forma e orientação trocadas. O modelo tem dois blocos paralelos à avenida, ambos com frente em y 65 (x 392 a 432, 7,2 m; x 440 a 465, 6,5 m). No real é um prédio único de cerca de 89 x 40 m com cobertura metálica de beiral largo, girado uns 19°: o canto NE fica perto da avenida e a fachada recua para sudoeste. A fachada longa tem mais que o dobro dos 40 m do bloco principal do modelo.",
+   "evidencia": "Aérea z18: telhado único com cantos (coordenadas da imagem) NE (446; 60), L (459; 98), SO (373; 124), O (362; 89): lado longo de 89 m a -19°. A caixa do cadastro usada pelo autor (368 a 466) é a envolvente desse retângulo; por ela a fachada vai de (453; 65) a (368; 94). Street View em x 402,7 (y 28): o beiral aparece em v=290 (u=268) e v=300 (u=690); sobre essa linha as distâncias são 40,3 e 50,9 m e o beiral dá 7,7 e 8,2 m, altura constante, o que valida a linha girada. Em x 442,9 o canto NE aparece em u=625, coerente com (453; 65) (esperado u=648). Topo da cobertura na ponta leste: cerca de 10,6 m.",
+   "correcao": "Trocar os dois corpos por um só, girado 19°: fachada norte de (453; 65) a (368; 94), ±4 m, 89 m x 40 m de fundo. Parede (beiral) 8,0 m (±0,8) e cobertura até cerca de 10,5 m (modelo: 7,2 e 8,8). Em x 392 a fachada real está em y ~86 e em x 432 em y ~72 (modelo: 65). O gradil azul na linha y 47 está certo; no real ele termina em x ~454."
+  },
+  {
+   "unidade": "so_bec_entrada_e001 (e ponta leste de so_bec_c)",
+   "gravidade": "media",
+   "descricao": "Boca da portaria estreita. As muretas do modelo ficam em x -576,2 e -545,8 (30,4 m). No real a mureta oeste está em x -583,5 (±2) e a leste em x -544 (±3): cerca de 40 m. O erro está quase todo no lado oeste, 7 m (4,5 a 9), no limite de grave. Na foto de cima da cena a pista de entrada da planta também é mais estreita que a real, então a correção pode esbarrar na planta.",
+   "evidencia": "Vista em x -570,85 (câmera na faixa oeste da entrada). Pé do muro oeste em u=1460/v=468, u=1310/v=462 e u=1100/v=412 -> x -584,1, -581,8 e -583,7 (com câmera a 2,27 m: -585,2, -582,7, -584,8); a linha converge para o ponto de fuga, ou seja, é paralela à entrada. Guia oeste da pista em x -577,5; guia da ilha em x -566,5. Muro leste: x -546,7 e -543,1 (mais ruidoso). Aérea: calçadas laterais a 33 m uma da outra, com os muros 3 a 4 m para fora de cada lado.",
+   "correcao": "so_bec_entrada_e001 de x -584 a -544: corpos em w 0 a 0,2 e 39,8 a 40. so_bec_c de -600 a -584. so_bec_b começando em -544. Altura das muretas da entrada 1,0 m (medido 0,95 a 1,03), com tela até 1,6 a 1,75 m."
+  },
+  {
+   "unidade": "so_pm_anexo_x001 (e ponta oeste de so_bec_d)",
+   "gravidade": "media",
+   "descricao": "Portão do anexo fora do lugar e cobertura com proporção errada. O modelo põe o portão em x -945 a -940 e a mureta do batalhão até -940. No real a entrada asfaltada fica em x -955 a -950, colada à ponta leste do prédio; a leste dela há um trecho de gradil azul (-950 a -945) e a mureta do batalhão só começa em cerca de -945. O prédio real tem varanda em volta, beiral baixo e cumeeira alta.",
+   "evidencia": "Vista em x -955,8. Entrada entre u=545 e u=740 na linha do gradil -> x -949,9 a -954,7. A posição da câmera foi conferida pelo telhado, que cai em x -954 a -971 (cadastro: -953,2 a -968,4). Fim da mureta do batalhão em u~320 -> x ~-945. Gradil: pé v=445, topo v=370 -> 1,85 m, y 57,4 (58,3 com câmera a 2,27 m). Beiral na linha do horizonte (v=360) -> 2,1 a 2,4 m. Cumeeira em v=290 -> 5 a 6 m. Telhado com 17 m de largura.",
+   "correcao": "Vão do portão em w 37 a 42,5 (x -955 a -949,5), não 47 a 52. gradil_bec('so_bec_d') terminando em -945, com gradil azul de -949,5 a -945. recuo_do_lote_m 10,5 a 11,3 (y 57,5 a 58,3; modelo 12,5). Prédio: parede 2,3 m, telhado de quatro águas com altura_m ~3,2 e beiral_m 1,5 a 2 (modelo: 3,4 + 1,3, beiral 0,6). Cor da cobertura cinza-azulada clara."
+  },
+  {
+   "unidade": "sul_w1_muro_azul",
+   "gravidade": "media",
+   "descricao": "Três pontos. (a) Muro com 2,3 m no modelo; medi 1,75 a 1,95 m (+20 a 30 %). (b) O corpo ocupa a frente inteira (x -175,3 a -135,6 desde y 56, 4,6 m), mas o cadastro é em L e o quadrante nordeste (x -153,8 a -135,6, y 52,7 a 71) é a piscina de um clube, aberta; da rua vê-se tobogã e telhados baixos de barro, não um prédio de 40 m. (c) O prédio que existe no lado oeste é creme com vidro verde e tem cerca de 3,1 a 3,6 m, não branco com 4,6 m. Além disso, na foto da cena r24_sul_xm140.png há uma caixa bege (cerca de 7 m de largura e 3,7 a 4,6 m de altura) em pé na calçada, na frente do muro, em x ~-141 a -134: no real ali só há gramado, árvores e o muro contínuo.",
+   "evidencia": "Vista em x -145,1: pé do muro v=466, topo v=375 -> 10,4 m da câmera, y 48,6 (49,5), altura 1,80 m (1,94). Vista em x -165,2: topo v=376 -> 1,75 m; portão bordô estreito em x -168,7 a -167,1 com painel vazado ao lado; prédio creme atrás, topo v=325 -> 3,1 a 3,6 m. Aérea: piscina em x_img -163 a -138, y_img 64 a 78; guia em y_img 49,5 e muro em 59, ou seja, 9,5 m de gramado. Contorno w550893672 em L.",
+   "correcao": "Muro: altura 1,85 m. Corpo oeste: w 0 a 21,5 (x -175,3 a -153,8), altura 3,4 m, cor creme (~#e6d9a8) com faixa de vidro verde. Corpo sudeste: w 21,5 a 39,7 só de y 71 a 86,6. Quadrante da piscina sem prédio. Vão do portão 1,6 a 2,7 m centrado em x -167,5 (modelo: 4 m; centro certo). Remover ou explicar a caixa bege na calçada. A linha do muro confere com y 47 do modelo (até 2,5 m); os 9,5 m de gramado aparecem como 2 a 3 m na cena porque a pista da planta está mais ao sul que a real nesse ponto."
+  },
+  {
+   "unidade": "so_bec_a (x -273 a -176)",
+   "gravidade": "media",
+   "descricao": "A leste do igarapé o fechamento não é mureta com tela: é muro azul cheio, de tijolo com pilastras, com 1,45 a 1,6 m, sem tela em cima, e com sebe contínua de flores amarelas na frente. A foto de consulta do autor rotulada 'xm215' mostra mureta com tela, mas no ponto que cai em x -216,5 pelo referencial não é isso que existe; provavelmente foi tirada mais a oeste.",
+   "evidencia": "Vista em x -216,5 (cobre x -233 a -200): topo do muro em v=387 a cerca de 11,5 m -> 1,5 m (1,6); sem quadro de tela; sebe de 1,2 a 1,5 m em toda a largura. Vista do igarapé (x -288): na borda leste do vão (x ~-270) aparece elemento azul-escuro cheio de 1,45 m.",
+   "correcao": "Trocar 'mureta_grade' por 'muro' com altura 1,55 m e pilastras a cada 3 m, de x -273 a -176, na mesma linha (y 51,1 a 52). Sebe de 1,3 m na frente se houver vegetação nesta rodada."
+  },
+  {
+   "unidade": "sul_e3_lanchonete",
+   "gravidade": "media",
+   "descricao": "O quiosque real fica na calçada, em diagonal na esquina, cerca de 5 m mais perto da avenida que o modelo (y 48,5 a 52,5, atrás da linha do lote), e é mais baixo e comprido. Na imagem de fev/2025 a testeira é preta com letras amarelas e as paredes são amarelas com preto; o vermelho e amarelo do modelo corresponde a uma imagem mais antiga.",
+   "evidencia": "Vista em x 481,6. Pé do quiosque: ponta próxima u=1415/v=515 -> (473; 41,9); ponta distante u=850/v=440 -> (479,9; 48,4); comprimento 9,5 m. Topo da testeira em v=325 e v=345 -> 2,5 a 2,6 m. Na esquina leste da transversal há outro quiosque, vermelho e amarelo, em x ~494 a 507.",
+   "correcao": "Caixa de 9,5 x 3 m, altura 2,6 m (testeira de 2,0 a 2,6 m), em diagonal de (473; 42) a (480; 48,5); se o gerador não gira, usar x 471 a 480, y 43 a 47. Cores: testeira preta (#1c1c1e) com letras amarelas, paredes amarelas (#f0c020). Nome em fonte genérica, sem a arte da faixa."
+  },
+  {
+   "unidade": "sul_e4_estacionamento (e gradil de sul_e5)",
+   "gravidade": "media",
+   "descricao": "Gradil branco baixo e portão deslocado. O modelo tem 1,6 m; medi barras até 1,9 a 2,0 m e pilares de 2,05 a 2,2 m a cada 2,5 m. O portão real do estacionamento fica em x 527 a 531,5 (modelo: 521 a 527). O gradil continua até a esquina do lote em x ~617,5, com entrada recuada em x 609,6 a 617,5; o modelo para em 603,9 (limite declarado pelo autor). Na foto da cena r24_sul_x578.png há uma caixa branca alta (~8 m) na frente das aletas, à esquerda, que não existe no real.",
+   "evidencia": "Vista em x 520,75: pé do gradil v=478 -> 9,4 m da câmera, y 44,1 (44,9); topo dos pilares v=362 -> 2,06 m; topo das barras v=372 -> 1,88 m; pilares a cada 139 px = 2,5 m; vão da entrada entre u=190 e u=427 -> x 531,4 a 527,2. Vista em x 613,8: canto do gradil em u=590 -> x 617,5.",
+   "correcao": "Gradil: altura 1,95 m, pilares 2,1 m a cada 2,5 m, mureta 0,3 m (certa). Vão do estacionamento em w 24 a 28,5 (x 527 a 531,5). Estender o gradil de sul_e5 até x 617,5, com vão em 609,6 a 617,5. Remover ou explicar a caixa branca. O vão do modelo em x 546 a 551 não foi visto."
+  },
+  {
+   "unidade": "so_cine_super_k_k001",
+   "gravidade": "leve",
+   "descricao": "Alturas e posições batem (ver confirmados). Diferenças de composição: (a) a ala 'CINEMA 3D' tem 2 janelões em arco com um medalhão oval entre eles, não 3 janelões; (b) a platibanda com o nome cobre só os ~13 m do lado leste da ala (x ~-1231 a -1244,5); o canto oeste desce em rampa até um beiral de ~3 m em x ~-1249 (o autor já declarou o canto como simplificado); (c) o painel do topo tem 22 a 23 m (modelo: 20,3), começa ~2,9 m para dentro do canto leste e passa ~0,9 m sobre a junção com a ala.",
+   "evidencia": "Vista em x -1229,9: arcos em u~830 a 960 e u~1105 a 1290; medalhão em u~985 a 1085; fim da platibanda em u=1295 -> x -1244,3 a -1245,4; beiral do canto em u=1490/v=330 -> 2,9 m, x -1248,6 a -1250. Captura do autor so_xm1222_cine.jpg (1411 px): painel de u=357 a 1028 e corpo no chão de u=265 a ~1000 -> painel = 0,91 x 24,3 m = 22,2 m.",
+   "correcao": "Ala: 2 janelas de 4,0 x 2,4 m em w 1,6 a 5,6 e 10,2 a 14,2, com painel oval de ~2,6 m em w 6,6 a 9,2. Testeira e frisos da platibanda só em w 3,5 a 16,2; no trecho w 0 a 3,5 o topo cai de 9,8 para ~3,0 m. Painel do topo em w 15,3 a 37,6 (x -1233,7 a -1211,4), com 5 quadros de ~4,45 m."
+  },
+  {
+   "unidade": "so_bec_monumento_m001",
+   "gravidade": "leve",
+   "descricao": "Composição diferente (o autor declarou confiança baixa). No real não há pedestal de 1,3 m: o trator fica quase no chão, sobre base baixa, girado uns 30 a 40° (lâmina voltada para noroeste), e a inscrição está pintada na lâmina. O conjunto fica 3 a 4 m mais perto da avenida e é um pouco mais baixo.",
+   "evidencia": "Vista em x -570,85. Pé da lâmina em u=150/v=505 e u=440/v=515 -> x -561,6 a -566,1, y 53,3 a 54,4. Topo da lâmina v=430 -> 1,07 m. Traseira do trator em y ~60 a 61. Topo da capota v=307 -> 3,15 a 3,4 m. Modelo: y 57,6 a 62,1, topo 3,7 m.",
+   "correcao": "Base de 0,3 m; volume do trator de 0,3 a 3,3 m; lâmina de 4,8 x 1,05 m com as duas linhas de texto, na frente em y ~54; conjunto em x -566,5 a -560, y 53,5 a 61, girado ~35° se o gerador permitir."
+  },
+  {
+   "unidade": "so_muro_rosa_r001",
+   "gravidade": "leve",
+   "descricao": "Falta um portão metálico escuro, de ripas, com cerca de 3,9 m, no meio do muro rosa. A altura medida é 1,8 m (modelo: 2,0 m).",
+   "evidencia": "Vista em x -1198,9: portão entre u=594 e u=745 -> x -1194,1 a -1197,9; topo do muro v=372 a 13 m -> 1,80 m.",
+   "correcao": "Vão em w 10,6 a 14,5 (x -1197,9 a -1194) com portão verde-escuro (#2e3b33). Altura do muro 1,85 m."
+  },
+  {
+   "unidade": "so_sobrado_s001",
+   "gravidade": "leve",
+   "descricao": "Telhado um pouco alto: beiral do piso superior medido em 5,6 a 5,9 m e cumeeira em 6,7 a 7,1 m (com câmera a 2,27 m: até 6,4 e 7,7); o modelo tem 6,2 e 7,8 m. Os portões e a posição do muro estão certos.",
+   "evidencia": "Vista em x -1168,5, casa a 18 a 19,5 m: beiral v=262, cumeeira v=233.",
+   "correcao": "Parede do piso superior 5,9 m (em vez de 6,2); altura_m do telhado 1,3 (cumeeira ~7,2 m)."
+  },
+  {
+   "unidade": "so_muro_terreno_a001",
+   "gravidade": "leve",
+   "descricao": "Falta um portão azul de pedestre no muro branco, com caminho de concreto até a calçada. O resto confere.",
+   "evidencia": "Vista em x -1089,4: portão entre u=540 e u=580 -> x -1084,5 a -1083,5; o vão entre pilastras ali é de 4,0 m contra 2,9 m nos demais.",
+   "correcao": "Vão em w 50,2 a 51,7 (x -1084,8 a -1083,3) com portão azul (#2f5fd0) de 1,6 m."
+  },
+  {
+   "unidade": "so_pm_quartel_qcg1",
+   "gravidade": "leve",
+   "descricao": "Prédio correto. Diferenças pequenas: topo da marquise em 3,55 a 3,8 m (modelo: 3,3 m); as torres avançam ~1,3 m sobre o corpo central e ~0,8 m sobre as alas (modelo: 1,2 m igual). Com câmera a 2,27 m as alas dariam 9,5 a 9,7 m e as torres 10,9 m, isto é, o modelo pode estar 4 a 6 % baixo.",
+   "evidencia": "Vista em x -1007,1: marquise em v=322 a 19,5 m; face lateral da torre oeste com 13,5 px na altura das janelas -> 1,31 m; pé da torre 3,5 % mais perto que o da ala -> 0,8 m.",
+   "correcao": "Marquise de 3,3 a 3,7 m. Opcional: alas 9,3 m, torres 10,8 m, corpo central 9,6 m."
+  }
+ ],
+ "confirmados": [
+  "Cine Super K, alturas (câmera 2,1 m, fachada a 13,3 m; entre parênteses com 2,27 m e 14,3 m, distância obtida por triangulação entre x -1229,9 e x -1198,9): topo do painel 11,5 (12,3) contra 12,0 do bloco; base do painel 8,2 (8,8) contra 8,6; letreiro de 3,75 a 5,25 (4,0 a 5,65) contra 3,9 a 5,45; marquise inferior 2,9 a 3,6 contra 3,1 a 3,8; marquise superior 5,5 a 6,1 contra 5,6 a 6,1; platibanda da ala CINEMA 3D 9,1 a 9,6 (10,2) contra 9,8. Painel com 5 quadros.",
+  "Cine Super K, posição: fachada em y 61,7 pela triangulação (modelo 62,4; cadastro 62,3 a 62,5); junção corpo/ala em x -1230,8 (modelo -1232,8); canto oeste no chão em x -1246,8 a -1249 (modelo -1249); canto leste em x -1206,2 (modelo -1208,5).",
+  "Quartel da PM, alturas: alas 8,9 a 9,1 m (bloco 9,0); torres 10,2 m (10,5); corpo central 9,1 m (9,3); faixa do letreiro de 7,1 a 9,1 m (7,2 a 9,25); barra azul 1,26 m (1,2); janelas das alas 2,3 a 3,1 m e 6,2 a 7,05 m (2,3 a 3,1 e 6,2 a 7,2). Com câmera a 2,27 m tudo sobe ~7 %.",
+  "Quartel da PM, composição e posição: 9 janelas estreitas no corpo central, 2 + 2 janelas no térreo, porta central com marquise, duas torres de pastilha azul. Larguras proporcionais (escaladas a 36,6 m): ala oeste 6,8, torre 4,1, centro 14,3, torre 3,9, ala leste 7,45 m (bloco: 6,6 / 4,7 / 13,5 / 3,9 / 7,9). Centro do prédio em x -1010 (±1); fachada em y 66,1 a 68,4 (modelo 68,5).",
+  "Sobrado: muro de x -1158,3 a -1182,9 (modelo -1158 a -1183), y 59,6 a 60,2 (modelo 59,0), altura 1,95 a 2,05 m (1,8); portão pequeno em x -1174 a -1173 (modelo w 9,3 a 10,3); garagem em x -1182,6 a -1180 (modelo w 0 a 3,2); piso superior de x -1182 a -1166,4 (modelo -1180 a -1166,4).",
+  "Muro rosa: y 59,7 a 60,3 (modelo 59,4); altura 1,8 m (modelo 2,0).",
+  "Muro do terreno (so_muro_terreno_a001): y 58,0 a 58,7 (modelo 58,0); altura 1,58 m (1,7); pilastras escuras a cada 2,9 m (3,0); cor branca com pilastra azul-escura.",
+  "Anexo da PM: prédio em x -954 a -971 pelo telhado (cadastro -953,2 a -968,4); gradil azul de 1,85 m (modelo 2,0). Gradil a oeste do quartel na linha da fachada, do prédio até x ~-1036, onde começa o muro branco (modelo -1028,2 a -1040).",
+  "Linha do gradil do batalhão (limite do OSM), y medido pelo pé do muro com câmera a 2,1 / 2,27 m: x -945: 55,7 / 56,6 (modelo 56,7); x -844: 54,0 / 54,9 (56,7); x -681: 54,3 / 55,2 (56,7); canto da portaria x -584: 56,3 / 57,1 (56,7); x -422: 52,7 / 53,7 (54,0); x -296: 50,6 / 51,5 (52,1); x -216: ~49,8 a 50,7 (51,5). Todos dentro de 2,5 m, que é a incerteza da posição da câmera.",
+  "Distância guia-gradil do batalhão: na aérea (x -900 a -780) a guia sul está em y_img 54,5 a 55 e a linha do gradil em 65 a 66, ou seja, 10 a 11 m, o que confirma os 10,5 a 12 m do autor. No Street View a câmera fica a 10,8 a 12,6 m do muro e a guia não aparece na imagem (está a menos de 5,2 m da câmera): coerente.",
+  "Vão do igarapé: fim do muro oeste em x -295,7 (modelo -296); início do fechamento leste em x ~-270 (modelo -273); eixo do canal em x ~-286 (centro do vão do modelo -284,5). Não é preciso deslocar o canal 8 m para oeste; o deslocamento visto na aérea é o da própria aérea.",
+  "Passo dos postes do gradil do batalhão: 2,2 a 2,6 m (modelo 2,5). Cor azul da mureta e postes azuis: corretos.",
+  "r24, gradil da escola: linha em y 46,2 a 47,7 (modelo 47,0); altura 1,75 a 1,9 m (1,9); azul, com trechos de muro com pintura. Guia sul real nesse trecho em y ~40,3 a 41,2.",
+  "r24, muro azul: existe, é contínuo, azul; linha em y 48,6 a 49,5 (modelo 47,0); portão bordô na ponta oeste centrado em x -167,5 (modelo -167,3).",
+  "r24, terreno cercado (x 341,5 a 368): gradil azul sobre base baixa com gramado e árvores atrás: existe (só conferência visual, fotoesfera de 2021).",
+  "r24, estacionamento: existe, com gradil branco de pilares quadrados a cada 2,5 m e mureta baixa.",
+  "Altura da câmera: três checagens independentes dão 2,23 m (largura cadastral do quartel), 2,27 m (triangulação da fachada do cinema) e 2,3 a 2,57 m (portão do sobrado, na borda da imagem, pouco confiável)."
+ ],
+ "nao_conferido": [
+  "Coordenadas reais dos objetos na cena do Unity: não abri o Unity. O que digo da cena vem das fotos do autor em 06_unity e 07_comparacoes; a causa das duas caixas (bege em x ~-141 a -134 e branca alta na frente do prédio cinza) não foi investigada.",
+  "Posição da guia e da calçada da planta em relação à real: só vi que a guia sul real passa de y ~52 (x -1230) para y ~40 (x -145 a 440), e que a câmera do Street View anda em y 47 a 38 nesse percurso; não medi a planta.",
+  "Altura absoluta da câmera do Street View: fica entre 2,1 e 2,3 m; por isso todas as alturas têm ±10 %.",
+  "Recuo do painel do topo do cinema em relação à fachada, profundidade dos corpos, laterais e fundos de todos os prédios.",
+  "so_muro_terreno_b002 e a entrada de terra em x -1050 a -1045,5: só vi a captura do autor, sem medir.",
+  "Trechos do batalhão não visitados: x -780 a -700, x -546 a -430 e x -400 a -300. Não sei onde exatamente a mureta com tela vira muro cheio entre x -296 e -233.",
+  "Escola: alturas com incerteza maior (beiral 7,7 a 8,2 m depende da linha girada do cadastro); número e ritmo real das janelas, posição do portão (modelo x 430 a 434) e composição do segundo piso não conferidos por causa das árvores. Canto NE: cadastro (453; 65), aérea (451; 53 a 55), triangulação duvidosa (457; 70).",
+  "Prédio cinza: profundidade (~26 m é dedução da caixa do cadastro), número exato de aletas, vão do gradil do modelo em x 546 a 551 e o prédio de vidro ao fundo.",
+  "Prédio atrás do muro azul: distância e altura estimadas (3,1 a 3,6 m supondo 15 a 22 m da câmera); janelas não conferidas.",
+  "Aérea z18 no trecho x 500 a 610: parece anterior ao estacionamento e ao prédio cinza, não serviu para conferir. A inclinação dos prédios altos na aérea (cinema, quartel) impediu medir guia-fachada por ela.",
+  "Cores só a olho, com luz de fim de tarde em jan/2025 e de dia nublado em fev/2025; textos dos letreiros e fontes não conferidos.",
+  "Elementos reais grandes que faltam e mudam a leitura (sem medidas inventadas). Batalhão: fileira contínua de árvores grandes no gramado de ~10 m entre a guia e o muro; sebes floridas; concertina; campo aberto atrás (na cena há caixas bege provisórias); muros de concreto cinza nas duas margens do igarapé; obstáculos de pista na entrada. PM: estacionamento asfaltado em recuo na frente (guia pintada em y ~57), canteiros de sebe, dois bustos, mastros. Cinema: pátio calçado com postes de globo e balizadores. Terreno murado: quiosque de telha, tendas azuis, abrigo de ônibus. r24: copas grandes na frente da escola; abrigo de ônibus em x ~452 a 458; muro bege com faixas coloridas entre x ~454 e 469; rua transversal em x ~481 a 493 saindo girada ~19° para sudeste; quiosque vermelho e amarelo na esquina leste (x ~494 a 507); tobogã e piscina atrás do muro azul."
+ ],
+ "vistas_consultadas": 21
+}

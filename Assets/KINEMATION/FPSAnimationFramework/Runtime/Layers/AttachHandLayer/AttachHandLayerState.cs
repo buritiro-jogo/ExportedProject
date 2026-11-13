@@ -1,4 +1,4 @@
-﻿// Designed by KINEMATION, 2024.
+// Designed by KINEMATION, 2024.
 
 using KINEMATION.FPSAnimationFramework.Runtime.Core;
 using KINEMATION.KAnimationCore.Runtime.Core;

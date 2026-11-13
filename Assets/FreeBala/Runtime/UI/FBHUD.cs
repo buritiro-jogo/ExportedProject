@@ -49,6 +49,7 @@ namespace FreeBala
         // HUD v2 do web (webui.js .h-root)
 
         Image hpLag, ring; Text fmT, medKey, ringT, ringS; RawImage wSil, medIc, miniMap; RectTransform magRT, ringRT, scA, scMid, scB, squadRT, miniClip, miniN, cone; Text squadCt; Image lineA, lineB;
+        bool roleTrim;                                                                   // r68: De Rolê: placar/minimapa/esquadrão/dinheiro escondidos
 
         readonly List<Image> magPips = new(); readonly List<Image> miniRings = new(); readonly List<(RectTransform rt, Image em, Text num, Text nm, Image bar, Text dt, CanvasGroup cg)> sqRows = new();
 
@@ -980,7 +981,11 @@ namespace FreeBala
 
             float dt = Time.deltaTime; var pl = FBPlayer.I; var cam = Camera.main;
 
-            canvas.enabled = !(FBMatch.I && FBMatch.I.mode != null && FBMatch.I.mode.role) || FBMatch.Paused || CardOpen;
+            // De Rolê sem HUD de combate — r68: com arma da loja na mão liga a mira/vida/munição (e o aviso/recibo da loja por alguns
+            // segundos); placar, minimapa, esquadrão e dinheiro do 4V4 continuam fora no rolê
+            bool roleNow = FBMatch.I && FBMatch.I.mode != null && FBMatch.I.mode.role;
+            if (roleNow != roleTrim) { roleTrim = roleNow; foreach (var rt in new[] { scA, scMid, scB, mini }) if (rt) rt.gameObject.SetActive(!roleNow); if (cashT) cashT.gameObject.SetActive(!roleNow); if (cashPlus) cashPlus.gameObject.SetActive(!roleNow); }
+            canvas.enabled = !roleNow || FBMatch.Paused || CardOpen || FBGunShop.HudOn;
 
             if (pl)
 
@@ -1172,7 +1177,7 @@ namespace FreeBala
 
         {
 
-            var me = FBMatch.Player; if (!me || !FBMatch.I) { squadRT.gameObject.SetActive(false); return; }
+            var me = FBMatch.Player; if (!me || !FBMatch.I || roleTrim) { squadRT.gameObject.SetActive(false); return; }   // r68: rolê sem painel de esquadrão
 
             var rows = FBMatch.Actors().Where(Ally).ToList(); if (rows.Count == 0) { squadRT.gameObject.SetActive(false); return; }
 
@@ -1505,8 +1510,18 @@ namespace FreeBala
             Tex = null; var cols = Object.FindObjectsByType<MeshCollider>(FindObjectsSortMode.None).Where(c => c.gameObject.layer == FBWorld.LMap).ToList(); if (cols.Count == 0) return;
 
             var b = cols[0].bounds; foreach (var c in cols) b.Encapsulate(c.bounds); center = b.center; Size = Mathf.Min(Mathf.Max(b.size.x, b.size.z), 900); mapBounds = b;
+            // r65: área = onde se anda (NavMesh) ∪ limites jogáveis, recortada pelas colisões, com margem — antes a caixa de TODAS as
+            // colisões (cidade em volta inclusa) limitada a 900 m e centrada nela cortava pontas do mapa jogável
+            string mapId = FBMatch.I ? FBMatch.I.mapId : FBSession.map; bool neutro = FBVisual.C.minimap == "neutro" && !FBVisual.Off;
+            var nav = FBMinimapNeutro.NavArea(b, out var tri); if (FBVisual.Off) nav = null;   // -fbvisualoff: área antiga (antes × depois)
+            if (nav is Bounds nb)
+            {
+                var pb = FBWorld.GetPlayableBounds(mapId); var a = nb;
+                Vector3 pmn = Vector3.Max(pb.min, b.min), pmx = Vector3.Min(pb.max, b.max); if (pmn.x < pmx.x && pmn.z < pmx.z) { a.Encapsulate(pmn); a.Encapsulate(pmx); }
+                center = new Vector3(a.center.x, b.center.y, a.center.z); Size = Mathf.Min(Mathf.Max(a.size.x, a.size.z) * 1.05f + 24, 1800);
+            }
 
-            int R = FBQuality.Mobile ? 1024 : 2048;   // antes 512 px para até 900 m (≈1,8 m por pixel: borrado)
+            int R = FBQuality.Mobile ? 1024 : Size > 1000 ? 4096 : 2048;   // antes 512 px para até 900 m (≈1,8 m por pixel: borrado)
 
             // luz neutra de dia (a partida pode começar à noite/chuva: o mapa saía escuro), sem neblina e sem sombras
 
@@ -1537,6 +1552,12 @@ namespace FreeBala
             Tex.SetPixels32(px); Tex.Apply(true, true);
 
             cam.targetTexture = null; Object.Destroy(rt); Object.Destroy(g);
+            if (neutro)
+            {
+                try { var t = FBMinimapNeutro.Build(Tex, center, Size, b.max.y + 5, b.size.y + 30, tri, mapId); if (t) { Object.Destroy(Tex); Tex = t; } }
+                catch (System.Exception e) { Debug.LogWarning($"[FreeBala][minimapa] neutro falhou, fica a foto: {e.Message}"); }
+            }
+            Debug.Log($"[FreeBala][minimapa] {mapId}: {(neutro ? "neutro" : "foto")} · centro ({center.x:0},{center.z:0}) lado {Size:0} m · {(nav != null ? "área do NavMesh" : "caixa das colisões")}");
 
             foreach (var (l, en, it, rot, sh) in saved) if (l) { l.enabled = en; l.intensity = it; l.transform.rotation = rot; l.shadows = sh; }
 

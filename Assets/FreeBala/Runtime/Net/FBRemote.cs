@@ -27,7 +27,8 @@ namespace FreeBala
             s.ayaw = m.ContainsKey("ay") ? Coords.YawFromWeb(Json.F(m, "ay")) : s.yaw; s.pitch = Json.F(m, "pi") * Mathf.Rad2Deg; s.lean = Json.F(m, "ln");
             buf.Add(s); if (buf.Count > 30) buf.RemoveAt(0);
         }
-        public void Shot() { if (ch.weapon != null) { ch.lastShot = 0; FBAudio.PlayAt(ch.weapon.fire != null && ch.weapon.fire.Count > 0 ? ch.weapon.fire[Random.Range(0, ch.weapon.fire.Count)] as string : "disparo1", ch.MuzzlePos, .8f, 6); FBFx.Muzzle(ch.MuzzlePos, .55f, ch.weapon.cls); FBBotBrain.Noise(ch.Pos); } }
+        public static int ShotsShown;   // r68e: tiros de outros jogadores mostrados aqui (som + clarão); o autoteste de LAN (FBLanTeste) confere
+        public void Shot() { if (ch.weapon != null) { ShotsShown++; ch.lastShot = 0; FBAudio.PlayAt(ch.weapon.fire != null && ch.weapon.fire.Count > 0 ? ch.weapon.fire[Random.Range(0, ch.weapon.fire.Count)] as string : "disparo1", ch.MuzzlePos, .8f, 6); FBFx.Muzzle(ch.MuzzlePos, .55f, ch.weapon.cls); FBBotBrain.Noise(ch.Pos); } }
         public void Teleport(Vector3 p) { buf.Clear(); transform.position = p; extrap = false; blend = 0; }   // renasceu: sem interpolar do lugar da morte
 
         // [parceiro] v1 (thread de física): tempo de CPU do Update medido pelo FBTempo (desligado no jogo: só um teste de bool; o FBTesteExe liga)

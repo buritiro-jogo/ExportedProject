@@ -21,7 +21,7 @@ MonoBehaviour:
   m_DefaultRendererIndex: 0
   m_RequireDepthTexture: 1
   m_RequireOpaqueTexture: 0
-  m_OpaqueDownsampling: 1
+  m_OpaqueDownsampling: 0
   m_SupportsTerrainHoles: 1
   m_SupportsHDR: 1
   m_HDRColorBufferPrecision: 0
@@ -68,11 +68,11 @@ MonoBehaviour:
   m_NumIterationsEnclosingSphere: 64
   m_SoftShadowQuality: 2
   m_AdditionalLightsCookieResolution: 2048
-  m_AdditionalLightsCookieFormat: 3
+  m_AdditionalLightsCookieFormat: 1
   m_UseSRPBatcher: 1
   m_SupportsDynamicBatching: 0
   m_MixedLightingSupported: 1
-  m_SupportsLightCookies: 0
+  m_SupportsLightCookies: 1
   m_SupportsLightLayers: 0
   m_StoreActionsOptimization: 0
   m_UseAdaptivePerformance: 1

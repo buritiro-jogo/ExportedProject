@@ -216,7 +216,8 @@ namespace FreeBala
             if (a.civ)
             {
                 if (a.hp > 0) { a.GetComponent<FBCivilian>()?.OnHit(); return; }
-                a.Die(src); if (src && src.isPlayer) { FBSession.money = Mathf.Max(0, FBSession.money - 150); FBHUD.I?.Toast("CIVIL ATINGIDO", a.Name.ToUpper(), "−$150 · NÃO ATIRE EM INOCENTES", new Color(.86f, .17f, .15f)); }
+                // r68: no De Rolê online o Host guarda a carteira (loja de armas): a multa vai para ele também (wdec, só diminui)
+                a.Die(src); if (src && src.isPlayer) { FBSession.money = Mathf.Max(0, FBSession.money - 150); FBSession.Save(); FBGunShop.OnPenalty(150); FBHUD.I?.Toast("CIVIL ATINGIDO", a.Name.ToUpper(), "−$150 · NÃO ATIRE EM INOCENTES", new Color(.86f, .17f, .15f)); }
                 FBMatch.Feed($"{(src ? src.Name : "?")} ✖ {a.Name} (civil)", src && src.isPlayer); return;
             }
             if (a.hp <= 0)

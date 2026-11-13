@@ -38,7 +38,10 @@ namespace FreeBala
 
     public class RecoilClass { public float v, h, ramp, spread, ads, bloom, bloomMax, rec; }
 
-    public class MapDef { public string id, name; public bool disabled; public Dictionary<string, object> level; public List<Vector3> spawnA = new(), spawnB = new(), bots = new(), points = new(), waypoints = new(); }
+    // r68d: dataA/dataB/dataP = os pontos COMO VIERAM do fb_data (spawnA, spawnB e points+waypoints+bots). O EnsureLevel do FBMatch filtra as
+    // listas de cima no próprio MapDef e, quando uma fica vazia, sorteia pontos novos (outros em cada PC e em cada partida); a loja do De Rolê,
+    // que precisa do MESMO lugar em todos os PCs, usa estas.
+    public class MapDef { public string id, name; public bool disabled; public Dictionary<string, object> level; public List<Vector3> spawnA = new(), spawnB = new(), bots = new(), points = new(), waypoints = new(), dataA = new(), dataB = new(), dataP = new(); }
 
     public class SkinDef { public string id, name, sex, src, npc2, func; public string[] cats; public int team; public bool role, sheet; }   // r52: cats/func = categoria e função no elenco (FBElenco)
 
@@ -57,7 +60,7 @@ namespace FreeBala
 
         public static readonly HashSet<string> BannedWeapons = new(System.StringComparer.OrdinalIgnoreCase) { "m79", "garruncha_12", "submetralhadora_caseira" };
         // [parceiro 31/10] Praça do PT, Orla e Centro Cívico liberados junto com Vila Jardim e Praça das Águas
-        public static readonly HashSet<string> AllowedMaps = new(System.StringComparer.OrdinalIgnoreCase) { "vila_jardim", "praca_aguas", "praca_pt", "orla", "centro_civico", "morro_sacola" };
+        public static readonly HashSet<string> AllowedMaps = new(System.StringComparer.OrdinalIgnoreCase) { "vila_jardim", "praca_aguas", "praca_pt", "orla", "centro_civico", "morro_sacola", "bv_city" };
 
         public static void Load()
         {
@@ -97,6 +100,7 @@ namespace FreeBala
                 var m = new MapDef { id = kv.Key, name = Json.S(o, "name"), disabled = dis, level = Json.O(o, "level") };
                 void Fill(List<Vector3> dst, string k) { var l = Json.L(o, k); if (l != null) foreach (var p in l) dst.Add(Coords.FromWeb(p as List<object>)); }
                 Fill(m.spawnA, "spawnA"); Fill(m.spawnB, "spawnB"); Fill(m.bots, "bots"); Fill(m.points, "points"); Fill(m.waypoints, "waypoints");
+                m.dataA.AddRange(m.spawnA); m.dataB.AddRange(m.spawnB); m.dataP.AddRange(m.points); m.dataP.AddRange(m.waypoints); m.dataP.AddRange(m.bots);   // r68d: cópia intocada (ver MapDef)
                 Maps[kv.Key] = m;
             }
             foreach (var o in Json.L(root, "skins"))

@@ -49,7 +49,8 @@ namespace FreeBala
         bool ok; int pIsAiming = -1, pAimW = -1, pMove = -1, pMouse = -1, pMouseD = -1, pLean = -1, pPlayW = -1;
         Vector3 olhoAnt;
         KVirtualElement vLeftIk, vLeftHint, vRightIk, vRightHint, vWeapon, vWeaponIk;
-        Transform bLeftHand, bLeftFore, bRightHand, bRightFore;
+        Transform bLeftHand, bLeftFore, bRightHand, bRightFore, bRightArm;
+        public static bool SwayNaMao = System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-fbswaysolto") < 0;   // r65: ver AplicarArma
         Vector3 desvioP; Quaternion desvioQ = Quaternion.identity;   // quanto as camadas de arma mexeram no quadro passado
 
         public static FBFpsaf Criar(FBCharacter c)
@@ -96,6 +97,7 @@ namespace FreeBala
             if (vLeftIk == null || vRightIk == null) return;               // prefab ainda sem os ossos virtuais (FBFpsafSetup)
             bLeftHand = ch.an.GetBoneTransform(HumanBodyBones.LeftHand); bLeftFore = ch.an.GetBoneTransform(HumanBodyBones.LeftLowerArm);
             bRightHand = ch.an.GetBoneTransform(HumanBodyBones.RightHand); bRightFore = ch.an.GetBoneTransform(HumanBodyBones.RightLowerArm);
+            bRightArm = ch.an.GetBoneTransform(HumanBodyBones.RightUpperArm);
             Soltar();
             ok = true;
         }
@@ -135,8 +137,10 @@ namespace FreeBala
             // o FBRig calculou o alvo com a arma AINDA SEM o balanço deste quadro; somo o desvio que as camadas de arma
             // aplicaram no quadro passado, para a mão esquerda acompanhar a arma em vez de ficar parada no ar
             var p = ch.weaponGO.transform.position;
-            alvoEsq.SetPositionAndRotation(p + desvioQ * (r.LeftTarget - p) + desvioP,
-                                           desvioQ * (bLeftHand ? bLeftHand.rotation : ch.transform.rotation));
+            // r65: com SwayNaMao a esquerda é recolocada depois (FBRig.RegrabLeft) — aqui só o alvo deste quadro, sem o desvio do anterior
+            Vector3 dP = SwayNaMao ? Vector3.zero : desvioP; Quaternion dQ = SwayNaMao ? Quaternion.identity : desvioQ;
+            alvoEsq.SetPositionAndRotation(p + dQ * (r.LeftTarget - p) + dP,
+                                           dQ * (bLeftHand ? bLeftHand.rotation : ch.transform.rotation));
             if (vLeftIk) vLeftIk.targetBone = alvoEsq;
         }
 
@@ -148,6 +152,21 @@ namespace FreeBala
             var t = ch.weaponGO.transform; var b = vWeaponIk.transform;
             desvioP = b.position - t.position; desvioQ = b.rotation * Quaternion.Inverse(t.rotation);
             if (desvioP.sqrMagnitude > .25f) { desvioP = Vector3.zero; desvioQ = Quaternion.identity; return; }   // trava: nunca mais de 50 cm
+            if (SwayNaMao)
+            {
+                // r65 (Ruan: "com fuzil os braços saem de posição e as mãos perdem o alinhamento com a arma" — andando, correndo, mirando,
+                // atirando e recarregando). CAUSA: aqui a arma era levada SOZINHA para a pose do balanço (até 8,5° de giro, RODADA57 §6),
+                // DEPOIS do FBRig: a mão direita ficava onde estava (o alvo "IK RightHand" é o próprio osso da mão) e a esquerda ia para o
+                // alvo do quadro anterior somado ao desvio do quadro anterior. No pacote, as mãos são filhas do WeaponBone e vão junto; nos
+                // jogos de referência (Complexo, IE, FF) a arma é filha da mão direita e a esquerda é posta nela no mesmo quadro.
+                // Agora o balanço move a MÃO DIREITA (IK do braço) e a arma vai junto como filha; a esquerda é recolocada nela já no lugar
+                // final. Recarga/saque/reação (mãos ocupadas): a arma fica com o clipe. -fbswaysolto = como antes.
+                if (ch.HandsBusy || !bRightHand || !bRightFore || !bRightArm) { desvioP = Vector3.zero; desvioQ = Quaternion.identity; return; }
+                var hp = b.position + desvioQ * (bRightHand.position - t.position); var hq = desvioQ * bRightHand.rotation;
+                FBIK.TwoBonePole(bRightArm, bRightFore, bRightHand, hp, bRightFore.position, 1); bRightHand.rotation = hq;
+                ch.rig?.RegrabLeft();
+                Medir(); return;
+            }
             t.SetPositionAndRotation(b.position, b.rotation);
             Medir();
         }

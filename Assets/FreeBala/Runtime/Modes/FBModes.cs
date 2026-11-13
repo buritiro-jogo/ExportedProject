@@ -543,7 +543,7 @@ namespace FreeBala
         public class DeRole : FBMode
         {
             public DeRole(FBMatch g) : base(g) { name = "DE ROLÊ"; respawn = true; autoRespawn = 3; role = true; }
-            public override void Setup() => FBHUD.I?.MatchToast("DE ROLÊ · G = GPS · K = SOM · E NA OFICINA", GOLD, 4);
+            public override void Setup() => FBHUD.I?.MatchToast("DE ROLÊ · G = GPS · K = SOM · E NA OFICINA · B NA LOJA DE ARMAS", GOLD, 4);
             public override void Update(float dt) => FBRole.Tick(dt);
         }
 
@@ -554,6 +554,45 @@ namespace FreeBala
             public override void Setup() => FBHUD.I?.MatchToast("ONLINE · " + (FBNet.I ? FBNet.I.status : "CONECTANDO…"), GOLD, 3);
             public override void Hud() { var n = FBNet.I; if (n) FBHUD.I?.SetMatch($"ONLINE · {G.MapName}", n.score[0].ToString(), n.status, n.score[1].ToString(), -1, -1, null); }
             public override void OnKill(FBCharacter v, FBCharacter k, bool head) { }
+        }
+
+        // ---------------------------------------------------------------- r69 ROLÊ ARMADO (online)
+        // Pedido 13/11/2026: "modos de rolê com armas". A mesma cidade livre do De Rolê (carros, paredão, NPCs, loja), mas cada jogador entra
+        // com o próprio arsenal e os jogadores são inimigos entre si (FBMatch.PvpPlayers); NPCs, trânsito e polícia continuam como no rolê.
+        // Sem placar e sem fim; morreu, renasce em 3 s no ponto do mapa mais longe dos outros jogadores (não na base de todos).
+        public class DeRoleArmado : DeRole
+        {
+            public DeRoleArmado(FBMatch g) : base(g) { name = "ROLÊ ARMADO"; FBMatch.PvpPlayers = true; }
+            public override void Setup() => FBHUD.I?.MatchToast("ROLÊ ARMADO · TODO MUNDO ARMADO · G = GPS · K = SOM · B NA LOJA DE ARMAS", RED, 4.5f);
+            public override Vector3 SpawnPoint()
+            {
+                var cand = G.Map.waypoints.Concat(G.Map.bots).Where(p => p != Vector3.zero).ToList(); if (cand.Count == 0) return base.SpawnPoint();
+                var foes = FBMatch.Remotes.Where(r => r && r.alive).Select(r => r.Pos).ToList();
+                if (foes.Count == 0) return cand[Random.Range(0, cand.Count)];
+                var longe = cand.OrderByDescending(p => foes.Min(f => (f - p).Flat().sqrMagnitude)).Take(Mathf.Max(1, cand.Count / 4)).ToList();
+                return longe[Random.Range(0, longe.Count)];
+            }
+        }
+
+        // ---------------------------------------------------------------- r69 2 × 2 (online, squad de 4)
+        // O servidor sorteia 2 contra 2 e cria uma sala só dos quatro. A área de combate é a mesma nos 4 PCs (FBMatch.Arena2x2: semente = código
+        // da sala), com a parede da zona parada marcando o limite e dano fora dela, como no Clássico. Placar e fim vêm do servidor (20 abates
+        // ou 10 min); renasce em 3 s no ponto da área mais longe dos inimigos.
+        public class Duelo2x2 : Online
+        {
+            static readonly FBBrCore.Phase[] FIXA = { new() { wait = 1e6f, shrink = 1, k = 1, dmg = 3 } }; FBZone Z;
+            public Duelo2x2(FBMatch g) : base(g) { name = "2 × 2"; }
+            public override FBZone.Z Zone => Z?.zone;
+            public override void Setup()
+            {
+                if (G.arena != null) { Z = new FBZone(G, FIXA) { warn = "FORA DA ÁREA DO 2 × 2" }; Z.Fx(); Z.Start(G.arena.c, G.arena.r).dmg = FIXA[0].dmg; }
+                var lados = FBLobbyNet.I ? FBLobbyNet.I.lastSides : null;
+                FBHUD.I?.MatchToast("2 × 2 · PRIMEIRO TIME A 20 ABATES" + (string.IsNullOrEmpty(lados) ? "" : " · " + lados), GOLD, 5);
+            }
+            public override Vector3 SpawnPoint() => G.arena != null ? G.arena.SafeSpot(FBSession.team) : base.SpawnPoint();
+            public override void Update(float dt) { if (Z != null) { Z.Anim(dt); Z.Step(dt); Z.Visual(); } }
+            public override void Dispose() => Z?.Dispose();
+            public override void Hud() { var n = FBNet.I; if (n) FBHUD.I?.SetMatch($"2 × 2 · {G.MapName}", n.score[0].ToString(), n.status, n.score[1].ToString(), n.score[0] / 20f, n.score[1] / 20f, null); }
         }
     }
 }

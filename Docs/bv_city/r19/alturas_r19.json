@@ -1,0 +1,859 @@
+{
+ "origem": "wf_cbe15747-b87 (2 medidores, so leitura)",
+ "fachadas": [
+  {
+   "id": "gob_67JXR8GC_GRJX",
+   "quadros_usados": [
+    "q_02725 (girado -3 graus)",
+    "q_02800 (girado -3 graus)",
+    "q_02685",
+    "q_02722 e q_02728 (paralaxe)",
+    "q_02760 (Saveiro passando)"
+   ],
+   "referencias": [
+    {
+     "objeto": "onda da telha de fibrocimento (passo 177 mm), lida por FFT na sombra do beiral",
+     "tamanho_real_m": 0.177,
+     "tamanho_px": 9.8,
+     "quadro": "q_02725",
+     "plano": "parede do predio (recuada)",
+     "px_por_m": 55.4
+    },
+    {
+     "objeto": "janela de correr padrao, altura 1,00 m (larguras lidas 1,2 e 1,6 m, padrao 1,20/1,50)",
+     "tamanho_real_m": 1,
+     "tamanho_px": 53,
+     "quadro": "q_02725",
+     "plano": "parede do predio (recuada)",
+     "px_por_m": 53
+    },
+    {
+     "objeto": "escala do alinhamento derivada: telha 177 mm x paralaxe grade/parede 1,50 medida entre q_02722 e q_02728 (rotacao descontada pelas nuvens)",
+     "tamanho_real_m": 1,
+     "tamanho_px": 83,
+     "quadro": "q_02725",
+     "plano": "alinhamento (mureta e grade)",
+     "px_por_m": 83
+    },
+    {
+     "objeto": "portao de pedestre da mureta, largura 0,85 m",
+     "tamanho_real_m": 0.85,
+     "tamanho_px": 70,
+     "quadro": "q_02685",
+     "plano": "alinhamento (mureta e grade)",
+     "px_por_m": 82.4
+    }
+   ],
+   "medidas": [
+    {
+     "elemento": "pilarete da frente (descricao ~1,6 m)",
+     "valor_spec_m": 1.6,
+     "valor_medido_m": 1.6
+    },
+    {
+     "elemento": "topo da grade (frente.altura_m)",
+     "valor_spec_m": 1.7,
+     "valor_medido_m": 1.63
+    },
+    {
+     "elemento": "mureta (frente.altura_mureta_m; arco rebaixado 0,81, junto ao pilarete 0,90)",
+     "valor_spec_m": 0.85,
+     "valor_medido_m": 0.84
+    },
+    {
+     "elemento": "altura das janelas de correr (z 1,2 a 2,3)",
+     "valor_spec_m": 1.1,
+     "valor_medido_m": 0.96
+    },
+    {
+     "elemento": "verga das janelas acima da calcada (geometria do chao, camera ~1,25 m acima da calcada)",
+     "valor_spec_m": 2.3,
+     "valor_medido_m": 2.19
+    },
+    {
+     "elemento": "da verga ate a borda do beiral (3,75 - 2,3)",
+     "valor_spec_m": 1.45,
+     "valor_medido_m": 1.33
+    },
+    {
+     "elemento": "topo da parede / borda do beiral (corpo z1)",
+     "valor_spec_m": 3.8,
+     "valor_medido_m": 3.55
+    },
+    {
+     "elemento": "eixo do letreiro PREVIDENCIA SOCIAL",
+     "valor_spec_m": 2.7,
+     "valor_medido_m": 2.64
+    }
+   ],
+   "fator_altura": 0.95,
+   "fator_largura": 1,
+   "veredito": "spec_confere",
+   "confianca": "media",
+   "observacoes": "NAO esta inflada em 25-40 %. Duas referencias no plano da parede concordam em 4 % (telha 177 mm = 55,4 px/m; janela de 1,00 m = 53 px/m) e a escala do alinhamento (83 px/m) fecha com o portao de 0,85 m, com pecas de guia de ~1 m e com a altura do teto da Saveiro que passa no q_02760. Pilarete, mureta e grade conferem; a parede e as janelas saem uns 5-13 % menores que a spec (janela 0,96 e nao 1,10; beiral ~3,55 e nao 3,75), dentro da incerteza (piso do predio nao visivel, tapado pela mureta). Passo dos pilaretes medido 2,49 m (spec 2,45) e larguras de janela batem: largura sem correcao. Comprimento total (29,7 m x 33 m do cadastro) nao da para medir num quadro so. Avisos gerais: (1) os quadros 2500-2830 tem ~3 graus de rolagem, medi em copias giradas; (2) a geometria do chao (ciclovia ~2,7 m, calcada ~2,8 m) indica camera a ~10-11 m do alinhamento e focal ~900 px (lente ultra-angular), nao 13-17 m / 1500 px; isso nao muda as escalas no plano, so correcoes de profundidade feitas com f=1500; (3) o 'cadastro' sao contornos de telhado (Open Buildings), nao testadas de lote. Recortes em C:/Users/Rodrigo/AppData/Local/Temp/claude/a0de669827628d24/6dd1e011-812b-4b4e-b90d-0ba9ee612670/scratchpad/alturas/ (gr_*.jpg)."
+  },
+  {
+   "id": "gob_67JXR8GC_GVG5",
+   "quadros_usados": [
+    "q_02685 (girado -3 graus)",
+    "q_02668 (girado -3 graus)",
+    "q_02626",
+    "q_02640",
+    "q_02606"
+   ],
+   "referencias": [
+    {
+     "objeto": "pilarete do INSS vizinho, 1,60 m (aferido na fachada GRJX pela telha de 177 mm + paralaxe), mesmo alinhamento, colado ao muro",
+     "tamanho_real_m": 1.6,
+     "tamanho_px": 129,
+     "quadro": "q_02668",
+     "plano": "alinhamento (muro)",
+     "px_por_m": 80.6
+    },
+    {
+     "objeto": "geometria do chao: calcada de ~2,8 m (41 px entre o pe do muro e a guia), camera ~1,25 m acima da calcada",
+     "tamanho_real_m": 2.8,
+     "tamanho_px": 41,
+     "quadro": "q_02668",
+     "plano": "alinhamento (muro)",
+     "px_por_m": 87.7
+    },
+    {
+     "objeto": "placa de advertencia (losango) na esquina, lida como lado 0,75 m / diagonal 1,06 m montada a ~1,9 m (AMBIGUA: se fosse lado 0,50 m montada a 1,3 m a escala seria 110 px/m)",
+     "tamanho_real_m": 1.06,
+     "tamanho_px": 78,
+     "quadro": "q_02626",
+     "plano": "poste da placa, ~2 m a frente do muro",
+     "px_por_m": 73.6
+    }
+   ],
+   "medidas": [
+    {
+     "elemento": "topo do muro branco (frente.altura_m; 1,05 x pilarete do INSS; 1,54 pela geometria do chao)",
+     "valor_spec_m": 1.6,
+     "valor_medido_m": 1.62
+    },
+    {
+     "elemento": "altura do oval LOJITA (z 0,3 a 1,4)",
+     "valor_spec_m": 1.1,
+     "valor_medido_m": 1.22
+    },
+    {
+     "elemento": "topo do oval LOJITA",
+     "valor_spec_m": 1.4,
+     "valor_medido_m": 1.5
+    },
+    {
+     "elemento": "base do oval LOJITA",
+     "valor_spec_m": 0.3,
+     "valor_medido_m": 0.27
+    }
+   ],
+   "fator_altura": 1,
+   "fator_largura": 1,
+   "veredito": "spec_confere",
+   "confianca": "media",
+   "observacoes": "Muro NAO inflado: nos quadros girados ele fica 5 % mais alto que os pilaretes do INSS (135 px contra 129 px), ou seja 1,6-1,7 m; a geometria do chao da 1,54 m. As duas referencias discordam 9 %. A spec dizia que o muro ficava 'um pouco abaixo dos pilaretes'; na verdade fica um pouco acima. O oval e ~10 % mais alto que o especificado (ocupa 76 % da altura do muro). Ressalva: as duas placas da esquina so fecham com esse resultado se forem placas grandes (octogono ~0,85 m, losango lado ~0,75 m) a ~1,9 m do chao; se fossem placas minimas (0,60 / 0,50 m) montadas a 1,3 m o muro teria so ~1,2 m. Descartei essa leitura porque a altura da camera tirada do teto da Saveiro (q_02760) e das guias de 1 m, e toda a cadeia do INSS, a contradizem. NAO conferido: predio creme de 3,2 m a 16 m de recuo (so aparece a faixa de cima; os carros da rua transversal nao servem porque a rua parece descer). Largura sem medida propria. Recortes gv_*.jpg na pasta alturas."
+  },
+  {
+   "id": "gob_67JXR8GC_CWG4",
+   "quadros_usados": [
+    "q_02530 (girado -3 graus)",
+    "q_02505",
+    "q_02527 e q_02533 (paralaxe)",
+    "q_02594 (Amarok junto a esquina do muro)"
+   ],
+   "referencias": [
+    {
+     "objeto": "porta de vidro fume da agencia, 2,10 m",
+     "tamanho_real_m": 2.1,
+     "tamanho_px": 122,
+     "quadro": "q_02530",
+     "plano": "parede da agencia (recuada; paralaxe medida = 0,655 do alinhamento)",
+     "px_por_m": 58.1
+    },
+    {
+     "objeto": "geometria do chao transferida do INSS (calcada 39 px e ciclovia 81 px; mesma secao de rua e mesma altura de camera)",
+     "tamanho_real_m": 1,
+     "tamanho_px": 86.6,
+     "quadro": "q_02530",
+     "plano": "alinhamento (muro cinza e mureta dos medidores)",
+     "px_por_m": 86.6
+    },
+    {
+     "objeto": "moto estacionada sob a marquise, ~1,15 m ate os retrovisores",
+     "tamanho_real_m": 1.15,
+     "tamanho_px": 80,
+     "quadro": "q_02505",
+     "plano": "intermediario (entre o alinhamento e a parede da agencia)",
+     "px_por_m": 69.6
+    }
+   ],
+   "medidas": [
+    {
+     "elemento": "topo do muro cinza (frente.altura_m)",
+     "valor_spec_m": 2.7,
+     "valor_medido_m": 2.28
+    },
+    {
+     "elemento": "mureta branca dos medidores",
+     "valor_spec_m": 2.15,
+     "valor_medido_m": 2
+    },
+    {
+     "elemento": "topo da janela quadriculada",
+     "valor_spec_m": 2.05,
+     "valor_medido_m": 2.06
+    },
+    {
+     "elemento": "topo do portao quadriculado",
+     "valor_spec_m": 2.1,
+     "valor_medido_m": 1.88
+    },
+    {
+     "elemento": "altura do basculante (z 1,6 a 2,25)",
+     "valor_spec_m": 0.65,
+     "valor_medido_m": 0.56
+    },
+    {
+     "elemento": "altura da testeira da marquise (z 2,65 a 3,7)",
+     "valor_spec_m": 1.05,
+     "valor_medido_m": 0.92
+    },
+    {
+     "elemento": "topo da testeira",
+     "valor_spec_m": 3.7,
+     "valor_medido_m": 3.42
+    },
+    {
+     "elemento": "base da testeira",
+     "valor_spec_m": 2.65,
+     "valor_medido_m": 2.5
+    },
+    {
+     "elemento": "beiral do sobrado creme do fundo (paralaxe 0,345; conferencia grosseira)",
+     "valor_spec_m": 8,
+     "valor_medido_m": 7.5
+    }
+   ],
+   "fator_altura": 0.91,
+   "fator_largura": 1,
+   "veredito": "spec_inflada",
+   "confianca": "media",
+   "observacoes": "Inflacao LEVE, ~9 % na mediana, nao os 25-40 %. Porta de vidro (2,10 m) e geometria do chao concordam em 2,4 % (88,7 contra 86,6 px/m no alinhamento; usei 87,6); a moto fecha em ~3 %. O erro maior e o MURO CINZA: 2,3 m e nao 2,7 m. Independente da escala, no quadro frontal girado ele e so 14 % mais alto que a mureta dos medidores (200 px contra 175 px), enquanto a spec da 26 %; com a mureta em 2,0-2,15 m o muro fica em 2,3-2,45 m. A conferencia pela Amarok na esquina (q_02594) da 2,3-2,85 m conforme a queda da rua transversal, sem contradizer. Na agencia: testeira ~0,92 m (nao 1,05), topo ~3,4 m, portao ~1,9 m, basculante 0,56 m; porta e janelas quadriculadas conferem. Paralaxes medidas: parede/alinhamento 0,655 (spec usou 0,68), testeira/alinhamento 0,735 (marquise com ~1,3-1,8 m de balanco, confere). Sobrado do fundo confere por alto (beiral ~7,5 m, cumeeira ~9,3 m). Telheiro atras do muro nao conferido. Larguras conferidas pontualmente (porta 1,03 m, mureta 1,63 m, janela 0,99 m) batem; so o portao quadriculado mede ~1,97 m contra 2,45 m na spec. Recortes cw_*.jpg na pasta alturas."
+  },
+  {
+   "id": "gob_67JXR8GF_73W6",
+   "quadros_usados": [
+    "q_02285",
+    "q_02250",
+    "q_02262"
+   ],
+   "referencias": [
+    {
+     "objeto": "geometria do chao transferida do INSS (calcada 35 px e ciclovia 68 px, praticamente iguais as do INSS: 36 e 71 px)",
+     "tamanho_real_m": 1,
+     "tamanho_px": 81.6,
+     "quadro": "q_02285",
+     "plano": "alinhamento (muro de tijolo), em x~1000 px",
+     "px_por_m": 81.6
+    },
+    {
+     "objeto": "portao social de grade, 2,10 m (sem verga)",
+     "tamanho_real_m": 2.1,
+     "tamanho_px": 172,
+     "quadro": "q_02285",
+     "plano": "alinhamento (muro de tijolo), em x~1050 px",
+     "px_por_m": 81.9
+    },
+    {
+     "objeto": "fiada de tijolo aparente suposta de 7 cm (FFT: 6,85 px por fiada) - DISCORDA 17 % das outras duas",
+     "tamanho_real_m": 0.07,
+     "tamanho_px": 6.85,
+     "quadro": "q_02285",
+     "plano": "alinhamento (muro de tijolo), em x~1000 px",
+     "px_por_m": 97.9
+    },
+    {
+     "objeto": "bloco de vidro 19 cm + junta = 20 cm (FFT)",
+     "tamanho_real_m": 0.2,
+     "tamanho_px": 11.6,
+     "quadro": "q_02250",
+     "plano": "frente do volume central da casa (recuada)",
+     "px_por_m": 58
+    }
+   ],
+   "medidas": [
+    {
+     "elemento": "muro de tijolo do trecho oeste (17,1 fiadas)",
+     "valor_spec_m": 1.4,
+     "valor_medido_m": 1.42
+    },
+    {
+     "elemento": "topo da grade baixa sobre o muro (25,2 fiadas)",
+     "valor_spec_m": 2,
+     "valor_medido_m": 2.09
+    },
+    {
+     "elemento": "pilar largo de tijolo do lado leste (24,4 fiadas, sem o capelo)",
+     "valor_spec_m": 2,
+     "valor_medido_m": 2.03
+    },
+    {
+     "elemento": "portao social (24,9 fiadas)",
+     "valor_spec_m": 2,
+     "valor_medido_m": 2.07
+    },
+    {
+     "elemento": "mureta de tijolo do trecho do meio (4,5 fiadas)",
+     "valor_spec_m": 0.4,
+     "valor_medido_m": 0.37
+    },
+    {
+     "elemento": "topo da grade alta do trecho do meio (24,2 fiadas)",
+     "valor_spec_m": 1.9,
+     "valor_medido_m": 2
+    },
+    {
+     "elemento": "comprimento da faixa de tijolo de vidro da casa (25 blocos visiveis no q_02250)",
+     "valor_spec_m": 4.7,
+     "valor_medido_m": 5
+    }
+   ],
+   "fator_altura": 1.03,
+   "fator_largura": 1,
+   "veredito": "spec_confere",
+   "confianca": "media",
+   "observacoes": "NAO inflada. A geometria do chao e o portao de 2,10 m concordam em 0,5 % (81,6 e 81,9 px/m) e implicam fiada de tijolo de ~8,3 cm (tijolo macico maior, modulo ~25 x 8,3 cm; razao comprimento/altura medida = 3,0). Contei as alturas em fiadas (FFT, 6,6 a 7,6 px por fiada conforme a posicao: ha ~12 graus de guinada neste quadro, entao a escala cresce 14 % da esquerda para a direita) e converti a 8,3 cm. ALERTA: se o tijolo fosse o comum de 7 cm por fiada, tudo no alinhamento cairia 16 % (muro 1,20, portao 1,74 m com 0,68 m de largura); descartei porque daria portoes sociais de 1,75 x 0,70 m em dois lotes vizinhos e porque a geometria do chao nao fecha com essa escala. A casa confere pelos blocos de vidro (faixa de 25 blocos = 5,0 m contra 4,7 m; paredes ~6,0-6,3 m); a base da casa nao e visivel (ha um barrado escuro atras do portao), entao as cotas absolutas da casa tem +-0,3 m. Largura: a testada medida da 177 fiadas = ~14,7 m, confirmando os ~14,3 m 'reais' da spec; os 12,36 m da lista sao o contorno do telhado, nao o lote, entao a compressao de 0,875 nos x da spec continua sendo so um ajuste ao cadastro. Portao de carro medido ~2,5 m. Recortes a73_*.jpg e chao_2285.jpg na pasta alturas."
+  },
+  {
+   "id": "gob_67JXR8GF_746F",
+   "quadros_usados": [
+    "q_02195",
+    "q_02175",
+    "q_02140"
+   ],
+   "referencias": [
+    {
+     "objeto": "geometria do chao transferida do INSS (so a calcada: 40 px do pe do muro a guia)",
+     "tamanho_real_m": 1,
+     "tamanho_px": 86.8,
+     "quadro": "q_02195",
+     "plano": "alinhamento (muro branco), em x~800 px",
+     "px_por_m": 86.8
+    },
+    {
+     "objeto": "portao social 2,10 m (chapa + grade, sem verga)",
+     "tamanho_real_m": 2.1,
+     "tamanho_px": 160,
+     "quadro": "q_02195",
+     "plano": "alinhamento (muro branco)",
+     "px_por_m": 76.2
+    },
+    {
+     "objeto": "fiada do pilar de tijolo vizinho (6,3 px por FFT), com a fiada de 8,3 cm aferida no q_02285 (com 7 cm seriam 90 px/m)",
+     "tamanho_real_m": 0.083,
+     "tamanho_px": 6.3,
+     "quadro": "q_02195",
+     "plano": "alinhamento, pilar de tijolo em x~475 px",
+     "px_por_m": 75.9
+    },
+    {
+     "objeto": "largura do muro contra o contorno do cadastro (9,92 m)",
+     "tamanho_real_m": 9.92,
+     "tamanho_px": 856,
+     "quadro": "q_02195",
+     "plano": "alinhamento (muro branco)",
+     "px_por_m": 86.3
+    }
+   ],
+   "medidas": [
+    {
+     "elemento": "pilares brancos",
+     "valor_spec_m": 2.1,
+     "valor_medido_m": 2.05
+    },
+    {
+     "elemento": "mureta branca",
+     "valor_spec_m": 1,
+     "valor_medido_m": 1.01
+    },
+    {
+     "elemento": "topo dos paineis de grade diagonal",
+     "valor_spec_m": 2,
+     "valor_medido_m": 2.02
+    },
+    {
+     "elemento": "chapa azul do portao social",
+     "valor_spec_m": 1,
+     "valor_medido_m": 0.97
+    },
+    {
+     "elemento": "calha/friso branco da casa recuada (correcao de profundidade grosseira)",
+     "valor_spec_m": 2.6,
+     "valor_medido_m": 2.6
+    }
+   ],
+   "fator_altura": 1,
+   "fator_largura": 1,
+   "veredito": "spec_confere",
+   "confianca": "media",
+   "observacoes": "NAO inflada. As quatro referencias se dividem em dois pares (86-87 px/m pela geometria do chao e pelo cadastro; 76 px/m pelo portao de 2,10 m e pelo tijolo de 8,3 cm), 13 % de diferenca entre os pares; usei a mediana, 81,3 px/m, com que todas as alturas do muro batem com a spec em +-3 %. Faixa plausivel do fator: 0,93 a 1,07. As proporcoes internas conferem independentemente da escala (mureta = 49 % do pilar; spec 49 %). Portao social medido 0,74-0,84 m de largura (spec 0,9) e portao de carro 2,5-2,9 m (spec 2,5). Largura do muro: 9,9 m se valer a escala de 86,8 px/m, 10,5 m na mediana; spec 9,6 e cadastro 9,92, sem motivo para corrigir. A casa atras do muro continua nao visivel. Observacao util para a fachada vizinha: a vitrine de vidro do Spoleto mede 189 px no q_02175, 2,2 a 2,4 m nessa escala, e o predio preto ~5 m. Recortes a746_*.jpg e chao_2195.jpg na pasta alturas."
+  },
+  {
+   "id": "gob_67JXR8GF_64X6",
+   "quadros_usados": [
+    "q_02100",
+    "q_02125",
+    "q_02150",
+    "q_02120-q_02130 (paralaxe)",
+    "q_02093-q_02158 (contagem da guia)"
+   ],
+   "referencias": [
+    {
+     "objeto": "Porta de vidro de 2 folhas (Spoleto), do piso a verga",
+     "tamanho_real_m": 2.15,
+     "tamanho_px": 173,
+     "quadro": "q_02125",
+     "plano": "mesmo plano da fachada (alinhamento)",
+     "px_por_m": 80.5
+    },
+    {
+     "objeto": "Guia pre-moldada pintada do canteiro: periodo branco+preto = 2 pecas de 1,00 m, cruza a coluna x=960 a cada 14,5 quadros (0,138 m/quadro); a fachada desloca 10,7 px/quadro (nuvens paradas)",
+     "tamanho_real_m": 2,
+     "tamanho_px": 168,
+     "quadro": "q_02093 a q_02158",
+     "plano": "velocidade do carro pela guia + paralaxe da fachada; escala no plano da porta",
+     "px_por_m": 84.1
+    },
+    {
+     "objeto": "Largura do lote no cadastro (x1-x0), predio de quina a quina com correcao da obliquidade (~13 graus)",
+     "tamanho_real_m": 12.89,
+     "tamanho_px": 990,
+     "quadro": "q_02125",
+     "plano": "fachada (escala equivalente na coluna da porta)",
+     "px_por_m": 77.3
+    },
+    {
+     "objeto": "Muro/portao da casa vizinha a oeste (supondo 2,0 m)",
+     "tamanho_real_m": 2,
+     "tamanho_px": 154,
+     "quadro": "q_02150",
+     "plano": "alinhamento, ~3 m a oeste da quina do predio",
+     "px_por_m": 77
+    }
+   ],
+   "medidas": [
+    {
+     "elemento": "Topo da platibanda (coluna da porta)",
+     "valor_spec_m": 4.6,
+     "valor_medido_m": 4.51
+    },
+    {
+     "elemento": "Topo do painel de tijolinho",
+     "valor_spec_m": 3.1,
+     "valor_medido_m": 2.96
+    },
+    {
+     "elemento": "Topo do banner / vitrine leste",
+     "valor_spec_m": 3,
+     "valor_medido_m": 2.94
+    },
+    {
+     "elemento": "Verga da porta de vidro (nao independente da ref. 1)",
+     "valor_spec_m": 2.1,
+     "valor_medido_m": 2.1
+    },
+    {
+     "elemento": "Letreiro CHINA IN BOX - topo",
+     "valor_spec_m": 4.3,
+     "valor_medido_m": 4.15
+    },
+    {
+     "elemento": "Letreiro CHINA IN BOX - base",
+     "valor_spec_m": 3.4,
+     "valor_medido_m": 3.47
+    },
+    {
+     "elemento": "Letreiro Domino's - topo",
+     "valor_spec_m": 4.2,
+     "valor_medido_m": 4.15
+    },
+    {
+     "elemento": "Mureta de tijolinho da vitrine leste",
+     "valor_spec_m": 0.6,
+     "valor_medido_m": 0.54
+    }
+   ],
+   "fator_altura": 0.98,
+   "fator_largura": 1,
+   "veredito": "spec_confere",
+   "confianca": "alta",
+   "observacoes": "NAO esta inflada. Quatro referencias independentes dao 77 a 84 px/m no plano da porta (dispersao de +-4,5 %): platibanda entre 4,4 m (guia de 1,00 m) e 4,8 m (largura do cadastro), 4,6 m pela porta de 2,15 m. A especificacao (4,6 m, ja corrigida de 5,1) confere. As medidas da tabela usam a media porta+guia (82,3 px/m). Unica diferenca visivel: o letreiro CHINA IN BOX tem ~0,7 m de altura (spec 0,9). Largura medida 12,1-12,4 m contra 12,4 da spec e 12,9 do lote: confere. Fiadas do tijolinho nao sao contaveis nesta resolucao (~5,3 px por fiada, pico fraco). Achado util para os outros lotes: a camera esta a ~1,5 m do asfalto (carro alto), o horizonte fica perto de y=547-575, e a velocidade da tabela CSV (0,154 m/quadro) aqui bate com a da guia (0,138) dentro de 10 %."
+  },
+  {
+   "id": "gob_67JXR8GF_38P6",
+   "quadros_usados": [
+    "q_01700",
+    "q_01740",
+    "q_01760",
+    "q_01700-q_01710, q_01735-q_01745, q_01757-q_01763 (paralaxe com rotacao medida nas nuvens)",
+    "q_01690-q_01765 (contagem da guia)"
+   ],
+   "referencias": [
+    {
+     "objeto": "Guia pre-moldada pintada: periodo de 2 pecas (2,0 m) a cada 14,0 quadros = 0,143 m/quadro; o predio desloca 7,8 a 9,05 px/quadro liquidos",
+     "tamanho_real_m": 2,
+     "tamanho_px": 121,
+     "quadro": "q_01690 a q_01765",
+     "plano": "plano do predio recuado (coluna da porta, q_01700)",
+     "px_por_m": 60.3
+    },
+    {
+     "objeto": "Porta de vidro do predio (se for de 2,15 m)",
+     "tamanho_real_m": 2.15,
+     "tamanho_px": 135,
+     "quadro": "q_01700",
+     "plano": "plano do predio recuado",
+     "px_por_m": 62.8
+    },
+    {
+     "objeto": "Placa circular de bicicleta (0,5 m de diametro)",
+     "tamanho_real_m": 0.5,
+     "tamanho_px": 46.5,
+     "quadro": "q_01760",
+     "plano": "calcada, ~2 m a frente do muro branco (a paralaxe da 98 px/m nesse ponto)",
+     "px_por_m": 93
+    },
+    {
+     "objeto": "Muro branco/sombra da placa no muro: paralaxe 1,36 x a do predio",
+     "tamanho_real_m": 2,
+     "tamanho_px": 160,
+     "quadro": "q_01757 a q_01763",
+     "plano": "alinhamento (muro branco), coluna x~700",
+     "px_por_m": 80
+    },
+    {
+     "objeto": "Cobogo: 7 fiadas = 125 px (17,9 px por fiada); com pecas de 0,30 m",
+     "tamanho_real_m": 2.1,
+     "tamanho_px": 125,
+     "quadro": "q_01700",
+     "plano": "junto a quina oeste do predio; a paralaxe o poe 2-3 m ATRAS da fachada (referencia fraca)",
+     "px_por_m": 59.7
+    }
+   ],
+   "medidas": [
+    {
+     "elemento": "Muro branco da frente (frente.altura_m)",
+     "valor_spec_m": 4,
+     "valor_medido_m": 2.6
+    },
+    {
+     "elemento": "Topo da faixa azul do bloco atras do muro (corpo z1)",
+     "valor_spec_m": 5.5,
+     "valor_medido_m": 3.6
+    },
+    {
+     "elemento": "Topo da platibanda do predio",
+     "valor_spec_m": 7.7,
+     "valor_medido_m": 7
+    },
+    {
+     "elemento": "Verga da porta de vidro",
+     "valor_spec_m": 2.4,
+     "valor_medido_m": 2.24
+    },
+    {
+     "elemento": "Topo da testeira azul do predio",
+     "valor_spec_m": 5.1,
+     "valor_medido_m": 4.35
+    },
+    {
+     "elemento": "Base da testeira azul do predio",
+     "valor_spec_m": 2.9,
+     "valor_medido_m": 2.9
+    },
+    {
+     "elemento": "Verga da janela superior",
+     "valor_spec_m": 6.3,
+     "valor_medido_m": 5.2
+    },
+    {
+     "elemento": "Topo do painel de cobogo",
+     "valor_spec_m": 2.75,
+     "valor_medido_m": 2.05
+    }
+   ],
+   "fator_altura": 0.85,
+   "fator_largura": 1,
+   "veredito": "spec_inflada",
+   "confianca": "media",
+   "observacoes": "Inflada, mas de forma DESIGUAL; nao aplicar um fator unico as cegas. (1) Corpo do predio: guia (60 px/m) e porta de 2,15 m (63 px/m) concordam em 4 % e dao platibanda de 6,7 a 7,3 m (melhor valor 7,0); a spec de 7,7 esta ~9 % alta. (2) As pecas alteradas no patch r18c estao MUITO altas e os valores anteriores (v2) eram os certos: muro da frente 4,0 -> 2,6-2,8 m (v2 dizia 2,8; a porta de enrolar ao lado tem ~2,35 m e o topo da placa de bicicleta, a ~2,7 m, fica na linha do topo do muro); faixa azul do bloco atras do muro 4,2-5,5 -> ~2,7 a 3,6 (v2: 2,9-4,0); testeira azul do predio 2,9-5,1 -> 2,9 a 4,35 (a faixa ocupa 21 % da altura da fachada, nao 30 %; v2: 3,2-4,8); janela superior 5,2-6,3 -> verga a 5,2 (v2: 4,7-5,8). (3) Cobogo: 7 fiadas de ~0,30 m = 2,05-2,1 m, nao 2,75 (com pecas de 0,39 m o predio teria 9,5 m, incompativel com guia e porta). A velocidade da tabela CSV neste trecho (0,202 m/quadro) esta ~40 % alta (a guia da 0,143); foi ela que gerou os antigos 9,3 m 'aparentes'. Proporcao largura/altura do predio = 1,09, logo a largura do pavimento superior e ~7,6 m (spec 8,1): se a altura for corrigida, a largura do predio deve encolher ~6 % (nao medi contra o cadastro, por isso fator_largura = 1). Recuo predio-muro pela paralaxe ~7,5-8,5 m se f=1500 (spec 6,4), incerto. Mediana das 8 razoes = 0,84; so o corpo = 0,91."
+  },
+  {
+   "id": "gob_67JXR8GF_396C",
+   "quadros_usados": [
+    "q_01700",
+    "q_01740",
+    "q_01700-q_01710 e q_01735-q_01745 (paralaxe)",
+    "q_01690-q_01765 (contagem da guia)"
+   ],
+   "referencias": [
+    {
+     "objeto": "Guia pre-moldada pintada: periodo de 2 pecas (2,0 m) a cada 14,0 quadros = 0,143 m/quadro; predio desloca 7,8 a 9,05 px/quadro liquidos",
+     "tamanho_real_m": 2,
+     "tamanho_px": 125,
+     "quadro": "q_01690 a q_01765",
+     "plano": "plano do predio recuado (coluna do janelao, q_01700)",
+     "px_por_m": 62.6
+    },
+    {
+     "objeto": "Porta de vidro do mesmo predio, na metade 38P6 (se for de 2,15 m), levada a coluna do janelao",
+     "tamanho_real_m": 2.15,
+     "tamanho_px": 140,
+     "quadro": "q_01700",
+     "plano": "plano do predio recuado",
+     "px_por_m": 65.2
+    },
+    {
+     "objeto": "Paralaxe do alinhamento (1,36 x a do predio)",
+     "tamanho_real_m": 1,
+     "tamanho_px": 86,
+     "quadro": "q_01757 a q_01763",
+     "plano": "alinhamento, onde sai a mureta da rampa",
+     "px_por_m": 86
+    }
+   ],
+   "medidas": [
+    {
+     "elemento": "Topo da platibanda",
+     "valor_spec_m": 7.7,
+     "valor_medido_m": 7
+    },
+    {
+     "elemento": "Verga do janelao do terreo",
+     "valor_spec_m": 2.6,
+     "valor_medido_m": 2.32
+    },
+    {
+     "elemento": "Peitoril do janelao do terreo (pe da parede encoberto pela grama)",
+     "valor_spec_m": 1,
+     "valor_medido_m": 0.8
+    },
+    {
+     "elemento": "Topo da testeira azul",
+     "valor_spec_m": 5.1,
+     "valor_medido_m": 4.35
+    },
+    {
+     "elemento": "Base da testeira azul",
+     "valor_spec_m": 2.9,
+     "valor_medido_m": 2.9
+    },
+    {
+     "elemento": "Verga da janela superior",
+     "valor_spec_m": 6.3,
+     "valor_medido_m": 5.23
+    },
+    {
+     "elemento": "Mureta branca da rampa do vizinho",
+     "valor_spec_m": 1.3,
+     "valor_medido_m": 1.07
+    }
+   ],
+   "fator_altura": 0.85,
+   "fator_largura": 1,
+   "veredito": "spec_inflada",
+   "confianca": "media",
+   "observacoes": "Mesmo predio da 38P6, mesma conclusao. Corpo: platibanda 7,0 m (6,7 a 7,3) contra 7,7 da spec, ~9 % alta; as duas referencias (guia e porta de 2,15 m) diferem 4 %. Pecas do patch r18c inflacionadas: testeira azul vai so ate ~4,35 m (spec 5,1; a base de 2,9 confere) e a verga da janela superior fica a ~5,2 m (spec 6,3); os valores de antes do r18c (testeira 3,2-4,8, janela 4,7-5,8) estavam mais perto. Janelao do terreo: verga ~2,3 m (spec 2,6), peitoril ~0,8 (incerto). Nao medi o trecho x 4,55-5,4 (parede do vizinho, 4,7 m) nem o corpo terreo de 3,2 m (escondido pela testeira). Guarda-corpo do terraco leste aparece com 47 px (~0,75 m), mas a base pode estar encoberta pela mureta: nao usei como referencia. Mediana das 7 razoes = 0,85; so o corpo = 0,91."
+  },
+  {
+   "id": "gob_67JXR8FF_WH45",
+   "quadros_usados": [
+    "q_01362",
+    "q_01380",
+    "q_01364-q_01374 (paralaxe, nuvens -0,4 px/quadro)",
+    "q_01339-q_01376 (contagem da guia)"
+   ],
+   "referencias": [
+    {
+     "objeto": "Guia pre-moldada pintada: 12 pecas de 1,00 m em 37 quadros = 0,324 m/quadro; o tapume desloca 15,8 px/quadro liquidos",
+     "tamanho_real_m": 2,
+     "tamanho_px": 99.6,
+     "quadro": "q_01339 a q_01376",
+     "plano": "plano do tapume",
+     "px_por_m": 49.8
+    },
+    {
+     "objeto": "Tapume de chapa (padrao NR-18: 2,20 m, duas chapas de 1,10)",
+     "tamanho_real_m": 2.2,
+     "tamanho_px": 103,
+     "quadro": "q_01362",
+     "plano": "plano do tapume",
+     "px_por_m": 46.8
+    },
+    {
+     "objeto": "Carro Onix hatch (1,476 m de altura) parado na rua lateral",
+     "tamanho_real_m": 1.476,
+     "tamanho_px": 43.5,
+     "quadro": "q_01362",
+     "plano": "rua lateral, ~15-20 m alem do tapume (usado so para achar o horizonte: tapume 2,0 a 2,45 m)",
+     "px_por_m": 29.5
+    },
+    {
+     "objeto": "Tabela CSV (0,319 m/quadro, 16,1 px/quadro)",
+     "tamanho_real_m": 1,
+     "tamanho_px": 50.5,
+     "quadro": "q_01360 a q_01380",
+     "plano": "plano do tapume",
+     "px_por_m": 50.5
+    }
+   ],
+   "medidas": [
+    {
+     "elemento": "Tapume (frente.altura_m)",
+     "valor_spec_m": 2.1,
+     "valor_medido_m": 2.1
+    },
+    {
+     "elemento": "Beiral / topo da parede da casa",
+     "valor_spec_m": 3.8,
+     "valor_medido_m": 3.7
+    },
+    {
+     "elemento": "Verga das janelas gradeadas",
+     "valor_spec_m": 3,
+     "valor_medido_m": 2.75
+    },
+    {
+     "elemento": "Cumeeira (3,8 + 2,6), ~6 m atras da frente, incerta",
+     "valor_spec_m": 6.4,
+     "valor_medido_m": 5.6
+    }
+   ],
+   "fator_altura": 0.95,
+   "fator_largura": 1,
+   "veredito": "spec_confere",
+   "confianca": "media",
+   "observacoes": "NAO esta inflada. Tapume: 100-103 px; guia+paralaxe da 2,07-2,16 m, CSV 2,0 m, padrao NR-18 2,2 m: as referencias diferem ~7 % e cercam os 2,1 m da spec. A casa desloca 0,86 x o tapume (bate com a razao 0,86 da spec; em metros isso da ~4,5 m atras do tapume se f=1500, nao 2,5 - a altura nao muda). Com isso: beiral a 3,7 m (spec 3,8, confere), vergas das janelas a ~2,75 m (spec 3,0, ~8 % altas), cumeeira ~5,6 m (spec 6,4; valor fragil, depende de quao atras esta a cumeeira). Largura visivel da parede ~12,5 m contra 12,7 do cadastro: confere. Tudo abaixo de ~2,3 m segue escondido pelo tapume. Nao ha porta, pessoa ou carro no plano da casa; por isso confianca media."
+  },
+  {
+   "id": "gob_67JXR8FF_QQ3V",
+   "quadros_usados": [
+    "q_01200 (ala oeste avancada, bloco amarelo e ala recuada oeste)",
+    "q_01210",
+    "q_01222",
+    "q_01128 (portico e ala recuada leste)",
+    "q_01118/q_01138",
+    "q_01200-q_01210 e q_01123-q_01133 (paralaxe com nuvens)",
+    "q_01131-q_01186 e q_01218-q_01251 (contagem da guia)"
+   ],
+   "referencias": [
+    {
+     "objeto": "Guia pre-moldada pintada: 3,24 a 3,30 quadros por peca de 1,00 m = 0,303-0,309 m/quadro; tapume desloca 14,3 a 15,7 px/quadro (nuvens paradas)",
+     "tamanho_real_m": 2,
+     "tamanho_px": 96,
+     "quadro": "q_01131 a q_01251",
+     "plano": "plano do tapume",
+     "px_por_m": 48
+    },
+    {
+     "objeto": "Placa 'Futuras instalacoes do Ministerio Publico' (chapa padrao 3,0 x 1,2 m): 142-148 px x 56-59 px",
+     "tamanho_real_m": 3,
+     "tamanho_px": 142,
+     "quadro": "q_01200 / q_01210",
+     "plano": "plano do tapume",
+     "px_por_m": 47.3
+    },
+    {
+     "objeto": "Tapume de chapa (padrao NR-18: 2,20 m)",
+     "tamanho_real_m": 2.2,
+     "tamanho_px": 95,
+     "quadro": "q_01200",
+     "plano": "plano do tapume",
+     "px_por_m": 43.2
+    },
+    {
+     "objeto": "Tabela CSV (0,319 m/quadro) aplicada ao deslocamento do tapume",
+     "tamanho_real_m": 1,
+     "tamanho_px": 46,
+     "quadro": "q_01200 a q_01210",
+     "plano": "plano do tapume",
+     "px_por_m": 46
+    }
+   ],
+   "medidas": [
+    {
+     "elemento": "Tapume (frente.altura_m)",
+     "valor_spec_m": 2.1,
+     "valor_medido_m": 2
+    },
+    {
+     "elemento": "Trecho A - ala oeste avancada: verga das janelas altas",
+     "valor_spec_m": 4.1,
+     "valor_medido_m": 3.9
+    },
+    {
+     "elemento": "Trecho A - ala oeste avancada: topo da parede no beiral",
+     "valor_spec_m": 5.4,
+     "valor_medido_m": 4.9
+    },
+    {
+     "elemento": "Trecho A - bloco amarelo: verga da janela",
+     "valor_spec_m": 4.1,
+     "valor_medido_m": 3.8
+    },
+    {
+     "elemento": "Trecho A - bloco amarelo: topo da parede no beiral",
+     "valor_spec_m": 5.6,
+     "valor_medido_m": 5.05
+    },
+    {
+     "elemento": "Trecho B - ala recuada oeste: verga das janelas",
+     "valor_spec_m": 4,
+     "valor_medido_m": 3.9
+    },
+    {
+     "elemento": "Trecho B - ala recuada oeste: topo da parede no beiral",
+     "valor_spec_m": 5.2,
+     "valor_medido_m": 5.1
+    },
+    {
+     "elemento": "Trecho B - ala recuada leste: verga das janelas",
+     "valor_spec_m": 3.9,
+     "valor_medido_m": 3.86
+    },
+    {
+     "elemento": "Trecho B - ala recuada leste: topo da parede no beiral",
+     "valor_spec_m": 5.2,
+     "valor_medido_m": 5.3
+    },
+    {
+     "elemento": "Trecho C - portico: topo da platibanda",
+     "valor_spec_m": 6.7,
+     "valor_medido_m": 7.4
+    },
+    {
+     "elemento": "Trecho C - portico: topo das ameias",
+     "valor_spec_m": 7.1,
+     "valor_medido_m": 7.8
+    },
+    {
+     "elemento": "Trecho C - portico: topo dos vaos",
+     "valor_spec_m": 4.4,
+     "valor_medido_m": 4.7
+    },
+    {
+     "elemento": "Trecho C - portico: verga da porta central",
+     "valor_spec_m": 3.5,
+     "valor_medido_m": 3.7
+    }
+   ],
+   "fator_altura": 0.98,
+   "fator_largura": 1,
+   "veredito": "spec_confere",
+   "confianca": "media",
+   "observacoes": "NAO esta inflada no conjunto (mediana 0,98), mas os tres trechos nao se comportam igual. Escala do tapume: guia 47-49 px/m, placa 47-49, CSV 46, NR-18 43: dispersao de +-6 %; o tapume tem ~2,0 m (spec 2,1). Usei 2,0. A) Corpos avancados (ala oeste e bloco amarelo, paralaxe 0,88 x tapume): vergas a 3,8-3,9 (spec 4,1) e beiral a 4,9-5,05 (spec 5,4-5,6): ~8-10 % altos na spec. B) Alas recuadas: conferem (0,96 a 1,02). C) Portico: sai 7 a 10 % mais ALTO que a spec (platibanda ~7,4 m, ameias ~7,8), mas e o valor mais fragil (+-0,5 m: depende da altura da camera sobre o pe do tapume e da razao de profundidade). ACHADO DE PROFUNDIDADE (medido por paralaxe, com rotacao corrigida pelas nuvens): alas recuadas E portico deslocam 0,67-0,68 x o tapume, contra 0,88 dos corpos avancados; ou seja, as alas recuadas e o portico estao ~11-12 m atras dos corpos avancados (se f=1500; 10-13 m conforme a lente), e nao 3,5 m e 1,7 m como a spec estimou. O portico esta no MESMO plano das alas recuadas (+-1,5 m), nao a frente dos corpos avancados. Larguras: vao das janelas ~1,2 m e ritmo ~3,2 m na ala avancada (spec 1,3 / 3,5, ~9 % largos), ritmo 3,6-3,7 m nas alas recuadas (confere), portico ~11 m (spec 10,3); nao medi o comprimento total contra o cadastro, por isso fator_largura = 1. A coluna px_por_m da tabela CSV neste trecho (30-44) segue as alas recuadas, nao o tapume; nao serve de escala. Nao ha porta comum, pessoa ou carro no plano do predio."
+  }
+ ]
+}

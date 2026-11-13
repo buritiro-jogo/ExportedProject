@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace FreeBala
 {
@@ -102,7 +103,7 @@ namespace FreeBala
 
     public static class FBStreetLights
     {
-        public struct Lamp { public Vector3 p; public float cct, intensity, range, angle, inner; public bool sodium; }
+        public struct Lamp { public Vector3 p; public float cct, intensity, range, angle, inner; public bool sodium; public Quaternion rot; public float tilt; }
         static readonly List<Lamp> lamps = new(); static float[] w; static readonly List<Light> slots = new(); static readonly Dictionary<int, int> slotOf = new();
         static readonly HashSet<int> sel = new(); static float selT; static int K, maxShadow; static float maxDist;
         public static IReadOnlyList<Lamp> Lamps => lamps;
@@ -158,12 +159,24 @@ namespace FreeBala
         {
             lamps.Clear(); slots.Clear(); slotOf.Clear(); sel.Clear(); selT = 0; Lit = 0; glowPs = null; glowP = null;
             if (pos == null) { w = new float[0]; dead = new bool[0]; flkOn = new bool[0]; flk = new float[0]; flkNext = new float[0]; return; }
-            foreach (var p in pos) lamps.Add(Classify(p, map));
+            // r65: facho do poste. Antes todo spot apontava RETO para baixo com 135°: o poste (a 1–1,5 m da cabeça) caía dentro do cone e
+            // virava um risco aceso (retorno do usuário, estacionamento do Colégio). Luminária de LED de rua joga a luz para a pista (óptica
+            // assimétrica): o facho inclina para LONGE do poste/parede achado por raios curtos abaixo da cabeça, e a abertura fecha um pouco.
+            var V = FBVisual.C;
+            foreach (var p in pos)
+            {
+                var lp = Classify(p, map);
+                lp.intensity *= V.lampIntensityMul; lp.range *= V.lampRangeMul;
+                if (V.lampAngle > 0) { lp.angle = Mathf.Min(lp.angle, V.lampAngle); lp.inner = Mathf.Min(lp.inner, V.lampInner > 0 ? V.lampInner : lp.angle * .5f); }
+                lp.rot = Aim(lp.p, V.lampTilt, out lp.tilt); lamps.Add(lp);
+            }
             w = new float[lamps.Count]; dead = new bool[lamps.Count]; flkOn = new bool[lamps.Count]; flk = new float[lamps.Count]; flkNext = new float[lamps.Count];
             FBLampHead.ResetScene(); FBLampHead.Bind(lamps);                                // cabeças separadas pelo FBLampPrep (uma por luminária)
             bool mob = FBQuality.Mobile; var L = FBQuality.Level;
             K = mob ? 6 : L == FBQLevel.Ultra ? 56 : L == FBQLevel.Alto ? 40 : L == FBQLevel.Medio ? 24 : 10;
-            maxShadow = mob ? 0 : L == FBQLevel.Ultra ? 14 : L == FBQLevel.Alto ? 8 : L == FBQLevel.Medio ? 3 : 0;   // retorno do usuário: postes/luz de teto sem sombra nos objetos
+            // r65: mais postes com sombra (luz que atravessava prédio = poste sem sombra): os 6 mais perto em 512 px, o resto em 256 px
+            maxShadow = mob ? 0 : L == FBQLevel.Ultra ? 22 : L == FBQLevel.Alto ? 14 : L == FBQLevel.Medio ? 5 : 0;   // retorno do usuário: postes/luz de teto sem sombra nos objetos
+            sw = new float[lamps.Count];
             maxDist = mob ? 70 : L >= FBQLevel.Alto ? 190 : 140;
             K = Mathf.Min(K, lamps.Count);
             for (int i = 0; i < K + Mathf.Min(6, lamps.Count - K); i++)
@@ -171,6 +184,7 @@ namespace FreeBala
                 var l = new GameObject("Poste" + i).AddComponent<Light>(); l.transform.SetParent(parent); l.type = LightType.Spot; l.transform.rotation = Quaternion.Euler(90, 0, 0);
                 l.useColorTemperature = true; l.color = Color.white; l.intensity = 0; l.enabled = false; l.shadows = LightShadows.None;
                 l.shadowStrength = .9f; l.shadowBias = .04f; l.shadowNormalBias = .3f; l.shadowNearPlane = .7f; FBLightUtil.MediumShadows(l);
+                if (V.lampCookie > 0 && !mob) l.cookie = LedCookie();                           // r65: distribuição de luminária de rua (não círculo)
                 slots.Add(l); FBVolumetric.Sources.Add(l);
             }
             // brilho das lâmpadas (sprite somado, cor pelo tipo) — acende com a noite (FBWeather.Tick)
@@ -182,11 +196,11 @@ namespace FreeBala
                 tex.Apply(); var m = new Material(FBShaders.ParticlesUnlit); m.SetTexture("_BaseMap", tex); m = FBShaders.Transparent(m, true); m.renderQueue = 3100;
                 var ps = glow.AddComponent<ParticleSystem>(); ps.Stop(); var mm = ps.main; mm.loop = false; mm.startLifetime = 1e6f; mm.startSpeed = 0; mm.maxParticles = lamps.Count + 1; mm.playOnAwake = false; mm.simulationSpace = ParticleSystemSimulationSpace.World;
                 var e = ps.emission; e.enabled = false; var pr = glow.GetComponent<ParticleSystemRenderer>(); pr.material = m; pr.shadowCastingMode = ShadowCastingMode.Off; ps.Play();
-                foreach (var l in lamps) ps.Emit(new ParticleSystem.EmitParams { position = l.p + Vector3.up * .55f, startSize = l.sodium ? 4.2f : 3.6f, startLifetime = 1e6f, startColor = GlowColor(l) }, 1);
+                foreach (var l in lamps) ps.Emit(new ParticleSystem.EmitParams { position = l.p + Vector3.up * .55f, startSize = (l.sodium ? 4.2f : 3.6f) * V.lampGlowSize, startLifetime = 1e6f, startColor = GlowColor(l) }, 1);
                 glowPs = ps;
                 glow.SetActive(false);
             }
-            Debug.Log($"[FreeBala][luz] postes: {lamps.Count} luminárias ({lamps.Count(x => x.sodium)} sódio), {K} luzes reais, {maxShadow} com sombra, alcance {maxDist:0} m");
+            Debug.Log($"[FreeBala][luz] postes: {lamps.Count} luminárias ({lamps.Count(x => x.sodium)} sódio), {K} luzes reais, {maxShadow} com sombra, alcance {maxDist:0} m · facho inclinado em {Aimed} (tilt {V.lampTilt}°)");
         }
         static GameObject glow;
 
@@ -223,18 +237,25 @@ namespace FreeBala
             {
                 float target = sel.Contains(i) ? 1 : 0; if (w[i] == target && target == 0) continue;
                 w[i] = Mathf.MoveTowards(w[i], target, dt * 1.6f);
-                if (w[i] > 0 && !slotOf.ContainsKey(i)) { int s = FreeSlot(); if (s < 0) { w[i] = 0; continue; } slotOf[i] = s; var l = slots[s]; l.transform.position = lamps[i].p; l.colorTemperature = lamps[i].cct; l.range = lamps[i].range; l.spotAngle = lamps[i].angle; l.innerSpotAngle = lamps[i].inner; }
+                if (w[i] > 0 && !slotOf.ContainsKey(i)) { int s = FreeSlot(); if (s < 0) { w[i] = 0; continue; } slotOf[i] = s; var l = slots[s]; l.transform.SetPositionAndRotation(lamps[i].p, lamps[i].rot); l.colorTemperature = lamps[i].cct; l.range = lamps[i].range; l.spotAngle = lamps[i].angle; l.innerSpotAngle = lamps[i].inner; }
                 if (w[i] <= 0 && slotOf.TryGetValue(i, out var s2)) { slots[s2].enabled = false; slots[s2].intensity = 0; slots[s2].shadows = LightShadows.None; slotOf.Remove(i); }
             }
-            // sombra nas mais próximas (já acesas por inteiro)
-            var near = slotOf.Keys.Where(i => w[i] > .95f).OrderBy(i => (lamps[i].p - cp).sqrMagnitude).Take(maxShadow).ToHashSet();
+            // sombra nas mais próximas (já acesas por inteiro). r65: a sombra ENTRA e SAI devagar (força 0→0,9 em ~0,7 s) e quem já tem
+            // sombra fica com vantagem (histerese) — antes ligava/desligava de uma vez e a sombra "brotava" na frente do jogador
+            var near = slotOf.Keys.Where(i => w[i] > .95f).OrderBy(i => (lamps[i].p - cp).sqrMagnitude * (sw[i] > 0 ? .7f : 1)).Take(maxShadow).ToList();
+            var nearSet = near.ToHashSet(); var hi = near.Take(6).ToHashSet();
             Lit = 0;
             foreach (var kv in slotOf)
             {
                 float life = IsCut(kv.Key) ? 0 : dead[kv.Key] ? (flk[kv.Key] > 0 && flkOn[kv.Key] ? Random.Range(.6f, 1.1f) : 0) : 1;
                 var l = slots[kv.Value]; l.intensity = lamps[kv.Key].intensity * k * w[kv.Key] * life; l.enabled = l.intensity > .01f; if (l.enabled) Lit++;
-                var sh = near.Contains(kv.Key) ? LightShadows.Soft : LightShadows.None; if (l.shadows != sh) l.shadows = sh;
+                int i = kv.Key; sw[i] = Mathf.MoveTowards(sw[i], nearSet.Contains(i) ? 1 : 0, dt * 1.4f);
+                var sh = sw[i] > 0 ? LightShadows.Soft : LightShadows.None; if (l.shadows != sh) l.shadows = sh;
+                l.shadowStrength = .9f * Mathf.SmoothStep(0, 1, sw[i]);
+                var ad = l.GetUniversalAdditionalLightData(); int tier = hi.Contains(i) ? UniversalAdditionalLightData.AdditionalLightsShadowResolutionTierMedium : UniversalAdditionalLightData.AdditionalLightsShadowResolutionTierLow;
+                if (ad && ad.additionalLightsShadowResolutionTier != tier) ad.additionalLightsShadowResolutionTier = tier;
             }
+            for (int i = 0; i < sw.Length; i++) if (!slotOf.ContainsKey(i)) sw[i] = 0;
         }
         // diagnóstico (vitrine -fbgfx): seleção, slots, peso máximo, luminária mais perto
         public static string Diag()
@@ -243,7 +264,45 @@ namespace FreeBala
             float wmax = 0; if (w != null) foreach (var x in w) wmax = Mathf.Max(wmax, x);
             return $"postes sel {sel.Count} slots {slotOf.Count}/{slots.Count} vivos {slots.Count(x => x)} wmax {wmax:0.00} mais perto {nd:0} m alcance {maxDist:0} K {K}";
         }
+        static float[] sw = new float[0];
+        // r65: COOKIE de luminária pública de LED (sem IES no URP — o perfil vira textura): distribuição de rua tipo II/III — larga ao longo
+        // da via (eixo x do spot), lançada para o lado da rua (+y, o 'away' do Aim) e cortada do lado da casa/poste; "asa de morcego"
+        // (borda mais forte que o centro, compensa a queda cos³ no chão → piso iluminado por igual em vez de bola no pé do poste).
+        static Texture2D ledCookie;
+        static Texture2D LedCookie()
+        {
+            if (ledCookie) return ledCookie; const int N = 128; ledCookie = new Texture2D(N, N, TextureFormat.R8, false, true) { wrapMode = TextureWrapMode.Clamp, name = "cookie_led_rua" };
+            var px = new byte[N * N];
+            for (int y = 0; y < N; y++) for (int x = 0; x < N; x++)
+            {
+                float u = (x + .5f) / N * 2 - 1, v = (y + .5f) / N * 2 - 1;                // -1..1 no cone
+                float vs = v > -.05f ? (v + .05f) / 1.05f : (v + .05f) / .5f;                    // lado da casa (v<0) encolhido
+                float e = Mathf.Sqrt(u * u / (1f * 1f) + vs * vs / (.92f * .92f));
+                float edge = 1 - Mathf.SmoothStep(.78f, 1f, e);
+                float bat = .62f + .38f * Mathf.Clamp01(e * e * 1.25f);
+                px[y * N + x] = (byte)Mathf.RoundToInt(255 * Mathf.Clamp01(edge * bat));
+            }
+            ledCookie.SetPixelData(px, 0); ledCookie.Apply(false, true); return ledCookie;
+        }
         static int FreeSlot() { var used = new HashSet<int>(slotOf.Values); for (int s = 0; s < slots.Count; s++) if (!used.Contains(s)) return s; return -1; }
+        // direção do facho: 16 raios horizontais curtos (2,8 m) a 0,5 e 1,4 m abaixo da luminária acham o poste/parede; o facho inclina
+        // tilt graus para o lado oposto. Sem nada perto (luminária solta) = reto para baixo. tilt 0 = comportamento antigo.
+        static Quaternion Aim(Vector3 p, float tilt, out float used)
+        {
+            used = 0; var down = Quaternion.Euler(90, 0, 0); if (tilt <= 0) return down;
+            Vector3 acc = Vector3.zero; int hits = 0;
+            foreach (float dy in new[] { .5f, 1.4f })
+                for (int k = 0; k < 16; k++)
+                {
+                    float a = k * Mathf.PI / 8; var d = new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a));
+                    if (Physics.Raycast(p + Vector3.down * dy, d, out var h, 2.8f, FBWorld.SolidMask, QueryTriggerInteraction.Ignore)) { acc += d * (1 - h.distance / 2.8f); hits++; }
+                }
+            if (hits == 0 || acc.sqrMagnitude < 1e-4f) return down;
+            var away = -acc.normalized; float t = tilt * Mathf.Deg2Rad; used = tilt;
+            var dir = (Vector3.down * Mathf.Cos(t) + away * Mathf.Sin(t)).normalized;
+            return Quaternion.LookRotation(dir, away);
+        }
+        public static int Aimed => lamps.Count(l => l.tilt > 0);
     }
 
     public static class FBAccentLights

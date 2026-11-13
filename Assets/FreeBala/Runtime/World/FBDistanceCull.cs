@@ -123,7 +123,7 @@ namespace FreeBala
         static void Boot() { if (I) return; var g = new GameObject("FBCarCull"); DontDestroyOnLoad(g); I = g.AddComponent<FBCarCull>(); }
         static FBCarCull I;
         public static float HideDist => FBQuality.Mobile ? 150 : 260;
-        public static float ShadowDist => FBQuality.Mobile ? 25 : 45;
+        public static float ShadowDist => FBQuality.Mobile ? 25 : FBVisual.C.carShadowDist > 0 ? FBVisual.C.carShadowDist : 45;   // r65: 90 m no PC (a sombra do carro nascia a 45 m, na frente do jogador)
         class St { public Renderer[] rs; public UnityEngine.Rendering.ShadowCastingMode[] sh; public float t; public bool hid, noSh; public FBCharacter drv; public bool drvHid; }
         readonly Dictionary<FBCar, St> st = new();
         public static int Hidden { get; private set; }

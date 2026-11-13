@@ -1,0 +1,367 @@
+{
+ "a": {
+  "achados": [
+   {
+    "peca": "Obra — peça inclinada do lado oeste (\"lance de escada\")",
+    "gravidade": "alta",
+    "descricao": "No real a peça inclinada de concreto NÃO é um lance curto paralelo à fachada. É uma laje/viga inclinada comprida que corre ao longo da divisa oeste (junto à casa branca), no sentido fundos -> frente: nasce baixa lá atrás (mais ou menos no nível do 1º piso) e sobe até o topo do pilar da frente-oeste, chegando ao nível da cobertura da caixa superior. Ocupa o vão entre as duas linhas de pilares altos do oeste (há uma viga inclinada em cada linha) e leva em cima um guarda-corpo INCLINADO com tela rosa, que de oeste desenha uma diagonal na silhueta. Pela paralaxe tem de 9 a 15 m em planta para ~3 m de subida (11 a 18 graus): parece mais RAMPA do que escada; não se vê degrau em nenhum quadro, então estou em dúvida entre rampa e escada longa. No modelo é um lance curto leste-oeste, paralelo à fachada, subindo para leste, a leste do 2º pilar, com corrimão próprio; o guarda-corpo do flanco oeste é horizontal e a silhueta vista de oeste é uma caixa.",
+    "evidencia": "Folhas obra_x4 e casa_obra_xm9. Quadros ampliados: q_02466 (recorte obra2466_oeste.jpg: viga inclinada de (250,700) a (700,240) no recorte, 2ª viga paralela no 2º pilar, guarda-corpo inclinado com tela), q_02500 (obra2500.jpg: rampa longa de perfil, espessura constante), q_02430 e q_02417 (obra2417_oeste.jpg: triângulos de concreto presos aos dois pilares = laje inclinada vista de frente). Unity: r16_video_xm9.png (u_obra_xm9.jpg) e r18_obra_x4.png (u_obra_x4_oeste.jpg). Recortes em C:\\Users\\Rodrigo\\AppData\\Local\\Temp\\claude\\a0de669827628d24\\6dd1e011-812b-4b4e-b90d-0ba9ee612670\\scratchpad\\verif_r19\\",
+    "sugestao": "Trocar o lance leste-oeste por uma laje inclinada de ~3 m de largura (vão entre os dois pilares do oeste) correndo norte-sul pela divisa oeste, baixa nos fundos e alta na frente, com viga de borda de ~0,45 m nas duas linhas de pilar e guarda-corpo inclinado com tela no lado oeste; manter sem degraus (superfície lisa) enquanto não houver quadro que mostre degrau."
+   },
+   {
+    "peca": "Corretora — painel quadriculado no alinhamento e parede a oeste da porta",
+    "gravidade": "alta",
+    "descricao": "No modelo há um painel quadriculado (2 colunas visíveis x 8 fiadas, da calçada até o topo da mureta) no plano do alinhamento, colado à ponta leste da mureta dos medidores. Isso não existe no real: ali só há o poste do totem. Em compensação, na parede da agência o real tem DUAS esquadrias quadriculadas iguais (4 colunas x 9 fiadas, do piso a ~2,05 m), uma de cada lado da porta escura; o modelo só tem a do lado leste e deixa lisa a parede a oeste da porta. Parece que a esquadria oeste foi parar no alinhamento.",
+    "evidencia": "Folha corretora_xm24. Quadros q_02480 (cor2480.jpg) e q_02505 (cor2505.jpg): ordem na parede recuada = quadriculada, porta preta, quadriculada, basculante, ar-condicionado, portão quadriculado; as duas quadriculadas têm quadros do mesmo tamanho e a mesma base (mesmo plano). Unity r19_corretora_xm24.png (u_corretora_esq.jpg): quadros do painel da esquerda 1,45x maiores que os da direita e base na calçada; r16_video_xm9.png (u_corretora_xm9.jpg): coluna de quadros com base na linha da mureta e parede lisa entre x=450 e 640 do recorte.",
+    "sugestao": "Remover o painel quadriculado do alinhamento e pôr a esquadria quadriculada (4x9) na parede da agência, imediatamente a oeste da porta, igual à do lado leste."
+   },
+   {
+    "peca": "Obra — tapume da frente (proporção e altura relativa)",
+    "gravidade": "media",
+    "descricao": "O tapume da frente é mais baixo/comprido no real do que no modelo. Largura/altura do pano frontal: 5,8 no quadro contra 5,0 na foto. E o topo do tapume fica ABAIXO da verga do portão da casa branca vizinha (portão = 1,06 a 1,15 x tapume, ~1,10 no quadro frontal), enquanto no modelo o tapume é mais alto que o portão (portão = 0,94 x tapume, topos no mesmo nível). Com 11,4 m de frente, 5,8 dá ~1,95-2,0 m de altura (não 2,2 m).",
+    "evidencia": "q_02417: tapume x 683-1822 (1139 px), altura 192 px (oeste) a 200 px (leste) -> 5,8; q_02380: 1075 px / 187 px -> 5,75. Divisa: q_02417 verga do portão y=480, topo do tapume y=509 (r_2417_div.jpg); q_02450 verga 453, tapume 482, portão 215 px x tapume 197 px; q_02466 portão 218 x tapume 190. Unity r18_obra_x4.png: tapume x 466-1127 (661 px), altura 133-136 -> 4,95; verga 490, topo do tapume 493, portão 125 x tapume 133 (r_u_x4_div.jpg).",
+    "sugestao": "Baixar o tapume para ~2,0 m (mesma ordem dos outros tapumes medidos em alturas_r19.json) mantendo os 11,4 m; conferir depois que o topo fique ~0,25 m abaixo da verga do portão 646."
+   },
+   {
+    "peca": "Casa branca 646 — portão da garagem (largura e altura)",
+    "gravidade": "media",
+    "descricao": "Na foto o portão da garagem ocupa 52 % da frente (pilar de pedra até o pilarete leste), igual ao ANTES; no real são 56 %. O pano entre o portão de pedestre e o da garagem está largo demais (16 % no modelo, 10,5 % no real). O portão também está baixo: a faixa branca entre a verga e a base do vidro vale 35 % da altura do portão no modelo e só 15-20 % no real (o portão ocupa ~85 % da altura do corpo da garagem; no modelo 74 %).",
+    "evidencia": "q_02466: pilar 665-750, pedestre 750-940, pano das frestas 940-1035, garagem 1035-1543, pilarete até 1565 -> 508/900 = 56,4 %; q_02450 (r_2450.jpg): 533/950 = 56,1 %; faixa acima do portão 33-40 px contra portão 215-218 px. Unity r16_video_xm9.png (r_u_xm9.jpg, u_casa_frente4.jpg): frente 578-1241, garagem 874-1218 -> 51,9 %; faixa 41-45 px contra portão 120-124 px. Foto de antes (antes_casa_xm9.jpg) tem as mesmas larguras.",
+    "sugestao": "Alargar o portão da garagem para 56 % da frente tirando do pano das frestas (que deve ficar com ~10 %: três pilaretes e duas frestas escuras estreitas) e subir a verga até a faixa branca ficar com ~0,35-0,4 m."
+   },
+   {
+    "peca": "Casa branca 646 — guarda-corpo de vidro do terraço",
+    "gravidade": "media",
+    "descricao": "No real o guarda-corpo tem 7 montantes redondos de inox com presilhas, corrimão tubular em cima e vidro bem transparente (vê-se a parede bege do fundo, com um degrau em diagonal no lado leste, e vasos). Na foto do modelo continua uma faixa leitosa azulada contínua: só aparece uma linha vertical (junta) e nenhum montante nem corrimão.",
+    "evidencia": "q_02450 (r_2450.jpg): montantes em x=360, 463, 572, 680, 790, 905, 1020 da régua (passo ~100 px do quadro, ~1,1 m); q_02466 (casa2466.jpg). Unity r16_video_xm9.png: perfil horizontal da faixa de vidro (x 800-1215, y 412-445) só acusa colunas em x=1082 e 1205; r18_obra_x4.png não acusa nenhuma (u_casa_vidro.jpg).",
+    "sugestao": "Engrossar/escurecer os montantes (tubo de ~5 cm, cinza-inox) a cada ~1,1 m, pôr corrimão tubular no topo e reduzir a opacidade do vidro; conferir numa foto a esta distância."
+   },
+   {
+    "peca": "Casa branca 646 — interior do pórtico",
+    "gravidade": "media",
+    "descricao": "Sob a laje do pórtico o real tem paredes revestidas de placa cinza-grafite com juntas horizontais (com uma plaquinha amarela) e um vão aberto por onde se vê o céu; no modelo o fundo é uma parede clara cheia, com só uma tira escura estreita. A leitura clara/escura fica invertida. Do lado oeste há ainda uma escada externa com guarda-corpo de vidro inclinado e concertina na divisa, que não vi no modelo.",
+    "evidencia": "q_02466 (casa2466.jpg: parede grafite em 185-330 e 380-460 do recorte, céu em 330-380) e q_02500 (obra2500.jpg). Amostra: real (76,73,65) contra Unity (126,126,120) no mesmo ponto. Unity r16_video_xm9.png (u_casa_xm9.jpg).",
+    "sugestao": "Revestir de grafite a face interna da parede oeste e a parede do fundo, abrir o vão entre elas (sem parede clara de fundo) e acrescentar a escada lateral com vidro."
+   },
+   {
+    "peca": "Sobrado — posição da casa em relação ao muro e largura dos portões",
+    "gravidade": "media",
+    "descricao": "(1) No real a ala leste da casa, com as duas janelinhas do térreo, fica ATRÁS do portão de carro, e isso vale nos dois pontos de vista; no modelo as janelinhas aparecem atrás da grade do meio e atrás do portão de carro só há pátio vazio. Descontando a paralaxe com dois quadros e duas fotos, a casa do modelo está ~1 a 1,5 m a oeste demais em relação ao pilar/portão (incerteza +-0,6 m). (2) Portão de pedestre com ~0,5 m no modelo (1,6 x a largura do pilar); no real ~0,8 m (2,75 x o pilar). (3) Portão de carro com 17 % da testada no modelo e 21,6 % no quadro frontal.",
+    "evidencia": "q_02268 (r_2268.jpg): fita leste de tijolo de vidro em 1070-1105 da régua, pilar em 1135-1168, portão de carro 1168-1530, janelas térreas em 1168-1205 e 1275-1330; pedestre 572-668 com pilares de 35. q_02230 (sob2230.jpg): janela térrea ainda dentro do portão de carro. Unity r16_video_x28.png (r_u_x28.jpg): fita em 970-1000, pilar 1198-1240, janelas 1015-1185, portão de carro 1240-1510, pedestre 622-690 com pilares de 42; r18_casas_x36.png (u_sob_x36.jpg).",
+    "sugestao": "Deslocar a casa ~1,2 m para leste (ou o conjunto pilar + portão de carro para oeste) até a ala leste ficar atrás do portão de carro; pedestre com 0,8 m; portão de carro com ~21 % da testada."
+   },
+   {
+    "peca": "Sobrado — cobertura do térreo (lado oeste)",
+    "gravidade": "media",
+    "descricao": "No real o térreo tem um telhado de fibrocimento cinza-claro, ondulado e em águas (com beiral e cumeeira), que avança ~3 m a oeste do corpo da casa. No modelo é uma laje cinza plana de borda grossa: lê como marquise de concreto.",
+    "evidencia": "q_02268 (r_2268.jpg: telhado claro de x=240 a 720 da régua, cumeeira y~345, beiral y~405) e q_02320 (vista de oeste, telhado em águas). Unity r16_video_x28.png (laje em 155-700, y 395-440) e r18_casas_x36.png (u_sob_x36.jpg).",
+    "sugestao": "Trocar a laje por telhado de duas/quatro águas de pouca inclinação com telha ondulada cinza-claro e beiral fino."
+   },
+   {
+    "peca": "Corretora — totem",
+    "gravidade": "media",
+    "descricao": "O totem real é uma placa de duas faces PERPENDICULAR à rua (de frente só se vê o poste de ~0,4 m; a face aparece de leste), sobre poste branco com base azul, colada à ponta leste da mureta; painel branco (topo com a marca, faixa escura com telefones, lista em fundo branco), ~3,9 m de altura. No modelo é um prisma cinza com a face larga (~1 m) virada para a rua e painel azul-marinho, e de frente tapa a porta da agência.",
+    "evidencia": "q_02530 (q2530_ag.jpg: poste de perfil em 400-465 do recorte), q_02480 (cor2480.jpg: face visível, topo y=165, mureta y=410, base y~660 -> 1,94 x a mureta), q_02505. Unity r19_corretora_xm24.png (u_corretora.jpg: face de 70 px virada para a rua, 263 px de altura contra mureta de 145 px = 1,81x) e u_corretora_xm9.jpg.",
+    "sugestao": "Girar o totem 90 graus (faces para leste e oeste), espessura ~0,3-0,4 m, painel de fundo branco, altura ~3,9 m, encostado à ponta leste da mureta."
+   },
+   {
+    "peca": "Casa das grades (598)",
+    "gravidade": "media",
+    "descricao": "(1) A parede atrás das grades está quase preta no modelo; no real é a parede clara da casa na sombra da varanda (cinza médio), então a casa não lê como casa escura. (2) O portão de pedestre do modelo (grade + chapa azul) é mais estreito que o vão e fica recuado: sobra um vão escuro aberto ao lado; no real o portão preenche o vão entre os pilares, no plano do muro. (3) O desenho das grades é mais miúdo: no real são barras verticais com 3-4 diagonais largas em faixas alternadas (zigue-zague grande), no modelo só espinha de peixe fina. (4) O telhado já aparece inclinado, mas liso (sem ondulação de fibrocimento). (5) Continuam faltando o número 598 no pilar, a cerca elétrica e a concertina.",
+    "evidencia": "q_02230 (grades2230.jpg). Unity r16_video_x28.png (u_grades_x28.jpg: vão sem portão em 990-1130 do recorte) e r18_casas_x36.png (u_grades_x36.jpg: chapa azul só em 808-908 de um vão 808-1000). Na folha casas_x36 um contêiner tapa o terço direito, por isso usei também a x28.",
+    "sugestao": "Clarear a parede do fundo para cinza médio; pôr o portão de pedestre no plano do muro com a largura do vão; redesenhar as grades com verticais + diagonais largas; textura ondulada no telhado; número, hastes da cerca e concertina."
+   },
+   {
+    "peca": "Sobrado — escalonamento dos telhados e detalhes",
+    "gravidade": "baixa",
+    "descricao": "Os três telhados existem, mas o degrau está trocado: no real a ala oeste (varanda) é a mais baixa (beiral a 0,875 da altura do central) e a leste quase na altura do central (0,95); no modelo as duas ficam iguais (0,93). A varanda real é aberta em toda a largura da ala, com pilar no canto e parapeito cheio; no modelo é um nicho menor. As fitas de tijolo de vidro estão verde-água com caixilho (leem como janela); no real são cinza-esverdeadas, de bloco de vidro. As grades do muro são brancas, chatas (~40 % de cheio), com pontas e duas travessas; no modelo são finas e cinza. O tijolo real é mais alaranjado. O canto oeste do muro é um pilar rebocado creme, não de tijolo.",
+    "evidencia": "q_02268 (r_2268.jpg): topo do central y=37, oeste 115, leste 65, base 665. Unity r16_video_x28.png (r_u_x28.jpg): central 330, oeste 350, leste 352, base 625. Cores: tijolo de vidro real (110,113,104) x Unity (86,105,103); tijolo real R/B 1,84 x Unity 1,47. sob2230.jpg x u_sob_x36.jpg.",
+    "sugestao": "Baixar o telhado da ala oeste ~0,4 m e subir o da leste ~0,2 m; abrir a varanda; trocar o material das fitas por bloco de vidro cinza-esverdeado; grades brancas chatas."
+   },
+   {
+    "peca": "Obra — detalhes",
+    "gravidade": "baixa",
+    "descricao": "(1) A tela do modelo é um painel liso e esticado; a real é rede plástica de trama aberta, caída em barrigas (principalmente no vão oeste do 1º piso), e na metade dos fundos da lateral do 1º piso o guarda-corpo está sem tela (só tubos). (2) No real o guarda-corpo com tela do nível de cima continua para oeste sobre o vão dos dois pilares altos; no modelo esse trecho não existe. (3) O X de madeira entre os pilares é inventado: há escoras soltas em diagonal e uma prancha horizontal. (4) Na quina do tapume o modelo tem uma estaca escura da altura do tapume; no real há um poste de concreto de iluminação junto à guia e uma estaca zebrada ~2 m antes da quina. (5) Continua sem a pichação. (6) As aberturas do térreo têm cantos superiores arredondados no real (frente e lateral); no modelo são retas. (7) A borda da laje curva tem ~0,7 m aparentes com a forma de madeira no real; no modelo é mais fina.",
+    "evidencia": "q_02417 (obra2417_top.jpg, obra2417_oeste.jpg), q_02380 (esq2380_canto.jpg), q_02320 (lat2320.jpg), q_02430. Unity r18_obra_x4.png, r18_obra_esquina.png (u_esq_canto.jpg), r18_obra_lateral.png (u_lat.jpg).",
+    "sugestao": "Textura de rede com alfa recortado e alguns panos caídos; tirar a tela do fundo da lateral do 1º piso; trocar o X por 2-3 escoras soltas; poste de concreto na esquina no lugar da estaca; cantos arredondados nas aberturas."
+   },
+   {
+    "peca": "Corretora — demais diferenças",
+    "gravidade": "baixa",
+    "descricao": "(1) O portão quadriculado grande do modelo é um pano cinza-claro de trama fina; no real é igual às janelas (quadro branco com quadros escuros, ~11 colunas x 9 fiadas, duas folhas). (2) Falta o corredor com portão pantográfico e o tubo de queda no extremo leste, sob a ponta vermelha da testeira; no modelo a parede termina antes e fica um vazio. (3) Junto à mureta o muro cinza mede 2,35-2,45 m (17-20 % acima da mureta), não 2,3 m. (4) O telheiro atrás do muro é uma faixa chapada quase preta; no real é telhado de telha cinza-escura que só aparece na metade leste do muro. (5) Sem concertina nem hastes de cerca elétrica no muro.",
+    "evidencia": "q_02530 nivelado (q2530_rotm3_c.jpg, q2530_ag.jpg), q_02480, q_02505. Unity r19_corretora_xm24.png, r16_video_xm9.png.",
+    "sugestao": "Usar no portão a mesma esquadria das janelas; acrescentar o corredor com pantográfico; muro com 2,35-2,4 m."
+   }
+  ],
+  "afirmacoes_conferidas": [
+   {
+    "afirmacao": "a1) Obra: os guarda-corpos dos dois níveis são cobertos por tela de proteção rosa/alaranjada semitransparente",
+    "resultado": "confere",
+    "como_medi": "Ampliei q_02417, q_02430, q_02466 e q_02320. Há rede plástica rosa-alaranjada de trama aberta no guarda-corpo da caixa superior, nos trechos de cima a leste, no balcão curvo do 1º piso e no vão oeste do 1º piso (caída). Ressalva: na lateral (q_02320), da metade para os fundos o guarda-corpo do 1º piso está sem tela. Na foto do modelo a tela aparece nos dois níveis, como painel liso."
+   },
+   {
+    "afirmacao": "a2) Obra: há um lance de escada de concreto inclinado no lado oeste",
+    "resultado": "nao_confere",
+    "como_medi": "Existe peça inclinada de concreto no oeste, mas não é um lance curto paralelo à fachada. Em q_02466 e q_02500 é uma laje/viga inclinada que corre pela divisa oeste, dos fundos (baixa) para a frente (alta), com viga em cada uma das duas linhas de pilar e guarda-corpo inclinado. Em q_02500 a ponta baixa fica a 573 px do centro e a alta sai do quadro (>960 px), com 14,4 m de afastamento lateral: comprimento em planta de 9 a 15 m conforme a focal (900 a 1500 px), para ~3 m de subida = 11 a 18 graus. Isso é inclinação de rampa; não se vê degrau. Fico em dúvida entre rampa e escada longa, mas a orientação (norte-sul) e a posição (entre os dois pilares do oeste) são seguras. Há uma segunda escada, essa com degraus visíveis, no miolo do prédio entre a caixa da frente e a cobertura da lateral (q_02320, lat2320_escada.jpg)."
+   },
+   {
+    "afirmacao": "a3) Obra: o canto do tapume na esquina é curvo",
+    "resultado": "confere",
+    "como_medi": "q_02380 ampliado 3,5x (esq2380_canto.jpg): a borda de baixo sobe e a de cima desce a partir de ~57 px antes do fim, em dois panos (57 px + 23 px do quadro, ~0,9 m projetado a ~90 px/m). É uma curva feita de chapas dobradas em facetas, raio da ordem de 1-1,5 m. No modelo a curva existe, com raio menor."
+   },
+   {
+    "afirmacao": "b1) Casa branca 646: o portão da garagem é de barras verticais finas e ocupa perto de 57 % da frente",
+    "resultado": "confere",
+    "como_medi": "No REAL confere: q_02466 -> 508 px de portão em 900 px de frente = 56,4 %; q_02450 -> 533/950 = 56,1 %. Barras verticais chatas, passo de 9,0-9,3 px (FFT), ~54 barras em duas folhas, 51 % de cheio (barra ~5 cm, vão ~5 cm). Mas a FOTO do modelo não chegou lá: portão 874-1218 em frente 578-1241 = 51,9 %, mesma largura da foto de antes; as barras estão certas (51 barras, 53 % de cheio)."
+   },
+   {
+    "afirmacao": "b2) Casa branca 646: o guarda-corpo de vidro do terraço tem montantes",
+    "resultado": "confere",
+    "como_medi": "No REAL confere: 7 montantes redondos de inox com presilhas e corrimão tubular (q_02450: x=360, 463, 572, 680, 790, 905, 1020 da régua; passo ~100 px do quadro). Na FOTO do modelo não aparecem: o perfil horizontal da faixa de vidro só acusa uma coluna (x=1082) e a ponta (x=1205) em r16_video_xm9.png, e nenhuma em r18_obra_x4.png."
+   },
+   {
+    "afirmacao": "c) Sobrado: três telhados escalonados (corpo central mais alto e avançado), muro e pilares de tijolo aparente claro",
+    "resultado": "confere",
+    "como_medi": "q_02268 (frontal): beiral do central com topo em y=37 da régua, o da ala leste em 65 e o da ala oeste em 115, base em 665 -> central 2,33, leste 2,22 e oeste 2,04 alturas do pilar largo. q_02230 (de leste): aparece a parede de retorno sombreada entre o corpo central e a ala leste, logo o central é avançado. Muro e pilares de tijolo aparente alaranjado claro, média (162,115,88). Ressalvas: o canto oeste é um pilar rebocado creme; há um quarto telhado, de fibrocimento claro, sobre o térreo; no modelo as alas oeste e leste ficaram na mesma altura (0,93 do central) em vez de 0,875 e 0,95."
+   },
+   {
+    "afirmacao": "d1) Corretora: o muro cinza tem cerca de 2,3 m, só ~14 % mais alto que a mureta branca dos medidores (~2,0 m)",
+    "resultado": "confere",
+    "como_medi": "q_02530 girado 3 graus no sentido horário (q2530_rotm3.jpg), perfis verticais: muro em x=300 topo 499, base 700 = 201 px; em x=900 topo 490, base 701 = 211 px; mureta topo 524, base ~700 = 176 px. Razão 1,14 na ponta oeste e 1,20 junto à mureta. Outros quadros: q_02480 1,18; q_02505 1,17. A 86,6 px/m: muro 2,32 a 2,44 m, mureta 2,03 m. Confere dentro de +-5 %, com viés: junto à mureta o muro está mais para 2,35-2,45 m (17-20 %). Na foto do modelo a razão é 168/145 = 1,16."
+   },
+   {
+    "afirmacao": "d2) Corretora: a testeira da marquise vai de ~2,5 a ~3,4 m (a porta de vidro tem 2,1 m)",
+    "resultado": "confere",
+    "como_medi": "Mesmo quadro nivelado: testeira topo y~440, base y~502 (58-62 px); porta escura 534-654 (120 px). Com a porta em 2,10 m (58 px/m na parede) e a testeira no plano mais próximo (65 px/m pela paralaxe 0,735/0,655 do JSON): altura 0,90-0,95 m. Horizonte em y~594: base a (594-502)/65,2 + 1,25 = 2,66 m da calçada e topo a 3,6 m; descontando ~0,2 m de piso do pátio acima da calçada, 2,46 e 3,4 m. Confere em +-0,15 m. Testeira/porta em pixels: 0,49 no quadro e 0,49 na foto."
+   },
+   {
+    "afirmacao": "e) Proporção geral obra x tapume x pórtico da casa branca na foto bate com a do quadro",
+    "resultado": "nao_confere",
+    "como_medi": "Bate em parte. Obra x pórtico (alturas acima da base do tapume): 1,47 no q_02466 e 1,45 na foto xm9. Topo do guarda-corpo da obra em alturas de tapume: 3,16-3,22 (q_02417) contra 3,01-3,08 (foto x4), -4,5 %. Plantas: caixa superior 19,5-44 % do tapume no quadro contra 23-52 % na foto, compatível depois de descontar o recuo. NÃO bate o tapume: largura/altura 5,8 no quadro contra 5,0 na foto; portão da casa branca/tapume 1,06-1,15 no quadro contra 0,94 na foto (no real a verga fica ~29-40 px acima do topo do tapume; na foto estão no mesmo nível); pórtico/tapume ~2,15-2,2 contra 2,04; 1ª laje (balcão) em 1,97 tapumes contra 1,68. Os desvios são coerentes com tapume ~10 % alto demais e portão ~10 % baixo demais no modelo."
+   }
+  ],
+  "corrigidos_desde_r18": [
+   "Obra: os guarda-corpos agora têm tela rosada nos dois níveis (era só tubo). Fica a ressalva de ser painel liso e de cobrir também o fundo da lateral, onde o real não tem tela.",
+   "Obra: o canto do tapume na esquina deixou de ser vivo; há um trecho curvo (raio menor que o real).",
+   "Sobrado: agora há três telhados separados, com o corpo central mais alto e avançado e os volumes das alas distintos (era um telhado só, achatado). Fica a ressalva do escalonamento oeste/leste.",
+   "Casa térrea das grades: o telhado já não lê como laje plana; aparece como água de pouca inclinação com beiral e quina (ainda liso, sem ondulação).",
+   "Casa branca: pela minha medição a parede lateral e a laje do pórtico não estão grossas demais (parede 6,1 % da largura do pórtico no quadro e na foto; laje ~10 % no quadro e 8 % na foto). A peça é igual na foto de antes, então o item da r18 não se sustenta como diferença.",
+   "NÃO resolvidos do meu trecho: lance de escada da obra (existe, mas com orientação e tipo errados); portão da garagem (52 %, igual ao antes, contra 56 % do real); montantes do vidro (não aparecem na foto); pichação e poste da esquina; cerca elétrica, concertina e número da casa térrea."
+  ],
+  "nao_julgavel": [
+   "As fotos do Unity têm 1600x900, não 1920x1080; não atrapalhou as medidas (usei só razões), mas fica registrado.",
+   "Folha casas_x28: uma árvore do jogo tapa quase todo o sobrado na foto do Unity; julguei o sobrado pela casas_x36 e pelas linhas de telhado que escapam da copa.",
+   "Folha casas_x36: um contêiner do jogo tapa o terço direito (casa das grades); julguei essa casa pela foto x28.",
+   "Folha corretora_xm24: o totem do modelo tapa a porta da agência; usei a foto xm9 para a ordem das esquadrias.",
+   "Obra: se a peça inclinada do oeste é rampa ou escada longa (nenhum quadro mostra a superfície de cima); comprimento exato dela e da lateral pela R. Pedrinho Filho (só vista em fuga no q_02320); térreo atrás do tapume; desnível entre a caixa superior e o nível de cima a leste (depende do recuo, que não dá para medir de frente).",
+   "Casa branca: a borda da laje do pórtico aparece com inclinações diferentes em cada quadro (0 a ~10 graus), o que não consegui explicar só com rolagem e guinada da câmera; não sei dizer se a laje é inclinada. Alturas absolutas do pórtico e do portão (o pórtico é recuado e não há referência de tamanho no plano dele). Lado oeste (escada com vidro, concertina): não há foto do Unity desse ângulo.",
+   "Sobrado: recuo real da casa atrás do muro e alturas absolutas (base da casa encoberta); o deslocamento casa x muro que apontei depende das posições de câmera estimadas (+-0,6 m).",
+   "Corretora: o sobrado creme do fundo e o telheiro atrás do muro só aparecem em parte; não dá para conferir forma nem altura. A altura absoluta do muro depende da escala de 86,6 px/m transferida de outro lote.",
+   "Cores finas (tom do tijolo, do muro cinza, da tela): as fotos do Unity estão subexpostas; só comparei razões entre canais, com pouca confiança."
+  ]
+ },
+ "b": {
+  "achados": [
+   {
+    "peca": "TCE - muro branco entre o portao de enrolar e a esquina do patio do predio branco (comprimento)",
+    "gravidade": "alta",
+    "descricao": "A altura foi baixada mas o comprimento ficou na escala antiga. No real o muro (da borda leste do portao ate a quina onde ele dobra para dentro) mede cerca de 2,0 x a propria altura; no modelo mede 2,8 a 2,9 x (cerca de 7,4 m para 2,6 m de altura; a especificacao soma 2,5 + 5,8 = 8,3 m). Com muro de 2,6-2,7 m o comprimento real fica em 5,2-5,6 m: sobram uns 2 m. Consequencia visivel: a quina do muro e o totem ficam ~1,3 m a leste demais em relacao a porta do predio branco (no real a porta fica inteira a leste do totem, de +1,0 a +3,1 m; no modelo de -0,3 a +2,05 m). O trecho inteiro (pilar oeste + portao + muro) tem ~11,5 m no real e ~15 m no modelo; a razao 1,3-1,4 e a mesma do erro de velocidade da tabela CSV apontado no alturas_r19.json (0,202 contra 0,143 m/quadro).",
+    "evidencia": "Quadros brutos, comprimento/altura do muro em pixels: q_01740 378/204 = 1,85; q_01760 412/211 = 1,95; q_01790 462/228 = 2,03 (corrigindo a guinada da camera pelo passo da guia pintada: 2,04 / 2,03 / 1,96). Unity r17_tce_x112.png: muro de x=770 a 1159 px = 389 px para 138 px de altura = 2,82. Paralaxe q_01740 x q_01760: totem 917->1175, batente oeste da porta 1000->1200, quina do predio 951->1145. Recortes em C:\\Users\\Rodrigo\\AppData\\Local\\Temp\\claude\\a0de669827628d24\\6dd1e011-812b-4b4e-b90d-0ba9ee612670\\scratchpad\\verif_r19\\ (b_1740_muroleste.jpg, i_1760_juncao.jpg, d_u_tce112.jpg).",
+    "sugestao": "Remedir as larguras deste trecho com a mesma escala usada para as alturas (guia de 1 m / 0,143 m por quadro) e encurtar o muro para ~2,0-2,1 x a altura (5,3-5,6 m). Antes de mexer, conferir no cadastro/satelite qual ponta esta ancorada (face leste da torre do TCE em x=104 ou quina oeste do predio branco): nao consegui decidir pelos quadros qual das duas esta fora."
+   },
+   {
+    "peca": "Calcada entre a ciclovia e o alinhamento (TCE, predio branco e ESCON)",
+    "gravidade": "alta",
+    "descricao": "No real ha uma calcada larga entre a guia da ciclovia e o pe do muro/volume azul, com 1,3 a 1,5 x a largura da ciclovia (~2,5-3,5 m). No modelo essa faixa tem ~1 m: o muro do TCE, o volume azul e o pe do pilone da ESCON ficam praticamente encostados na ciclovia.",
+    "evidencia": "q_01790: pe do muro y=706, guia calcada/ciclovia y~745, ciclovia ate y~805; com horizonte entre 600 e 620 a razao calcada/ciclovia da 1,33-1,48 (q_01760 da 1,3-1,5). q_01617 e q_01679: calcada cinza de 40-70 px entre o pe do pilone/volume azul e a ciclovia. Unity r19_muro_tce_x109.png: pe do muro y~577, ciclovia y 585-622 -> razao 0,35; r19_branco_x122.png -> 0,50; r18_escon_x147.png: pe do pilone sobre a borda da ciclovia; r16_video_x134.png: 0-2 px de calcada.",
+    "sugestao": "Recuar o alinhamento das fachadas deste trecho ~1,5-2,5 m para o norte (ou conferir a posicao da ciclovia do mapa de base) ate a calcada ficar com ~1,3-1,5 x a largura da ciclovia."
+   },
+   {
+    "peca": "Predio branco - totem DIPLE",
+    "gravidade": "media",
+    "descricao": "Totem alto demais: no modelo o topo do disco fica a ~3,8 m (pilar de ~3,0 m com o disco de ~0,85 m em cima) e aparece ACIMA do topo da testeira azul, na altura das janelas de cima. No real o topo do disco fica a ~3,05-3,25 m (1,17-1,21 x a altura do muro) e aparece no MEIO da testeira. Composicao tambem difere: no real, de cima para baixo: tambor redondo grosso (luminoso) branco; caixa azul estreita com 3 linhas de texto logo abaixo do disco; painel BRANCO com DIPLE em letras azul-escuras; base branca em dois degraus dentro de uma floreira de concreto com arbustos. No modelo: disco fino, trecho cinza, painel AZUL com DIPLE em branco, base azul, sem floreira.",
+    "evidencia": "q_01740: topo do disco y=433, linha do topo do muro extrapolada y=479, pe y~696 -> 263/217 px = 1,21; q_01760: 268/229 = 1,17. Unity r17_tce_x112.png: totem y 461-662 (201 px) contra muro 138 px = 1,46 (3,8 m a 53 px/m); r19_branco_x122.png: topo do totem y=347, topo da testeira y=372. Recorte c_totem.jpg.",
+    "sugestao": "Fazer o topo do DISCO a ~3,1 m (pilar ~2,3-2,4 m + disco ~0,75 m); inverter as cores (caixa azul pequena sob o disco, painel branco com letras escuras, base branca) e por a floreira no pe."
+   },
+   {
+    "peca": "TCE - portao de enrolar",
+    "gravidade": "media",
+    "descricao": "Largo demais para a altura: largura/altura = 1,71-1,76 no modelo (4,4 x 2,5 m) contra 1,45-1,55 no real em tres quadros (um quarto quadro da 1,65-1,7). Com 2,45 m de altura isso da 3,6-3,9 m de largura. O topo do portao fica 0,1-0,2 m abaixo do topo do muro (ha uma verga branca); no modelo a folga e de ~0,06 m.",
+    "evidencia": "q_01760: 236 x 180 px = 1,31 bruto, ~1,45 corrigida a compressao do lado esquerdo; q_01790 (portao no centro do quadro): 283 x 195 = 1,45; q_01850: 355 x 200 = 1,75 bruto, ~1,5 corrigido; q_01820: 329 x 185-195 = 1,7-1,78 bruto (base borrada). Pela guia pintada (periodo 2 m): 3,7-3,9 m. Unity r17_tce_x112.png: 222 x 130 px = 1,71.",
+    "sugestao": "Reduzir para ~3,7-3,8 m de largura e ~2,45 m de altura, com verga de ~0,15-0,2 m ate o topo do muro."
+   },
+   {
+    "peca": "TCE - trecho de muro/pilar a oeste do portao",
+    "gravidade": "media",
+    "descricao": "No real e um pano mais baixo que o muro longo (~2,15-2,2 m, 0,87 x a altura do portao), com um painel rebaixado entre pilastras, e ha uma fresta aberta e escura de ~0,3 m entre o topo dele e a base da faixa azul (ve-se a estrutura atras). Largura ~2,2-2,7 m. No modelo e um pano liso de 3,0 m com 2,6 m de altura, colado na faixa.",
+    "evidencia": "q_01760 (i_1760_juncao.jpg): topo do trecho y=549-552, base y~712 (160 px) contra portao 180 px e muro 185 px; base da faixa azul y~527 -> fresta de 22 px; largura 148 px contra portao 236 px. q_01790 (i_1790_juncao.jpg): fresta escura y 520-540. Unity r17_tce_x112.png: topo do trecho = topo do muro (y=526), sem fresta.",
+    "sugestao": "Baixar o trecho para ~2,2 m, deixar a fresta de ~0,3 m sob a faixa, estreitar para ~2,5 m e marcar o painel rebaixado entre duas pilastras."
+   },
+   {
+    "peca": "TCE - coroamento da torre",
+    "gravidade": "media",
+    "descricao": "Continua simplificado. No real o ultimo pavimento e um andar inteiro de vidro espelhado (~90 px para 170-180 px de pe-direito) sob uma cobertura azul de grande balanco e forro inclinado. No modelo e uma fita escura fina sob uma laje azul grossa de balanco pequeno.",
+    "evidencia": "q_01790: vidro do topo y 60-150, pavimentos a cada ~170-182 px. Unity r17_tce_x112.png: fita escura y 178-190 (12 px) e laje azul y 130-175 (45 px) para pavimentos de 110 px.",
+    "sugestao": "Subir o pano de vidro do atico para ~1,6-1,7 m visiveis, afinar a borda azul e aumentar o balanco com forro inclinado (o topo sai do quadro: so a parte de baixo esta conferida)."
+   },
+   {
+    "peca": "Predio branco - lado leste (terraco, rampa e parede do vizinho)",
+    "gravidade": "media",
+    "descricao": "No real: terraco sobre a ponta leste do terreo com guarda-corpo metalico escuro de 4 barras e condensadora; mureta branca inclinada da rampa com gradil azul trabalhado (ovais) em cima; parede branca alta ao fundo com duas janelas estreitas de grade azul e tubo branco. No modelo ha so caixas brancas escalonadas e uma mureta lisa: faltam o guarda-corpo, o gradil azul e as janelas estreitas.",
+    "evidencia": "q_01740 (x 1440-1660, y 268-670) e q_01679 (x 765-855); Unity r19_branco_x122.png x 1110-1340. Recorte e_anexo_leste.jpg.",
+    "sugestao": "Acrescentar o guarda-corpo do terraco, o gradil azul sobre a mureta da rampa e as duas janelas estreitas gradeadas."
+   },
+   {
+    "peca": "Predio antigo - portico",
+    "gravidade": "media",
+    "descricao": "Falta a caixa envidracada horizontal de 5 paineis logo abaixo das ameias (ocupa ~48 % da largura do portico): no modelo a parede e lisa nesse ponto. O brasao e um quadrado ocre; no real e um disco dourado (~1,25 m) com estrela. O portico esta ~10 % estreito (10,2 m no modelo contra ~11,3 m medidos). A pintura real e cinza-azulada muito descascada em manchas creme; no modelo e cinza liso.",
+    "evidencia": "q_01128 ampliado (k_portico_zoom.jpg): caixa de vidro x 878-1042, y 340-368; brasao circular x 945-988; portico 347 px de largura a ~30,4 px/m. Unity r19_portico_x279.png: portico 277 px a ~27,3 px/m, quadrado ocre em x 797-830, sem caixa de vidro.",
+    "sugestao": "Modelar a caixa de vidro (5 paineis) sob as ameias, trocar o quadrado por disco dourado, alargar o portico para ~11 m e dar a textura descascada."
+   },
+   {
+    "peca": "Predio antigo - faixa entre a ciclovia e o tapume",
+    "gravidade": "media",
+    "descricao": "No modelo e um piso creme claro liso. No real e bloquete intertravado marrom e terra (trecho da ala oeste e da ala leste) e grama seca com acesso de concreto, mureta/rampa baixa e marco branco (em frente ao portico), com canteiros de concreto, arvore grande, toco e palmeiras. Indicio de que a faixa ainda esta rasa: a profundidade da faixa equivale a 0,90 x a altura do tapume no real e 0,63 x no Unity (as cameras diferem, por isso nao afirmo o valor).",
+    "evidencia": "q_01128 (faixa y 585-668, tapume y 492-588), q_01200 e q_01052 (bloquete marrom); cor mediana real (180,144,97) e (158,135,110) contra (224,217,197) no Unity r19_portico_x279.png (faixa y 548-597, tapume y 470-548).",
+    "sugestao": "Trocar o material por bloquete marrom/terra e grama seca, por o acesso de concreto em frente ao portico e reconferir a profundidade (8,7 m parece o minimo; minha conta pelo chao da 9-14 m)."
+   },
+   {
+    "peca": "Oi - frente do lote (gradil, pilar, portao de correr e fundo)",
+    "gravidade": "media",
+    "descricao": "(1) O portao de correr do modelo e curto: no real ele e ~1,3 x o comprimento do gradil a oeste do pilar e termina num montante branco; no modelo e ~0,6 x. (2) Entre o pilar e o portao de correr ha um portaozinho branco de pedestre de topo em arco, ausente. (3) O pilar real e de concreto encardido com concertina em cima; no modelo e branco liso. (4) O gradil real nao tem mureta (barras de ponta ate o chao) e o terco leste dele e um portao de duas folhas; no modelo e gradil fixo sobre mureta. (5) Atras do portao de correr o real tem o painel alto impresso do governo (cinza/azul-escuro, 2050); no modelo ve-se o mapa ao fundo. (6) Falta a placa vermelha e branca de proibido estacionar no portao.",
+    "evidencia": "q_00110 (m_110_portao.jpg, m_110_grade.jpg): gradil x 365-805, portao azul 282-365, pilar 808-840 com concertina, portaozinho 847-925, portao de correr ~1045-1720. Unity r17_oi_x547.png e r17_oi_de_cima.png (gradil ~330 px, portao ~195 px na vista de cima).",
+    "sugestao": "Alongar o portao de correr ate o montante real (~1,3 x o gradil), acrescentar o portaozinho e a concertina, tirar a mureta do gradil, marcar o portao de duas folhas e fechar o fundo com o painel do governo (item pendente da rodada 18)."
+   },
+   {
+    "peca": "ESCON - volume azul (proporcao)",
+    "gravidade": "media",
+    "descricao": "Depois do corte de altura da rodada 18 o volume ficou largo para a altura: largura/altura 1,33 no modelo contra 0,95-1,2 no real (melhor valor ~1,1; a ponta leste fica atras do pilone, por isso a faixa de incerteza). Mesmo padrao do muro do TCE: so a altura foi reduzida.",
+    "evidencia": "q_01679: face azul de x=888 ate o pilone (1228-1280) = 340-392 px para 350 px de altura. Unity r16_video_x134.png: face x 765-1140 (375 px) para y 347-628 (281 px). Altura conferida por paralaxe q_01679 x q_01740: ~4,4-4,7 m (a de 4,7 m esta coerente).",
+    "sugestao": "Estreitar o volume para ~5,0-5,2 m (ou reconferir a largura no cadastro); incerteza de +-10 %."
+   },
+   {
+    "peca": "TCE - faixa azul sobre o muro",
+    "gravidade": "baixa",
+    "descricao": "O trecho da faixa que pertence ao TCE esta ~14 % grosso (0,387 da altura do muro contra 0,335-0,345 no real) e a faixa aparece em dois trechos de tom e topo diferentes, com emenda visivel onde comeca o lote vizinho; no real e uma peca unica, de um tom so, da juncao com a faixa do nome ate a quina, onde dobra para o norte.",
+    "evidencia": "Perfil de cor em 30 colunas de q_01740, q_01760, q_01790, q_01820 e q_01850: faixa 68-81 px para muro 199-245 px, razao 0,331-0,354. Unity r17_tce_x112.png: 53 px/137 px = 0,387 (x<895) e 48-50/139 = 0,35 (x>895); cores (26,37,99) e (29,44,89); degrau do topo de 3-4 px em x=895.",
+    "sugestao": "Faixa unica de ~0,88-0,90 m (2,6 a ~3,5 m), um material so ate a quina."
+   },
+   {
+    "peca": "Predio branco - largura",
+    "gravidade": "baixa",
+    "descricao": "Pavimento superior ~7-8 % largo: largura/altura 1,17 no modelo contra 1,07-1,09 no real (~7,5 m para 7,0 m de altura). O alturas_r19.json ja apontava isso. A porta real e um pano de vidro escuro de 3-4 folhas quase quadrado (~2,2 x 2,25 m).",
+    "evidencia": "q_01740: platibanda x 951-1430 (479 px), altura 434 px; q_01760: 515/445. Unity r17_tce_x112.png: 337 px a 41,8 px/m = 8,06 m.",
+    "sugestao": "Encolher o bloco superior para ~7,5 m."
+   },
+   {
+    "peca": "Predio antigo - telhados das alas",
+    "gravidade": "baixa",
+    "descricao": "Telhado puxado para o vinho/marrom-avermelhado e inteiro; no real e fibrocimento cinza-acastanhado escurecido, com telhas faltando e beiral quebrado.",
+    "evidencia": "Cor mediana q_01128 (107,95,87) contra Unity r19_portico_x279.png (87,74,76); buracos visiveis em q_01128, q_01200 e q_01052.",
+    "sugestao": "Trocar para cinza-acastanhado e marcar telhas faltando."
+   },
+   {
+    "peca": "ESCON - cor e detalhes (itens da rodada 18 ainda presentes)",
+    "gravidade": "baixa",
+    "descricao": "Azul ainda mais violeta e escuro que o cobalto real; marquise sem as juntas verticais dos paineis; jardineira sem plantas floridas; muro sem concertina; os tres quadros de medicao aparecem maiores e mais espacados que no real; a placa de proibido estacionar do mapa de base tapa o E e o emblema na foto x147.",
+    "evidencia": "Cor mediana q_01679 (36,93,144) contra r16_video_x134.png (27,44,98); q_01617 (juntas da marquise x 510-868, quadros x 985-1100) contra r18_escon_x147.png.",
+    "sugestao": "Clarear o azul puxando para o ciano (G/B ~0,65), riscar as juntas da marquise, por plantas e concertina, reduzir os quadros."
+   },
+   {
+    "peca": "Oi - anexo terreo e cores",
+    "gravidade": "baixa",
+    "descricao": "A parede leste do anexo tem tres paineis cinza no modelo; no real ha uma unica veneziana no alto (a parede sul e cega). Janelas do predio principal azuis de 4 vidros; no real sao esverdeadas, de muitos vidros. Base da torre laranja-tijolo; no real e bege-acastanhada sob a cinta branca.",
+    "evidencia": "q_00110 (veneziana x 745-800, y 440-470; janelas x 75-160) contra r17_oi_x547.png (paineis x 455-665, y 615-690; base da torre y 615-790).",
+    "sugestao": "Trocar os tres paineis por uma veneziana, esverdear e subdividir as janelas, tirar o laranja da base da torre."
+   },
+   {
+    "peca": "TCE - detalhes da entrada",
+    "gravidade": "baixa",
+    "descricao": "Continua sem a placa amarela do Banco do Brasil no poste junto a juncao das faixas. Os canteiros do modelo sao cercas-vivas em caixa; no real sao cicas soltas. Mastros cinza (no real, azuis). Na foto da entrada aparece um vao claro entre o vidro do terreo e o trecho de muro do portao, por onde se ve o fundo do mapa; nao achei quadro real desse angulo para dizer o que ha ali.",
+    "evidencia": "q_01790 (placa BB x 560-600, y 405-470), q_01820 e q_01880 (cicas, mastros azuis); Unity r19_tce_entrada_x96.png (vao em x 977-1050, y 470-570).",
+    "sugestao": "Por a placa amarela, trocar as caixas por cicas, pintar os mastros de azul e fechar o vao atras do muro do portao."
+   }
+  ],
+  "afirmacoes_conferidas": [
+   {
+    "afirmacao": "a) Muro branco entre o portao de enrolar e o predio branco com ~2,6 m (placa de bicicleta de 0,5 m com borda inferior a ~2,1 m; portao ~2,5 m, quase da altura do muro)",
+    "resultado": "confere",
+    "como_medi": "q_01740, coluna da placa (x~420): disco com 47,7 px de altura (0,5 m -> 95,4 px/m no plano da placa), borda inferior 201,7 px acima do pe do poste = 2,11 m, topo a 2,61 m. Muro na mesma coluna: topo y=514,5, base y=710,5 (196 px, lido por perfil de cor). A placa fica um pouco a frente do muro, entao a conta depende da altura da camera sobre a calcada: 1,2 m -> 2,66 m; 1,3 -> 2,60; 1,4 -> 2,55; 1,5 -> 2,52. Conferencia independente pela guia pintada (periodo de 2 m) em q_01760: ~2,7 m. Portao/muro = 0,93-0,97 (q_01760 180/185 px; q_01790 195/208) -> 2,4-2,5 m. Faixa final 2,5-2,7 m; 2,6 esta certo. Depende de o disco ter 0,5 m (com 0,6 m tudo subiria 20 %, mas ai a guia nao fecharia)."
+   },
+   {
+    "afirmacao": "b1) Faixa azul sobre o muro de ~2,6 a ~3,65 m, espessura ~0,9-1,0 m",
+    "resultado": "nao_confere",
+    "como_medi": "Perfil de cor (azul -> branco -> calcada) em 30 colunas de 5 quadros (q_01740, 01760, 01790, 01820, 01850): espessura da faixa / altura do muro = 0,331 a 0,354 (media 0,34), no mesmo plano (a faixa dobra a quina junto com o muro em q_01740). Para muro de 2,6 m: 0,88 m, topo ~3,5 m (0,92 m e topo 3,6 se o muro tiver 2,7). No Unity r17_tce_x112.png o trecho do TCE da 53/137 px = 0,387 (1,0-1,05 m, topo 3,65): ~14 % grosso, ~0,15 m alto no topo. O trecho do lote vizinho (0,35) esta certo. Erro pequeno."
+   },
+   {
+    "afirmacao": "b2) A faixa do muro fica ~0,2-0,3 m mais alta que a faixa do nome do TCE",
+    "resultado": "confere",
+    "como_medi": "Na juncao, a faixa do muro aparece 20-24 px acima da faixa do nome tanto no topo quanto na base: q_01790 (nome 477-543, muro 457-519) e q_01850 (nome 425-490, muro 405-470); a ~70-75 px/m isso da ~0,27-0,3 m. Ressalva: a faixa do nome esta num plano um pouco recuado, o que explica parte do desnivel aparente; no modelo o desnivel e 0,15 m no topo e 0,05 m na base, e as duas faixas estao no mesmo plano. Nao consegui medir o recuo."
+   },
+   {
+    "afirmacao": "c) Faixa do nome do TCE de ~2,55 a ~3,50 m; porta de vidro ~2,45 m logo abaixo; andares da torre ~3 m",
+    "resultado": "confere",
+    "como_medi": "q_01880 (entrada no centro do quadro): faixa y 440-502 (62 px), verga de marmore ate y=528, porta y 528-677 (149 px). Faixa/porta = 0,416. Com porta de 2,45 m (60,8 px/m) e camera a ~1,3 m, a faixa no plano da porta iria de 2,88 a 3,90 m; como ela e a testeira de uma marquise 2-2,5 m a frente da porta (fator ~1,15-1,2), fica em 2,6-2,67 a 3,47-3,56 m. Folga real entre faixa e porta ~0,15-0,2 m. Torre em q_01820: 182 px entre vergas de dois andares a ~58 px/m = 3,1 m. Tudo depende de a porta ter 2,45 m (largura/altura da porta dupla = 0,70, coerente com 1,7 x 2,45) e do avanco da marquise, que nao medi: incerteza de +-0,15 m."
+   },
+   {
+    "afirmacao": "d) Portao de enrolar com ~4,4 m de largura, entre um trecho de muro/pilar de ~3 m (oeste) e o muro longo (leste)",
+    "resultado": "nao_confere",
+    "como_medi": "A ordem das pecas confere. A largura nao: largura/altura do portao = 1,31 bruto em q_01760 (portao a esquerda, zona comprimida; ~1,45 corrigido pelo passo da guia), 1,45 em q_01790 (portao no centro), 1,75 bruto / ~1,5 corrigido em q_01850, 1,7-1,78 em q_01820 (base borrada). Com 2,45 m de altura: 3,6-3,9 m (4,2 no pior caso). Pela guia pintada (periodo 2 m, calcada 1,34-1,44 x mais perto que o muro): 3,7-3,9 m em q_01760 e q_01790. Contagem de quadros (25 quadros x 0,143 m): 3,6 m. No Unity 222 x 130 px = 1,71. O trecho oeste mede 0,58-0,64 x a largura do portao = 2,2-2,7 m (nao 3) e e mais baixo que o muro. Confianca media: as larguras dependem da correcao da guinada da camera."
+   },
+   {
+    "afirmacao": "e1) Predio branco: platibanda ~7,0 m; testeira azul ~2,9 a ~4,35 m (~21 %); janelas de cima com verga a ~5,2 m; porta ~2,25 m",
+    "resultado": "confere",
+    "como_medi": "q_01740, coluna da porta (x~1050): porta y 510-647,5 (137 px); platibanda y=213,5, base 647,5 (434 px) -> platibanda/porta = 3,17 (7,0/2,25 = 3,11). Testeira y 373-471 = 97 px = 22,3 % da fachada (ela avanca ~0,9 m, o que infla ~5 %: ~21 %); base aparente 0,407 x 7,0 = 2,85 m; topo aparente 4,43 m. Verga da janela de cima y=320,5 -> 0,753 x 7,0 = 5,27 m. No Unity r19_branco_x122.png as mesmas razoes: porta 0,323, testeira 0,217, verga 0,757, peitoril do janelao 0,127 (real 0,134). O valor absoluto depende de a porta ter 2,25 m (com 2,15 a platibanda cai para 6,8 m)."
+   },
+   {
+    "afirmacao": "e2) Totem com disco no topo com ~2,9 m, no alinhamento",
+    "resultado": "nao_confere",
+    "como_medi": "Alinhamento confere: entre q_01740 e q_01760 o totem desloca 258 px, a quina do muro 266 px e o predio 194-205 px, logo o totem esta no plano do muro. Altura: topo do disco / altura do muro = 1,21 (q_01740: 263/217 px) e 1,17 (q_01760: 268/229) -> 3,05-3,15 m para muro de 2,6 m (ate 3,25 com muro de 2,7): 2,9 m fica ~7 % baixo. O problema maior e a foto: no Unity o totem mede 201 px contra 138 px do muro (1,46 -> ~3,8 m), porque os 2,9 m parecem ter sido aplicados ao pilar e o disco posto por cima. No real o topo do disco aparece no meio da testeira; no Unity, acima dela."
+   },
+   {
+    "afirmacao": "f1) Tapume do predio antigo bem atras da ciclovia, com faixa larga de terra/grama e arvores entre os dois",
+    "resultado": "confere",
+    "como_medi": "q_01128: guia norte da ciclovia y~668, pe do tapume y~585, tapume com 96 px (2,0 m -> 48 px/m); pela geometria do chao (camera ~1,4 m, horizonte ~520) o tapume esta 2,3-2,4 x mais longe que a borda da ciclovia: 9-14 m de faixa conforme a focal (700-1100 px). A posicao recuada confere; os 8,7 m do modelo ficam no limite de baixo da minha faixa e nao da para fechar o valor. O material da faixa nao confere (ver achados)."
+   },
+   {
+    "afirmacao": "f2) Portico central e alas amarelas vizinhas no mesmo plano, ~6 m atras da ala oeste avancada",
+    "resultado": "confere",
+    "como_medi": "q_01200: janelas da ala recuada com 38 px de largura e ritmo de 113 px, contra 55 px e 132 px na ala avancada -> a ala recuada esta 1,3-1,45 x mais longe; em metros isso da 6,4 m (focal 700 px) a 8,3 m (900 px). Em q_01128 portico e ala leste saem na mesma escala (~30 px/m contra 48 px/m do tapume); em q_01052 ve-se uma face lateral estreita do portico, compativel com avanco de ate ~1-1,5 m. 6 m e o limite de baixo; nao da para refutar."
+   },
+   {
+    "afirmacao": "f3) Portico mais alto que os beirais das alas (platibanda ~7,4 m contra beiral ~5,2 m)",
+    "resultado": "confere",
+    "como_medi": "q_01128: platibanda y=333, ameias y=322, beiral da ala leste y=405, topo do tapume y=492, pe y=588. Com horizonte em ~522 (camera 1,35 m): (522-333)/(522-405) = 1,615; a afirmacao da (7,4-1,35)/(5,2-1,35) = 1,57. Fixando o beiral em 5,2 m a platibanda sai a 7,57 m e as ameias a 7,9 m. Unity r19_portico_x279.png: (495-333)/(495-390) = 1,54. Diferenca de 2-5 %."
+   },
+   {
+    "afirmacao": "g) ESCON: o letreiro le como letras sobre a parede, sem placa saliente de outro tom",
+    "resultado": "confere",
+    "como_medi": "Unity r18_escon_x147.png: cor da parede (28,45,98) e cor em volta da palavra ESCON (30,47,100), diferenca de 2 niveis em 255, imperceptivel a olho; em r16_video_x134.png nao aparece retangulo algum mesmo com contraste x4. No real (q_01617, q_01679) as letras sao brancas em relevo direto na parede."
+   },
+   {
+    "afirmacao": "h) Oi: o piso de cimento cobre o lote ate o portao de correr a leste, sem sobra de faixa vermelha",
+    "resultado": "nao_confere",
+    "como_medi": "A faixa vermelha que cortava o lote a leste sumiu (comparando antes e agora). Mas: (1) na vista de cima r17_oi_de_cima.png a borda leste da placa de cimento alcanca so ~70 % do portao de correr; o resto do portao fica sobre o piso salmao do mapa, e isso aparece na foto da rua (r17_oi_x547.png, x 1330-1600, y 790-900, atras das barras); (2) ainda se ve uma faixa vermelho-escura ao fundo, entre as barras (y 752-785), e de cima ha uma area vermelha grande em volta da base da torre; (3) de cima, corre uma faixa vermelho-escura ao longo do meio-fio em frente ao lote; em q_00110 a frente e concreto rachado e bloquete marrom, sem piso vermelho (em duvida se essa faixa e a ciclovia do mapa)."
+   }
+  ],
+  "corrigidos_desde_r18": [
+   "ESCON: o letreiro nao aparece mais sobre placa de tom diferente (diferenca de 2 niveis de cor, invisivel).",
+   "Oi: a faixa vermelha que cortava o lote a leste sumiu; o piso de cimento foi estendido (ainda nao ate a ponta do portao).",
+   "Oi: a leste do pilar ha agora um portao de correr (antes o lote ficava aberto), embora curto.",
+   "TCE: muro e faixas azuis, que estavam ~45 % altos, estao na altura certa (muro 2,5-2,7 m conferido pela placa de bicicleta; portao 0,93-0,97 do muro).",
+   "TCE: o trecho branco entre o vidro da entrada e o portao, antes conferido so pelo autor, existe no real (q_01760, q_01790); falta acertar altura, largura e a fresta sob a faixa.",
+   "Predio branco: platibanda, testeira, verga das janelas de cima, porta e janelao do terreo batem com as proporcoes do quadro q_01740 (diferencas de 1-4 %).",
+   "Predio antigo do portico: o tapume saiu de junto da ciclovia e ficou atras de uma faixa larga; portico e alas no mesmo plano recuado; relacao de altura portico/beiral certa (1,54 no Unity, 1,6 no quadro)."
+  ],
+  "nao_julgavel": [
+   "Valores absolutos de altura: todos dependem de uma referencia suposta (disco da placa 0,5 m, portas de 2,25 e 2,45 m, guia de 1 m, altura da camera 1,2-1,5 m). As proporcoes estao medidas; os metros tem +-5 a 8 %.",
+   "Qual ponta do trecho TCE - predio branco esta fora de lugar em planta (torre do TCE ou predio branco): os quadros so dao a proporcao; precisa do cadastro/satelite.",
+   "Recuo da faixa do nome do TCE em relacao a faixa do muro e avanco da marquise sobre a porta: nao ha quadro lateral.",
+   "Topo da torre do TCE acima do pano de vidro (sai do quadro em todos os quadros uteis) e o tambor/ala oeste do TCE (arvore do jogo na frente em r19_tce_entrada_x96.png; fora dos quadros do meu trecho).",
+   "ESCON: altura do pilone e tamanho do furo (as duas fotos do Unity tem cameras muito diferentes das do celular e dao razoes opostas: 1,59 e 1,93 contra 1,67-1,72 no real); portao, marquise e pe do pilone na vista x134 (conteiner do jogo na frente); ponta leste do volume azul (atras do pilone no real).",
+   "Predio branco: cobogo (tapado pelo totem em r19_branco_x122.png e pela arvore do jogo em r16_video_x134.png) e ponta oeste da testeira.",
+   "Predio antigo: metade oeste da ala avancada em r19_ala_oeste_x236.png (ponto de onibus e arvore do jogo na frente); tudo abaixo de ~2 m (atras do tapume, tambem no real); profundidades em metros (dependem da focal, 700 a 1100 px); numero de ameias (conto 5 visiveis em q_01128, a ponta oeste esta atras da arvore; a especificacao diz 6).",
+   "Oi: lado oeste do predio, topo da torre e o piso em volta da base da torre (nao aparecem em q_00110); se existe ciclovia em frente ao lote."
+  ]
+ }
+}

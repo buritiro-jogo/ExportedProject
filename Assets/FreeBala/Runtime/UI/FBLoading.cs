@@ -82,7 +82,7 @@ namespace FreeBala
             // fundo opaco + arte do mapa (cobre a tela; a cena montando nunca aparece)
             FBUI.Panel(root, "fundo", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, new Color(.02f, .025f, .03f, 1));
             bg = FBUI.Rect(root, "arte", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero).gameObject.AddComponent<RawImage>(); bg.raycastTarget = false;
-            bg.texture = Resources.Load<Texture2D>("MapShots/" + mapId) ?? Resources.Load<Texture2D>("UI/Lobby/lobby_bg"); bg.color = new Color(.82f, .82f, .82f);
+            bg.texture = FBMapShot.Big(mapId) ?? Resources.Load<Texture2D>("UI/Lobby/lobby_bg"); bg.color = new Color(.82f, .82f, .82f);
             KenBurnsSetup();
             gradV ??= Grad(true); gradH ??= Grad(false);
             var gb = FBUI.Rect(root, "escuro_baixo", Vector2.zero, new Vector2(1, portrait ? .62f : .55f), Vector2.zero, Vector2.zero).gameObject.AddComponent<RawImage>(); gb.texture = gradV; gb.uvRect = new Rect(0, 1, 1, -1); gb.raycastTarget = false;

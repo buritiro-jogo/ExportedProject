@@ -30,6 +30,8 @@ namespace FreeBala
             int nct = 0; foreach (var t in Object.FindObjectsByType<Transform>(FindObjectsSortMode.None)) if (t.gameObject.layer == FBWorld.LMap && FBRoads.IsCoverContainer(t)) { t.gameObject.SetActive(false); nct++; }
             if (nct > 0) { Physics.SyncTransforms(); Debug.Log($"[FreeBala][rolê] {nct} contêineres de cobertura fora do De Rolê"); }
             FBTransito.BuildRoads(); FBPedNav.Build(FBSession.map);
+            // r68: loja de armas (antes dos objetos de rua, assentos e NPCs: eles respeitam a colisão dela; lugar igual em todos os PCs)
+            FBGunShop.Setup(g);
             FindSeats();
             { int n0 = seats.Count; seats.RemoveAll(S => !FBNav.InsideNear(S.p, 2f)); if (seats.Count < n0) Debug.Log($"[FreeBala][rolê] {n0 - seats.Count} assentos fora da área jogável ignorados"); }   // banco/cadeira atrás do muro de limite
             // SEM REPETIÇÃO (pedido 20/10: "não quero npcs repetidos"): cada personagem do pacote existe uma vez só — uns andando, os outros
@@ -45,7 +47,9 @@ namespace FreeBala
             FBRoleHeli.Spawn();
             // vaga do carro do jogador: o estacionado mais perto do spawn sai e o escolhido na garagem nasce ali
             var me = FBMatch.Player; var near = FBVehicles.list.Where(c => c && !c.ie).OrderBy(c => me ? (c.transform.position - me.Pos).sqrMagnitude : 0).FirstOrDefault();
-            if (me && near && Vector3.Distance(near.transform.position, me.Pos) < 60) { spot = (near.transform.position, near.transform.eulerAngles.y); FBVehicles.list.Remove(near); Object.Destroy(near.gameObject); }
+            // r68: online NÃO tira o estacionado (cada PC tirava um diferente e o carro sumido de um era dirigido pelo outro); a vaga da
+            // garagem procura um lugar livre de verdade (FreeAnchor com carros contando como obstáculo)
+            if (me && near && Vector3.Distance(near.transform.position, me.Pos) < 60 && !FBSession.online) { spot = (near.transform.position, near.transform.eulerAngles.y); FBVehicles.list.Remove(near); Object.Destroy(near.gameObject); }
             else if (me) spot = (me.Pos + me.transform.forward * 5, me.Yaw + 90);
             // a cidade viva: duas picapes estacionadas já tocando (músicas do próprio jogador)
             FBMediaLib.Refresh(); var tracks = FBMediaLib.lib.Where(t => t.s <= FBParedao.MAX_SHARE).ToList();
@@ -79,7 +83,7 @@ namespace FreeBala
         }
         public static void Tick(float dt)
         {
-            FBTransito.Update(dt); FBRoleHeli.Tick(dt);
+            FBTransito.Update(dt); FBRoleHeli.Tick(dt); FBGunShop.Tick(dt);
             var kb = UnityEngine.InputSystem.Keyboard.current; if (kb != null && kb.oKey.wasPressedThisFrame && !FBGarage.Open_) FBOficina.Toggle();   // oficina do REB
             if ((wallT += dt) > .5f) { wallT = 0; var tracks = FBMediaLib.lib;   /* r45n: 0,5 s (era 2 s: um som que acabou de ligar ficava até 2 s colado no paredão) */ foreach (var car in walls) { var W = FBParedao.State(car); if (car && W != null && W.on && W.ended && tracks.Count > 0 && FBParedao.CanControl(car)) FBParedao.Play(car, FBUtil.Pick(tracks), 0); } WallSpacing(tracks); }
             npcs.RemoveAll(n => !n);
@@ -573,7 +577,7 @@ namespace FreeBala
             var fit = (Json.L(Json.O(d, "som"), "fit") ?? new List<object>()).Select(x => x as string).Where(x => FBRegistry.I.Som(x)).ToList();
             var A = anchor ?? (s.p, s.yaw);
             prev = FBVehicles.Make(id, A.p, A.yaw, true, () => .5f, true, paint, fit.Count > 0, fit.FirstOrDefault(m => m.Contains("Grave") || m.Contains("Trio")) ?? fit.FirstOrDefault());   // caixa grave / trio: o paredão de respeito
-            if (prev) { prev.syncId = "role:" + id; FBTune.Apply(prev, FBTune.Load(id)); }   // configuração salva da oficina
+            if (prev) { prev.syncId = "role:" + FBLobbyNet.Pid + ":" + id; FBTune.Apply(prev, FBTune.Load(id)); }   // configuração salva da oficina · r68: id com o código do jogador (dois jogadores com o mesmo carro)
             if (prev)
             {   // alinhamento padrão: o CENTRO da caixa do carro no ponto (a origem de cada modelo do REB fica num lugar diferente)
                 var c = prev.transform.TransformPoint(prev.lbox.center); var dlt = A.p - c; dlt.y = 0; prev.transform.position += dlt; Physics.SyncTransforms();
@@ -587,7 +591,8 @@ namespace FreeBala
         static (Vector3 p, float yaw) FreeAnchor(Vector3 p0, float yaw)
         {
             var rot = Quaternion.Euler(0, yaw, 0); var ext = new Vector3(1.35f, .6f, 3.4f);
-            bool Free(Vector3 q) { foreach (var h in Physics.OverlapBox(q + Vector3.up * .95f, ext, rot, FBWorld.SolidMask, QueryTriggerInteraction.Ignore)) if (!h.GetComponentInParent<FBCar>() && !h.GetComponentInParent<FBCharacter>()) return false; return true; }
+            bool carsBlock = FBSession.online;                                                    // r68: online o estacionado continua na vaga
+            bool Free(Vector3 q) { foreach (var h in Physics.OverlapBox(q + Vector3.up * .95f, ext, rot, FBWorld.SolidMask, QueryTriggerInteraction.Ignore)) if ((carsBlock || !h.GetComponentInParent<FBCar>()) && !h.GetComponentInParent<FBCharacter>()) return false; return true; }
             if (Free(p0)) return (p0, yaw);
             for (int k = 0; k < 64; k++)
             {
@@ -621,6 +626,7 @@ namespace FreeBala
             if (!FBInput.Touch) { Cursor.lockState = CursorLockMode.Locked; Cursor.visible = false; }
             FBVehicles.fp = false; if (FBVehicles.CarOf(FBMatch.Player) != car) FBDrive.Enter(FBMatch.Player, car, true); if (FBPlayer.I) { FBPlayer.I.camYaw = car.transform.eulerAngles.y; FBPlayer.I.camPitch = -7; }
             FBHUD.I?.Center("BOM ROLÊ! · G = GPS · K = SOM · N = LIGA O PAREDÃO", 3.5f);
+            FBNet.I?.ShareCar(car);                                                               // r68: os outros jogadores passam a ver este carro
         }
     }
 }

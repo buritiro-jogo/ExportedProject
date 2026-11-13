@@ -15,6 +15,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 namespace FreeBala
 {
@@ -402,6 +403,11 @@ namespace FreeBala
             Material M(Color c) { var m = new Material(FBShaders.Unlit); m.SetColor("_BaseColor", c); m.color = c; return m; }
             mR = M(new Color(1, .12f, .08f)); mB = M(new Color(.15f, .4f, 1)); mOff = M(new Color(.12f, .12f, .14f));
             gR = M(new Color(5, .45f, .3f)); gB = M(new Color(.35f, 1.1f, 6));                 // lente acesa: HDR > 1 = brilha no bloom
+            if (FBVisual.C.giroflex > .5f)
+            {   // r65: lente de LED sem estourar o bloom (antes 5–6× = mancha branca); luz com sombra disponível (o par mais perto, à noite)
+                gR.SetColor("_BaseColor", new Color(2.6f, .2f, .12f)); gR.color = new Color(2.6f, .2f, .12f); gB.SetColor("_BaseColor", new Color(.15f, .55f, 3.2f)); gB.color = new Color(.15f, .55f, 3.2f);
+                foreach (var l in pool) { l.shadowNearPlane = .12f; l.shadowBias = .03f; l.shadowNormalBias = .25f; l.shadowStrength = .95f; var ad = l.GetUniversalAdditionalLightData(); if (ad) ad.additionalLightsShadowResolutionTier = UnityEngine.Rendering.Universal.UniversalAdditionalLightData.AdditionalLightsShadowResolutionTierLow; }
+            }
         }
         // giroflex PRÓPRIO do modelo (pedido 26/10: "ela já tem a sirene dela"): nas viaturas é um material do corpo, não um nó —
         // giroflexbypabblo (barra do teto), generic_lightbar (strobos da grade) e a lente cbf0507a (PM). As lentes têm textura escura
@@ -474,19 +480,30 @@ namespace FreeBala
         // pisca duplo alternado (vermelho-vermelho, azul-azul) em 0,9 s. r45: cada lampejo de 0,1 s é testado contra o INTERVALO do quadro
         // (t-dt, t] — antes era o instante t, e com 25–40 qps a janela de 0,1 s caía entre dois quadros e o lampejo sumia (pisca "aleatório")
         const float CYC = .9f; static readonly (float a, float b)[] FR = { (0, .1f), (.2f, .3f) }, FB = { (.45f, .55f), (.65f, .75f) };
-        static bool Flash((float a, float b)[] w, float t0, float t1)
+        // r65: padrão de LED das viaturas daqui (triplo alternado, 0,8 s — ~75 ciclos/min): 3 lampejos de 60 ms por cor
+        const float CYC3 = .8f; static readonly (float a, float b)[] FR3 = { (0, .06f), (.1f, .16f), (.2f, .26f) }, FB3 = { (.4f, .46f), (.5f, .56f), (.6f, .66f) };
+        static bool Flash((float a, float b)[] w, float t0, float t1, float cyc = 0)
         {
-            if (t1 - t0 >= CYC) return true; float a = t0 % CYC, b = t1 % CYC; if (a < 0) a += CYC; if (b < 0) b += CYC;
+            float C = cyc > 0 ? cyc : CYC;
+            if (t1 - t0 >= C) return true; float a = t0 % C, b = t1 % C; if (a < 0) a += C; if (b < 0) b += C;
             foreach (var (x, y) in w) if (b >= a ? (x < b && y > a) : (y > a || x < b)) return true;
             return false;
         }
         public static void Tick(float dt)       // chamado pelo FBSiren (todo quadro, em qualquer modo)
         {
             t += dt; float day = FBQuality.Mobile ? 0 : 1;                                       // celular: só as lentes acendem (sem luz pontual extra)
+            bool nv = FBVisual.C.giroflex > .5f; Bar shB = null;
+            if (nv && !FBQuality.Mobile && (FBWeather.NightK > .3f || FBWeather.Rain))
+            {   // r65: o par da viatura mais perto da câmera projeta SOMBRA — a luz não atravessa a própria carroceria nem pinta o chão embaixo
+                // dela; só no escuro (com os postes já usando sombra: sem variante de shader nova no meio da partida)
+                var cam = Camera.main; float best = 60 * 60;
+                if (cam) foreach (var b in bars) { if (!b.car || !b.on) continue; float d2 = (b.car.transform.position - cam.transform.position).sqrMagnitude; if (d2 < best) { best = d2; shB = b; } }
+            }
             foreach (var b in bars)
             {
                 if (!b.car) continue; bool on = b.on; float t1 = t + b.phase, t0 = t1 - Mathf.Max(dt, 1e-4f);
-                bool rOn = on && Flash(FR, t0, t1), bOn = on && Flash(FB, t0, t1);
+                bool rOn = on && (nv ? Flash(FR3, t0, t1, CYC3) : Flash(FR, t0, t1)), bOn = on && (nv ? Flash(FB3, t0, t1, CYC3) : Flash(FB, t0, t1));
+                if (nv) { var sh = b == shB ? LightShadows.Soft : LightShadows.None; foreach (var l in new[] { b.red, b.blue }) if (l && l.shadows != sh) l.shadows = sh; }
                 var T = b.car.transform; if (b.red) { b.red.transform.position = T.TransformPoint(b.lr); b.red.intensity = rOn ? 4.5f * day : 0; } if (b.blue) { b.blue.transform.position = T.TransformPoint(b.lb); b.blue.intensity = bOn ? 4.5f * day : 0; }
                 if (b.gr) b.gr.sharedMaterial = rOn ? mR : mOff; if (b.gb) b.gb.sharedMaterial = bOn ? mB : mOff;
                 foreach (var r in b.ownR) if (r) r.enabled = rOn; foreach (var r in b.ownB) if (r) r.enabled = bOn;

@@ -141,6 +141,18 @@ namespace FreeBala
             ["Rifle_Grenade_Throw_Single"] = "POL_BS_toss_grenade_fit",  // granada
             ["Rifle_Hit_C_1"] = "POL_BS_hit_reaction",                   // levou tiro
         };
+        // r65 (Ruan: "mirar sozinho está certo; ao atirar mirando o corpo inclina de forma anormal para um lado"). CAUSA, medida nos
+        // próprios .anim: a vaga do tiro (Rifle_ShootOnce, estado FIRE da camada Upper Body) tocava POL_SH_firing_rifle /
+        // POL_BS_firing_rifle (Mixamo), de tronco RETO (Spine/Chest/UpperChest Left-Right ≈ 0,00), enquanto a mira acima ("Idle Aiming"
+        // do Complexo) tem o tronco curvado para a frente e para o lado (Left-Right +0,14/+0,13/+0,22, Front-Back −0,32/−0,29/−0,77).
+        // A camada Upper Body cobre a coluna: a cada rajada o tronco trocava de postura em 0,04 s (Any State → FIRE) e voltava ao soltar.
+        // O FBRig só corrige rumo e altura do cano, não a rolagem — sobrava a inclinação de lado.
+        // Como os jogos de referência fazem: no Complexo o clipe de tiro tem o MESMO tronco do parado de mira dele (Rifle_ShootOnce/
+        // Rifle_ShootLoop_Additive × Rifle_Idle: Left-Right +0,08/−0,16 × +0,10/−0,17) e o tranco é procedural (PuppetAimRig.fireKickAngle);
+        // no KINEMATION (r59) "Fire" aponta para o próprio idle e o coice é procedural (RecoilAnimation); o IE leva a mão ao alvo por IK.
+        // Aqui: no combate novo o estado FIRE toca o MESMO clipe da mira (inclusive o agachado) e o coice vem do FBRig.KickRifle.
+        // -fbtiroantigo = como antes (clipe de tiro do Mixamo).
+        public static bool TiroNaMira = System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-fbtiroantigo") < 0;
         public static readonly Dictionary<string, string> NovoPistol = new()
         {
             ["Rifle_Idle"] = "POL_PI_pistol_idle",

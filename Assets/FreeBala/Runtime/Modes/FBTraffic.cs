@@ -47,6 +47,9 @@ namespace FreeBala
             public Car chase, fugitive; public bool runLights; public float chaseT, closeT; public bool caught;   // r45d: perseguição (viatura -> fugitivo)
         }
         static readonly List<Car> cars = new(); static int serial; static float enterCd = 25, spawnCd; static int target = 10;
+        // r68: o trânsito roda em cada PC; "npc:car:3" existia em TODOS os jogadores (carros diferentes) e o estado de um jogador dirigindo
+        // o dele movia o carro de mesmo id dos outros. Agora o id leva o código do jogador: só bate com a cópia (rcar) que o dono mandou.
+        static string Sid(string tag) => "npc:" + FBLobbyNet.Pid + ":" + tag + ":" + (++serial);
         public static bool Running => FBRoads.Ready && occ.Length == FBRoads.segs.Count;
         static List<Car>[] occ = new List<Car>[0];
         static readonly Dictionary<int, HashSet<Car>> res = new();                                          // conexão -> quem reservou
@@ -112,7 +115,7 @@ namespace FreeBala
             if (!car || !driver || !Running) return null;
             if (seg < 0 && !LanePoint(out seg, out s, false)) return null;
             var S = Seg(seg); var p = FBRoads.At(S, s, out var tan); var f = tan.Flat().sqrMagnitude > 1e-6f ? tan.Flat().normalized : Vector3.forward;
-            car.syncId ??= "npc:" + tag + ":" + (++serial); car.aiLights = true;
+            car.syncId ??= Sid(tag); car.aiLights = true;
             var c = New(car); c.actor = driver; c.tag = tag; c.vCap = vCap; c.wantPark = false; c.route.Add(seg); c.s = s; c.v = Mathf.Min(vCap, 3); Extend(c);
             c.pos = p; c.fwd = f; c.yaw = Mathf.Atan2(-f.x, f.z); car.transform.SetPositionAndRotation(p, FBDrive.CarRot(0, c.yaw, 0)); car.yaw = c.yaw;
             cars.Add(c); Seat(c); Pose(c, 0); return c;
@@ -127,7 +130,7 @@ namespace FreeBala
             float sout = s + 9; if (sout > S.len - 1.5f) { if (S.len - s < 4) return null; sout = S.len - 1.5f; }
             var q = FBRoads.At(S, sout, out var tq); var path = Bez(p, f, q, tq.Flat().normalized);
             var sp = new FBSpot { p = p, yaw = -car.yaw * Mathf.Rad2Deg, kind = "guia", seg = S.id, s = s, sin = s, sout = sout, inp = new Vector3[0], outp = path, rev = null };
-            car.syncId ??= "npc:" + tag + ":" + (++serial); car.aiLights = true;
+            car.syncId ??= Sid(tag); car.aiLights = true;
             var c = New(car); c.actor = driver; c.tag = tag; c.vCap = vCap; c.wantPark = false; c.spot = sp; c.mode = "out_wait"; c.modeT = 1.2f + Random.value;
             c.yaw = car.yaw; c.pos = p; c.fwd = f; cars.Add(c); Seat(c); return c;
         }
@@ -215,7 +218,7 @@ namespace FreeBala
             var mxIds = FBMxBike.IDS.Where(FBMxBike.Has).ToList(); bool moto = mxIds.Count > 0 && Random.value < MotoShare && cars.Count(o => o.car && o.car.mx) < 4;
             var car = moto ? FBVehicles.Spawn("mx_" + FBUtil.Pick(mxIds), p, yawS) : FBVehicles.Make(FBUtil.Pick(carIds), p, yawS, true, null, Random.value < .6f); if (!car) return null;
             var actor = Actor(p); if (!actor) { FBVehicles.list.Remove(car); Object.Destroy(car.gameObject); return null; }
-            car.syncId = "npc:car:" + (++serial); car.aiLights = true;
+            car.syncId = Sid("car"); car.aiLights = true;
             var c = New(car); c.actor = actor; c.route.Add(seg); c.s = s; c.v = Random.Range(4f, 9f); Extend(c);
             c.pos = p; c.fwd = tan.Flat().normalized; c.yaw = Mathf.Atan2(-c.fwd.x, c.fwd.z);
             cars.Add(c); Seat(c); Pose(c, 0); if (moto && Random.value < GarupaShare) AddGarupa(c, p); return c;
@@ -393,7 +396,7 @@ namespace FreeBala
             var cops = FBStreetEvents.FreeIds(FBNpcAnims.Police); var id = cops.FirstOrDefault() ?? FBUtil.Pick(FBNpcAnims.Police); FBCharacter actor = null;
             if (id != null) { actor = FBRole.SpawnNpc(id, p, "tp" + serial); if (actor) { FBRole.npcs.Remove(actor); var rn = actor.GetComponent<FBRoleNpc>(); if (rn) rn.enabled = false; } }
             if (!actor) { FBVehicles.list.Remove(car); Object.Destroy(car.gameObject); return null; }
-            car.syncId = "npc:pm:" + (++serial); car.aiLights = true;
+            car.syncId = Sid("pm"); car.aiLights = true;
             var c = New(car); c.actor = actor; c.patrol = true; c.wantPark = false; c.cruise = .92f; c.T = 1.6f; c.callT = Random.Range(40f, 110f); c.route.Add(seg); c.s = s; c.v = 5; Extend(c);
             c.pos = p; c.fwd = tan.Flat().normalized; c.yaw = Mathf.Atan2(-c.fwd.x, c.fwd.z); cars.Add(c); Seat(c); Pose(c, 0); return c;
         }
@@ -475,7 +478,7 @@ namespace FreeBala
         {
             var c = cars.Find(x => x.walker == ch); var rn = ch.GetComponent<FBRoleNpc>(); if (c == null) { if (rn) rn.st = "walk"; return; }
             var car = c.car; if (!car || car.driver || car.remoteDriver >= 0) { c.mode = "gone"; if (rn) rn.st = "walk"; return; }
-            FBRole.npcs.Remove(ch); if (rn) rn.enabled = false; c.actor = ch; c.walker = null; car.aiLights = true; car.syncId ??= "npc:car:" + c.id;
+            FBRole.npcs.Remove(ch); if (rn) rn.enabled = false; c.actor = ch; c.walker = null; car.aiLights = true; car.syncId ??= "npc:" + FBLobbyNet.Pid + ":car:c" + c.id;
             c.yaw = car.yaw; c.pos = car.transform.position; c.fwd = car.transform.forward;
             Seat(c); float tin = 0;
             if (car.kind == "moto") { FBDrive.StartMount(ch, car); var dpm = ch.GetComponent<FBDriverPose>(); if (dpm && dpm.trans == "mount") { tin = dpm.transLen + .4f; InsDone++; } }   /* r45d: NPC sobe na moto pelo clipe */
@@ -890,6 +893,7 @@ namespace FreeBala
         // pedestre do rolê vai pegar um carro estacionado numa vaga (de vez em quando, 25–160 m do jogador; paredão tocando não)
         static void PedestrianTakesCar(float dt)
         {
+            if (FBSession.online) return;                                                       // r68: online os estacionados são iguais em todos os PCs: NPC local não leva nenhum
             if (target <= 0 || (enterCd -= dt) > 0 || cars.Count(t => t.mode == "drive" && t.tag == null) >= target + 2) return;
             enterCd = 25 + Random.value * 35; var pl = PlayerPos;
             var cand = FBRoads.spots.Where(sp => sp.car && sp.res == null && !sp.car.ie && sp.car != FBRole.roleCar && !sp.car.driver && sp.car.remoteDriver < 0 && !(FBParedao.State(sp.car)?.on ?? false)

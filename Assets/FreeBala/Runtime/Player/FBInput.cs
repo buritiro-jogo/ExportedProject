@@ -86,7 +86,7 @@ namespace FreeBala
             }
             // [parceiro] fisica 01/11: com a loja aberta na fase de compra o teclado e o controle eram ignorados, então o B (e o D-pad
             // direito) não fechava a loja apesar do botão "FECHAR [B]". Agora só o B passa, para fechar (FBPlayer: Show(!Open)).
-            if (FBShop.Open && FBEconomy.buying && !FBMatch.Paused && !FBBag.Open && !FBMultimidia.Open && !FBOficina.on && !mapOpen)
+            if (FBShop.Open && (FBEconomy.buying || FBShop.Store) && !FBMatch.Paused && !FBBag.Open && !FBMultimidia.Open && !FBOficina.on && !mapOpen)   // r68: + loja do De Rolê
             {
                 if (K != null) { s.buy |= Down(Key.B); s.buyReleased |= Up(Key.B); }
                 if (Gp != null) { s.buy |= Gp.dpad.right.wasPressedThisFrame; s.buyReleased |= Gp.dpad.right.wasReleasedThisFrame; }

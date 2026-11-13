@@ -14,6 +14,8 @@ namespace FreeBala
         public string mapId; static FBMatch inst; public static FBMatch I { get => inst ? inst : null; set => inst = value; }
         public static readonly List<FBCharacter> All = new(); public static readonly List<FBCharacter> Bots = new(), Civs = new(), Remotes = new();
         public static bool FFA, Paused, God; public static FBCharacter Player;
+        // r69 ROLÊ ARMADO: jogadores (eu e os remotos) são inimigos entre si; NPCs, trânsito e polícia do rolê seguem como antes
+        public static bool PvpPlayers;
         public class StatsT { public int kills, deaths, shots, hits, heads; } public static readonly StatsT Stats = new();
         // placar por nome (tela de fim: MVP e destaques) — os bots do Tático/Clássico são destruídos e recriados, então o FBCharacter.kills se perde
         public static readonly Dictionary<string, (int team, int k, int d)> Tally = new();
@@ -26,14 +28,14 @@ namespace FreeBala
         public List<string>[] typePool = { new(), new() };
         float respawnT = -1; FBCharacter spect;
 
-        public static bool Hostile(FBCharacter a, FBCharacter b) => a && b && (FFA ? a != b : a.team != b.team);
+        public static bool Hostile(FBCharacter a, FBCharacter b) => a && b && (FFA ? a != b : PvpPlayers ? (a != b && (a.isPlayer || a.isRemote) && (b.isPlayer || b.isRemote)) || a.team != b.team : a.team != b.team);
         public static bool KnockOn => I && I.state == "play" && FBMechanics.KnockMode(FBSession.mode) && !FBSession.online;
         public static IEnumerable<FBCharacter> TeamOf(FBCharacter a) => All.Where(o => o && o != a && !o.civ && !o.isRemote && o.team == a.team);
         public static bool HasReviver(FBCharacter a) => TeamOf(a).Any(o => o.alive && !o.knocked);
         public static void Feed(string t, bool me = false) => FBHUD.I?.Feed(t, me);
         public static IEnumerable<FBCharacter> Actors() => All.Where(a => a && !a.civ);
 
-        void Awake() { I = this; All.Clear(); Bots.Clear(); Civs.Clear(); Remotes.Clear(); GameData.Load(); FBSession.Load(); Paused = false; FFA = false; FBNav.Reset(); FBFx.Warm(); }
+        void Awake() { I = this; All.Clear(); Bots.Clear(); Civs.Clear(); Remotes.Clear(); GameData.Load(); FBSession.Load(); Paused = false; FFA = false; PvpPlayers = false; FBNav.Reset(); FBFx.Warm(); }
 
         // r43: tempos dos passos da montagem (FBLoading mostra junto no log de carregamento)
         public static string BuildTimes = "";
@@ -69,14 +71,16 @@ namespace FreeBala
             for (int t = 0; t < 2; t++) if (typePool[t].Count == 0) typePool[t].Add(FBRegistry.I.charIds[0]);
             // jogador
             Stats.kills = Stats.deaths = Stats.shots = Stats.hits = Stats.heads = 0; Tally.Clear();
-            arena = FBArena.For(FBSession.mode) ? FBArena.PickFor(this, FBSession.mode) : null; B("área de combate");
+            arena = FBArena.For(FBSession.mode) ? FBArena.PickFor(this, FBSession.mode) : FBSession.Duel2x2 ? Arena2x2() : null; B("área de combate");
             PickBases(); var sp = NextSpot(FBSession.team);
             B("bases"); Player = Spawn(FBSession.skin, FBSession.look, FBSession.team, sp, true); B("jogador");
             Player.transform.rotation = Quaternion.Euler(0, teamLine[FBSession.team].yaw, 0);
             bool econ = FBEconomy.EconMode(FBSession.mode) || FBSession.mode == "br" || FBSession.mode == "role";
-            var wu = Player.GetComponent<FBWeaponUser>(); if (FBSession.mode == "role") wu.Strip(); else if (!econ) wu.Give(FBSession.primary, FBSession.smg, FBSession.secondary); else wu.Give();   // DE ROLÊ: ninguém anda armado
+            // DE ROLÊ: ninguém anda armado · r69: ROLÊ ARMADO e partida online (times, 2 × 2) = o arsenal do jogador (sem compra por rodada)
+            var wu = Player.GetComponent<FBWeaponUser>(); if (FBSession.mode == "role" && !FBSession.RoleArmed) wu.Strip(); else if (!econ || FBSession.online) wu.Give(FBSession.primary, FBSession.smg, FBSession.secondary); else wu.Give();
             FBMed.ResetPlayer(econ ? 1 : FBMed.Start, FBSession.mode == "treino");
-            if (FBSession.online) { new GameObject("Rede").AddComponent<FBNet>(); mode = new FBModes.Online(this); }
+            // r68: De Rolê online é De Rolê de verdade (todos juntos, carros, loja, sem placar). Antes virava o mata-mata Online com o jogador desarmado.
+            if (FBSession.online) { new GameObject("Rede").AddComponent<FBNet>(); mode = FBSession.mode == "role" ? (FBSession.RoleArmed ? new FBModes.DeRoleArmado(this) : FBModes.Create("role", this)) : FBSession.Duel2x2 ? new FBModes.Duelo2x2(this) : new FBModes.Online(this); }   // r69
             else mode = FBModes.Create(FBSession.mode, this);
             B("jogador (armas/rede)"); mode.Setup(); B("modo (bots)");
             if (mode.ffa) { FFA = true; var p = mode.SpawnPoint(); Teleport(Player, p, SpawnYaw(p)); }
@@ -112,6 +116,23 @@ namespace FreeBala
             if (m.spawnA.Count == 0) m.spawnA = Near(e1, 5); if (m.spawnB.Count == 0) m.spawnB = Near(e2, 5);
             List<Vector3> Fps(int n, List<Vector3> avoid) { var cand = ground.Where(p => avoid.All(a => D2(p, a) > 400)).ToList(); if (cand.Count == 0) cand = ground; var o = new List<Vector3> { cand[cand.Count / 2] }; while (o.Count < n) { var best = cand.OrderByDescending(p => o.Min(q => D2(q, p))).First(); o.Add(best); } return o; }
             if (m.points.Count == 0) m.points = Fps(5, m.spawnA.Concat(m.spawnB).ToList()); if (m.waypoints.Count == 0) m.waypoints = Fps(Mathf.Min(20, ground.Count), new List<Vector3>()); if (m.bots.Count == 0) m.bots = Fps(Mathf.Min(18, ground.Count), m.spawnA);
+        }
+
+        // r69 2 × 2: área de combate IGUAL nos 4 PCs (sorteio com semente = código da sala que o squad recebeu) e o time 0 sempre na base
+        // 'a' do sorteio, o time 1 na 'b' (o FBArena chama de 'a' a base de quem joga: no PC do time 1 elas trocam de nome). Raio 75 m
+        // (bases a ~100 m); sem região boa, tenta o tamanho do 4X4. O estado do Random volta ao que era (o resto da partida não muda).
+        FBArena Arena2x2()
+        {
+            var keep = Random.state; FBArena ar = null;
+            try
+            {
+                var seed = FBSession.room ?? (FBSession.map + "2x2"); int h = 17; foreach (var ch in seed) h = h * 31 + ch; Random.InitState(h);
+                ar = FBArena.Pick(this, 75f) ?? FBArena.PickFor(this, "squad");
+                if (ar != null && FBSession.team == 1) (ar.a, ar.b) = (ar.b, ar.a);
+                Debug.Log($"[FreeBala][2x2] área sorteada pela sala {seed}: centro {(ar != null ? ar.c.ToString() : "-")} raio {(ar != null ? ar.r : 0):0} m · meu time {FBSession.team}");
+            }
+            finally { Random.state = keep; }
+            return ar;
         }
 
         // ---- bases e formação

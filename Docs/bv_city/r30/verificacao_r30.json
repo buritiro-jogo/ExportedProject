@@ -1,0 +1,210 @@
+{
+ "resumo": "Conferi 40 folhas: os 25 pares c30_* (existem 25, nao 30: 10 da pista norte, 8 da pista sul, 1 do largo, 6 das transversais), as 5 cima_* e as 10 antes_*. Metodo: projetei as malhas do proprio rua_malhas.json (mesma camera do cams_r30.txt) por cima de cada captura REAL e de cada foto da CENA; na cena o aramado coincide pixel a pixel, entao a diferenca vista no real e erro de medida/conversao, nao de camera. Medidas minhas = retroprojecao de pixels no chao ou num plano de parede (camera a 2,25 m), confiaveis ate ~8 m; alem de ~12 m a retroprojecao encurta 20-25 % (ex.: apice da ilha leste sai em 1457,9 em vez de 1466,5), por isso nao uso distancias longas como medida. RESULTADO GERAL: a conversao NAO espelhou nada. Vagas norte e sul tem o sentido certo (linhas reais retroprojetadas: norte (1280,4;-23,9)->(1278,6;-21,8), sul (1494,5;-16,65)->(1496,3;-18,6)), angulos reais 49-53 graus; L1, L3 e L5 estao na ordem certa e presas na parede; faces dos quiosques (sul = +y) corretas. Guia norte e guia sul caem a 0,1-0,35 m do real em 17 vistas (pior: norte em x~1361 e ~1422, real 0,2-0,35 m mais ao sul); linha das vagas a <=0,25 m. Os problemas graves sao de EMENDA (Bento Brasil norte/sul 4,5-6 m fora, ponta oeste 2,1-2,6 m, Sebastiao Diniz com canteiro de grama e buracos na guia), a esquina noroeste da Bento Brasil norte que cobre a faixa de pedestres (3,1 m), a ponta da ilha oeste (1,3 m) e o largo do mercado sem fundo. Depois vem detalhes de quiosques (D, G, H, B), lateral L5, postes, fase/comprimento de linhas de vaga e porte das copas. Rascunhos (so na pasta de rascunho): C:/Users/Rodrigo/AppData/Local/Temp/claude/a0de669827628d24/6dd1e011-812b-4b4e-b90d-0ba9ee612670/scratchpad/ov.py, bp.py, bpw.py e ov_real_c30_*.jpg / ov_cena_c30_*.jpg. Nenhum arquivo do projeto foi alterado.",
+ "achados": [
+  {
+   "item": "emenda Av. Bento Brasil norte (y -38,5) e sul (y -1,5), x 1453-1470",
+   "gravidade": "grave",
+   "origem": "modelagem",
+   "o_que": "Onde a faixa nova acaba, a rua antiga da planta continua deslocada para leste: asfalto antigo em x 1462,1-1468,9 (norte) e 1462,1-1469,1 (sul), contra 1457,6-1464,4 e 1456,2-1465,7 da faixa nova. Degrau lateral de 4,5 m na guia oeste norte, 6,0 m na guia oeste sul e 3,3-4,5 m no lado leste; a metade oeste da rua vira calcada creme e, ao sul, o asfalto encosta na parede da casa antiga. Nao esta na lista do que nao foi feito.",
+   "evidencia": "c30_transv2N_h42_y-38_x1462 e y-49, c30_transv2S_h222_y-5 e y5: no real a camera esta no meio da pista com asfalto dos dois lados; na cena o asfalto so existe de um lado do centro da imagem. Tambem antes_N_x1453_v18, antes_S_x1454_v38 e cima_x1455. Medido na r30_cima_x1455.png (14 px/m) e por retroprojecao das guias reais a 6-12 m: norte oeste 1457,2-1458,0 / leste 1465,0-1465,5; sul oeste 1456,7-1457,0 / leste 1465,5-1465,9.",
+   "correcao": "Prolongar o marco (asfalto + calcadas) pela Bento Brasil ate onde houver levantamento (sugestao: y -60 ao norte, y +25 ao sul) com guias 1457,6 / 1464,4 (norte) e 1456,2 / 1465,7 (sul), ou deslocar a pista antiga ~4,5 m para oeste. Guias: MEDIDO (levantador +-0,5; conferi +-0,5). Extensao: ESTIMADO."
+  },
+  {
+   "item": "ponta oeste x 1247 (emenda em diagonal com o mapa vizinho)",
+   "gravidade": "grave",
+   "origem": "modelagem",
+   "o_que": "A secao do mapa vizinho nao bate com a nova: guia sul antiga em y -12,3 x nova -9,68 (degrau 2,6 m); guia norte antiga -29,0 x nova -26,83 (2,15 m); canteiro antigo de terra de -22,7 a -18,55 (4,1 m) x ilha nova de -21,6 a -14,6. A pista sul nova (y -13,1 a -9,7) da de frente para a calcada antiga e sobra ~0,8 m de passagem; a calcada norte nova fecha 2,15 m da pista norte antiga. No real as guias seguem retas para oeste (a guia nova bate com o real a <=0,15 m em N x1246 e S x1252).",
+   "evidencia": "cima_x1275 e r30_cima_x1275.png (medido na foto de cima, 14 px/m, +-0,2 m; conferida a escala pela ilha nova -14,7/-21,7); antes_S_x1256_v64 (AGORA): tira de terra marrom a direita encostada no piso novo. Duas frestas cor de ceu em (1247,4; -24,5) e (1248,3; -26,6).",
+   "correcao": "Refazer o trecho do mapa vizinho junto a emenda (pelo menos x 1230-1247) com as retas do levantamento: guia norte y = -26,85 - 0,0092(x-1249), guia sul y = -9,75 - 0,0093(x-1255), ilha continuando (-21,6 a -14,6) [MEDIDO pelo levantador ate x 1247; para oeste ESTIMADO/OBSERVADO: 'a ilha continua a oeste']."
+  },
+  {
+   "item": "emenda Av. Sebastiao Diniz (boca norte 1, y -37,0)",
+   "gravidade": "grave",
+   "origem": "modelagem",
+   "o_que": "Ao norte de y -37 fica a planta antiga: canteiro de GRAMA de x 1308,3 a 1311,8 (3,5 m) no lugar da tira de bloquete avermelhado de x 1307,1 a 1309,5 com postes; o remendo novo de bloquete (2,5 m de comprimento) nao alinha com a grama (centros 1308,3 x 1310,05). Guia oeste pula de 1299,3 (nova) para 1301,5 (antiga): 2,2 m. O poste do canteiro (1308,0; -39,4) fica em cima da guia oeste da grama. BURACO: a face vertical da guia antiga sumiu de y -37,0 a -39,7 em x~1301,5 e x~1308,3 (ve-se o ceu) e ha frestas de 1 px ao longo de y -37,0 (x 1299,3-1301,5; 1309,7-1311,9; 1313,7-1317,1).",
+   "evidencia": "c30_transv1N_h42_y-36_x1306 e y-45: real = canteiro estreito de bloquete com poste carregado de fios; cena = faixa larga de grama verde; cunhas azul-claras (cor exata do ceu 158,189,219) no canto inferior esquerdo e ao pe do poste. antes_N_x1297_v07 (AGORA): mancha azul junto ao poste. r30_cima_x1335.png: medidas acima (+-0,2 m).",
+   "correcao": "Prolongar o marco pela Sebastiao Diniz (sugestao ate y -70): canteiro de bloquete #a8584a de x 1307,1 a 1309,5 [MEDIDO pelo levantador a 5-10 m +-0,3], guias de calcada 1299 / 1318 [+-0,7, satelite], sem grama. Enquanto isso, fechar as faces de guia removidas e as frestas em y -37,0. Largura das pistas dentro da rua: nao medida."
+  },
+  {
+   "item": "esquina noroeste da boca norte da Bento Brasil (calcada norte, x 1454-1458, y -33 a -29)",
+   "gravidade": "grave",
+   "origem": "conversao",
+   "o_que": "A calcada da esquina avanca ate 3,1 m para dentro da boca e cobre as 3-4 primeiras listras da faixa de pedestres (so ~10 das 14 aparecem inteiras). O conversor usou a guia de dentro da rua (1457,6) com raio 3,5 ESTIMADO; a guia real abre devagar e contradiz o proprio levantamento, que da a quina em (1455,1; -32,2).",
+   "evidencia": "c30_N_h132_x1452: no real a quina da guia fica no extremo esquerdo (pixel x < 115) e a faixa comeca na borda da imagem; na cena a laje da calcada ocupa o canto ate o pixel ~545. Retroprojecao da base da guia real a 5-7,6 m: (1454,0; -30,9), (1454,3; -31,2), (1454,6; -31,7), (1454,9; -32,2), (1455,4; -33,4); no modelo, em y -31 a guia esta em x 1457,35. Tambem cima_x1455 (listras cortadas em diagonal).",
+   "correcao": "Trocar o quarto de circulo por: guia da avenida ate x ~1453,5, curva curta passando por (1454,0; -30,9), (1454,9; -32,2), (1455,4; -33,4) e reta ate (1457,2; -41,5), so entao 1457,6. MEDIDO (+-0,3; ponto -41,5 a 6 m). Vale conferir do mesmo jeito a esquina sudoeste da boca sul (raio 3 ESTIMADO): em c30_S_h132_x1454 o real mostra asfalto em (1455,65; -8,6) e (1456,0; -8,6), onde o modelo tem calcada (>= 0,3-0,6 m a mais)."
+  },
+  {
+   "item": "ilha I1, ponta leste (x 1296,5-1299,8)",
+   "gravidade": "grave",
+   "origem": "levantamento",
+   "o_que": "A ponta foi chanfrada cedo demais do lado norte: o contorno vai de (1296,5; -21,4) a (1298,3; -20,6) e (1299,3; -19,3), mas a guia real ainda esta em y -22,0 em x 1298,4 e so fecha em x ~1299,8. Falta um 'ombro' de ate 1,3 m; o contorno contradiz os pontos de flanco medidos pelo proprio levantador ((1298,5; -21,6) e (1299,2; -20,9)).",
+   "evidencia": "c30_N_h132_x1297: no real a ponta arredondada de bloquete vermelho com guia ocupa o canto inferior direito; na cena esse canto e so asfalto (a ponta do modelo cai fora do quadro). Retroprojecao da base da guia real a 5-8 m: (1298,4; -22,0), (1298,6; -21,9), (1298,8; -21,7), (1299,05; -21,4), (1299,2; -21,1), (1299,45; -20,5), (1299,65; -19,7), (1299,75; -19,0).",
+   "correcao": "Ponta em arco de raio ~2,7 m com centro ~(1297,0; -18,9): tangente norte em y ~-21,6, apice x ~1299,7-1299,8, tangente sul -16,2. MEDIDO (8 pontos, +-0,3; lado sul nao remedido)."
+  },
+  {
+   "item": "largo do mercado (boca sul 1, x 1302-1315, y > -7)",
+   "gravidade": "media",
+   "origem": "falta",
+   "o_que": "O asfalto do largo acaba em y +4,3 num chao bege vazio; no fundo ha so uma laje cinza horizontal solta (peca antiga, parece flutuar) no lugar do galpao de empena do mercado; a lateral oeste (parede azul e branca da loja de esquina) e um bloco cinza sem nada; falta a mureta com balaustres do sobrado. O levantamento declara isso como nao levantado, mas nao consta na lista do conversor. Ha uma fresta cor de ceu ao longo do fim do asfalto (y ~+4,0 a +4,3, x 1302-1315).",
+   "evidencia": "c30_largo_mercado_h222_x1313: real = mercado com empena, viaturas, parede azul/branca, arvores; cena = arvore, poste da camera, asfalto que termina numa linha azul-clara e blocos lisos. r30_cima_x1275/x1335.png: linha de 1 px cor de ceu em y ~+4,0.",
+   "correcao": "Fechar a fresta em y +4,3 ja. Fundo e laterais dependem de levantamento novo (nao ha panorama dentro do largo): OBSERVADO apenas. Guia oeste do largo: retroprojecao a 11-16 m deu 1302,7-1303,9 contra 1302 (distancia longa: ESTIMADO, dentro do +-1 do levantador)."
+  },
+  {
+   "item": "quiosque D (Sorveteria Saci)",
+   "gravidade": "media",
+   "origem": "levantamento",
+   "o_que": "A porta em arco esta na face errada e o octogono esta girado: no real, visto da pista norte, a porta fica na face a ESQUERDA (leste) do pano que tem o cartaz e o ar-condicionado; na cena ela esta no meio da face a direita (noroeste) e o pano norte e liso. As duas faces reais se encontram num vertice que aponta para o norte (faces a +29 e -18 graus do eixo da avenida), nao numa face plana. A placa 'Sorveteria Saci' foi posta na face SUL (ESTIMADO do conversor); no real o nome esta no pano norte-noroeste, junto do cartaz.",
+   "evidencia": "c30_N_h132_x1276: real = face estreita com porta (pixels 1180-1276), face larga com cartaz e ar (1276-1517); modelo projetado = face norte 1159-1314 e face noroeste 1314-1689 com a porta. Pes das quinas reais a 7-8 m: (1281,8; -19,9), (1280,55; -20,6), (1279,1; -20,15): faces de 1,4-1,5 m (octogono de ~3,5-3,8 m entre faces; modelo 4,3). Topo da parede no vertice: 2,5 m acima do asfalto.",
+   "correcao": "Girar o octogono ~20 graus (vertice norte em ~(1280,6; -20,6)), porta na face norte-nordeste, placa do nome na face norte-noroeste. Posicoes MEDIDO numa vista so (+-0,4); tamanho 3,5-3,8 m ESTIMADO (conferir com outra vista antes de reduzir)."
+  },
+  {
+   "item": "quiosque G (branco e roxo)",
+   "gravidade": "media",
+   "origem": "levantamento",
+   "o_que": "A face norte real e um pano reto e comprido, sem quina no meio: vai do contraforte arredondado ate alem da borda da foto. No modelo (octogono regular de 3,9 m) a face norte tem 1,62 m e dobra em x 1364,09, bem no meio de onde o real tem o cartaz amarelo num pano plano.",
+   "evidencia": "c30_N_h132_x1361: pe da parede real a 6-7 m em (1365,7; -21,55), (1364,7; -21,4), (1363,7; -21,3), (1363,3; -21,3) = pelo menos 2,45 m em linha reta paralela a avenida; o aramado do modelo mostra uma aresta vertical no pixel ~1313, dentro do pano liso.",
+   "correcao": "Fazer G como quadrado de cantos chanfrados (como o I) com face norte de x <= 1363,3 a 1365,7 em y ~-21,4. MEDIDO numa vista (+-0,4); extremo oeste da face fora do quadro: nao medido."
+  },
+  {
+   "item": "quiosque H, letreiro 'CONSERTA-SE JOIAS'",
+   "gravidade": "media",
+   "origem": "conversao",
+   "o_que": "O letreiro nao aparece: foi posto de z 2,35 a 2,55 na face sul, mas o telhado comeca em 2,30 (altura_parede_m) com beiral de 0,5 m e e um solido fechado; na linha da parede o telhado ocupa de 2,30 a ~2,59, entao a placa fica inteira dentro dele.",
+   "evidencia": "antes_N_x1387_v55_longe (AGORA): quiosque de tijolo com porta escura e nenhuma faixa azul; no real a faixa azul e branca esta logo abaixo do beiral. Conta feita com os numeros do monta_rua_jb.py/rua_lib.py (piramide: anel a 2,30/2,42, cume 3,20).",
+   "correcao": "Subir a parede e a base do telhado do H para 2,55 (beiral MEDIDO pelo levantador +-0,2) mantendo o letreiro em 2,35-2,55, ou descer o letreiro para 2,05-2,25. O mesmo desencontro (altura_parede x beiral medido: B 2,25/2,5; D 2,5/2,8; G 2,3/2,6; I 2,5/2,7) nao pude decidir pelas fotos."
+  },
+  {
+   "item": "quiosque B (branco e lilas)",
+   "gravidade": "media",
+   "origem": "conversao",
+   "o_que": "Telhado saiu de telha de barro laranja; o levantamento da #b3a297 (telha clara, cinza-bege). O conversor ignora cor_telhado e usa tabela fixa. A parede saiu branca lisa; no real tem tijolinho desenhado em lilas.",
+   "evidencia": "antes_N_x1272_v05_longe: real = telhado cinza-claro e parede branca com tijolinho lilas; AGORA = telhado laranja, parede lisa. cima_x1275: os dois octogonos (B e D) aparecem com o mesmo telhado laranja.",
+   "correcao": "TEL['B'] com a cor do levantamento (#b3a297) e parede com fiadas lilas #8f96d8. Cores do levantador: OBSERVADO."
+  },
+  {
+   "item": "lateral L5 (casa antiga, Bento Brasil sul)",
+   "gravidade": "media",
+   "origem": "levantamento",
+   "o_que": "O modelo tem 2 paineis pretos largos (y -3,0 a -0,9 e 0,8 a 2,6) e 1 janelao; o real tem uma fila de vaos em arco estreitos com cartaz (~1,05-1,1 m de largura a cada ~1,9 m; contei 5 da esquina ate o janelao) e DOIS janeloes gradeados. O painel 2 do modelo cai no intervalo entre dois cartazes reais. A faixa-letreiro esta ~0,3 m alta e fina.",
+   "evidencia": "c30_transv2S_h222_y-5_x1461, no plano x 1470 a 5-8 m: cartaz y 0,0 a 1,1 (z 0,67-3,22); cartaz y 1,9 a 2,9 (z 0,7-3,2); janelao y 3,5 a 4,9 (bate com o modelo); segundo janelao y 5,4 a 7,0 (z 0,55-3,45), que nao existe no modelo; portas 7,2-8,65 ... 10,95-12,4 (batem). Letreiro real z 3,4-4,0 (modelo 3,7-4,1). Contagem dos 5 vaos: c30_S_h132_x1454.",
+   "correcao": "Paineis de 1,1 m: y 0,0-1,1 e 1,9-2,9 [MEDIDO, uma vista, +-0,3] e mais tres para o norte em ~-1,9, -3,8 e -5,7 [ESTIMADO pelo passo]; z 0,7-3,2. Acrescentar janelao y 5,4-7,0, z 0,55-3,45 [MEDIDO, uma vista]. Letreiro z 3,4-4,0."
+  },
+  {
+   "item": "postes: [2] esquina noroeste (1297; -28), [4] (1362,9; -28,35), [12] (1290,2; -9,6)",
+   "gravidade": "media",
+   "origem": "levantamento",
+   "o_que": "[2]: poste enorme bem na frente da camera onde o real nao tem nenhum; o poste real da esquina fica junto a borda oeste da faixa de pedestres da pista norte e tem braco com luminaria. [4]: aparece 2 m a frente da camera de N x1361, onde o real nao tem poste; o poste real (com transformador e braco) esta a oeste de x 1361. [12]: o real fica ~0,8 m mais a leste e 0,6 m mais para dentro da calcada.",
+   "evidencia": "antes_N_x1297_v07 (AGORA): poste cobrindo o centro da imagem, ausente no real (camera em 1296,7; -26,0 olhando para o norte). c30_N_h132_x1361: poste grande a esquerda na cena, nada no real. c30_N_h132_x1276: pe do poste real na mesma linha da borda proxima da faixa de pedestres (pixel 716,366). c30_N_h132_x1331: pe em (740,344), largura aparente ~5,5 px. c30_S_h132_x1282 + antes_S_x1292_v27: poste real 28 px a direita do modelo e a 64-70 % da largura (modelo 88 %).",
+   "correcao": "[2] para ~(1293,5; -27,6) e com braco de luminaria; [4] para x ~1352-1358 (plano liso da 1351,5; com a correcao de longe ~1357); [12] para ~(1291,0; -9,0). Tudo ESTIMADO (distancias de 9-21 m; so a ausencia nas fotos e certa)."
+  },
+  {
+   "item": "postes: cruzetas, bracos e transformadores",
+   "gravidade": "leve",
+   "origem": "conversao",
+   "o_que": "As cruzetas foram postas AO LONGO da avenida (x +-0,9); no real sao perpendiculares aos fios (aparecem de frente, em T, olhando ao longo da avenida). No poste da Bento Brasil norte (1456,9; -42,9) o braco da luminaria aponta para o sul, ao longo da calcada; no real aponta para leste, sobre a pista. So um poste tem transformador; no real vi transformador tambem nos postes da calcada norte perto de x ~1262, ~1352-1357 e ~1469.",
+   "evidencia": "c30_N_h132_x1276 e x1331 (real: barra horizontal larga no topo; cena: cruzeta de topo, quase invisivel); c30_transv2N_h42_y-38_x1462 (real: braco longo para a direita; cena: braco na diagonal para a camera); recortes de N x1246, x1331 e x1452.",
+   "correcao": "Cruzeta em y +-0,9 nos postes da avenida e em x +-0,9 nos das transversais; braco das transversais no sentido da pista (+x no poste 20). Transformadores: OBSERVADO, posicao ao longo da avenida ESTIMADA."
+  },
+  {
+   "item": "linhas de vaga: fase e comprimento (VN3, VN4, VN10, VS9)",
+   "gravidade": "media",
+   "origem": "conversao",
+   "o_que": "O conversor comeca cada fileira em x0 + meio passo e ignora as posicoes de linha que o levantador mediu, e estica toda linha ate o fim do poligono. Resultado: VN4 com as linhas 0,9 e 1,4 m a leste das reais; VN3 +0,7 m (passo 1,5 contra 1,43); VN10 +1,15 m perto de x 1483; VS9 com linhas de 4,3 m que chegam na espinha (y -19,65) quando as reais tem ~2,7 m e param em y -18,6. Sentido e angulo estao certos.",
+   "evidencia": "Retroprojecao a 4-8 m: c30_N_h132_x1331: pontas reais em x 1334,9 e 1338,0 (modelo 1335,8 e 1339,4; levantador 1335,2 e 1338,8). c30_N_h132_x1276: 1279,05 / 1280,4 / 1281,9 (modelo 1279,75 / 1281,25 / 1282,75). c30_S_h132_x1492: linha real de (1494,5; -16,65) a (1496,3; -18,6); modelo de (1493,6; -16,6) ate -19,65.",
+   "correcao": "Ancorar a primeira linha de cada fileira na posicao medida (VN3 1279,1 passo 1,43; VN4 1335,0 e 1338,4 +-0,4; VN10 1482,6 / 1485,6 e 1514,5 / 1517,3; VS9 1494,5 / 1497,8) e cortar a VS9 em y -18,6. MEDIDO (levantador e eu, +-0,3)."
+  },
+  {
+   "item": "vagas sul sem linhas: x 1368,5-1378, x 1334,5-1339,5 e motos x 1339,5-1345",
+   "gravidade": "media",
+   "origem": "falta",
+   "o_que": "Esses trechos estao so no texto do levantamento (campo incerteza de VS6 e VS7), sem poligono, e o conversor nao pintou nada: asfalto liso onde o real tem vagas de carro a ~53 graus com linha branca. Nao esta na lista do que nao foi feito (so a VS3 esta).",
+   "evidencia": "c30_S_h132_x1366: real = carros nas vagas e linha branca de (1369,8; -14,1) a (1372,6; -17,9) (retroprojecao a 5-9 m); cena = asfalto sem linha a leste do remendo vermelho. A quina da ilha em (1368,6; -16,3) bate com o modelo.",
+   "correcao": "Criar poligonos: carros x 1368,5-1378 (3 vagas, y -14,4 a ~-18,7, primeira linha com ponta em 1370,0 e cabeca em 1372,6) [MEDIDO uma linha]; carros x 1334,5-1339,5 e motos x 1339,5-1345 (y -14,2 a -16,5) [ESTIMADO pelo levantador]."
+  },
+  {
+   "item": "arvores do trecho leste (x 1472-1541)",
+   "gravidade": "media",
+   "origem": "levantamento",
+   "o_que": "A altura (7 m) confere, mas a copa esta pequena e rala: no real as mangueiras formam uma copa continua que cobre a pista norte; na cena sao bolas separadas de ~5,5 m.",
+   "evidencia": "c30_N_h132_x1510 (metades direitas lado a lado): na arvore de x 1515,5 a copa real chega ao pixel ~1000-1030 a meia altura (>= 4,2 m ao norte do tronco); a da cena para em ~1150-1180 (~2,7 m). Segunda arvore (1521,9): topo real y~100 e cena y~115 = ~7,3 m. Tambem c30_N_h132_x1479 e cima_x1515.",
+   "correcao": "Copa de ~8,5-9 m de diametro (larg ~1,25 para altura 7) e folhagem mais fechada nas arvores de x > 1466. ESTIMADO (uma vista)."
+  },
+  {
+   "item": "ponta leste x 1541",
+   "gravidade": "media",
+   "origem": "modelagem",
+   "o_que": "A espinha nova (1,9 m, y -22,2 a -20,3, piso cinza com mangueiras) da num canteiro antigo de GRAMA de 4,2 m (y -23,3 a -19,1) sem arvores, com ponta em x ~1566; a guia norte tem degrau de 0,7 m (antiga -30,26 x nova -29,54) e a sul de 0,35 m; as linhas de bordo e de vaga param. No real a secao continua igual para leste.",
+   "evidencia": "cima_x1515 e r30_cima_x1515.png (medido, 14 px/m); c30_N_h132_x1510 e c30_S_h132_x1492: mancha verde no fim da avenida, onde o real tem mangueiras. Fresta em (1541,5; -30,0).",
+   "correcao": "Prolongar a espinha, as arvores (a cada 6-8 m) e as vagas alem de 1541 ate o fim do canteiro antigo, ou ao menos trocar a grama por espinha de 1,9 m. Secao: EXTRAPOLADO pelo levantador (nada medido no chao a leste de ~1526)."
+  },
+  {
+   "item": "faixas de pedestres: passo, fase e contagem",
+   "gravidade": "leve",
+   "origem": "conversao",
+   "o_que": "Boca norte 1: passo fixo de 1,0 m a partir de 1298,5; o real tem passo 0,92 a partir de 1298,3 (erro cresce 0,08 m por listra; ~21-22 listras reais contra 20). Boca sul 2: listras do modelo caem nos intervalos das reais (0,55 m de fase). Travessias de pista: o real mostra 5 listras em ~3,8 m; o modelo faz 3-4 (0,5 a cada 1,0). Posicao e sentido das listras estao certos em todas.",
+   "evidencia": "c30_N_h132_x1297: bordas reais 1298,83 / 1299,21-1299,72 / 1300,09-1300,65 / 1301,02-1301,47 / 1302,02-1302,54 / 1302,86-1303,30; pontas sul em y -28,2 a -28,4. c30_S_h132_x1454: inicios reais 1456,54 / 1457,43 / 1458,34 / 1459,18 (levantador: 1456,0 / 1456,8 / 1457,7 / 1458,5; divergimos 0,55 m). c30_S_h132_x1429: 5 barras na travessia.",
+   "correcao": "PASSO_FP[0] = 0,92 com inicio em 1298,3 [MEDIDO +-0,1]; travessias com passo ~0,8; boca sul 2: reconferir o inicio (1456,0 do levantador x 1456,5 meu) antes de mexer."
+  },
+  {
+   "item": "ilha I2d: piso da ponta leste",
+   "gravidade": "leve",
+   "origem": "conversao",
+   "o_que": "Toda a ilha saiu de bloquete avermelhado (#9a6a5c); o levantamento da avermelhado so em volta do quiosque I e mosaico/cimento cinza (#8d8a84) na ponta. A forma da ponta bate (<= 0,3 m).",
+   "evidencia": "c30_N_h132_x1452: ponta real cinza-bege de pedra; cena vermelha. cima_x1455.",
+   "correcao": "Dividir a cor em x ~1452 (cinza #8d8a84 a leste). Limite ESTIMADO; cor OBSERVADA."
+  },
+  {
+   "item": "rampa azul da calcada sul (x 1332-1334)",
+   "gravidade": "leve",
+   "origem": "levantamento",
+   "o_que": "O retangulo azul do modelo tem 2,0 x 1,6 m; o real tem ~0,85 x 1,4 m (falta tambem o piso tatil vermelho ao lado e a faixa amarela da calcada).",
+   "evidencia": "c30_S_h132_x1331: cantos reais a 3-4,5 m em (1333,63; -9,99), (1333,63; -9,13), (1332,8; -10,7), (1332,83; -9,29); modelo x 1332,3-1334,3, y -10,5 a -8,9.",
+   "correcao": "Azul em x 1332,8-1333,65, y -10,6 a -9,2. MEDIDO (+-0,2)."
+  },
+  {
+   "item": "lateral L1: primeiro painel (foto, y -41,4 a -33)",
+   "gravidade": "leve",
+   "origem": "levantamento",
+   "o_que": "Topo do painel em 4,8 m; no real fica em 4,35-4,45 (o que esta a 4,8-5 e o beiral da parede de tras, noutro plano). Demais paineis, divisas e textos conferem (topos 4,5 / 4,55 / 4,9 / 5,0; divisas -44,9 / -47,2 / -50,9 / -54,8 / -60,5).",
+   "evidencia": "c30_transv1N_h42_y-36_x1306 e y-45, no plano x 1298,7: topo da foto 4,31 / 4,34 / 4,44; base 2,3-2,45.",
+   "correcao": "z1 do painel 0 = 4,4. MEDIDO (uma vista, +-0,2)."
+  },
+  {
+   "item": "guia norte entre x ~1355 e ~1425",
+   "gravidade": "leve",
+   "origem": "levantamento",
+   "o_que": "A guia real fica 0,2-0,35 m mais ao sul (mais perto da pista) que a reta do modelo nesse trecho; nas outras vistas o desvio e <= 0,15 m. Guia sul: <= 0,2 m em todas.",
+   "evidencia": "Recortes da base da imagem (pontos a ~1,8 m): c30_N_h132_x1361: 40-70 px = 0,22-0,38 m; x1422: 33-56 px = 0,18-0,3 m; x1392: 0,05-0,17; x1246, x1276, x1331, x1479, x1510: <= 0,1.",
+   "correcao": "Opcional: guia norte por trechos em vez de uma reta (em x 1361 y ~-27,7 em vez de -28,04). MEDIDO (+-0,1), mas dentro da tolerancia do levantamento."
+  },
+  {
+   "item": "placas (E e placa informativa de x 1480,9) e linha de bordo no trecho leste",
+   "gravidade": "leve",
+   "origem": "conversao",
+   "o_que": "As chapas foram postas com a face para norte/sul; no real as placas E e a placa informativa ficam de frente para quem vem pela avenida (face para oeste/leste). A informativa real e maior (~1,2 x 0,8 m) e mais baixa (~1,2-2,0 m) que a chapa de 0,5 x 0,6 a 2,0-2,6 m. A leste de x 1466 nao consegui ver a linha branca de bordo junto a guia norte nas fotos reais; a cena tem linha branca forte.",
+   "evidencia": "c30_N_h132_x1479 (real: placa branca de frente; cena: so o tubo, chapa de perfil), c30_S_h132_x1282 (placa E de frente no real); c30_N_h132_x1479 e x1510 para a linha de bordo.",
+   "correcao": "Girar as chapas 90 graus (largura em y). Tamanho da informativa e ausencia do bordo: OBSERVADO, nao medido."
+  },
+  {
+   "item": "calcada leste da Bento Brasil sul (plataforma elevada) e pisos das calcadas",
+   "gravidade": "leve",
+   "origem": "falta",
+   "o_que": "O levantamento descreve a calcada leste da Bento Brasil sul como plataforma elevada com degraus (e a oeste, plataforma com guarda-corpo verde); a cena tem calcada rasa comum. As calcadas da avenida sairam todas de concreto cinza; no real mudam por trecho (ladrilho amarelo em frente a x ~1355-1400 norte, vermelho em x ~1282-1300 sul, bloquete escuro em x ~1490 sul). Nada disso esta na lista do que nao foi feito.",
+   "evidencia": "c30_transv2S_h222_y-5_x1461 (degraus de concreto no canto inferior esquerdo do real); c30_N_h132_x1361 e x1392, c30_S_h132_x1282 e x1492.",
+   "correcao": "Plataforma: altura ~0,9 m no fim da casa (y +13) segundo o levantador; na esquina nao medido. Pisos: OBSERVADO."
+  }
+ ],
+ "pares_conferidos": 40,
+ "nao_conferido": [
+  "Distancias ao longo da avenida acima de ~12 m: a retroprojecao em plano liso encurta 20-25 % olhando para leste (faixa da pista sul sai em 1444,2-1447,2 contra 1447,9-1453,8 na planta retificada; apice da ilha leste em 1457,9 contra 1466,5). Pode ser declive real da avenida para leste ou ~1-1,5 grau de erro de inclinacao do panorama; nao deu para separar. Por isso a posicao em x dos postes da calcada norte e das arvores vindas do satelite nao foi conferida como medida.",
+  "Degrau de ALTURA nas emendas (chao novo x antigo), altura das guias (0,15 m) e declive da avenida: fotos nao permitem medir; Unity nao foi aberto.",
+  "Folhas cima_*: a planta retificada e a cena tem centro e escala diferentes e o satelite e obliquo; comparei so qualitativamente e usei a grade para a faixa da pista sul. Contorno da ilha I2b (x 1335-1389) e tira central I2c nao conferidos (sob copas e carros).",
+  "Vagas estimadas pelo levantador (VN1, VN2, VN5, VN7, VN8, VS2, VS6, VS8): carros e motos cobrem as linhas; conferi so sentido e linha da faixa onde havia uma linha visivel.",
+  "Quiosques E, F e I: so posicao e tamanho pelo aramado (batem a <= 0,5 m); lado das portas de E e I e alturas de beiral nao medidos. Quiosque A confere (face oeste real em x 1250,7-1251,1, y -19,4 a -16,7; alturas 2,05 e 2,85).",
+  "Topo da lateral L3 (6,5 x 7,6-7,8): em c30_N_h132_x1452 o topo das pilastras cai perto da linha do telhado real, mas a 18 m nao e conclusivo. Pilastras reais sao inclinadas; as do modelo sao retas.",
+  "Laterais L2, L4, L6 e tudo alem de y -38,5 / +4,3 / -1,5 nas transversais (pares c30_transv2N_y-49 e c30_transv2S_y5 mostram so planta antiga): fora da rodada; vi apenas a emenda.",
+  "Esquinas noroeste/nordeste da boca norte 1 e as duas do largo: caem na borda ou fora dos quadros; nao medidas. Esquina nordeste da boca norte 2 bate com o ponto do levantador (1466,0; -29,7).",
+  "Poste da Bento Brasil norte (1456,9; -42,9): pe escondido na foto; nao medido. Altura dos postes e das luminarias: topo fora do quadro.",
+  "Chao atravessando parede de predio e pecas flutuando: nao encontrei nas 40 folhas alem da laje solta no fundo do largo (peca antiga); nao percorri a cena fora desses pontos de vista."
+ ]
+}

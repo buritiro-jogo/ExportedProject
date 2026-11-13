@@ -59,7 +59,17 @@ namespace FreeBala.EditorTools
         static string Out(string p) => Path.GetFullPath(Path.Combine(System.Environment.GetEnvironmentVariable("FB_BUILD_DIR") is string d && d.Length > 0 ? d : Path.Combine(Application.dataPath, "../../Builds"), p));
         // cenas do Build Settings + cenas de teste que existirem (IKTest do Agente 3: o autoteste do executável abre pelo nome)
         static readonly string[] TestScenes = { FBImport.SceneDir + "/IKTest.unity" };
-        static string[] Scenes => EditorBuildSettings.scenes.Where(s => s.enabled && File.Exists(s.path)).Select(s => s.path).Concat(TestScenes.Where(File.Exists)).Distinct().ToArray();
+        static string[] Scenes => EditorBuildSettings.scenes.Where(s => s.enabled && File.Exists(s.path)).Select(s => s.path).Concat(demo ? new string[0] : TestScenes.Where(File.Exists)).Distinct().ToArray();
+        // r69 (13/11/2026, pedido: "gere uma build dev com o que já temos, sem lixo não usável na demo"): build de desenvolvimento em MONO
+        // só com as cenas jogáveis (sem a IKTest; o teste de foot IK monta a pista sozinho quando ela não está no build). Saída WindowsDemo.
+        static bool demo;
+        public static void WindowsDemoDevBatch()
+        {
+            bool ok;
+            try { mono = true; demo = true; ok = Run(BuildTarget.StandaloneWindows64, BuildTargetGroup.Standalone, Out("WindowsDemo/Buritiro.exe"), BuildOptions.Development); }
+            finally { mono = false; demo = false; PlayerSettings.SetScriptingBackend(NamedBuildTarget.Standalone, ScriptingImplementation.IL2CPP); }
+            EditorApplication.Exit(Ok(ok));
+        }
         static bool Run(BuildTarget t, BuildTargetGroup g, string path, BuildOptions o = BuildOptions.None)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(path));

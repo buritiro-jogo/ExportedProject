@@ -93,6 +93,21 @@ namespace FreeBala
             }
         }
 
+        // r65: só a grade de asfalto (minimapa), SEM carregar a malha — o estado do FBRoads liga trânsito/semáforo/vestir rua
+        public static System.Func<Vector3, bool> RoadGridOnly(string mapId)
+        {
+            if (loaded == mapId && grid != null) return IsRoad;
+            var ta = Resources.Load<TextAsset>("FBRoads/" + mapId); if (!ta) return null;
+            if (!(Json.Parse(ta.text) is Dictionary<string, object> J)) return null;
+            float x0 = Json.F(J, "gx0"), z0 = Json.F(J, "gz0"), c = Json.F(J, "cell", 1); int nx = Json.I(J, "gnx"), nz = Json.I(J, "gnz"); byte[] g;
+            try { g = System.Convert.FromBase64String(Json.S(J, "road") ?? ""); } catch { return null; }
+            if (g.Length == 0 || nx <= 0 || nz <= 0) return null;
+            return p =>
+            {
+                int ix = Mathf.FloorToInt((p.x - x0) / c), iz = Mathf.FloorToInt((p.z - z0) / c);
+                if (ix < 0 || iz < 0 || ix >= nx || iz >= nz) return false; int k = iz * nx + ix; return (k >> 3) < g.Length && (g[k >> 3] & (1 << (k & 7))) != 0;
+            };
+        }
         // ---- consultas
         public static bool IsRoad(Vector3 p)
         {

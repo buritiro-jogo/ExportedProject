@@ -8,6 +8,12 @@
 //    celular com depth texture); sem ela, a cor sai do ângulo de visão (rasante = mais fundo) e não há espuma de borda;
 //  · FB_WATER_LITE (qualidade baixa): 1 amostra de normal, sem agitação, sem espuma por textura.
 // Keywords globais (multi_compile: as 4 variantes vão no build): o FBWater liga FB_WATER_DEPTH/FB_WATER_LITE conforme a qualidade.
+// r65 (PC, _FBPuddleSSR = 1 — textura opaca da câmera): água FÍSICA em vez de cor chapada + alfa:
+//  · REFRAÇÃO: o fundo/margem visto através da água (textura opaca deslocada pela normal);
+//  · ABSORÇÃO de Beer-Lambert pela coluna d'água real (depth): o azul some primeiro → rio barrento de Boa Vista cor de chá/barro,
+//    nunca piscina cristalina; ESPALHAMENTO da turbidez (cor de fundo do material) iluminado pelo céu e pelo sol;
+//  · REFLEXO em espaço de tela (pontes, prédios, árvores, margem, luzes) com volta para a sonda do céu do horário;
+//  · brilho especular GGX do sol/lua E dos postes/faróis (luzes adicionais do Forward+) — à noite a água pega as luzes da orla.
 Shader "FreeBala/Water"
 {
     Properties
@@ -43,15 +49,19 @@ Shader "FreeBala/Water"
             Cull Back
 
             HLSLPROGRAM
-            #pragma target 3.0
             #pragma vertex vert
             #pragma fragment frag
             #pragma multi_compile_fog
             #pragma multi_compile _ FB_WATER_LITE
             #pragma multi_compile _ FB_WATER_DEPTH
+            #pragma multi_compile _ _ADDITIONAL_LIGHTS
+            #pragma multi_compile _ _CLUSTER_LIGHT_LOOP
+            #pragma multi_compile_fragment _ _LIGHT_COOKIES
+            #pragma target 3.5
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
+            #include "FBScreenRefl.hlsl"
+            float _FBWaterPbr;                                             // r65: FBVisual (waterPbr) — 0 = água da r64
 
             CBUFFER_START(UnityPerMaterial)
                 half4 _ShallowColor, _DeepColor, _SkyTint, _FoamColor;
@@ -83,6 +93,7 @@ Shader "FreeBala/Water"
             float2 Rot(float2 d, float a) { float s = sin(a), c = cos(a); return float2(d.x * c - d.y * s, d.x * s + d.y * c); }
             half3 SampleN(float2 uv, half scale) { return UnpackNormalScale(SAMPLE_TEXTURE2D(_NormalMap, sampler_NormalMap, uv), scale); }
 
+            half4 WaterNew(Varyings i, half3 N, half3 V, half fres, float2 uv1, float2 uv2, half river);
             half4 frag(Varyings i) : SV_Target
             {
                 float t = _Time.y; float2 xz = i.positionWS.xz;
@@ -110,6 +121,9 @@ Shader "FreeBala/Water"
                 half3 V = GetWorldSpaceNormalizeViewDir(i.positionWS);
                 half NdV = saturate(dot(N, V));
                 half fres = 0.02 + 0.98 * pow(1 - NdV, 5);
+            #if !defined(FB_WATER_LITE)
+                if (_FBPuddleSSR > 0.5 && _FBWaterPbr > 0.5) return WaterNew(i, N, V, fres, uv1, uv2, river);
+            #endif
 
                 // ---- profundidade (raso → fundo) e espuma da margem
                 half deepK, edgeFoam = 0, soft = 1;
@@ -156,6 +170,56 @@ Shader "FreeBala/Water"
                 a = saturate(max(a, foam)) * soft;
                 col = MixFog(col, i.fogFactor);
                 return half4(col, a);
+            }
+            // r65: caminho físico (ver cabeçalho)
+            half4 WaterNew(Varyings i, half3 N, half3 V, half fres, float2 uv1, float2 uv2, half river)
+            {
+                float2 suv = i.screenPos.xy / i.screenPos.w;
+                float sceneEye = FBSceneEye(suv); float thick = max(0, sceneEye - i.screenPos.w);
+                float column = thick * saturate(abs(V.y) + 0.15);
+                half soft = saturate(thick / 0.06);
+                // refração: o deslocamento some no raso (sem "vazar" a margem por cima da água)
+                float2 ruv = suv + N.xz * 0.035 * saturate(column / 0.5);
+                if (FBSceneEye(ruv) < i.screenPos.w) ruv = suv;                      // amostra caiu em algo NA FRENTE da água: sem refração
+                half3 bed = FBSceneColor(ruv);
+                // absorção: coeficiente por canal a partir da cor rasa (o que ela não tem é o que a água come) × turbidez
+                half3 sigma = (1.15 - _ShallowColor.rgb) * (0.6 + 2.4 * _Murk) / max(0.05, _DepthRange);
+                half3 T = exp(-sigma * (thick * 0.5 + column * 0.5));
+                Light ml = GetMainLight(); half3 amb = SampleSH(half3(0, 1, 0));
+                half3 litIn = amb * 0.9 + ml.color * saturate(ml.direction.y + 0.15) * 0.55;
+                half3 scatter = _DeepColor.rgb * litIn;                                // turbidez iluminada (barro em suspensão)
+                half3 body = bed * T + scatter * (1 - T);
+                // reflexo: tela → sonda/céu
+                float rough = saturate(1 - _Smoothness) * 0.8 + 0.02;
+                half3 R = reflect(-V, N);
+                half3 env = GlossyEnvironmentReflection(R, i.positionWS, rough, 1, suv);
+                half envL = dot(env, half3(0.3, 0.59, 0.11)); env = lerp(_SkyTint.rgb * (amb * 1.2 + 0.25), env, saturate(envL * 6));
+                half4 ssr = FBSSRTrace(i.positionWS, R, 90);
+                half3 refl = lerp(env, ssr.rgb, ssr.a) * _ReflStrength;
+                half3 col = lerp(body, refl, fres);
+                // brilho: sol/lua (o mesmo de antes, estreito + largo) e luzes adicionais (GGX)
+                half rl = saturate(dot(R, ml.direction));
+                col += ml.color * (pow(rl, 900 * _Smoothness * _Smoothness + 40) * _SpecBoost * 6 + pow(rl, 60) * 0.12 * _SpecBoost) * saturate(ml.direction.y * 4 + 0.2);
+                float a2 = max(rough * rough, 0.0016); a2 *= a2;
+            #if defined(_ADDITIONAL_LIGHTS) || defined(_CLUSTER_LIGHT_LOOP)
+                InputData inputData = (InputData)0; inputData.positionWS = i.positionWS; inputData.normalizedScreenSpaceUV = suv;
+                uint cnt = GetAdditionalLightsCount();
+                LIGHT_LOOP_BEGIN(cnt)
+                    Light al = GetAdditionalLight(lightIndex, i.positionWS);
+                    col += min(FBSpecGGX(al.color * al.distanceAttenuation, al.direction, V, N, a2, fres), 30.0);
+                    col += _DeepColor.rgb * al.color * al.distanceAttenuation * saturate(al.direction.y) * 0.08 * (1 - T.g);   // luz entrando na água turva
+                LIGHT_LOOP_END
+            #endif
+                // espuma (igual ao caminho antigo, sem a da margem rasa por textura de profundidade inexistente)
+                half fA = SAMPLE_TEXTURE2D(_FoamTex, sampler_FoamTex, uv1 * 1.7 + float2(0.13, 0.71)).r;
+                half fB = SAMPLE_TEXTURE2D(_FoamTex, sampler_FoamTex, uv2 * 2.3).r; half fm = fA * fB;
+                half edgeFoam = 1 - saturate(column / max(0.02, _FoamDist));
+                half foam = saturate(edgeFoam * 1.6 - (1 - fm) * 1.1) * _FoamAmount;
+                foam += smoothstep(0.55, 0.9, fm) * 0.35 * river * _FoamAmount;
+                foam += smoothstep(0.6, 0.95, fA) * 0.25 * _Agitation * _FoamAmount;
+                col = lerp(col, _FoamColor.rgb * (amb + ml.color * 0.6), saturate(foam));
+                col = MixFog(col, i.fogFactor);
+                return half4(col, soft);
             }
             ENDHLSL
         }

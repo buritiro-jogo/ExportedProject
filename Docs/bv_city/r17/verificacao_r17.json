@@ -1,0 +1,552 @@
+{
+ "tce_oi_rest": {
+  "achados": [
+   {
+    "arquivo": "tce_x112.jpg",
+    "elemento": "Trecho entre o portão de garagem do TCE e o prédio vizinho (DIPLE), lado leste",
+    "real": "Muro branco contínuo (cerca de 9 m depois do portão) com a faixa azul brilhante correndo por cima sem interrupção, do TCE até encostar no prédio da DIPLE. Não há rua, beco nem vão.",
+    "cena": "A faixa azul acaba logo depois do portão; em seguida há uma abertura de uns 5 m (parece beco/entrada, com placa de trânsito e um muro cinza lá no fundo) e só depois recomeça um muro, de cor bege-oliva, com outra faixa azul mais baixa e separada.",
+    "tipo": "inventado",
+    "gravidade": "alta",
+    "correcao_sugerida": "Fechar o vão: muro branco liso contínuo do portão até a DIPLE, com a faixa azul única na mesma altura da faixa do nome (só um pequeno degrau para cima ao chegar na DIPLE)."
+   },
+   {
+    "arquivo": "tce_x112.jpg",
+    "elemento": "Prédio vizinho da DIPLE (leste do TCE)",
+    "real": "Um volume único branco de 2 pavimentos, platibanda reta na mesma altura, faixa azul contínua entre os pavimentos, janelas de vidro escuro com caixilho preto em cima e embaixo, totem branco com logo redondo no topo e 'DIPLE'.",
+    "cena": "Três caixas cinza de alturas diferentes (escalonadas), térreo bege-oliva, faixa azul em pedaços de alturas diferentes. Totem com 'DIPLE' presente, mas sem o logo redondo.",
+    "tipo": "cor",
+    "gravidade": "media",
+    "correcao_sugerida": "Paredes brancas (térreo e superior), platibanda numa altura só, faixa azul contínua; acrescentar o disco do logo no topo do totem."
+   },
+   {
+    "arquivo": "tce_x97.jpg",
+    "elemento": "Pastilha do tambor e da faixa vertical da torre",
+    "real": "Pastilha azul-clara puxando para lilás (miúda, com rejunte claro visível), nitidamente mais clara que a faixa azul-royal brilhante do nome. O tambor lê como 'branco com um painel de pastilha' (terço oeste branco com as janelas em fita e pilaretes brancos verticais).",
+    "cena": "Pastilha em azul-royal saturado, quase a mesma cor da faixa do nome; o tambor lê como um cilindro quase todo azul-escuro, com só uma tira branca estreita a oeste e sem os pilaretes brancos.",
+    "tipo": "cor",
+    "gravidade": "media",
+    "correcao_sugerida": "Clarear/dessaturar a pastilha para azul-lilás claro (contraste claro com a faixa royal), aumentar a parte branca a oeste e marcar os pilaretes brancos verticais nas bordas do painel de pastilha."
+   },
+   {
+    "arquivo": "tce_x83.jpg",
+    "elemento": "Cobertura do tambor",
+    "real": "Testeira metálica azul-médio alta, em anel, cortada em plano inclinado (uma aba/viseira inclinada, mais alta de um lado e descendo para o outro); não é cúpula.",
+    "cena": "Cúpula rasa simétrica tipo 'disco voador', facetada, azul-marinho brilhante com reflexo forte (em tce_de_cima.jpg aparece como domo redondo).",
+    "tipo": "errado",
+    "gravidade": "media",
+    "correcao_sugerida": "Trocar o domo por um anel de testeira alta com topo plano inclinado (uma água), em azul-médio fosco/acetinado, mais claro que a faixa do nome."
+   },
+   {
+    "arquivo": "tce_x112.jpg",
+    "elemento": "Lateral leste da torre: escada de incêndio",
+    "real": "Escada metálica externa preta em zigue-zague, vazada, com corrimão, descendo do último andar até a altura da faixa azul; parede branca com janelinhas pequenas por andar.",
+    "cena": "Lajes/prateleiras pretas maciças saindo da lateral em cada andar; não lê como escada, não há corrimão nem lances inclinados, nem as janelinhas.",
+    "tipo": "errado",
+    "gravidade": "media",
+    "correcao_sugerida": "Substituir as lajes por patamares finos + lances inclinados com guarda-corpo de barras; pôr 3 a 4 janelinhas por andar na lateral."
+   },
+   {
+    "arquivo": "tce_x112.jpg",
+    "elemento": "Janelas e topo da torre (face da avenida)",
+    "real": "Três faixas largas de vidro escuro ocupando quase toda a largura do trecho branco e dobrando a esquina leste; no topo, um coroamento azul único (caixa revestida de azul envolvendo o último andar), quase rente à fachada.",
+    "cena": "Janelas de 5 folhas mais estreitas, com margem branca dos dois lados e sem dobrar a esquina; no topo, duas lajes azuis planas sobrepostas com beiral muito grande para a frente.",
+    "tipo": "proporcao",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Alargar as janelas até a esquina leste; unir as duas lajes num coroamento azul único com beiral menor."
+   },
+   {
+    "arquivo": "tce_x97.jpg",
+    "elemento": "Letreiro da faixa azul",
+    "real": "Logo em cubo colorido à esquerda do texto 'TRIBUNAL DE CONTAS DE RORAIMA' (duas linhas, branco) e 'Cidadania e Transparência' sobre uma tarja avermelhada; ao lado, poste com placa amarela do Banco do Brasil junto ao portão.",
+    "cena": "Texto correto em duas linhas e subtítulo em branco, mas sem o cubo colorido e sem a tarja avermelhada; sem a placa amarela do BB.",
+    "tipo": "falta",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Adicionar o cubo colorido à esquerda do nome e a tarja vermelha sob o subtítulo; opcional: placa amarela do BB no poste."
+   },
+   {
+    "arquivo": "tce_x83.jpg",
+    "elemento": "Muro branco da esquina oeste e base do tambor",
+    "real": "Muro branco de uns 3 m com frisos horizontais, saindo do pé do tambor e avançando uns 8 a 10 m para oeste até um pilar de canto (placa verde 'ESG' atrás); todo o conjunto é branco vivo. Térreo com cicas no jardim.",
+    "cena": "Só um bloco baixo e curto, cinza, colado no tambor; a base do tambor e as paredes 'brancas' saem cinza-bege. Jardim com caixas de sebe aparada no lugar das cicas.",
+    "tipo": "proporcao",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Alongar o muro para oeste até a esquina, com frisos horizontais; clarear o material branco do TCE; trocar as sebes por cicas/palmeirinhas baixas."
+   },
+   {
+    "arquivo": "oi_x547.jpg",
+    "elemento": "Torre metálica treliçada",
+    "real": "Treliça alta e larga, com várias antenas/parábolas, passando do topo do quadro; altura da mesma ordem da torre de concreto e fica logo atrás do anexo.",
+    "cena": "Treliça fina e baixa, mais ou menos metade da altura visível da torre de concreto, sem antenas.",
+    "tipo": "proporcao",
+    "gravidade": "media",
+    "correcao_sugerida": "Aumentar a altura (próxima da torre de concreto) e a largura da base, e pendurar antenas/parábolas no terço superior."
+   },
+   {
+    "arquivo": "oi_x547.jpg",
+    "elemento": "Fundo do lote: bloco técnico ao pé da torre de concreto",
+    "real": "Atrás do anexo há um bloco branco de 3 a 4 pavimentos com janelinhas, encostado na base da torre; a torre nasce junto/por trás dele. O pátio é cimentado claro (q_00090 e q_00130).",
+    "cena": "A torre nasce sozinha no meio de um pátio vazio de piso vermelho-escuro, com a base inteira à vista; não existe o bloco branco.",
+    "tipo": "falta",
+    "gravidade": "media",
+    "correcao_sugerida": "Acrescentar o bloco branco de 3–4 pavimentos junto à base da torre e trocar o piso vermelho do pátio por cimento claro."
+   },
+   {
+    "arquivo": "oi_x547.jpg",
+    "elemento": "Torre de concreto (detalhes)",
+    "real": "Cilíndrica, creme-amarelada, com janelas em mais de uma face (duas colunas visíveis), várias antenas pequenas presas; na base, faixa branca sobre faixa bege-marrom.",
+    "cena": "Fuste esbelto com uma única coluna de janelinhas pretas e sem antenas; faixas branca e marrom na base estão presentes.",
+    "tipo": "falta",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Segunda coluna de janelas em outra face e antenas pequenas; conferir o diâmetro (no real parece mais grossa)."
+   },
+   {
+    "arquivo": "oi_x522.jpg",
+    "elemento": "Lado oeste da fachada: corpo intermediário e anexo verde-água",
+    "real": "Colado ao bloco principal há um corpo branco de 2 níveis com 3–4 vãos altos, estreitos e escuros entre pilaretes brancos (e uma caixa/letreiro esverdeado em cima); só depois vem o anexo baixo de PAREDE pintada de verde-água claro, com pilaretes brancos e uma porta dupla da mesma cor.",
+    "cena": "Uma caixa única baixa, toda envidraçada em verde-água (8 panos de vidro) com laje de concreto, encostada direto no bloco principal; não existe o corpo branco dos vãos verticais.",
+    "tipo": "falta",
+    "gravidade": "media",
+    "correcao_sugerida": "Inserir o corpo branco de 2 níveis com os vãos verticais escuros entre o bloco principal e o anexo; fazer o anexo como parede opaca verde-água com pilaretes brancos e porta dupla, não como vitrine."
+   },
+   {
+    "arquivo": "oi_x500.jpg",
+    "elemento": "Módulos de painel laranja-avermelhado (lado esquerdo do pavimento superior)",
+    "real": "4 módulos entre pilaretes brancos; cada um tem painel opaco bege-acinzentado em cima, painel canelado laranja-avermelhado no meio e um trecho salmão/laranja claro embaixo. Não há vidro nesses módulos.",
+    "cena": "5 módulos; cada um com janelinha de vidro azul em cima do painel vermelho e concreto bege embaixo.",
+    "tipo": "errado",
+    "gravidade": "media",
+    "correcao_sugerida": "Reduzir para 4 módulos, trocar o vidro do topo por painel opaco bege-acinzentado e pintar a base de salmão."
+   },
+   {
+    "arquivo": "oi_x522.jpg",
+    "elemento": "Janelão e faixas do lado direito do pavimento superior",
+    "real": "De cima para baixo: fita de janelas altas (6–7 folhas), faixa branca cega com altura parecida com a da fita, janelão de 6 colunas x 2 fileiras (a de cima mais baixa) com caixilho branco e vidro esverdeado, faixa bege fina e faixa salmão-laranja.",
+    "cena": "A fita de cima e o janelão ficam praticamente colados (sem a faixa branca cega), o janelão tem 3 fileiras iguais de vidro azulado, e a faixa de baixo é de um tom só, ocre/mostarda.",
+    "tipo": "errado",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Abrir a faixa branca entre a fita e o janelão, deixar o janelão com 2 fileiras (6 colunas), vidro mais esverdeado/neutro, e a faixa inferior em dois tons (bege fino + salmão)."
+   },
+   {
+    "arquivo": "oi_x522.jpg",
+    "elemento": "Térreo e cores gerais do bloco principal",
+    "real": "Sobre as duas portas de enrolar há uma faixa de placas de pedra cinza-CLARO; só a ponta oeste é grafite/preta; pilar central e pilares de canto brancos; beiral inclinado e lajes pintados de branco/creme. Rampa com corrimão metálico diante da porta esquerda.",
+    "cena": "Térreo inteiro num cinza médio-escuro de concreto áspero (faixa, pilar central e portas); laje de cobertura e beiral em cinza de concreto aparente; sem rampa nem corrimão.",
+    "tipo": "cor",
+    "gravidade": "media",
+    "correcao_sugerida": "Faixa sobre as portas em cinza-claro com juntas de placas, pilar central claro, só a ponta oeste em grafite; pintar beiral/lajes/pilares de branco-creme; opcional: rampa com corrimão."
+   },
+   {
+    "arquivo": "oi_x500.jpg",
+    "elemento": "Frente do lote da Oi (calçada)",
+    "real": "Nos quadros q_00345, q_00222 e q_00110 a sequência é asfalto, meio-fio pintado, calçada de concreto/bloquete e o pátio de estacionamento rachado com vagas pintadas; não aparece ciclovia vermelha nem faixa de grama nessa testada.",
+    "cena": "Entre o meio-fio e o pátio há faixa de grama + ciclovia vermelha com pictogramas de bicicleta + calçada, e o pátio é um piso bege liso sem vagas.",
+    "tipo": "inventado",
+    "gravidade": "media",
+    "correcao_sugerida": "Conferir no vídeo se a ciclovia existe nesse lado/trecho; se não, remover grama e ciclovia da frente da Oi e marcar vagas (inclusive a vaga amarela/azul de acessibilidade) no pátio."
+   },
+   {
+    "arquivo": "oi_x547.jpg",
+    "elemento": "Anexo leste e gradil",
+    "real": "Anexo creme com laje de borda escurecida e 3 venezianas na parede leste; gradil branco com cerca elétrica em cima, portãozinho azul junto ao bloco principal, pilar de alvenaria com concertina e portão de correr branco a leste.",
+    "cena": "Anexo cinza com uma veneziana; gradil branco simples, sem cerca elétrica, sem portão azul, sem pilar com concertina.",
+    "tipo": "falta",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Anexo em creme, 3 venezianas; acrescentar portãozinho azul, pilar de alvenaria com concertina e fios de cerca elétrica."
+   },
+   {
+    "arquivo": "rest_norte.jpg",
+    "elemento": "Pavimento superior do restaurante",
+    "real": "Varanda aberta e sombreada entre pilares amarelos: lê como um vão escuro atrás do guarda-corpo de madeira, sem parede de tijolo aparente na frente.",
+    "cena": "Parede de tijolo à vista com uma porta, recuada atrás do guarda-corpo; blocos roxos nas duas pontas da sacada.",
+    "tipo": "errado",
+    "gravidade": "media",
+    "correcao_sugerida": "Abrir o pavimento superior como varanda (fundo escuro/recuado, sem pano de tijolo na frente) e tirar os blocos roxos das pontas."
+   },
+   {
+    "arquivo": "rest_norte.jpg",
+    "elemento": "Frontão amarelo e térreo",
+    "real": "Frontão amarelo com um brasão/emblema redondo com ornamentos no centro e 'RESTAURANTE' em letras menores numa faixa abaixo; no térreo, pilares/base azul-acinzentados e letreiro vermelho do Bob's bem visível.",
+    "cena": "'RESTAURANTE' grande em preto ocupando o frontão, sem o emblema; dois retângulos verdes nos cantos; pilares do térreo cinza-claros; letreiro do Bob's pequeno.",
+    "tipo": "falta",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Colocar o emblema redondo acima do texto e reduzir as letras; pintar pilares/base do térreo de azul-acinzentado; aumentar o letreiro vermelho."
+   }
+  ],
+  "o_que_esta_certo": [
+   "TCE: composição geral correta (tambor curvo a oeste, corpo de ligação, torre recuada mais alta, faixa azul com o nome na altura da laje do 1o pavimento, portão de garagem branco seccionado a leste).",
+   "TCE: texto 'TRIBUNAL DE CONTAS DE RORAIMA' + 'Cidadania e Transparência' no lugar certo; 3 mastros de bandeira em frente à entrada.",
+   "TCE torre: ordem dos elementos certa (duas tiras verticais de vidro escuro, tira de pastilha, pano branco com janelas) e 3 níveis de vidro acima da faixa azul.",
+   "TCE tambor: duas fitas de janelas na parte branca e marquise curva entre os níveis.",
+   "TCE térreo: vidro escuro, pilares revestidos em bege e porta central sob a faixa.",
+   "Oi: volume principal com beiral grande, portas de enrolar duplas no térreo com pilar no meio, painéis laranja-avermelhados entre pilaretes à esquerda, janelão + faixa laranja à direita, pilar largo no canto leste.",
+   "Oi lado leste: panos bege-acinzentados entre pilares altos, laje em balanço, anexo térreo com laje e gradil branco de barras verticais.",
+   "Oi: torre de concreto com faixa branca sobre faixa marrom na base e fileira de janelinhas; floreiras de concreto no pátio da frente.",
+   "Restaurante: 2 pavimentos, telhado de duas águas agora marrom-escuro (como no real), frontão amarelo com 'RESTAURANTE', sacada com guarda-corpo de madeira, sebe sobre mureta de tijolo; proporção largura x altura parecida."
+  ],
+  "nao_deu_para_julgar": [
+   "tce_de_cima.jpg: só tem ANTES e AGORA (sem REAL); não dá para conferir a planta do TCE, a profundidade da torre nem os telhados dos fundos. Só dá para dizer que o domo redondo do tambor não bate com a cobertura inclinada vista do chão.",
+   "oi_torre.jpg: as duas colunas são AGORA (sem REAL); posição e altura das torres são declaradas como estimadas e não podem ser confirmadas por essa imagem.",
+   "Oi pelo lado oeste (oi_x500.jpg): no quadro real o bloco principal está quase todo escondido pelas árvores; não dá para conferir a fachada oeste nem o perfil exato do beiral inclinado.",
+   "Diâmetro e seção (redonda x quadrada) da torre de concreto no AGORA, e distância real da torre até a rua.",
+   "TCE: número exato de folhas das janelas em fita do tambor e extensão da marquise curva em volta dele (árvore e poste na frente no AGORA).",
+   "TCE: lado oeste/rua lateral e fundos (não aparecem nos quadros reais).",
+   "Restaurante: a referência real está pequena e de ângulo oblíquo; não dá para confirmar o desenho do guarda-corpo, o número de pilares, a fachada lateral nem se existe a passarela elevada que aparece à esquerda no AGORA; a loja de frente vermelha à direita no real pode ser outro prédio."
+  ]
+ },
+ "fachadas": {
+  "achados": [
+   {
+    "arquivo": "todas as fachada_*.jpg (r17)",
+    "elemento": "Brancos e cremes da cena inteira",
+    "real": "Predio da Previdencia, casa moderna, loja SABIO, casa terrea das grades, predios DIPLE/ESCON e tapumes sao brancos ou creme claro.",
+    "cena": "No Unity tudo isso sai bege-oliva/cinza medio (muro da Previdencia oliva, casa moderna oliva, sobrado oliva, tapume verde-oliva). Nos renders das folhas fn3d os mesmos modelos aparecem brancos, entao o desvio nasce na cena (material/luz ambiente), nao no modelo.",
+    "tipo": "cor",
+    "gravidade": "alta",
+    "correcao_sugerida": "Conferir albedo/tonemapping/luz ambiente da cena BV City: o branco precisa chegar perto de branco na foto do Unity. Comparar um mesmo material no render da folha e no Unity."
+   },
+   {
+    "arquivo": "fachada_xm70.jpg",
+    "elemento": "Telhado do predio branco comprido (GRJX)",
+    "real": "Telhado claro de telha ondulada, baixa inclinacao, beiral curto; le-se como faixa clara fina acima da parede.",
+    "cena": "Laje/cobertura cinza escura plana com beiral grosso e saliente em toda a extensao.",
+    "tipo": "errado",
+    "gravidade": "media",
+    "correcao_sugerida": "Telhado de fibrocimento/metalico claro, com inclinacao baixa e beiral curto."
+   },
+   {
+    "arquivo": "fachada_xm70.jpg",
+    "elemento": "Muro e gradil da Previdencia",
+    "real": "Mureta branca (suja) com pilares brancos e gradil; portao cinza de chapa a direita.",
+    "cena": "Mureta e pilares oliva com gradil preto; portao de grade preta estreito. Janelas em verde-escuro.",
+    "tipo": "cor",
+    "gravidade": "media",
+    "correcao_sugerida": "Mureta e pilares brancos envelhecidos; portao de chapa cinza."
+   },
+   {
+    "arquivo": "fachada_xm70.jpg",
+    "elemento": "Letreiro PREVIDENCIA SOCIAL",
+    "real": "Texto com logotipo redondo a esquerda, direto na parede branca.",
+    "cena": "Placa retangular clara com texto, sem logotipo; ha uma faixa verde horizontal na parede esquerda que nao se ve no real.",
+    "tipo": "errado",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Acrescentar o logotipo; conferir no video se a faixa verde existe."
+   },
+   {
+    "arquivo": "fachada_xm9.jpg",
+    "elemento": "Volume atras da SABIO (esquerda)",
+    "real": "Casa bege baixa, com telhado de duas aguas, pouco mais alta que a loja.",
+    "cena": "Caixa oliva lisa, sem janelas, mais alta que a casa moderna, dominando o canto esquerdo. Nao existia no ANTES.",
+    "tipo": "inventado",
+    "gravidade": "alta",
+    "correcao_sugerida": "Reduzir para uma casa terrea/baixa bege com telhado de duas aguas, ou remover."
+   },
+   {
+    "arquivo": "fachada_xm9.jpg",
+    "elemento": "Obra ao lado da casa branca (922M)",
+    "real": "Esqueleto de concreto cinza de 3 niveis, vazado, com andaimes e guarda-corpos de madeira vermelha em trelica; ocupa toda a largura atras do tapume.",
+    "cena": "Volumes solidos rosa/vinho com grandes janelas pretas, pilares oliva e um trecho de tijolo: parece predio pronto pintado de rosa, nao obra.",
+    "tipo": "errado",
+    "gravidade": "alta",
+    "correcao_sugerida": "Lajes e pilares de concreto cinza sem fechamento, com guarda-corpos finos vermelhos; tirar os panos rosa e as janelas pretas."
+   },
+   {
+    "arquivo": "fachada_xm9.jpg",
+    "elemento": "Casa branca moderna: portico e terraco (9XPV)",
+    "real": "Portico de concreto claro em caixa aberta com parede branca ao fundo e uma porta escura pequena; terraco com guarda-corpo de vidro transparente e montantes metalicos.",
+    "cena": "Interior do portico e um pano preto grande; guarda-corpo virou faixa azul-acinzentada opaca.",
+    "tipo": "errado",
+    "gravidade": "media",
+    "correcao_sugerida": "Fundo do portico branco com uma porta escura; guarda-corpo de vidro translucido."
+   },
+   {
+    "arquivo": "fachada_xm9.jpg",
+    "elemento": "Portao da garagem da casa branca",
+    "real": "Portao largo de grade branca vertical em toda a frente da garagem (ve-se o carro atras), mais portao de pedestre igual.",
+    "cena": "Grades verticais com fundo escuro e, no vao da direita, porta cinza solida em dois paineis.",
+    "tipo": "errado",
+    "gravidade": "media",
+    "correcao_sugerida": "Trocar o painel cinza por grade branca vazada; barras brancas."
+   },
+   {
+    "arquivo": "fachada_xm9.jpg",
+    "elemento": "Totem da SABIO",
+    "real": "Totem alto claro com o logotipo SABIO em vermelho/azul.",
+    "cena": "Placa azul-marinho com texto 'SABIO Corretora de Seguros' e base azul.",
+    "tipo": "cor",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Totem branco com o logotipo colorido."
+   },
+   {
+    "arquivo": "fachada_xm9.jpg",
+    "elemento": "Tapume da obra",
+    "real": "Chapa ondulada branca/galvanizada clara.",
+    "cena": "Pano cinza liso com placa azul CREA (a placa existe no real).",
+    "tipo": "cor",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Tapume mais claro, com ondulacao vertical."
+   },
+   {
+    "arquivo": "fachada_x28.jpg",
+    "elemento": "Telhado do sobrado (73W6)",
+    "real": "Telhado de aguas em dois niveis com beiral escuro modesto, pouco mais largo que a casa.",
+    "cena": "Laje preta unica em forma de asa, com balanco enorme (quase o dobro da largura do corpo). O ANTES tinha o mesmo exagero em vermelho; so mudou a cor.",
+    "tipo": "proporcao",
+    "gravidade": "alta",
+    "correcao_sugerida": "Dois telhados de quatro aguas baixos com beiral de ~0,6-0,8 m, em niveis diferentes."
+   },
+   {
+    "arquivo": "fachada_x28.jpg",
+    "elemento": "Varanda do 2o piso do sobrado",
+    "real": "Varanda aberta a esquerda com guarda-corpo e porta ao fundo.",
+    "cena": "Painel rosa/vinho chapado no lugar da varanda.",
+    "tipo": "errado",
+    "gravidade": "media",
+    "correcao_sugerida": "Abrir o vao com guarda-corpo; tirar o painel rosa."
+   },
+   {
+    "arquivo": "fachada_x28.jpg",
+    "elemento": "Cores do sobrado",
+    "real": "Paredes creme/amarelo claro; faixas verticais verde-escuro.",
+    "cena": "Paredes oliva; faixas verticais cinza-azulado claro.",
+    "tipo": "cor",
+    "gravidade": "media",
+    "correcao_sugerida": "Creme claro nas paredes, verde-escuro nas faixas."
+   },
+   {
+    "arquivo": "fachada_x28.jpg",
+    "elemento": "Muro do sobrado",
+    "real": "Muro baixo de tijolo aparente continuo, pilares de tijolo, grade branca por cima, pilar largo de tijolo a direita.",
+    "cena": "Pilares lisos laranja/marrom; tijolo so em dois vaos da esquerda; restante so grade.",
+    "tipo": "errado",
+    "gravidade": "media",
+    "correcao_sugerida": "Tijolo aparente nos pilares e em toda a mureta."
+   },
+   {
+    "arquivo": "fachada_x28.jpg",
+    "elemento": "Casa terrea da direita (746F)",
+    "real": "Branca; vaos grandes quase do piso ao beiral, com grades brancas em zigue-zague; dois portoes azul-claro.",
+    "cena": "Cinza; janelas pequenas a meia altura com grade reticulada escura; portao cinza (verde-claro na foto x50).",
+    "tipo": "errado",
+    "gravidade": "media",
+    "correcao_sugerida": "Vaos altos com grade branca diagonal e portoes azul-claro; parede branca."
+   },
+   {
+    "arquivo": "fachada_x28.jpg",
+    "elemento": "Obra e tapume no canto esquerdo",
+    "real": "Lajes com guarda-corpos vermelhos e tapume branco.",
+    "cena": "Bloco vinho/tijolo solido e muro oliva.",
+    "tipo": "errado",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Mesma correcao da obra 922M."
+   },
+   {
+    "arquivo": "fachada_x50.jpg",
+    "elemento": "Vitrine da Domino's",
+    "real": "Vidro escuro com '2x1' enorme em branco e vermelho ocupando quase toda a altura.",
+    "cena": "Grade preta na vitrine e '2x1' pequeno em vermelho, quase ilegivel. No ANTES o '2x1' era maior: piorou.",
+    "tipo": "errado",
+    "gravidade": "media",
+    "correcao_sugerida": "Adesivo '2x1' grande em branco/vermelho; sem grade."
+   },
+   {
+    "arquivo": "fachada_x50.jpg",
+    "elemento": "Painel de comida no tijolo (China in Box)",
+    "real": "Mupi com foto de comida e moldura.",
+    "cena": "Retangulo rosa liso.",
+    "tipo": "errado",
+    "gravidade": "media",
+    "correcao_sugerida": "Arte propria de cartaz de comida no painel."
+   },
+   {
+    "arquivo": "fachada_x50.jpg",
+    "elemento": "Letreiros das tres lojas",
+    "real": "China in Box com logo; SPOLETO em letras finas espacadas com circulo; Domino's com logo azul/vermelho.",
+    "cena": "Textos em fonte generica, sem logos; 'Domino's Pizza' so texto branco.",
+    "tipo": "errado",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Tipografia e simbolos mais proximos."
+   },
+   {
+    "arquivo": "fachada_x50.jpg",
+    "elemento": "Caixa clara entre Spoleto e Domino's e faixa de horario",
+    "real": "Faixa colorida de promocao acima da porta de vidro; nenhuma caixa clara saliente.",
+    "cena": "Caixa cinza-clara pendurada na fachada e faixa com '12h as 22h / ABERTO TODOS OS DIAS' (texto nao legivel no real).",
+    "tipo": "inventado",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Remover a caixa; conferir o texto da faixa no video."
+   },
+   {
+    "arquivo": "fachada_x134.jpg",
+    "elemento": "Totem alto e marquise da ESCON",
+    "real": "Lamina azul alta, curva e inclinada, com furo circular no topo; cruza uma marquise azul cilindrica com frisos.",
+    "cena": "Prisma reto sem furo e marquise em caixa retangular. Igual ao ANTES na forma.",
+    "tipo": "errado",
+    "gravidade": "alta",
+    "correcao_sugerida": "Modelar a lamina curva com o furo e a marquise curva; e a marca do predio."
+   },
+   {
+    "arquivo": "fachada_x134.jpg",
+    "elemento": "Cor da parede e do totem da ESCON",
+    "real": "Azul royal vivo, o mesmo na parede e no totem.",
+    "cena": "Azul-petroleo esverdeado na parede e no totem; marquise em azul-marinho (dois azuis diferentes).",
+    "tipo": "cor",
+    "gravidade": "alta",
+    "correcao_sugerida": "Azul royal unico para parede, totem e marquise."
+   },
+   {
+    "arquivo": "fachada_x134.jpg",
+    "elemento": "Logo e letreiro ESCON",
+    "real": "Hexagono colorido (amarelo/verde/azul com estrela) e 'ESCON' grande, cerca de um terco da largura da parede.",
+    "cena": "Quadradinho amarelo e 'ESCON' pequeno numa plaquinha. O quadrado ficou menor que no ANTES.",
+    "tipo": "proporcao",
+    "gravidade": "media",
+    "correcao_sugerida": "Logo hexagonal e texto com o dobro do tamanho, direto na parede."
+   },
+   {
+    "arquivo": "fachada_x134.jpg",
+    "elemento": "Predio branco a esquerda (DIPLE)",
+    "real": "Dois pavimentos de topo reto, balcao azul, cobogos brancos no terreo, totem claro com esfera.",
+    "cena": "Volumes cinza extras mais altos com topo inclinado; sem cobogos; totem virou placa azul 'DIPLE'; paredes bege.",
+    "tipo": "errado",
+    "gravidade": "media",
+    "correcao_sugerida": "Topo reto, pano de cobogo, totem claro com esfera."
+   },
+   {
+    "arquivo": "fachada_x262.jpg",
+    "elemento": "Telhado do predio antigo",
+    "real": "Telhado de telha escura envelhecida, inclinado, bem visivel acima da parede.",
+    "cena": "Cobertura da mesma cor oliva da parede, lendo-se como laje plana. No ANTES havia faixa marrom-escura de telhado: PIOROU.",
+    "tipo": "cor",
+    "gravidade": "alta",
+    "correcao_sugerida": "Voltar o material de telha escura e conferir a inclinacao."
+   },
+   {
+    "arquivo": "fachada_x262.jpg",
+    "elemento": "Janelas do predio antigo",
+    "real": "Fileira de janelas iguais, com grade escura, em parede creme.",
+    "cena": "Quadrados de cores diferentes (rosa, azul-claro, verde-escuro, cinza).",
+    "tipo": "inventado",
+    "gravidade": "media",
+    "correcao_sugerida": "Uma so esquadria escura gradeada repetida."
+   },
+   {
+    "arquivo": "fachada_x262.jpg",
+    "elemento": "Tapume e placa de obra",
+    "real": "Tapume ondulado branco/prateado; placa de obra bordo em cavalete na frente, a esquerda.",
+    "cena": "Tapume verde-oliva liso; sem placa de obra.",
+    "tipo": "cor",
+    "gravidade": "media",
+    "correcao_sugerida": "Tapume claro ondulado e a placa bordo."
+   },
+   {
+    "arquivo": "fn3d_folha_0.jpg",
+    "elemento": "GVG5: muro com pintura verde",
+    "real": "Muro branco alto com um grande logotipo verde redondo pintado.",
+    "cena": "Muro claro liso, sem a pintura; duas placas em poste na frente.",
+    "tipo": "falta",
+    "gravidade": "media",
+    "correcao_sugerida": "Pintar no muro uma arte propria verde no mesmo lugar e tamanho."
+   },
+   {
+    "arquivo": "fn3d_folha_0.jpg",
+    "elemento": "CWG4: muro de bloco e casa atras",
+    "real": "Muro comprido de bloco/chapisco cinza-marrom; atras so aparece o topo de uma casa bege de duas aguas.",
+    "cena": "Muro oliva liso e, atras, caixa bege alta de dois niveis.",
+    "tipo": "proporcao",
+    "gravidade": "media",
+    "correcao_sugerida": "Baixar o volume de tras e dar textura de bloco ao muro."
+   },
+   {
+    "arquivo": "fn3d_folha_0.jpg",
+    "elemento": "922M: tamanho da obra",
+    "real": "A obra sobe cerca de duas vezes a altura do tapume e ocupa toda a largura do lote.",
+    "cena": "Bloco estreito e recuado, rosa e cinza-esverdeado, pequeno em relacao ao tapume.",
+    "tipo": "proporcao",
+    "gravidade": "alta",
+    "correcao_sugerida": "Alargar para a largura do lote, trazer para perto do tapume, 3 lajes."
+   },
+   {
+    "arquivo": "fn3d_folha_2.jpg",
+    "elemento": "X9PV: portao e muro ao lado da ESCON",
+    "real": "Portao de grade diagonal (losangos); muro branco com 3 janelinhas e jardineira com plantas.",
+    "cena": "Portao de barras verticais; muro bege com 2 janelinhas, sem jardineira.",
+    "tipo": "errado",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Grade em losango, terceira janelinha, jardineira."
+   },
+   {
+    "arquivo": "fn3d_folha_2.jpg",
+    "elemento": "WH45: casa ocre atras do tapume",
+    "real": "Telhado de telha marrom envelhecida; a direita so arvore.",
+    "cena": "Telhado laranja-avermelhado vivo; segundo volume oliva com janelas azuladas a direita; tapume bege.",
+    "tipo": "cor",
+    "gravidade": "media",
+    "correcao_sugerida": "Telha marrom escura; conferir se o volume da direita existe."
+   },
+   {
+    "arquivo": "fn3d_folha_2.jpg",
+    "elemento": "QQ3V: predio antigo comprido",
+    "real": "Parede creme continua, janelas iguais, telhado escuro.",
+    "cena": "Janelas multicoloridas, trecho central cinza com ameias no topo, telhado oliva.",
+    "tipo": "errado",
+    "gravidade": "media",
+    "correcao_sugerida": "Unificar janelas; conferir o trecho com ameias."
+   },
+   {
+    "arquivo": "fn3d_folha_2.jpg",
+    "elemento": "7387: Tribunal de Contas",
+    "real": "Faixas azuis curvas de vidro, marquise curva com letreiro grande e logo, escultura branca em arco na frente, frente aberta com jardim.",
+    "cena": "Blocos retos com faixas azuis, torre com listras pretas verticais, gradil preto alto em toda a frente, letreiro minusculo, sem escultura.",
+    "tipo": "errado",
+    "gravidade": "alta",
+    "correcao_sugerida": "Modelo proprio: curvas, letreiro legivel, escultura; conferir o gradil."
+   },
+   {
+    "arquivo": "fachada_xm9.jpg / fachada_x262.jpg",
+    "elemento": "Sacos de lixo pretos e tambor preto na calcada",
+    "real": "Um suporte de lixo com saco claro em frente a SABIO; nada em frente ao tapume nem ao portao da casa.",
+    "cena": "Dois sacos pretos em frente ao tapume (xm9 e x262) e um tambor preto em frente ao portao da casa branca.",
+    "tipo": "inventado",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Se nao forem objetos de jogo, remover."
+   },
+   {
+    "arquivo": "fachada_x50.jpg",
+    "elemento": "Lixeira verde na esquina",
+    "real": "Lixeira verde ao fundo, a direita das lojas.",
+    "cena": "Nao aparece.",
+    "tipo": "falta",
+    "gravidade": "baixa",
+    "correcao_sugerida": "Colocar a lixeira verde na esquina."
+   }
+  ],
+  "o_que_esta_certo": [
+   "xm70: predio terreo comprido, fileira de janelas, mureta com pilares e gradil, letreiro PREVIDENCIA SOCIAL na posicao certa; melhor que o ANTES (muro cego, sem letreiro).",
+   "xm9: faixa da SABIO em roxo/branco/vermelho com telefones, pilar de pedra com numero ao lado do portao, placa azul no tapume, portico em caixa no lugar da marquise em balanco do ANTES.",
+   "x28: sobrado de 2 pavimentos com 2 janelinhas no alto a direita, faixas verticais, pilar de tijolo a direita, casa terrea vizinha com telhado baixo de duas aguas.",
+   "x50: bloco preto com tres letreiros na ordem certa, base e pano de tijolo, porta de vidro central, trecho preto liso a esquerda, proporcao geral do bloco; placa amarela de advertencia na esquina como no real.",
+   "x134: parede azul com ESCON, totem alto a direita da parede, predio de 2 pavimentos com balcao azul a esquerda, totem DIPLE no lugar certo.",
+   "x262: predio comprido atras de tapume continuo, aparelhos de ar-condicionado sob as janelas.",
+   "Folha 1, 396C: faixa azul entre andares e janelas escuras em fita batem com o video.",
+   "Mobiliario REAL x AGORA. xm70: real nenhum; agora 1 placa de transito de costas junto ao portao e 2 mastros finos.",
+   "Mobiliario xm9: real totem SABIO e suporte de lixo; agora placa de proibido estacionar, totem SABIO, caixa em poste, tambor preto, 2 sacos, placa CREA.",
+   "Mobiliario x28: real nenhum (so poste com luminaria); agora placa amarela losango a esquerda e caixa em poste a direita.",
+   "Mobiliario x50: real placa amarela losango e lixeira verde; agora placa amarela, PARE de costas e placas azuis de nome de rua, sem lixeira.",
+   "Mobiliario x134: real totem DIPLE; agora placa DIPLE, nenhuma placa de transito.",
+   "Mobiliario x262: real placa de obra bordo; agora nada alem de sacos de lixo.",
+   "Abrigo de onibus nao aparece em nenhum REAL nem em nenhum AGORA destas seis comparacoes."
+  ],
+  "nao_deu_para_julgar": [
+   "As fotos r16_video_*.png em resolucao cheia coincidem com a coluna AGORA (r17) das comparacoes; tratei-as como a cena atual, apesar do nome r16.",
+   "xm70: a arvore grande e a picape tapam metade da fachada real; nao deu para contar janelas nem confirmar a faixa verde, os 2 mastros e o tipo de portao.",
+   "xm9: nao da para ler os textos do letreiro e do totem da SABIO no real para conferir com os do AGORA.",
+   "x28: a arvore do jogo plantada em frente ao sobrado tapa o centro da fachada no AGORA; nao deu para conferir janelas do terreo e portao.",
+   "x50: o poste real e o poste do jogo tapam parte do SPOLETO; nao deu para confirmar se a vitrine da Domino's tem grade nem o texto da faixa acima da porta.",
+   "x134: o conteiner tapa o portao e o muro a direita da ESCON no AGORA; a arvore do jogo tapa as janelas do predio da esquerda.",
+   "x262: o tapume esconde o terreo real; nao deu para saber o numero de pavimentos nem se o predio cinza com ameias a direita existe (no real ha uma arvore na frente).",
+   "Folhas fn3d: os renders sao pequenos e tomados de mais longe e em angulo que os recortes do video; em GRJX, 38P6 e QQ3V nao deu para contar vaos.",
+   "Se as placas PARE, de nome de rua e de proibido estacionar existem nesses pontos: os quadros reais nao as mostram, mas o enquadramento e outro."
+  ]
+ }
+}

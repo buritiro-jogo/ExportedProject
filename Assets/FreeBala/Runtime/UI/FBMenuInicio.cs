@@ -33,6 +33,7 @@ namespace FreeBala
         static readonly Vector3 HeroPos = new(.72f, 0, 0);           // terço direito da tela
         const float HeroYaw = 214, HeroFov = 27, PageFov = 30;
         bool atHome; float userYaw; FBLobbyStage stageFx; Transform lightRig; CanvasGroup homeGroup; static bool titleShown;
+        string curPage;   // r66: qual pagina esta aberta, para nao refazer a transicao quando ela so se atualiza
 
         // ------------------------------------------------------------ palco
         void BuildStage()
@@ -125,12 +126,20 @@ namespace FreeBala
         }
 
         // ------------------------------------------------------------ páginas: barra de topo comum
-        void Clear() { foreach (Transform t in root) Destroy(t.gameObject); if (wpPreview) Destroy(wpPreview); }
+        // desliga ANTES de destruir: o Destroy so vale no fim do quadro, entao o que sai e o que entra
+        // apareciam juntos por um quadro - era parte da piscada ao trocar de pagina
+        void Clear() { foreach (Transform t in root) { t.gameObject.SetActive(false); Destroy(t.gameObject); } if (wpPreview) Destroy(wpPreview); }
         Transform Page(string title, bool dimStage = false)
         {
-            Clear(); atHome = false; StageCam(false); userYaw = 0;
-            if (preview) { preview.transform.position = Vector3.zero; preview.SetActive(true); }   // páginas que não usam o personagem escondem depois
-            var p = FBUI.Panel(root, "pagina", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, dimStage ? FBKit.Bg : new Color(0, 0, 0, 0)).transform; FBFadeIn.Add(p, 0, 10);
+            // r66: a mesma pagina sendo refeita (clicar num mapa, num modo, no clima) NAO e troca de tela:
+            // nada de fade a partir do preto, nada de mexer na camera do palco, nada de ligar/desligar o
+            // personagem. Sem isso, cada clique apagava a tela e a trazia de volta - a piscada relatada.
+            bool mesma = title == curPage; curPage = title;
+            Clear(); atHome = false; userYaw = 0;
+            if (!mesma) StageCam(false);
+            if (preview && !mesma) { preview.transform.position = Vector3.zero; preview.SetActive(true); }   // páginas que não usam o personagem escondem depois
+            var p = FBUI.Panel(root, "pagina", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, dimStage ? FBKit.Bg : new Color(0, 0, 0, 0)).transform;
+            if (!mesma) FBFadeIn.Add(p, 0, 10);
             var top = FBUI.Panel(p, "topo", new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -32), new Vector2(0, 64), new Color(.015f, .02f, .03f, .94f)).transform;
             Bx(top, "fio", new Vector2(.5f, 0), new Vector2(.5f, 0), Vector2.zero, new Vector2(4000, 1), Stroke);
             FlagTick(top, new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0), 240, 2, .85f);
@@ -148,6 +157,10 @@ namespace FreeBala
         // ------------------------------------------------------------ INÍCIO
         void Home()
         {
+            // o INICIO sempre refaz camera e personagem: ha chamadas de Home() que existem
+            // justamente para trocar a skin ou a pose (FBMenu -fbauto, laboratorio de poses,
+            // volta do PERSONALIZAR). Aqui a transicao e de tela mesmo, entao o fade fica.
+            curPage = "@INICIO";
             Clear(); atHome = true; userYaw = 0; StageCam(true); Preview();
             var p = (Transform)FBUI.Rect(root, "inicio", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero); FBFadeIn.Add(p, 0, 8);
             homeGroup = p.GetComponent<CanvasGroup>(); if (!homeGroup) homeGroup = p.gameObject.AddComponent<CanvasGroup>();
@@ -249,7 +262,7 @@ namespace FreeBala
             }
             // mapa: miniatura + nome + descrição
             var th = Bx(p, "mapa_mini", a, a, new Vector2(X, 244), new Vector2(112, 63), new Color(1, 1, 1, .1f), 6); th.gameObject.AddComponent<Mask>().showMaskGraphic = true;
-            var shot = Pic(th.transform, "foto", Resources.Load<Texture2D>("MapShots/" + FBSession.map), new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, new Vector2(112, 63)); Cover(shot, 112, 63);
+            var shot = Pic(th.transform, "foto", FBMapShot.Get(FBSession.map), new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, new Vector2(112, 63)); Cover(shot, 112, 63);
             mapT = Tx(p, (mp ?? "").ToUpper(), 20, a, a, new Vector2(X + 126, 280), new Vector2(W - 126, 26), TextAnchor.MiddleLeft, true, Ink);
             Tx(p, MAP_INFO.TryGetValue(FBSession.map, out var info) ? info : "", 12, a, a, new Vector2(X + 126, 248), new Vector2(W - 100, 34), TextAnchor.UpperLeft, false, InkDim);
             // modo em destaque
@@ -271,8 +284,8 @@ namespace FreeBala
             var slides = new List<FBNews.Slide>();
             int tier = FBPass.Tier, pend = FBPass.Claimable();
             slides.Add(new FBNews.Slide { tex = Resources.Load<Texture2D>("Modes/squad"), tag = "PASSE DE BATALHA", title = $"TEMPORADA 1 · NÍVEL {tier}", sub = pend > 0 ? $"{pend} prêmio{(pend > 1 ? "s" : "")} esperando para resgatar" : "Jogue partidas para liberar os 30 níveis", act = Pass });
-            if (maps.Any(m => m.id == "morro_sacola")) slides.Add(new FBNews.Slide { tex = Resources.Load<Texture2D>("MapShots/morro_sacola"), tag = "NOVO MAPA", title = "MORRO DA SACOLA", sub = "Ruas de terra, muro pré-moldado e quintais", act = () => { FBSession.map = "morro_sacola"; FBSession.Save(); Home(); } });
-            if (MODES.Any(m => m.id == "10x10")) slides.Add(new FBNews.Slide { tex = Resources.Load<Texture2D>("MapShots/praca_aguas"), tag = "MODO EM DESTAQUE", title = "10X10 POR RODADAS", sub = "Compre no começo da rodada · primeiro a 7 vitórias", act = () => { FBSession.mode = "10x10"; FBSession.Save(); Home(); } });
+            if (maps.Any(m => m.id == "morro_sacola")) slides.Add(new FBNews.Slide { tex = FBMapShot.Get("morro_sacola"), tag = "NOVO MAPA", title = "MORRO DA SACOLA", sub = "Ruas de terra, muro pré-moldado e quintais", act = () => { FBSession.map = "morro_sacola"; FBSession.Save(); Home(); } });
+            if (MODES.Any(m => m.id == "10x10")) slides.Add(new FBNews.Slide { tex = FBMapShot.Get("praca_aguas"), tag = "MODO EM DESTAQUE", title = "10X10 POR RODADAS", sub = "Compre no começo da rodada · primeiro a 7 vitórias", act = () => { FBSession.mode = "10x10"; FBSession.Save(); Home(); } });
             slides.Add(new FBNews.Slide { tex = Resources.Load<Texture2D>("Modes/role"), tag = "MODO LIVRE", title = "DE ROLÊ", sub = "Carros, paredão de som e a cidade inteira", act = () => { FBSession.mode = "role"; FBSession.Save(); Home(); } });
             slides.Add(new FBNews.Slide { tex = Resources.Load<Texture2D>("Modes/classico"), tag = "ARSENAL", title = "MONTE SUA ARMA", sub = "Miras, canos, carregadores, lasers e empunhaduras", act = Arsenal });
             news.Build(slides, W, 196);

@@ -38,6 +38,12 @@ namespace FreeBala
                     { long gk = ((long)gx << 32) ^ (uint)gz; if (!grid.TryGetValue(gk, out var l)) grid[gk] = l = new List<int>(); l.Add(i); }
             }
         }
+        // r68: área ocupada depois da NavMesh (loja de armas do De Rolê): triângulo com o centro dentro do retângulo fica caro — o A* contorna
+        public static void Block(Vector3 c, float hx, float hz, float yawDeg)
+        {
+            if (!Ready) return; var inv = Quaternion.Inverse(Quaternion.Euler(0, yawDeg, 0));
+            for (int i = 0; i < C.Length; i++) { var l = inv * (C[i] - c); if (Mathf.Abs(l.x) < hx && Mathf.Abs(l.z) < hz && Mathf.Abs(l.y) < 3) W[i] = Mathf.Max(W[i], 80); }
+        }
         static float Cross(Vector3 a, Vector3 b) => a.x * b.z - a.z * b.x;
         static bool InTri(int t, Vector3 p)
         {

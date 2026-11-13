@@ -32,7 +32,7 @@ namespace FreeBala
 
         public static readonly (string id, string name, string tag, string desc)[] MODES = {
 
-            ("role", "DE ROLÊ", "ROLE PLAY", "Modo livre: sem armas e sem inimigos. Carros liberados, paredão de som (K) e NPCs que curtem perto do som."),
+            ("role", "DE ROLÊ", "ROLE PLAY", "Modo livre sem inimigos: carros liberados, paredão de som (K), NPCs que curtem perto do som e loja de armas (B no balcão)."),
 
             ("classico", "CLÁSSICO", "4 × 4", "Mata-mata 4×4 numa área delimitada do mapa. Primeiro time a 40 abates ou quem liderar após 8 minutos."),
 
@@ -80,7 +80,7 @@ namespace FreeBala
 
             { var cv = FBUI.Canvas("Lobby", 5).transform; var sa = FBUI.Rect(cv, "area_segura", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero); sa.gameObject.AddComponent<FBSafeArea>(); root = sa; }   // r47: entalhe/cantos do celular
 
-            FBLobbyNet.Ensure(); FBMenuAvisos.Create();   // r62: conexão de lobby (amigos/squad) e avisos/convites por cima de tudo
+            FBLobbyNet.Ensure(); FBLanHost.FromArgs(); FBMenuAvisos.Create();   // r62: conexão de lobby (amigos/squad) e avisos/convites por cima de tudo · r68: -fblanhost/-fblanjoin
             Home(); if (WantTitle()) Title();   // r61: tela de título só na primeira abertura
 
             FBAudio.SetLoop("menu_music", "music", .9f);   /* r47: categoria MÚSICA (o volume do ajuste entra na hora; antes saía pelos efeitos e só valia ao reabrir o menu) */
@@ -165,7 +165,7 @@ namespace FreeBala
 
                 var t = FBKit.Tile(b, "modo_" + m.id, x, y, CW, 100, sel, () => { FBSession.mode = m.id; FBSession.Save(); MatchPicker(); });
 
-                var tex = Resources.Load<Texture2D>("Modes/" + m.id); if (!tex) tex = Resources.Load<Texture2D>("MapShots/" + FBSession.map);
+                var tex = Resources.Load<Texture2D>("Modes/" + m.id); if (!tex) tex = FBMapShot.Get(FBSession.map);
 
                 var art = FBKit.Cover(t.transform, tex, 1, 1, CW - 2, 98); art.color = sel ? Color.white : new Color(.62f, .62f, .62f);
 
@@ -187,7 +187,7 @@ namespace FreeBala
 
                 var t = FBKit.Tile(b, "mapa_" + m.id, x, y, CW, 124, sel, () => { FBSession.map = m.id; FBSession.Save(); MatchPicker(); });
 
-                var img = FBKit.Cover(t.transform, Resources.Load<Texture2D>("MapShots/" + m.id), 1, 1, CW - 2, 122); img.color = sel ? Color.white : new Color(.62f, .62f, .62f);
+                var img = FBKit.Cover(t.transform, FBMapShot.Get(m.id), 1, 1, CW - 2, 122); img.color = sel ? Color.white : new Color(.62f, .62f, .62f);
 
                 FBKit.Shade(t.transform, 1, 64, CW - 2, 59);
 
@@ -201,7 +201,7 @@ namespace FreeBala
 
             var card = FBKit.Box(b, "resumo", RX, 18, RW, 236).transform; card.gameObject.AddComponent<Mask>().showMaskGraphic = true;
 
-            var shot = Resources.Load<Texture2D>("MapShots/" + FBSession.map); var cardTex = shot ? shot : Resources.Load<Texture2D>("Modes/" + M.id); FBKit.Cover(card, cardTex, 1, 1, RW - 2, 234); FBKit.Shade(card, 1, 50, RW - 2, 184);
+            var shot = FBMapShot.Get(FBSession.map); var cardTex = shot ? shot : Resources.Load<Texture2D>("Modes/" + M.id); FBKit.Cover(card, cardTex, 1, 1, RW - 2, 234); FBKit.Shade(card, 1, 50, RW - 2, 184);
 
             FBKit.T(card, M.tag, 11, 16, 86, RW - 32, 16, TextAnchor.MiddleLeft, true, FBKit.Gold);
 

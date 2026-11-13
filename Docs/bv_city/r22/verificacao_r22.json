@@ -1,0 +1,164 @@
+{
+ "afirmacoes_conferidas": [
+  {
+   "afirmacao": "A) Larguras novas (calcada 2,96 | ciclovia 2,60 | canteiro 1,90 + guias; guia da pista a 7,9 m do muro) dentro do que o video mostra, e proporcao calcada : ciclovia : canteiro igual a do quadro",
+   "resultado": "confere",
+   "meu_valor": "Real em q_01760, coluna 960: muro -> face da guia da calcada 2,8-3,0 m; ciclovia 2,6-2,8 m; canteiro com as duas guias 1,85-2,2 m; total 7,3-8,0 m (+-1 m). Cena, nas mesmas definicoes: 3,11 / 2,60 / 2,20 = 7,91 m. Proporcao real 1,07 : 1 : 0,70-0,79 (na coluna 700 sai 1,15-1,19 : 1 : 0,87-0,90); cena 1,20 : 1 : 0,85. Tudo dentro de +-0,3 m. Ressalvas: (1) a calcada da cena medida como no levantamento anterior (muro ate a face da guia) da 3,11 m, 0,2 m acima do teto de 2,9 que a propria afirmacao cita; (2) a ciclovia tende a estar 0,1-0,3 m estreita em relacao as outras duas. A aerea Bing (0,30 m/px, muito borrada) da ~8 +-1 m da borda dos telhados ate onde comecam os carros estacionados: compativel.",
+   "como_medi": "Linhas lidas em tiras ampliadas 9x de q_01760 (ts_q_01760_690.png, q1760_c.png): pe do muro 700, topo/base da guia da calcada 735,5/745, eixo amarelo ~774, topo da guia do canteiro do lado da ciclovia 805, topo/base da guia da pista 918/958. Distancia = f*(h-z)/(linha-horizonte), camera a 1,55 m da pista (odometro da r20). Horizonte e focal amarrados pela convergencia das verticais distantes (inclinacao dx/dy -0,025 em x=232, +0,020 em 655, +0,058 em 1066, +0,118 em 1700 -> ponto de fuga vertical ~10300 px acima; f^2 = 10300*(yh-540)); a largura total fecha em 7,3-8,0 m com yh~600 e f~790 px. O horizonte 582 da r20 daria 4,9 m, inviavel. A borda da ciclovia do lado do canteiro NAO e visivel (a guia do canteiro a encobre); tirei-a do eixo amarelo, supondo-o no meio da ciclovia. Duvida: a razao calcada:ciclovia muda de 1,07 para 1,19 com +-3 linhas no pe do muro; por isso nao afirmo que a calcada esteja larga."
+  },
+  {
+   "afirmacao": "B) Ciclovia nova no nivel da pista, calcada e canteiro ~0,2 m acima, guia dos dois lados da ciclovia, como no real; 0,20 esta alto?",
+   "resultado": "nao_confere",
+   "meu_valor": "A cena faz o que a afirmacao diz (perfil: ciclovia 0,0; calcada, guias e grama 0,2). O real e diferente: guia da pista 0,16-0,17 m (0,20 esta 3-4 cm alto, aceitavel); guia da calcada sobre a ciclovia 0,09-0,10 m (cena 0,20 = o dobro); guia do canteiro do lado da ciclovia so 0,04-0,09 m acima dela (cena 0,20). Conclusao provavel: a ciclovia real fica ~0,08-0,10 m ACIMA da pista (rebaixada so em relacao a calcada), nao no nivel da pista. Duvida: +-0,04 m; a diferenca ciclovia x pista sai de tres indicios indiretos, nao de medida direta.",
+   "como_medi": "Alturas pela razao entre a linha do topo e a da base de cada guia (h_guia = h_cam*(1-(topo-yh)/(base-yh))), em q_01760 colunas 650 e 960: pista 918/958, calcada 735,5/745. Guia do canteiro do lado da ciclovia: so se ve o topo (linha 805); a borda real da ciclovia (do eixo amarelo) cai na linha 812-820 em 4 colunas (420, 700, 1100, 1550), ou seja, a guia encobre so 0,04-0,09 m. Indicios do desnivel ciclovia-pista: (a) q_01820, ponta oeste da entrada do TCE (q1820_fim_oeste.png): cunha de concreto subindo da pista com um tubo de drenagem passando por baixo; (b) ponta leste (q1820_fim_leste.png): a guia da ponta do canteiro diminui de ~0,15 m junto a pista para quase rente junto a ciclovia; (c) q_02322: remendo em rampa onde a ciclovia da quadra encontra a travessia pintada no asfalto."
+  },
+  {
+   "afirmacao": "C) No perfil novo nao sobrou chao do mapa de base dentro da faixa, nao ha buraco entre y=-48,4 e y=-40,4 e as alturas sao 0,2 / 0,0 / 0,2",
+   "resultado": "confere",
+   "meu_valor": "Nos 11 x do perfil (-70, -25, 30, 50, 95, 112, 125, 150, 230, 280) tudo entre -48,3 e -40,5 e BVC_FXN_* (ou fachada/placa em cima); nenhuma linha (nada); nenhuma peca BVC_FXN com -0,1; alturas 0,2 | 0,0 | 0,2; em x=280 a rampa da entrada da 0,0 / 0,1 / 0,2. PA_Chao so reaparece em -48,4..-48,5, atras da linha do muro. Limites: o perfil nao amostra nenhuma boca de rua nem as pontas dos blocos, onde sobrou chao antigo (ver G). Em x=125 ha uma peca de fachada (BVC_FN_pintura_e8e5dc, h 0,9) ocupando a calcada de -45,9 a -48,2.",
+   "como_medi": "Leitura de 06_unity\\perfil_calcada.txt contra 07_comparacoes\\r22\\antes\\perfil_calcada_antes.txt, linha a linha."
+  },
+  {
+   "afirmacao": "D) Postes, arvores e placas ficaram dentro do canteiro novo; fiacao inteira; nada flutuando ou afundado. Onde ficam no real?",
+   "resultado": "confere",
+   "meu_valor": "Cena: postes, arvores, tufos e placas com a base na grama em todas as fotos (r20_branco_x120, r20_calcada_de_cima_x125, r22_faixa_de_cima_x30, r22_faixa_xm20, r22_faixa_x260, r18_escon_x147); placas em x=112 em y -41,2 e -41,5 (perfil); colisor da moto passou de -42,7..-43,4 para -39,5..-40,3, na pista junto a guia; fios continuos de poste a poste nas fotos; nada flutuando. Pela lista de antes (centros dos postes/fios de -45,4 a -42,9) algumas pecas devem ter ido a y -39,75, 0,7 m sobre a pista: provavelmente bracos de luminaria, nao vi base de poste fora da grama. Real: postes de concreto da rede NO canteiro (x do csv ~ -53, -29, 1, 24, 53, 114, 156, 181, 206, 227, 245, 284, 323) - bate; lixeiras de cesto no canteiro; NENHUMA arvore no canteiro em todo o trecho -105..333 (as arvores reais ficam dentro dos lotes ou no gramado atras da ciclovia) - a cena tem 14 arvores de rua do mapa de base no canteiro; a placa R-12 fica na borda da CALCADA (q_01760, pe em (718,733)) e as de advertencia em losango ficam na calcada das esquinas - na cena estao no canteiro.",
+   "como_medi": "Fotos da cena e recortes; 06_unity\\lista_faixa.txt (posicoes antes) + 3,15 m; panoramas do canteiro que montei com a faixa central de cada quadro do video (pano_a.png x -105..70, pano_b.png x 60..200, pano_c.png x 190..340, em ...\\scratchpad\\verif_r22). Nao deu para ver as emendas da fiacao em x=-100 e x=333,2 nem dentro das bocas."
+  },
+  {
+   "afirmacao": "E) Entradas de garagem nos lugares certos em relacao as fachadas e existentes no real; faltam outras?",
+   "resultado": "nao_confere",
+   "meu_valor": "TCE: existe e bate (real comeca ~1,4 m a oeste da borda oeste do portao e tem ~4,4 m; cena comeca 1,2 m a oeste e tem 4,0 m). Casa das grades (598): bate (real 40,3..43,5 no x do csv; cena 40,8..43,7). Casa 646: existe; a real tem ~3,4 m (cena 5,2) e a oeste dela ha uma ilha de plantas que a cena engole em parte. ESCON: FORA DO LUGAR - a abertura real fica em frente a parede azul do letreiro, ~3 m a OESTE do pilone, e tem ~2 m; a cena pos 4,4 m a LESTE do pilone, em frente ao portao, onde no real o canteiro e continuo. Portico: posicao bate (eixo 278,5), mas a real e uma passagem de pedestre de 1,3-1,8 m, nao uma entrada de 4 m. Faltam pelo menos 12 aberturas do canteiro (lista no achado).",
+   "como_medi": "Panoramas do canteiro (escala 56 px/m, rotulos com o x do csv faixa_norte_quadros.csv) + quadros brutos q_01820, q_01679, q_02450, q_02480, q_02230, q_01128, q_01200, q_01875, q_01960, q_01590, q_01328. Posicao em relacao a fachada pela diferenca de coluna entre a abertura (plano do canteiro, ~0,0052*f) e o portao/pilone (plano do muro, ~0,0125*f). Na cena: colunas das fotos r20_muro_x112 e r20_escon_x132. Aviso: o x do csv tem erro local de ate ~6 m (em q_01760 e q_01679 esta 5,5-6,5 m a leste da cena; perto de 40 e de 190 bate), por isso dou as posicoes tambem pela fachada."
+  },
+  {
+   "afirmacao": "F) Cores e materiais: ciclovia vermelha com tracejado amarelo; guias brancas e cinza/preto alternadas; calcada de concreto/bloquete; grama",
+   "resultado": "confere",
+   "meu_valor": "O basico confere: ciclovia vermelha (real mediana 165,119,117; cena 186,115,115), eixo amarelo tracejado, linhas brancas nas bordas, guias pintadas em trechos alternados de ~1,0-1,4 m. Diferencas: (1) o trecho escuro da guia real e cinza medio (106,108,106) e na cena sai quase preto (31,33,34); (2) grama real verde-oliva seca (95,95,48 a 146,143,84), cena verde saturado (102,165,80); (3) o canteiro real NAO e grama em toda a extensao: ilha de agaves em frente a casa 598, cica + agaves e ilha de terra batida com lixeira em frente a 646/corretora, arbustos secos a leste da ESCON e na ponta da Coronel Mota; (4) piso da calcada muda por trecho: bloquete bege em frente ao muro/garagem do TCE (185,174,154), concreto cinza pintado em rampa em frente ao predio branco, bloquete avermelhado em frente as lojas (159,136,109) e a casa 646, pedra escura em frente ao sobrado, e em frente ao predio antigo (x 216-308) nao ha calcada pavimentada: e gramado seco/terra com arvores ate o tapume; cena: concreto cinza unico (128,133,133); (5) ha sarjeta de concreto de ~0,3-0,4 m entre o asfalto e a guia da pista; (6) a ciclovia real tem pictogramas de bicicleta, setas e PARE nas esquinas - a nova nao tem (a antiga do mapa de base tinha); (7) a ciclovia atravessa as ruas transversais pintada de vermelho no asfalto com tracejado branco dos dois lados - na cena acaba na boca.",
+   "como_medi": "Medianas de cor em janelas dos quadros q_01760, q_02123, q_01128 e da foto r20_muro_x112.png; leitura dos panoramas e dos quadros q_02230, q_02450, q_02480, q_01679, q_02322."
+  },
+  {
+   "afirmacao": "G) Nas ruas transversais a faixa nova termina de forma aceitavel (sem degrau estranho, sem peca solta)",
+   "resultado": "nao_confere",
+   "meu_valor": "Nas duas esquinas fotografadas (R. Pedrinho Filho, lados leste e oeste) a ponta da calcada antiga do mapa de base (PA_Chao, h 0,2) continua dentro da boca e avanca ate y=-43,3: a ciclovia nova (z 0, y -45,25..-42,65) da de frente num degrau de 0,2 m em ~1,95 m dos seus 2,60 m e so 0,65 m abrem para o asfalto. No lado oeste sobra ainda um retalho da ciclovia vermelha antiga. As pontas do canteiro e das guias terminam em corte reto, com a lateral do canteiro em textura de grama. No real a ciclovia continua pela travessia pintada e as pontas do canteiro sao arredondadas, com guia em volta, recuadas 1,5 a 5,5 m da esquina.",
+   "como_medi": "r22_faixa_de_cima_x30.png (recorte c30_esq.png: placa de concreto clara a esquerda do inicio da ciclovia, px 160-290 x 490-560 na foto) e r18_obra_esquina.png agora x antes (esq_obra.png / esq_obra_antes.png: px 600-690 x 650-680); bocas em 06_unity\\bocas_pa.txt (y -49,2..-43,3); real em q_02322 e nos panoramas. Nao ha foto das bocas da Jose Ribeiro, Coronel Mota e Barao nem das pontas x=-100 e 333,2: o gerador trata todas igual, presumo o mesmo defeito."
+  }
+ ],
+ "achados": [
+  {
+   "peca": "Pontas da faixa nas ruas transversais (4 bocas + pontas x=-100 e 333,2)",
+   "gravidade": "media",
+   "descricao": "A ciclovia rebaixada acaba contra a ponta da calcada antiga do mapa de base, que ficou dentro da boca ate y=-43,3 com 0,2 m de altura: degrau de 0,2 m barrando ~1,95 m dos 2,60 m da ciclovia; resto de ciclovia vermelha antiga no lado oeste da Pedrinho Filho. Falta a travessia vermelha da ciclovia sobre o asfalto da transversal.",
+   "evidencia": "C:\\Users\\Rodrigo\\Desktop\\favela\\game\\tools\\bv_city\\06_unity\\r22_faixa_de_cima_x30.png px (160-290, 490-560); 06_unity\\r18_obra_esquina.png px (600-690, 650-680); real: E:\\BURITIRO IMAGENS\\PRAÇA DAS AGUAS\\quadros\\IMG_4194\\q_02322.jpg (travessia vermelha com tracejado branco, esquina da calcada alinhada com a guia da calcada).",
+   "correcao": "Em cada boca (x -46,9..-37,3; 8,1..18,8; 64,2..71,8; 185,8..194,0) recortar do PA_Chao e do colisor tudo entre y=-45,40 e y=-43,30, de modo que a esquina da calcada termine em y=-45,40 com guia; por no asfalto da boca um plano vermelho y -45,25..-42,65 (z 0,006) com tracejado branco de 0,4 x 0,4 m a cada 0,8 m nas duas bordas. Conferir as outras tres bocas e as duas pontas com foto de cima."
+  },
+  {
+   "peca": "Entrada da ESCON (x 132,8..137,2)",
+   "gravidade": "media",
+   "descricao": "Fora do lugar e larga demais. No real a abertura do canteiro fica em frente a parede azul do letreiro ESCON, ~3 m a oeste do pilone, com ~2 m (1,4 m entre as pontas arredondadas junto a pista, 2,4 m junto a ciclovia). Em frente ao portao de grade o canteiro real e continuo, com arbustos.",
+   "evidencia": "q_01679.jpg: abertura em x 830-1140 px (centro 985, no eixo da camera), pilone em 1220-1330, portao em 1330-1530 -> abertura 2,6-3,7 m a oeste do pilone. Cena: 06_unity\\r20_escon_x132.png, abertura em 860-1415 px, a direita do pilone (810-845).",
+   "correcao": "Trocar ('ESCON', 132,8..137,2) por 127,5..129,5 (+-1 m; centro 3,2 m a oeste do pilone, que esta em x~131,7) e fechar o canteiro de 132,8 a 137,2."
+  },
+  {
+   "peca": "Aberturas do canteiro que existem no video e faltam na cena",
+   "gravidade": "media",
+   "descricao": "Faltam (x do csv; erro local de ate ~6 m, conferir pela fachada): (1) -84,5..-81,0, em frente ao INSS (q_02805); (2) -61,0..-59,3, passagem estreita (q_02703); (3) -18,0..-14,8, patio da corretora Sabio (q_02480, q_02500); (4) -12,2..-9,2, em frente ao totem/portao social da 646, entre a ilha de terra com lixeira e a ilha da cica (q_02475); (5) 29,8..32,1, portao leste do sobrado, entre a ilha gramada e a ilha de agaves (q_02230, q_02248); (6) rampa azul de acessibilidade 77,0..78,7 com faixa de pedestre na pista, junto a Coronel Mota (q_01960); (7) 91,2..93,2, em frente a porta de vidro do TCE, com cones (q_01875); (8) 151,2..154,7 e (9) 158,4..162,2, lote vago a leste da ESCON, com ilha de 3,7 m e poste entre elas (q_01590, q_01550); (10) 177,1..179,7 (q_01460); (11) 212,3..217,5, entre a casa amarela e o predio antigo (q_01328); (12) 253,9..260,4, entrada larga de ~6 m com conteiner verde na ponta oeste (q_01200, o quadro da propria folha faixa_x260.jpg); (13) 297,3..298,6, passagem estreita (q_01068).",
+   "evidencia": "Panoramas C:\\Users\\Rodrigo\\AppData\\Local\\Temp\\claude\\a0de669827628d24\\6dd1e011-812b-4b4e-b90d-0ba9ee612670\\scratchpad\\verif_r22\\pano_a.png, pano_b.png, pano_c.png e quatro.png; 07_comparacoes\\r22\\faixa_x260.jpg (real com abertura, cena com canteiro continuo).",
+   "correcao": "Acrescentar em ENTRADAS, nas coordenadas da cena: (-84,5, -81,0); (-61,0, -59,3); (-19,7, -16,5) corretora; (-13,9, -10,9) 646 oeste; (30,3, 33,0) sobrado; (91,5..93,5 no csv -> alinhar com a porta de vidro do TCE); (212,3, 217,5); (253,9, 260,4); (297,3, 298,6); as tres do lote vago em ~146,8..150,7, ~154,9..159,2 e ~176,0..178,9 (+-3 m). Estreitar a da casa 646 para -8,1..-4,7 (3,4 m). A rampa azul entra como piso inclinado de concreto azul de 1,7 m em x~73..75 (conferir contra a esquina)."
+  },
+  {
+   "peca": "Entrada do portico (x 277,5..281,5)",
+   "gravidade": "media",
+   "descricao": "No real e uma passagem estreita de pedestre no eixo do portico, de 1,3-1,8 m entre pontas arredondadas, que da no caminho de concreto de ~5 m que cruza o gramado ate o portico. A cena fez uma entrada de veiculo de 4,0 m.",
+   "evidencia": "q_01128.jpg: abertura em x 955-1160 px na linha da guia da pista (~1,2 m) e 940-1165 na borda da ciclovia (~1,8 m); pano_c.png, linha 3 (278,5..279,8). Cena: 06_unity\\r19_portico_x279.png, abertura 550-1215 px.",
+   "correcao": "('portico', 277,8..279,6): 1,8 m, sem rebaixar a guia da calcada em 4 m (so 1,8 m)."
+  },
+  {
+   "peca": "Abrigo de onibus (x 230,6..237,9) em relacao a faixa nova",
+   "gravidade": "media",
+   "descricao": "Na cena o abrigo esta na calcada, ATRAS da ciclovia, e o canteiro passa continuo na frente. No real o abrigo fica numa plataforma na beira da pista (no lugar do canteiro), com piso tatil amarelo e rampas azuis de acessibilidade nas duas pontas, e a ciclovia desvia por tras dele. A propria especificacao (mobiliario QQ3V x 18) ja descreve isso.",
+   "evidencia": "pano_c.png linhas 1-2 (rampa azul 227..230,4, plataforma 230,5..238, rampa azul 238..242, ciclovia subindo por tras); cena: 06_unity\\r19_ala_oeste_x236.png (abrigo atras da guia da calcada).",
+   "correcao": "De x 227,0 a 242,0 trocar a grama por plataforma de concreto h 0,20 de y -43,3 a -40,45, com rampas azuis de 3,5 m nas pontas (227,0..230,5 e 238,5..242,0); mover o abrigo para y ~ -42,3..-41,0; desviar a ciclovia ~1,0 m para o norte nesse trecho (y -46,25..-43,65)."
+  },
+  {
+   "peca": "Niveis da ciclovia e das duas guias que a ladeiam",
+   "gravidade": "media",
+   "descricao": "Cena: ciclovia em 0,00 com guias de 0,20 dos dois lados (parece uma vala). Real: degrau da calcada para a ciclovia 0,09-0,10 m; guia do canteiro so 0,04-0,09 m acima da ciclovia; guia da pista 0,16-0,17 m. A ciclovia real deve estar ~0,08-0,10 m acima da pista. Duvida de +-0,04 m.",
+   "evidencia": "q_01760.jpg, coluna 960: guia da calcada topo 735,5 / base 745; guia da pista topo 918 / base 958; topo da guia do canteiro 805 contra borda calculada da ciclovia 812-820 (ts_q_01760_690.png, q1760_c.png); q1820_fim_oeste.png e q1820_fim_leste.png; perfil_calcada.txt (0,2 / 0,0 / 0,2).",
+   "correcao": "Em faixa_norte_chao.py subir o topo da ciclovia, das pinturas e do piso das entradas para z=0,10 (pinturas em 0,106), mantendo calcada e canteiro em 0,20: as duas guias da ciclovia ficam com 0,10 expostos. Nas entradas, rampa de 0,00 a 0,10 nos primeiros 0,5 m a partir da face da guia da pista (y -40,45 a -40,95) e rampa da calcada de 0,20 a 0,10. Se preferir manter 0,00, ao menos baixar para 0,10 as guias dos dois lados da ciclovia."
+  },
+  {
+   "peca": "Mureta do predio branco sobre a calcada (x~125)",
+   "gravidade": "media",
+   "descricao": "A mureta/rampa lateral do predio branco (BVC_FN_pintura_e8e5dc, h 0,9) avanca ate y=-45,9 e ocupa 2,3 m dos 2,96 m da calcada nova; sobra 0,5 m de passagem. Ja estava assim antes (ficava por cima da ciclovia antiga); no real a mureta termina no limite do patio. Nao e da r22, mas agora fecha a calcada.",
+   "evidencia": "perfil_calcada.txt x=125: 'y -45.9 .. -48.2: BVC_FN_pintura_e8e5dc | h 0.9'; 06_unity\\r20_calcada_de_cima_x125.png px (765-835, 380-475); r20_branco_x120.png px (1055-1205, 535-610); real q_01679.jpg (mureta em 765-870, termina antes da calcada).",
+   "correcao": "Encurtar a mureta para terminar em y=-48,36 (tirar 2,46 m da ponta sul)."
+  },
+  {
+   "peca": "Piso da calcada por trecho",
+   "gravidade": "media",
+   "descricao": "A calcada nova e concreto cinza unico de x=-100 a 333. No real muda por lote e, em frente ao predio antigo e a casa amarela (x ~200..308), nao existe calcada pavimentada: depois da guia da ciclovia vem gramado seco/terra com arvores e palmeiras ate o tapume.",
+   "evidencia": "q_01128.jpg e q_01200.jpg (gramado seco, mediana 177,143,96); q_01760.jpg (bloquete bege 185,174,154 em frente ao muro do TCE; concreto cinza em rampa em frente ao predio branco); q_02123.jpg (bloquete avermelhado 159,136,109); cena r22_faixa_x260.png (concreto claro).",
+   "correcao": "Dividir 'calcada' por faixas de x com material proprio: terra/grama seca (0,62,0,50,0,34) de 199,8 a 333,2, com o caminho de concreto do portico em 276,0..281,0; bloquete bege 71,8..119,7; concreto cinza 119,7..131,4; bloquete avermelhado 43,9..64,2 e -14,6..-4,2; pedra escura 21,8..34,2; concreto no resto."
+  },
+  {
+   "peca": "Proporcao calcada : ciclovia : canteiro",
+   "gravidade": "baixa",
+   "descricao": "Cena 1,20 : 1 : 0,85; quadro 1,07 : 1 : 0,70-0,79 (ate 1,19 em outra coluna). Dentro do erro, mas a ciclovia tende a estar 0,1-0,3 m estreita e a calcada, medida do muro a face da guia (3,11 m), passa 0,2 m do teto de 2,9 m do levantamento anterior.",
+   "evidencia": "q_01760.jpg coluna 960 (linhas 700 / 735,5 / 745 / 774 / 805 / 918 / 958) e coluna 700 (704 / 742 / 750 / 776 / 806 / 949).",
+   "correcao": "Opcional: Y_CAL = -45,60 (calcada 2,76 + guia 0,15), ciclovia de -45,45 a -42,65 (2,80 m); canteiro e guia da pista como estao. Total continua 7,91 m."
+  },
+  {
+   "peca": "Pontas do canteiro nas entradas e nas bocas",
+   "gravidade": "baixa",
+   "descricao": "Terminam em corte reto, com a face lateral do canteiro em textura de grama (parede verde de 0,2 m) e sem guia de topo. No real as pontas sao arredondadas (raio ~0,5-0,9 m) com a guia pintada dando a volta, e ficam recuadas 1,5 a 5,5 m das esquinas.",
+   "evidencia": "a_x112_esq.png (recorte de 06_unity\\r20_muro_x112.png, px 0-230 x 620-705: lateral verde); esq_obra.png; real q1820_fim_oeste.png, q_01679.jpg, q_02450.jpg.",
+   "correcao": "Em cada ponta acrescentar guia de topo: bx('guia_topo', xe, xe+0,15, -42,65, -40,45, ZB, H, GUIA) (ou xe-0,15 na ponta leste); melhor, fechar com meio disco de raio 1,1 m. Recuar as pontas das bocas 2 m (Pedrinho Filho) a 5 m (Coronel Mota oeste, Barao leste)."
+  },
+  {
+   "peca": "Pintura das guias e sarjeta",
+   "gravidade": "baixa",
+   "descricao": "O trecho escuro da guia sai quase preto na cena (31,33,34); no real e cinza medio (106,108,106) contra branco (203,202,196). Falta a sarjeta de concreto entre o asfalto e a guia da pista.",
+   "evidencia": "q_01760.jpg px (1000-1300, 925-950) e (830-960, 925-950); r20_muro_x112.png px (700-840, 715-740); sarjeta em q_01760 coluna 650, linhas 948-975.",
+   "correcao": "Clarear o trecho escuro da textura da guia para ~(0,36, 0,37, 0,37); faixa de concreto (0,55, 0,53, 0,49) de 0,35 m em y -40,45..-40,10, z 0,005."
+  },
+  {
+   "peca": "Vegetacao do canteiro",
+   "gravidade": "baixa",
+   "descricao": "Grama saturada e uniforme em tudo; no real e verde-oliva seca e ha trechos sem grama: ilha de agaves variegadas (csv 32,1..40,3), cica + agaves (-9,2..-6,2), ilha de terra com lixeira (-14,8..-12,2), arbustos secos (135,7..151,2 e 74,6..77). As 14 arvores de rua do mapa de base ficaram no canteiro; no video nao ha nenhuma arvore no canteiro norte.",
+   "evidencia": "pano_a.png linhas 3-4, pano_b.png linhas 1-3; q_02230.jpg; medianas da grama: real (95,95,48)/(123,113,72), cena (102,165,80).",
+   "correcao": "Grama base ~(0,26, 0,27, 0,13); trocar grama por plantas baixas nos quatro trechos; decidir com o dono se as arvores do mapa de base saem do canteiro norte."
+  },
+  {
+   "peca": "Placas no canteiro",
+   "gravidade": "baixa",
+   "descricao": "A placa de regulamentacao em frente ao muro do TCE (x~112) foi levada para o canteiro junto com as outras; no real fica na borda da calcada, junto a guia da ciclovia. As placas em losango das esquinas tambem ficam na calcada.",
+   "evidencia": "q_01760.jpg, pe da placa em (718,733), sobre a calcada; cena perfil x=112 (placas em y -41,2 e -41,5) e r20_muro_x112.png px (848, 660).",
+   "correcao": "Placa de x~112: y ~ -45,6 (0,2 m para dentro da calcada). Poste pequeno de cabeca amarela em x~20 esta em cima da guia da calcada (r22_faixa_de_cima_x30.png px (395-410, 425-495)): levar para y ~ -45,7."
+  },
+  {
+   "peca": "Tracejado da pista colado a guia nova",
+   "gravidade": "baixa",
+   "descricao": "A linha tracejada branca do mapa de base em y=-40,2 (divisa da antiga faixa junto ao meio-fio) ficou a 0,25 m da face da guia nova.",
+   "evidencia": "perfil_calcada.txt (PA_Sinalizacao | PA_white_paint em y -40.2 em x=-70, 50, 112, 280); r20_muro_x112.png px (757-1325, 750-768); r22_faixa_x260.png px (620-775, 550-610).",
+   "correcao": "Retirar de PA_Sinalizacao os tracos em y -40,3..-40,1 entre x=-100 e 333,2."
+  },
+  {
+   "peca": "Pictogramas da ciclovia",
+   "gravidade": "baixa",
+   "descricao": "A ciclovia antiga tinha pictogramas (PA_ciclo_pict); a nova so tem eixo e bordas. No real ha bicicleta, setas de sentido e PARE junto as esquinas.",
+   "evidencia": "perfil antes x=50/125/150 (PA_ciclo_pict) contra o perfil novo; q_02123.jpg px (830-1010, 745-775) e (1600-1740, 760-790); q_01679.jpg px (440-640, 780-810).",
+   "correcao": "Reaproveitar o material PA_ciclo_pict em planos de 1,0 x 2,0 m no eixo de cada meia pista, a cada ~25 m e a 3 m de cada boca."
+  }
+ ],
+ "nao_julgavel": [
+  "AVISO de procedimento: ao recortar a aerea, um comando meu gravou por engano 3 arquivos (sat_95_135.jpg, sat_20_65.jpg, sat_200_260.jpg) em tools\\bv_city\\02_referencias\\sat\\r20\\; movi os tres na hora para a pasta de rascunho e a pasta do projeto voltou aos 12 arquivos originais. Nenhum arquivo existente foi alterado.",
+  "Largura absoluta: depende da focal (nao documentada) e da altura da camera (1,55 m, herdada do odometro da r20). Amarrei a focal pela convergencia das verticais, supondo o ponto principal no centro do quadro; se a estabilizacao do video deslocou esse centro em 30 px, o total muda ~1 m. A aerea Bing e borrada demais para decidir entre 7 e 9 m.",
+  "Nivel da ciclovia em relacao a pista: inferido por indicios (guia do canteiro quase rente a ciclovia, cunha de concreto com tubo na entrada do TCE, remendo em rampa na esquina), nao medido direto. Uma foto ou medida no local resolve.",
+  "Posicao exata em x das aberturas que faltam: o x do csv erra ate ~6 m em alguns trechos (velocidade nao constante). As do lote vago a leste da ESCON, a do INSS e a de 297 ficam com +-3 m.",
+  "Emendas da fiacao e postes nas pontas x=-100 e x=333,2 e dentro das bocas: nenhuma foto mostra esses pontos; nas fotos que existem os fios estao continuos.",
+  "Bocas da Jose Ribeiro, Coronel Mota e Barao e as duas pontas da faixa: sem foto proxima; presumo o mesmo degrau visto nas duas esquinas da Pedrinho Filho.",
+  "Colisores: o perfil indica ciclovia em 0,0 e placas/moto nas posicoes novas, mas nao pude conferir no Unity se sobrou colisor invisivel de poste ou arvore na posicao antiga (o resumo da importacao fala em '0 colisores soltos' deslocados).",
+  "Fora do escopo da r22, so registro: em x=30, 150, 230 e 280 o perfil mostra '(nada)' ao norte de y=-49,3 (atras da linha do muro), igual ao perfil de antes.",
+  "Um conteiner do jogo em x~40 encosta na guia e fica em frente a entrada da casa das grades (r22_faixa_de_cima_x30.png); nao tratei como defeito porque conteineres foram excluidos da revisao."
+ ]
+}

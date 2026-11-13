@@ -27,8 +27,28 @@ namespace FreeBala
             var g = new GameObject("FB_LabAnimacao"); DontDestroyOnLoad(g); var lab = g.AddComponent<FBAnimLab>();
             string Arg(int k) => i + k < a.Length && !a[i + k].StartsWith("-") ? a[i + k] : null;
             lab.skinArg = Arg(1) ?? "all"; lab.setArg = Arg(2) ?? "all"; lab.raw = System.Array.IndexOf(a, "-fblabraw") >= 0;
+            int f = System.Array.IndexOf(a, "-fblabfilme"); if (f >= 0 && f + 1 < a.Length) lab.filmSkin = a[f + 1];
+            int fe = System.Array.IndexOf(a, "-fblabfilmeestados"); if (fe >= 0 && fe + 1 < a.Length) lab.filmStates = new HashSet<string>(a[fe + 1].Split(','));
         }
         string skinArg = "all", setArg = "all"; bool raw;
+        // r65: -fblabfilme <pele> [-fblabfilmeestados a,b] — quadro a quadro de UM personagem (câmera do jogo atrás do ombro + frente 3/4)
+        // em autoteste/lab/filme/<conjunto>_<estado>/NNNN.jpg, para virar vídeo (ffmpeg) e comparar antes × depois
+        string filmSkin; HashSet<string> filmStates = new() { "mirando", "atirando", "mirando_andando", "andar", "andar_combate", "sprint", "recarga", "troca_arma" };
+        RenderTexture filmRT; Texture2D filmTex;
+        void Film(FBCharacter c, string name, int n)
+        {
+            const int W = 540, H = 720; if (!filmRT) { filmRT = new RenderTexture(W, H, 24, RenderTextureFormat.ARGB32) { antiAliasing = 4 }; filmTex = new Texture2D(W * 2, H, TextureFormat.RGB24, false); }
+            Show(c); float S = c.ScaleK; var fw = c.transform.forward; var rt = c.transform.right; var ctr = c.transform.position + Vector3.up * (c.crouch ? .8f : 1.35f) * S;
+            for (int v = 0; v < 2; v++)
+            {
+                if (v == 0) { cam.transform.position = ctr - fw * 2.4f * S + rt * .55f * S + Vector3.up * .25f * S; cam.transform.LookAt(ctr + fw * 3f * S + rt * .2f * S); }   // atrás do ombro direito, como o FBPlayer
+                else { var c2 = c.transform.position + Vector3.up * (c.crouch ? .7f : 1.1f) * S; cam.transform.position = c2 + Quaternion.Euler(0, c.transform.eulerAngles.y + 35, 0) * Vector3.forward * 2.6f * S + Vector3.up * .2f * S; cam.transform.LookAt(c2); }
+                cam.targetTexture = filmRT; cam.Render(); RenderTexture.active = filmRT; filmTex.ReadPixels(new Rect(0, 0, W, H), v * W, 0); RenderTexture.active = null;
+            }
+            cam.targetTexture = null; Show(null); filmTex.Apply(false);
+            var d = System.IO.Path.Combine(dir, "filme", name); System.IO.Directory.CreateDirectory(d);
+            System.IO.File.WriteAllBytes(System.IO.Path.Combine(d, $"{n:0000}.jpg"), filmTex.EncodeToJPG(90));
+        }
 
         // ---- estados (o que o jogador/bot faria naquele instante)
         public class St
@@ -64,8 +84,8 @@ namespace FreeBala
             L.Add(new St { id = "patrulha_parado", views = "fec" });
             if (full) L.Add(new St { id = "relaxado_parado", relaxed = true, len = 4.6f });   // > 3 s parado: arma no descanso (FBRig, Resting)
             L.Add(new St { id = "combate_parado", hold = true });
-            L.Add(new St { id = "mirando", aim = true });
-            L.Add(new St { id = "atirando", aim = true, fire = true });
+            L.Add(new St { id = "mirando", aim = true, views = "fec" });                           // r65: costas = vista da câmera do jogo
+            L.Add(new St { id = "atirando", aim = true, fire = true, views = "fec" });
             if (full)
             {
                 L.Add(new St { id = "andar", speed = walk, dir = Vector2.up, views = "fec" });
@@ -155,6 +175,9 @@ namespace FreeBala
             public float stretchFirme, worstLen0, worstLen1; public string firmeBone = "-";
             public float aboveCm; public string aboveWhat = "-";   // r60: arma guardada passando do alto da cabeça
             public readonly Dictionary<Transform, Quaternion> prev = new();
+            // r65: postura do tronco (média, com sinal): linha dos ombros em relação à horizontal e inclinação lateral quadril→pescoço
+            // no plano cima/direita do corpo; arma fora da pose dela na mão direita (cm, graus) e mão esquerda fora do ponto da arma (cm)
+            public readonly List<float> ombros = new(), lateral = new(), armaCm = new(), armaGr = new(), lhArma = new();
         }
         static readonly List<AnimatorClipInfo> ciL = new();
         static readonly HumanBodyBones[] POP = { HumanBodyBones.Hips, HumanBodyBones.Spine, HumanBodyBones.Chest, HumanBodyBones.Neck, HumanBodyBones.Head,
@@ -175,6 +198,20 @@ namespace FreeBala
             if (c.weaponGO && c.weaponGO.activeInHierarchy && c.CombatStance && c.rig && c.rig.AimW > .9f)
             { var d = c.aimPoint - c.MuzzlePos; if (d.sqrMagnitude > 1) m.aim.Add(Vector3.Angle(c.BarrelDir(), d)); }
             if (c.rig && c.rig.LeftTargetValid && c.rig.IkW > .9f && c.LeftHand) m.lh.Add((c.LeftHand.position - c.rig.LeftTarget).magnitude);
+            // r65: medido na pose FINAL do quadro anterior (o coroutine volta depois do Update, antes do Animator), ou seja, depois do FBRig
+            // E do rig novo (FBFpsaf) — que é quem mexia na arma por último
+            {
+                var la = an.GetBoneTransform(HumanBodyBones.LeftUpperArm); var ra = an.GetBoneTransform(HumanBodyBones.RightUpperArm);
+                if (la && ra) { var d = (ra.position - la.position).normalized; m.ombros.Add(Mathf.Asin(Mathf.Clamp(Vector3.Dot(d, Vector3.up), -1, 1)) * Mathf.Rad2Deg); }
+                if (c.Hips && c.Neck) { var v = c.Neck.position - c.Hips.position; m.lateral.Add(Mathf.Atan2(Vector3.Dot(v, c.transform.right), Vector3.Dot(v, Vector3.up)) * Mathf.Rad2Deg); }
+                var wg = c.weaponGO; var rh = c.RightHand;
+                if (wg && wg.activeInHierarchy && rh && wg.transform.parent == rh)
+                {
+                    m.armaCm.Add((wg.transform.position - rh.TransformPoint(c.ProxyLocalPos)).magnitude * 100 / Mathf.Max(.01f, c.ScaleK));
+                    m.armaGr.Add(Quaternion.Angle(wg.transform.localRotation, c.ProxyLocalRot));
+                    if (c.rig && c.rig.LeftLocalOk && c.rig.IkW > .9f && c.LeftHand) m.lhArma.Add((c.LeftHand.position - wg.transform.TransformPoint(c.rig.LeftLocal)).magnitude * 100 / Mathf.Max(.01f, c.ScaleK));
+                }
+            }
             foreach (var right in new[] { false, true })
             {
                 Transform U(HumanBodyBones r, HumanBodyBones l) => an.GetBoneTransform(right ? r : l);
@@ -231,6 +268,7 @@ namespace FreeBala
             Destroy(tmp);
         }
         static void Holster(FBCharacter c, M m) { var hp = HolsterPenetration(c); if (hp.cm > m.holsterCm) { m.holsterCm = hp.cm; m.holsterWhat = hp.what; } if (hp.gap > m.gapCm) { m.gapCm = hp.gap; m.gapWhat = hp.gapWhat; } if (hp.above > m.aboveCm) { m.aboveCm = hp.above; m.aboveWhat = hp.aboveWhat; } }
+        static float Med(List<float> l) { if (l.Count == 0) return 0; float s = 0; foreach (var x in l) s += x; return s / l.Count; }
         static float P(List<float> l, float q) { if (l.Count == 0) return 0; var c = new List<float>(l); c.Sort(); return c[Mathf.Clamp(Mathf.RoundToInt(q * (c.Count - 1)), 0, c.Count - 1)]; }
 
         /// <summary>Rodada 38: quanto cada arma GUARDADA entra no corpo, medido na pose atual contra os triângulos da malha (não o perfil do
@@ -374,7 +412,7 @@ namespace FreeBala
             string rifle = First("fuzil", FBSession.primary) ?? First("fuzil", "ak"), smg = First("submetralhadora", FBSession.smg), pistol = First("pistola", FBSession.secondary), sg = First("escopeta", null), sn = First("sniper", null);
             var sets = new List<(string id, string[] give, int slot)> { ("desarmado", new[] { rifle, smg, pistol }, 3), ("fuzil", new[] { rifle, smg, pistol }, 0), ("pistola", new[] { rifle, smg, pistol }, 2), ("smg", new[] { rifle, smg, pistol }, 1), ("escopeta", new[] { sg, smg, pistol }, 0), ("sniper", new[] { sn, smg, pistol }, 0) };
             if (setArg != "all") { var want = new HashSet<string>(setArg.Split(',')); sets = sets.Where(s => want.Contains(s.id)).ToList(); }
-            var csv = new System.Text.StringBuilder("conjunto;estado;personagem;erro_mira_p95_graus;mao_esq_p95_cm;estalo_p99_graus_s;estalo_max;cotovelo_min_graus;joelho_invertido_quadros;estiramento_max;estiramento_frac;compressao_min;osso_pior;osso_estalo;coldre_dentro_cm;coldre_pior;coldre_folga_cm;coldre_folga_pior;ritmo_passo_med;clipe_base;estiramento_firme;osso_firme;aresta_bind_mm;aresta_deformada_mm;arma_acima_cabeca_cm;arma_acima_qual\n");
+            var csv = new System.Text.StringBuilder("conjunto;estado;personagem;erro_mira_p95_graus;mao_esq_p95_cm;estalo_p99_graus_s;estalo_max;cotovelo_min_graus;joelho_invertido_quadros;estiramento_max;estiramento_frac;compressao_min;osso_pior;osso_estalo;coldre_dentro_cm;coldre_pior;coldre_folga_cm;coldre_folga_pior;ritmo_passo_med;clipe_base;estiramento_firme;osso_firme;aresta_bind_mm;aresta_deformada_mm;arma_acima_cabeca_cm;arma_acima_qual;ombros_med_graus;tronco_lateral_med_graus;tronco_lateral_faixa_graus;arma_solta_mao_dir_p95_cm;arma_solta_mao_dir_p95_graus;mao_esq_fora_arma_p95_cm\n");
             var ic = System.Globalization.CultureInfo.InvariantCulture;
             bool first = true;
             foreach (var (setId, give, slot) in sets)
@@ -389,10 +427,12 @@ namespace FreeBala
                     var ms = chars.ToDictionary(c => c, c => new M());
                     foreach (var a in actors) { a.Leave(); a.st = st; a.t = 0; }
                     float t = 0; bool shot = false; int si = 0; float[] SF = { .3f, .5f, .7f, .9f };
+                    var filmC = filmSkin != null && filmStates.Contains(st.id) ? chars.FirstOrDefault(c => c && c.skinId == filmSkin) : null; int fn = 0;
                     while (t < st.len)
                     {
                         yield return null; float dt = Time.deltaTime; t += dt; bool settle = t > .6f;
                         foreach (var c in chars) if (c) Sample(c, ms[c], dt, settle);
+                        if (filmC && t > .3f) { yield return new WaitForEndOfFrame(); Film(filmC, $"{setId}_{st.id}", fn++); }
                         // arma guardada x corpo em 4 momentos do estado (não só no quadro do print): dentro e afastada
                         if (settle && si < SF.Length && t >= st.len * SF[si])
                         {
@@ -402,13 +442,17 @@ namespace FreeBala
                         if (!shot && t >= st.len * st.shotAt) { shot = true; yield return new WaitForEndOfFrame(); foreach (var c in chars) if (c) { Stretch(c, ms[c]); Holster(c, ms[c]); } Capture($"{setId}_{st.id}", st.views); }
                     }
                     float aimW = 0, lhW = 0, popW = 0, strW = 0, firW = 0, holW = 0, gapW = 0, rLo = 9, rHi = 0; string wc = "-", fc = "-", hw = "-", rc = "-", gw = "-"; float wl0 = 0, wl1 = 0, abvW = 0; string ac = "-";
+                    float armaW = 0, armaGW = 0, lhaW = 0;
                     foreach (var c in chars)
                     {
                         var m = ms[c]; float a95 = P(m.aim, .95f), l95 = P(m.lh, .95f) * 100, p99 = P(m.pop, .99f);
-                        csv.AppendLine(string.Join(";", setId, st.id, c.skinId, a95.ToString("0.0", ic), l95.ToString("0.0", ic), p99.ToString("0", ic), P(m.pop, 1).ToString("0", ic), m.elbowMin.ToString("0", ic), m.kneeRev.ToString("0", ic), m.stretchMax.ToString("0.00", ic), (m.stretchFrac * 100).ToString("0.00", ic), m.squashMin.ToString("0.00", ic), m.worstBone, m.popBone, m.holsterCm.ToString("0.0", ic), m.holsterWhat, m.gapCm.ToString("0.0", ic), m.gapWhat, P(m.rate, .5f).ToString("0.00", ic), m.clips.Count > 0 ? m.clips.OrderByDescending(k => k.Value).First().Key : "-", m.stretchFirme.ToString("0.00", ic), m.firmeBone, m.worstLen0.ToString("0.000", ic), m.worstLen1.ToString("0.000", ic), m.aboveCm.ToString("0.0", ic), m.aboveWhat));
+                        csv.AppendLine(string.Join(";", setId, st.id, c.skinId, a95.ToString("0.0", ic), l95.ToString("0.0", ic), p99.ToString("0", ic), P(m.pop, 1).ToString("0", ic), m.elbowMin.ToString("0", ic), m.kneeRev.ToString("0", ic), m.stretchMax.ToString("0.00", ic), (m.stretchFrac * 100).ToString("0.00", ic), m.squashMin.ToString("0.00", ic), m.worstBone, m.popBone, m.holsterCm.ToString("0.0", ic), m.holsterWhat, m.gapCm.ToString("0.0", ic), m.gapWhat, P(m.rate, .5f).ToString("0.00", ic), m.clips.Count > 0 ? m.clips.OrderByDescending(k => k.Value).First().Key : "-", m.stretchFirme.ToString("0.00", ic), m.firmeBone, m.worstLen0.ToString("0.000", ic), m.worstLen1.ToString("0.000", ic), m.aboveCm.ToString("0.0", ic), m.aboveWhat,
+                            Med(m.ombros).ToString("0.0", ic), Med(m.lateral).ToString("0.0", ic), (P(m.lateral, .95f) - P(m.lateral, .05f)).ToString("0.0", ic), P(m.armaCm, .95f).ToString("0.0", ic), P(m.armaGr, .95f).ToString("0.0", ic), P(m.lhArma, .95f).ToString("0.0", ic)));
+                        armaW = Mathf.Max(armaW, P(m.armaCm, .95f)); armaGW = Mathf.Max(armaGW, P(m.armaGr, .95f)); lhaW = Mathf.Max(lhaW, P(m.lhArma, .95f));
                         aimW = Mathf.Max(aimW, a95); lhW = Mathf.Max(lhW, l95); popW = Mathf.Max(popW, p99); if (m.stretchMax > strW) { strW = m.stretchMax; wc = c.skinId + "/" + m.worstBone; wl0 = m.worstLen0; wl1 = m.worstLen1; } if (m.stretchFirme > firW) { firW = m.stretchFirme; fc = c.skinId + "/" + m.firmeBone; } if (m.aboveCm > abvW) { abvW = m.aboveCm; ac = c.skinId + "/" + m.aboveWhat; } if (m.holsterCm > holW) { holW = m.holsterCm; hw = c.skinId + "/" + m.holsterWhat; } if (m.gapCm > gapW) { gapW = m.gapCm; gw = c.skinId + "/" + m.gapWhat; } if (m.rate.Count > 0) { float rm = P(m.rate, .5f); if (rm < rLo) { rLo = rm; rc = m.clips.OrderByDescending(k => k.Value).First().Key; } rHi = Mathf.Max(rHi, rm); }
                     }
                     Debug.Log($"[FreeBala][lab] {setId}/{st.id}: pior erro de mira {aimW:0.0}° · pior mão esq. {lhW:0.0} cm · pior estalo p99 {popW:0}°/s · pior estiramento {strW:0.00}× ({wc}, aresta {wl0:0.00}→{wl1:0.00} mm) · FIRME {firW:0.00}× ({fc}) · arma guardada dentro do corpo {holW:0.0} cm ({hw}) · maior afastamento {gapW:0.0} cm ({gw}) · acima da cabeça {abvW:0.0} cm ({ac}){(rHi > 0 ? $" · ritmo do passo {rLo:0.00}–{rHi:0.00} (mais lento: {rc})" : "")}");
+                    Debug.Log($"[FreeBala][lab] {setId}/{st.id} r65: arma solta da mão direita p95 {armaW:0.0} cm / {armaGW:0.0}° · mão esq. fora da arma p95 {lhaW:0.0} cm · tiro na mira {FBAnimProfile.TiroNaMira} · balanço na mão {FBFpsaf.SwayNaMao} · coice {FBRig.CoiceArma}");
                     Debug.Log($"[FreeBala][lab] {setId}/{st.id} rig (modo {FBRig.Mode}): ergueu {FBRig.LiftN} quadros (média {(FBRig.LiftN > 0 ? FBRig.LiftSum / FBRig.LiftN : 0):0.0}°) · centralizou {FBRig.CenterN} quadros · diag {FBRig.DbgN} q: cru {FBRig.DbgRaw / Mathf.Max(1, FBRig.DbgN):0.0}° punho {FBRig.DbgWrist / Mathf.Max(1, FBRig.DbgN):0.0}° corpo {FBRig.DbgClear / Mathf.Max(1, FBRig.DbgN):0.0}° fim {FBRig.DbgLeft / Mathf.Max(1, FBRig.DbgN):0.0}° · low ready {FBRig.DbgLower / Mathf.Max(1, FBRig.DbgN):0.0}° · empurrão {100 * FBRig.DbgPush / Mathf.Max(1, FBRig.DbgN):0.0} cm · punho no limite {FBRig.DbgClamp} · longe {FBRig.DbgFar}"); FBRig.LiftN = FBRig.CenterN = 0; FBRig.LiftSum = 0; FBRig.DbgN = FBRig.DbgClamp = FBRig.DbgFar = 0; FBRig.DbgRaw = FBRig.DbgWrist = FBRig.DbgClear = FBRig.DbgLeft = FBRig.DbgLower = FBRig.DbgPush = 0;
                 }
                 foreach (var a in actors) a.Leave();

@@ -11,6 +11,16 @@ namespace FreeBala
         public const string DefaultSkin = "r_tutu";   // personagens regionais (rodada 36)
         public static string skin = DefaultSkin, look = "", map = "vila_jardim", mode = "classico", primary = "ak", smg = "p90", secondary = "38", name = "JOGADOR";
         public static int team, diff = 1; public static bool online; public static string server = "ws://localhost:8123/ws", room;
+        // r68 REDE LOCAL: endereço do Host da rede (o próprio PC hospedando ou um achado em PROCURAR NA REDE). NÃO é salvo: na próxima
+        // abertura o jogo volta ao servidor online normal (antes um endereço de LAN salvo deixava o jogo "offline" quando o Host fechava).
+        public static string lanServer;
+        public static string Server => string.IsNullOrEmpty(lanServer) ? server : lanServer;
+        // r69 (13/11/2026): modo ONLINE escolhido no SQUAD, separado do modo contra bots: "role" (De Rolê desarmado, loja), "rolex"
+        // (ROLÊ ARMADO: a cidade livre com todo mundo armado, um contra o outro), "tdm" (times) e "x2" (2 × 2 sorteado, squad de 4).
+        public static string netMode = "role";
+        public static bool RoleArmed => online && mode == "role" && netMode == "rolex";
+        public static bool Duel2x2 => online && netMode == "x2";
+        public static string NetModeName(string m) => m == "rolex" ? "ROLÊ ARMADO" : m == "x2" ? "2 × 2" : m == "tdm" ? "TIMES" : "DE ROLÊ";
         // r43: nome de usuário escolhido pelo jogador (placar, feed de abates, online) — independente do nome do personagem
         public static bool nameChosen => PlayerPrefs.GetInt("fb_nameChosen", 0) == 1 && !string.IsNullOrWhiteSpace(name) && name != "JOGADOR";
         public static string CleanName(string s, out string why)
@@ -24,6 +34,7 @@ namespace FreeBala
             return r;
         }
         public const string OldDefaultServer = "ws://localhost:8123/ws";
+        public const string OldVpsServer = "ws://179.66.136.216:8123/ws";   // r69 (porte do ramo mobile do parceiro, 09/11): VPS antigo, desligado na migração para o Brasil
         public static string ServidorPadrao()
         {
             try
@@ -49,7 +60,7 @@ namespace FreeBala
 
         public static void Save()
         {
-            foreach (var (k, v) in new[] { ("skin", skin), ("look", look), ("map", map), ("mode", mode), ("primary", primary), ("smg", smg), ("secondary", secondary), ("name", name), ("server", server), ("view", view), ("aimAssist", aimAssist), ("victory", victory ?? ""), ("emotes", emoteSlots) })
+            foreach (var (k, v) in new[] { ("skin", skin), ("look", look), ("map", map), ("mode", mode), ("primary", primary), ("smg", smg), ("secondary", secondary), ("name", name), ("server", server), ("view", view), ("aimAssist", aimAssist), ("victory", victory ?? ""), ("emotes", emoteSlots), ("netMode", netMode) })
                 PlayerPrefs.SetString("fb_" + k, v);
             PlayerPrefs.SetInt("fb_diff", diff); PlayerPrefs.SetInt("fb_money", money); PlayerPrefs.SetInt("fb_xp", xp); PlayerPrefs.SetInt("fb_passXp", passXp); PlayerPrefs.SetInt("fb_quality", quality);
             PlayerPrefs.SetFloat("fb_fov", fov); PlayerPrefs.SetFloat("fb_sens", sens); PlayerPrefs.SetFloat("fb_adsSens", adsSens); PlayerPrefs.SetFloat("fb_master", master); PlayerPrefs.SetFloat("fb_music", music); PlayerPrefs.SetFloat("fb_sfx", sfx); PlayerPrefs.SetFloat("fb_voice", voice); PlayerPrefs.SetFloat("fb_vehicles", vehicles); PlayerPrefs.SetFloat("fb_ambient", ambient);
@@ -62,7 +73,8 @@ namespace FreeBala
             string G(string k, string d) => PlayerPrefs.GetString("fb_" + k, d);
             // [parceiro 07/11] servidor online padrão: StreamingAssets/servidor.txt (o instalador do jogo grava o IP do VPS).
             // Quem ainda tem o padrão antigo (localhost) salvo passa a usar o do arquivo; quem digitou outro endereço mantém o seu.
-            server = ServidorPadrao(); var salvo = G("server", server); if (salvo != OldDefaultServer) server = salvo;
+            server = ServidorPadrao(); var salvo = G("server", server); if (salvo != OldDefaultServer && salvo != OldVpsServer) server = salvo;   // r69: quem tem o VPS antigo salvo passa para o do arquivo
+            netMode = G("netMode", netMode); if (netMode != "role" && netMode != "rolex" && netMode != "tdm" && netMode != "x2") netMode = "role";   // r69
             skin = G("skin", skin); look = G("look", look); map = G("map", map); mode = G("mode", mode); primary = G("primary", primary); smg = G("smg", smg); secondary = G("secondary", secondary); name = G("name", name);
             view = "tps"; /* r45b: câmera em 1ª pessoa removida do jogo (pedido) */ aimAssist = G("aimAssist", aimAssist); victory = G("victory", ""); if (victory == "" || FBEmotes.IsFF(victory)) victory = null;   /* r47: dança de vitória FF salva */ emoteSlots = G("emotes", "");
             diff = PlayerPrefs.GetInt("fb_diff", diff); money = PlayerPrefs.GetInt("fb_money", money); xp = PlayerPrefs.GetInt("fb_xp", xp); passXp = PlayerPrefs.GetInt("fb_passXp", passXp); quality = PlayerPrefs.GetInt("fb_quality", quality);

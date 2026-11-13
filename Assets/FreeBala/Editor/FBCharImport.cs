@@ -69,6 +69,11 @@ namespace FreeBala.EditorTools
             var ch = go.AddComponent<FBCharacter>(); ch.skinId = id;
             if (File.Exists(sheetJson)) { var w = go.AddComponent<FBWardrobe>(); w.sheetJson = File.ReadAllText(sheetJson); }
             foreach (var r in go.GetComponentsInChildren<SkinnedMeshRenderer>(true)) { r.updateWhenOffscreen = false; r.skinnedMotionVectors = false; }
+            // RODADA 66 (10/11/2026) — o rig de combate novo (KINEMATION/FPSAF) entra AQUI, não só no FBFpsafSetup da r57.
+            // O KRigComponent e os 5 ossos virtuais são SERIALIZADOS no prefab (RefreshHierarchy é #if UNITY_EDITOR), então todo
+            // personagem importado depois da r57 nascia sem eles e o FBFpsaf ficava inerte em jogo: sem IK das mãos na arma, sem
+            // balanço, sem WeaponBone (foi o que aconteceu com o r_sandro_junior). O KRig/Perfil/Entrada continuam no FBFpsafSetup.
+            if (anim.isHuman) FBFpsafSetup.Preparar(anim);
             Directory.CreateDirectory(PrefabDir);
             var path = $"{PrefabDir}/{id}.prefab";
             var prefab = PrefabUtility.SaveAsPrefabAsset(go, path);

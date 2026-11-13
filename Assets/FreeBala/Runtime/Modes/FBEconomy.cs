@@ -286,7 +286,7 @@ namespace FreeBala
                 float d = (l.pos - player.Pos).Flat().magnitude; if (d < nd && Mathf.Abs(l.pos.y - player.Pos.y) < 2) { nd = d; near = l; }
                 l.ring.localScale = Vector3.one * (1 + .05f * Mathf.Sin(l.t * 4));
             }
-            if (near == null || !player.alive) FBHUD.I?.Prompt(null, null);
+            if (near == null || !player.alive) { if (!FBGunShop.Prompt(player)) FBHUD.I?.Prompt(null, null); }   // r68: sem saque perto, o aviso pode ser o da loja de armas do De Rolê
             else if (near.armor != null) { var a = FBBrCore.NewArmor(near.armor); FBHUD.I?.Prompt("X", $"PEGAR {ArmorLabel(near.armor)}", $"EQUIPAMENTO · REDUZ O DANO {Mathf.RoundToInt(a.red * 100)}%"); }
             else FBHUD.I?.Prompt("X", "PEGAR " + GameData.Weapons[near.id].name.ToUpper(), $"{near.ammo} / {near.reserve}");
         }

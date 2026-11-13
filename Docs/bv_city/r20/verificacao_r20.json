@@ -1,0 +1,114 @@
+{
+ "afirmacoes_conferidas": [
+  {
+   "afirmacao": "A) Velocidade: ~0,170 m/quadro entre Coronel Mota (eixo ~2022) e Pedrinho Filho (eixo ~2340); ~0,199 entre Barao (eixo ~1406) e Coronel Mota; esquinas nos quadros 1976, 2068, 2318, 2362",
+   "resultado": "confere",
+   "meu_valor": "Medias: 0,199 (Barao->Mota, 122,6 m em 616 quadros) e 0,167-0,170 (Mota->Pedrinho). Quadros em x=960: muro oeste do TCE 1969 (quina do muro baixo da frente) / 1974-1976 (ponta do muro lateral, mais recuada); quina leste do predio preto 2071-2072 (autor 2068); quina oeste do lote do sobrado 2316 (autor 2318); quina sudeste do tapume 2375 (autor 2362 - NAO bate, 13 quadros); boca da R. Barao: guias em 1388 e 1427 -> eixo ~1407. Eixos: Mota 2020-2024, Pedrinho ~2345. RESSALVA IMPORTANTE: a velocidade nao e constante dentro dos trechos: ~0,25-0,36 em 1400-1500, 0,21 em 1550, 0,16 em 1600, 0,142-0,148 em 1650-1800 (predio branco/muro/portao), 0,19 em 1850, 0,20-0,21 em 1930-2030, 0,15-0,17 em 2050-2200, 0,19-0,21 em 2250-2400.",
+   "como_medi": "(1) Folhas de tiras centradas em x=960 (strip.py) para achar o quadro de cada quina. (2) Odometro proprio, independente de focal e de guinada: deslocamento horizontal entre quadros consecutivos (correlacao por faixas de 12 px, 3 blocos de colunas) das linhas de chao 700-905; a inclinacao a = d(desloc)/d(linha) = v*cos(guinada)/altura_da_camera. Somando a(n) entre os eixos: Barao->Mota da altura 1,463 m e Mota->Pedrinho da 1,478-1,511 m (diferenca <=3 %), ou seja, o odometro fecha nas duas quadras com a mesma altura de camera (~1,47 m acima do canteiro). Lacunas (arbustos 1640-1660 e 2200-2230, carro-forte 1900-1920) interpoladas. Conferencia cruzada: placa R-12 de q_01760 sai com 0,47 m de diametro com a minha velocidade local (0,145) e 0,61 m com 0,186."
+  },
+  {
+   "afirmacao": "B) Camera guinada ~20 a 27 graus para oeste; pecas recuadas cruzam a coluna central antes (0,4 m por metro de recuo)",
+   "resultado": "nao_confere",
+   "meu_valor": "O sentido esta certo (camera virada para a frente; recuado cruza antes), a grandeza nao: ~10 graus em q_01760 (8 a 15 conforme a focal real, 750 a 1300 px), e VARIA ao longo do video: ~5,5-6,5 em 1686-1696, ~8-10 em 1741-1750, ~10-12 em 1760-1790, ~9 em 1813, ~3-6 em 2046-2074 (valores para f=850 px). Correcao: 0,10 a 0,19 m por metro de recuo (ate ~0,27 se f=1300), nao 0,4.",
+   "como_medi": "Ponto de fuga das retas paralelas a avenida: em q_01760 o topo do muro, a platibanda do predio branco e a borda da ciclovia se cruzam em x=-3660 (4620 px a esquerda do centro); a altura do muro vai de 196 px (x=660) a 215 px (x=1060) -> mesma conta (4400-5000 px). Estimador automatico pelas linhas de chao (borda da ciclovia x guia; kyaw.py): k=1/(960-xW)=1,05e-4 (1693), 1,67e-4 (1741), 2,0e-4 (1750), 2,1-2,2e-4 (1760-1788), 1,9e-4 (1813). tan(guinada)=f*k. Para dar 23 graus seria preciso f~1850-2000 px (campo horizontal ~52 graus), o que nao existe a 1x no iPhone 14 Pro Max (metadado do .MOV) e poria a camera a ~25 m do muro. A focal pelas ortogonais fica em 650-1050 px: face leste da torre do TCE converge em x~1085-1100 (para 23 graus teria de ser ~1790); verticais convergem 1,0e-4/px (5 arestas bem ajustadas de q_01760) com horizonte em y~582. A aerea (margem de ~9-10 m) puxaria f para ~1250; por isso dou a faixa 8-15 graus. Em nenhum caso chega a 20."
+  },
+  {
+   "afirmacao": "C) Posicoes (x do corredor, +-1,5 m): quina O do muro do TCE 77,0; quina SE da torre 102-104; borda O do portao 105,8-106,6; quina L do muro 115,7-116,2; predio branco 116,0-124,2 (8,2 m); volume azul da ESCON a partir de 129,4-130,2; pilone 137,2-137,7",
+   "resultado": "nao_confere",
+   "meu_valor": "Batem dentro da tolerancia (meus valores ficam ~0,5-1,5 m a LESTE dos do autor, de forma sistematica): muro O do TCE 77,5 (76,9-78,1); quina SE da torre 104,3 (102,9-105,7); borda O do portao 107,4 (106,5-108,3) - no limite; quina L do muro 116,5 (115,6-117,4); predio branco 117,4 -> 125,3 (largura 7,9 +-0,4). NAO batem: borda O do volume azul 126,7 (126,2-127,3; autor 129,4-130,2, erro de ~3 m) e pilone 132,5 (131,8-133,3, +-1; autor 137,2-137,7, erro de ~5 m). Distancias relativas (mais firmes que as absolutas): fim do predio branco -> inicio do volume azul = 1,3-1,6 m (autor/cena: 5,2-6,0); inicio do volume azul -> pilone ~6 m.",
+   "como_medi": "x = x_camera(quadro) - distancia*tan(guinada do quadro), com x_camera pelo odometro de chao ancorado no eixo da Coronel Mota (testei 68,9 e 67,9, que e o eixo do OSM na linha das fachadas, y=-48) e as guinadas medidas quadro a quadro; faixas cobrem f=850 a 1300 px e as duas ancoras. Quadros em x=960: pilone (pe) 1652; borda O do volume azul 1686-1687; fim leste da testeira do predio branco 1693; borda O do predio branco 1741-1742; totem 1744; quina do muro 1750; borda L do portao 1788-1789; borda O do portao 1813-1814; quina SE da torre 1824-1825. O volume azul cruza o centro so 6,5 quadros (0,95 m de avanco do carro) antes do fim do predio branco: nao cabe um vao de 5-6 m."
+  },
+  {
+   "afirmacao": "D) O predio branco de 2 pavimentos corresponde ao contorno 38P6 (113,9-124,0) e nao a 120,5-128,3; o telhado branco vivo da aerea (~124,5 a ~133, contorno 396C) e outro predio, o anexo branco recuado entre o predio branco e o volume azul",
+   "resultado": "nao_confere",
+   "meu_valor": "1a metade CONFERE: predio branco em ~117-125 (borda leste = borda leste do 38P6, 124,0); a posicao antiga 120,5-128,3 estava errada. 2a metade NAO confere: (i) a aerea Bing, como o sat_fn_corte.py a desenha, esta ~5 m a OESTE do referencial OSM/Open Buildings; corrigindo, o telhado branco vivo fica em ~129-138,5 = contorno 29V7, nao 396C; (ii) no video nao existe anexo de ~5,5 m entre o predio branco e o volume azul: ha uma fresta de ~1,5 m (terraco com condensadora, painel perfurado, lamina branca). O contorno 396C (124,7-130,2, 5,5 m) casa com o proprio volume azul (5,4-5,9 m de frente, comecando ~1,5 m depois do predio branco).",
+   "como_medi": "Deslocamento da Bing: centro do asfalto da R. Coronel Mota em x~64 na aerea (OSM 67,9-68,9), R. Pedrinho Filho ~8,8 (OSM 13,4-14,8), R. Barao ~186 (OSM 191,5): -4,5 a -5,5 m nas tres (recortes v_mota2, v_pedrinho, v_barao). Telhados na Bing: bege 108,8-119,2, faixa opaca 119,2-124, branco vivo 124-133,5; somando 5 m casam em largura e posicao com 38P6, 396C e 29V7. Video: q_01679 (fresta de ~30-38 px contra 340 px do volume azul), q_01706, e cruzamentos 1686,5/1693."
+  },
+  {
+   "afirmacao": "E) Muro branco entre a borda leste do portao e a quina ~5,3 m (cerca de 2 x a altura, ~2,6 m); portao ~3,8 m",
+   "resultado": "confere",
+   "meu_valor": "Muro 5,6-5,8 m; portao 3,45-3,75 m (soma 9,25-9,3 contra 9,1 do autor); altura do muro 2,65-2,7 m; razao comprimento/altura ~2,1. Razao muro/portao 1,5-1,6 (autor 1,39). Trecho baixo a oeste do portao: 2,5 m.",
+   "como_medi": "Odometro entre os cruzamentos 1750 (quina), 1788,5 (borda L do portao) e 1813,5 (borda O): 5,59 e 3,66 m, com pequena correcao pela variacao da guinada entre os quadros. Conferido num quadro so (q_01760: portao 415->655 px, muro 655->1070 px, retificando o plano do muro com a guinada medida): razao 1,50. Altura: 196-215 px com escala vertical de ~77 px/m no plano do muro."
+  },
+  {
+   "afirmacao": "F) Layout na cena: predio branco -> anexo -> volume azul -> pilone -> marquise, e TCE -> trecho baixo -> portao -> muro -> quina -> totem -> predio branco batem com q_01679, q_01740, q_01760, q_01790",
+   "resultado": "nao_confere",
+   "meu_valor": "Segunda sequencia BATE (em relacao a quina Q=115,7 da cena): borda O do portao Q-9,1 (real Q-9,3); borda L do portao Q-5,3 (real Q-5,6 a -5,8); trecho baixo 2,5 m (real 2,5); totem Q+1,4 (real Q+1,1); borda O do predio Q+0,3 (real Q+1,0 +-0,5); largura do predio 8,1-8,6 (real 7,9). Primeira sequencia NAO bate: na cena o predio branco acaba em 124,1-124,6 (testeira ate 124,85) e o volume azul so comeca em 130,2 -> vao de 5,4-5,6 m ocupado por mureta, parede do 'anexo' (125,05-127,1), 'quina leste do predio vizinho' repetida (127,0-128,4), vao, lamina e pano. No real o vao tem 1,3-1,6 m. Volume azul, pilone (137,0-137,5), marquise, portao e muro da ESCON ficam ~4 m (3,5-5) a leste demais em relacao ao predio branco. Internamente a ESCON esta coerente (volume azul 5,4 m + ponta; pilone ~6-7 m apos o inicio do volume).",
+   "como_medi": "Posicoes da cena lidas (so leitura) de fachadas_spec.json + fachadas/lista.json + dx_m do patch_r20 e de 03_blender/tce.py; comparadas com as posicoes relativas medidas no video (cruzamentos em x=960 + odometro + guinada) e com as fotos r20_escon_x132.png, r20_branco_x120.png, r20_muro_x112.png contra q_01679, q_01693, q_01706, q_01741, q_01760."
+  },
+  {
+   "afirmacao": "G) Real: guia -> muro com grama ~1,9 m, ciclovia ~2,6-3,0 m, calcada ~3,0 m (total 7,5-8 m; calcada:ciclovia:grama ~1,15:1:0,74). Cena: guia em -44,2, 1,0 + 2,0 + 0,9 = 4,1 m ate o muro em -48,3; a pista da cena avanca ~3,5-4 m (uma faixa) sobre grama e ciclovia",
+   "resultado": "confere",
+   "meu_valor": "Cena: confere com perfil_calcada.txt (1,0 / 2,0-2,1 / 0,9; total 4,1 m). Real em q_01760 (coluna central): canteiro gramado com as duas guias 1,9-2,3 m (grama 1,65-2,0), ciclovia 2,3-2,9 m, calcada 2,3-2,9 m, total 6,9-8,3 m (f=850-1000 px; cresce com a focal). Proporcao calcada:ciclovia:canteiro = 0,98:1:0,78 (independe da focal; a calcada sai um pouco menor que a do autor). A aerea sugere margem ainda maior (~9-10 m entre a frente da garagem e a guia da pista). A conclusao se sustenta: faltam na cena pelo menos 3 m (provavelmente 3-4,5) entre a guia e o muro; a faixa junto a guia (-44,2 a -40,2) esta onde no real ha canteiro e ciclovia. Faixas da pista norte: pelo menos 2 (a nossa e a do meio-fio); nao da para contar alem disso por este video.",
+   "como_medi": "Geometria do chao em q_01760 com horizonte em y~582 na coluna central (dos fluxos e da distancia ao muro), altura da camera 1,47 m do odometro: pe do muro y=698, topo da guia da calcada 733, borda proxima da ciclovia 801, guia da pista 910-918 (base 955). Distancia lateral = f*h*cos/(y-yh). Perfil de cor da aerea (satprof.py) em x 100-119 e 40-50. Faixas: carro-forte estacionado com cones e carro branco entre nos e a guia (q_01840-q_01920), carros passando pela direita em q_01100 e q_02800; camera a 3,6-5,4 m da guia. Observacao: no real a ciclovia e REBAIXADA (nivel da pista) entre duas guias pintadas (calcada ~0,12 m acima, canteiro ~0,16 m acima); na cena ela esta a +0,2, no mesmo nivel da grama e da calcada."
+  }
+ ],
+ "achados": [
+  {
+   "peca": "ESCON (volume azul, pilone, marquise, portao e muro 402) e o 'anexo branco' entre ela e o predio branco",
+   "gravidade": "alta",
+   "descricao": "Na cena ha um vao de 5,4-5,6 m entre o fim do predio branco (124,1-124,6; testeira ate 124,85) e o inicio do volume azul (130,2), preenchido por mureta, parede de 'anexo' (125,05-127,1), uma 'quina leste do predio branco' duplicada (127,0-128,4), vao, lamina e pano. No video esse intervalo tem 1,3-1,6 m (no maximo 2). Consequencia: volume azul, pilone (137,0-137,5), marquise, portao (137,4-141,5) e muro (141,5-151,0) estao ~4 m (3,5 a 5) a leste demais em relacao ao predio branco. O r20 moveu o predio branco -4,2 m e a ESCON so -3,2 m, aumentando o vao que ja era grande (4,55 m no r19).",
+   "evidencia": "Fim leste da testeira do predio branco cruza x=960 em q_01693; borda oeste do volume azul em q_01686/q_01687: 6,5 quadros = 0,95 m de avanco do carro (0,146 m/quadro) + no maximo 0,6 m de paralaxe. q_01679: fresta de 30-38 px entre a testeira (x~850-858) e o volume azul (x=888), contra 340 px de frente do volume azul. q_01706: entre a testeira (x~1080) e o volume azul (x~1192) so cabem o terraco com condensadora, o painel perfurado e a lamina branca. Foto da cena C:\\Users\\Rodrigo\\Desktop\\favela\\game\\tools\\bv_city\\06_unity\\r20_escon_x132.png: vao de ~200 px contra 327 px do volume azul. Tiras: C:\\Users\\Rodrigo\\AppData\\Local\\Temp\\claude\\a0de669827628d24\\6dd1e011-812b-4b4e-b90d-0ba9ee612670\\scratchpad\\verif_r20\\st_g1.jpg",
+   "sugestao": "Encostar a ESCON no predio branco: volume azul comecando ~1,5 m depois do fim do predio branco (x ~125,5-126,5, isto e, dentro do contorno 396C), pilone em ~131-132,5, e o resto da ESCON acompanhando (-4 m aprox.). Tirar a parede do 'anexo' de 396C (local 4,55-6,6) e a quina duplicada de 29V7 (local 0-1,4); deixar so a fresta com terraco/painel/lamina. Antes de mover o muro leste da ESCON, medir a ponta leste dele com o odometro (nao medi)."
+  },
+  {
+   "peca": "Identificacao dos contornos na aerea (396C / 29V7)",
+   "gravidade": "media",
+   "descricao": "A aerea Bing desenhada pelo sat_fn_corte.py esta ~5 m a oeste do referencial OSM/Open Buildings (as tres ruas transversais aparecem 4,5-5,5 m a oeste dos eixos do OSM). A folha tce2_contornos.jpg sobrepoe os contornos sem esse deslocamento; por isso o 'telhado branco vivo' foi atribuido ao 396C. Corrigido, ele e o 29V7 (129-138,5) e a faixa opaca de 5 m e o 396C, que casa com o volume azul.",
+   "evidencia": "Recortes C:\\Users\\Rodrigo\\Desktop\\favela\\game\\tools\\bv_city\\02_referencias\\sat\\r20\\v_mota2.jpg (asfalto da Coronel Mota em x 61,5-66,5; OSM 68,9), v_pedrinho.jpg (asfalto 4,5-13; OSM 13,4-14,8), v_barao.jpg (183-188,5; OSM 191,5), v_branco.jpg (telhados 108,8-119,2 / 119,2-124 / 124-133,5 contra contornos 113,9-124,0 / 124,7-130,2 / 130,2-138,8).",
+   "sugestao": "Somar ~5 m ao x lido na Bing (ou redesenhar a grade) antes de comparar com contornos; nao usar a aerea para justificar o anexo."
+  },
+  {
+   "peca": "Correcao de guinada usada no levantamento (23 graus, 0,4 m por metro de recuo)",
+   "gravidade": "media",
+   "descricao": "A guinada real e ~10 graus perto do predio branco e varia de ~3 a ~12 graus ao longo do trecho (8-15 no pior caso de focal). Com 0,4 m/m as pecas recuadas foram empurradas ~1 m a oeste a mais do que deviam em relacao as do alinhamento: borda oeste do predio branco em Q+0,3 na cena (real Q+1,0 +-0,5, Q = quina do muro). O desfazimento do r19e ('puxamos quina e totem 1,2 m para oeste') foi justificado com essa guinada superestimada; o resultado ainda fica dentro de +-1,5 m, mas a regra nao deve ser reaplicada em outros trechos (torre do TCE, recuos maiores).",
+   "evidencia": "q_01760: retas paralelas a avenida convergem 4400-5000 px a esquerda do centro; face leste da torre do TCE converge em x~1085-1100; guinada por quadro em kyaw.py (k = 1,05e-4 em 1693, 1,67e-4 em 1741, 2,0-2,2e-4 em 1750-1790).",
+   "sugestao": "Usar a guinada medida no proprio quadro (ponto de fuga das linhas do chao) e a distancia de cada plano; correcao tipica 0,10-0,19 m por metro de recuo."
+  },
+  {
+   "peca": "Cobogo do predio branco (38P6)",
+   "gravidade": "media",
+   "descricao": "Na cena o painel de cobogo esta em x 114,6-115,95, quase todo a OESTE da quina do muro (115,7) e escondido atras do retorno do muro: nas fotos aparece como uma lasca de ~10 px. No real ele fica a LESTE da quina, entre a quina e a borda oeste do predio (aprox. Q+0 a Q+1,5), bem visivel com 4 colunas, com o totem na frente.",
+   "evidencia": "q_01741 (quina x~805, cobogo x 895-960, totem 905-935, borda do predio ~955-975) e q_01760 (quina 1070, cobogo 1085-1150, predio 1140) contra C:\\Users\\Rodrigo\\Desktop\\favela\\game\\tools\\bv_city\\06_unity\\r20_branco_x120.png (quina ~612, cobogo ~665-675, predio 678).",
+   "sugestao": "Levar o cobogo para ~115,8-117,2 (logo a leste da quina, no plano do predio) e a borda oeste do predio para ~116,5-117."
+  },
+  {
+   "peca": "Faixa entre a guia da pista e o muro (calcada, ciclovia, canteiro)",
+   "gravidade": "media",
+   "descricao": "Cena: 4,1 m (grama 1,0 + ciclovia 2,0 + calcada 0,9). Real: 6,9-8,3 m pelos quadros (a aerea sugere ate 9-10): canteiro 1,9-2,3, ciclovia 2,3-2,9, calcada 2,3-2,9. A calcada da cena tem um terco da largura real. Alem disso a ciclovia real e rebaixada, no nivel da pista, entre duas guias pintadas; na cena esta a +0,2, nivelada com grama e calcada.",
+   "evidencia": "C:\\Users\\Rodrigo\\Desktop\\favela\\game\\tools\\bv_city\\06_unity\\perfil_calcada.txt (x=112: guia -44,2, grama ate -45,2, ciclovia -45,3 a -47,3 com h 0,2, calcada -47,4 a -48,2, muro -48,3) contra q_01760 (linhas y=698/733/801/910-955 na coluna central; guias pintadas dos dois lados da ciclovia).",
+   "sugestao": "Guia da pista a ~7-8 m do muro (y ~ -41 a -40), sem a faixa de rolamento que hoje vai de -44,2 a -40,2; ciclovia rebaixada com guia dos dois lados. A decisao e do dono do chao (PA_Chao)."
+  },
+  {
+   "peca": "Tabela de velocidade do video (faixa_norte_quadros.csv, 0,202 constante) e velocidades por quadra",
+   "gravidade": "media",
+   "descricao": "O carro varia de ~0,31 m/quadro (1400-1500) a ~0,143 (1650-1800). Qualquer x tirado por velocidade constante ou pela media da quadra erra varios metros no meio dela: entre 1500 e 1650 (frente leste da ESCON, muro 402) o carro esta freando de 0,28 para 0,14. A largura do predio branco '8,2 m em 44 quadros = 0,186' e circular; a velocidade ali e 0,145 e a borda leste cruza em 1693, a oeste em 1741-1742 (49 quadros); os 7,9 m so fecham descontando a mudanca de guinada entre os dois quadros.",
+   "evidencia": "Odometro de chao (flow.py/odo4.py): x da camera com ancora 68,9 em 2022: 1400:193,6 1450:180,1 1500:163,0 1550:150,1 1600:140,8 1650:132,7 1700:125,1 1750:117,9 1800:110,7 1850:102,3 1900:92,9 1950:83,6 2000:73,5 2050:63,2 2100:55,4 2200:40,3 2300:24,2 2350:14,1.",
+   "sugestao": "Trocar a tabela constante por essa curva (ou refazer o odometro) e redatar as pecas a leste do predio branco."
+  },
+  {
+   "peca": "Portao de enrolar e muro ate a quina",
+   "gravidade": "baixa",
+   "descricao": "Dentro da tolerancia, mas a proporcao esta um pouco invertida: portao da cena 3,8 m (real 3,45-3,75) e muro 5,3 m (real 5,6-5,8); razao muro/portao 1,39 na cena contra 1,5-1,6 no real.",
+   "evidencia": "Cruzamentos em x=960: quina 1750, borda L do portao 1788-1789, borda O 1813-1814; q_01760: portao 240 px, muro 415 px.",
+   "sugestao": "Se for mexer: borda leste do portao ~0,3-0,4 m para oeste."
+  },
+  {
+   "peca": "Ancora e quadro de esquina usados na calibracao",
+   "gravidade": "baixa",
+   "descricao": "(1) A quina sudeste do tapume cruza o centro em ~2375, nao 2362 (em 2362 quem esta no centro e a face lateral do tapume); o eixo da Pedrinho Filho fica em ~2345 e a media cai de 0,170 para 0,167. (2) Os eixos foram tomados em y=-62, mas as esquinas observadas estao em y~-48, onde o OSM da 67,9 (Mota) e 13,4 (Pedrinho): ~1 m de incerteza sistematica em todas as posicoes absolutas. Meus valores para TCE/portao/quina/predio branco saem 0,5-1,5 m a leste dos do autor.",
+   "evidencia": "Tiras C:\\Users\\Rodrigo\\AppData\\Local\\Temp\\claude\\a0de669827628d24\\6dd1e011-812b-4b4e-b90d-0ba9ee612670\\scratchpad\\verif_r20\\st_p2.jpg (tapume) e st_g4.jpg/st_g4b.jpg (Coronel Mota); vias_eixo.geojson (Mota: 67,7 em y=-45,3 e 71,1 em y=-94,1).",
+   "sugestao": "Nao mover nada por isso; registrar +-1,5 m como incerteza absoluta do trecho."
+  }
+ ],
+ "nao_julgavel": [
+  "Distancia focal real do video: as ortogonais (face leste da torre do TCE, convergencia das verticais) dao 650-1050 px; a margem lida na aerea (9-10 m) pediria ~1250 px. Todas as distancias LATERAIS (recuos, larguras de calcada/ciclovia/canteiro, distancia camera-muro) escalam com a focal e ficam com +-25 %; as distancias ao longo da avenida nao dependem dela.",
+  "Posicao ABSOLUTA do conjunto predio branco + ESCON: meu odometro poe o predio branco em ~117-125 e o volume azul em ~126-127, com +-1,5 m. O que e firme e o vao de 1,3-1,6 m entre os dois; nao consigo garantir se e a ESCON inteira que deve vir ~4 m para oeste (o que casa com os contornos 38P6/396C) ou parte disso.",
+  "Numero total de faixas da avenida: o video so mostra o lado norte; vejo a nossa faixa e a do meio-fio (pelo menos 2). A aerea mostra asfalto continuo de ~15 m com uma linha a ~4,9 m da guia norte e estacionamento no lado sul, mas nao da para separar faixas com seguranca a 0,3 m/px.",
+  "Ponta leste da ESCON (muro 402, predio atras do muro, poste, bloco cinza) e a marquise: nao medi; o odometro tem lacuna em 1640-1660 (arbustos do canteiro) e a incerteza ali e maior.",
+  "Esquinas da R. Barao do Rio Branco: so conferi pelas guias da boca da rua (1388 e 1427); as quinas dos lotes sao recuadas e irregulares.",
+  "Folhas tce_x112, muro_x112b, escon_x147 e calcada_x60 e as fotos r19/r18/r17/r16: nao examinei em detalhe; o julgamento de F usa as posicoes numericas da cena e as fotos r20_escon_x132, r20_branco_x120 e r20_muro_x112.",
+  "Recuo do predio branco (6,4 m na especificacao): pela geometria do chao sai entre ~4 e ~9 m conforme a focal e o desnivel do patio; a aerea indica ~5 m. Nao da para fechar.",
+  "Altura exata do desnivel calcada/ciclovia/canteiro (estimei 0,12 e 0,16 m pelas faces das guias, +-0,05)."
+ ]
+}

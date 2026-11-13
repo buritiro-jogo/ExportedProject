@@ -1,0 +1,256 @@
+{
+ "resumo": "Revisão independente da r26 (vegetação) e reconferência da r25c, só leitura. Usei 26 vistas próprias do Street View (limite atingido): 21 de jan/fev 2025, 1 de out/2019 (x -542, a que o serviço entregou nesse ponto), 1 de jun/2012 (escola, descartada para medidas) e as demais de 2025. Também usei 1 recorte da aérea z18, as 34 fotos da cena em 06_unity e os blocos de especificação. Não abri o Unity nem editei nada do projeto; minha aba foi fechada. Capturas, ampliações e o script de medição estão em C:/Users/Rodrigo/AppData/Local/Temp/claude/a0de669827628d24/6dd1e011-812b-4b4e-b90d-0ba9ee612670/scratchpad/revisor_r26/ (v01 a v26, zoom_0 a zoom_5, cena_0 a cena_8, geo.py).\n\nMétodo: ponto de chão pelo pé do tronco ou do muro (campo vertical 60 graus, inclinação 8 graus, câmera a 2,1 m; com 2,27 m tudo cresce ~8 %). A maioria das vistas foi oblíqua (rumo 177) para contar troncos ao longo da fileira. Incerteza: x e y ±1 m até 15 m da câmera, ±3 m a 40 m; alturas ±10 %; posição absoluta da câmera ±2 a 3 m, por isso só afirmo distâncias relativas (guia, árvore, muro na mesma vista).\n\nPARTE A, o que está bom: a fileira do batalhão existe em toda a extensão e o x das copas lidas na aérea bate com os troncos reais (melhor caso: a leste do igarapé, 9 de 10 dentro de 2 m). As intermediárias \"estimadas\" se justificam: a fileira real é ainda mais cheia que o modelo (cerca de 94 troncos contra 72 nos 634 m que vi). Só uma estimada sobra (x -324,4). As sebes do quartel da PM e a sebe a leste do igarapé conferem em posição e altura.\n\nPARTE A, erros principais:\n1. Porte: só o trecho oeste (x -945 a -800) tem árvores do tamanho do modelo. De x -793 a -340 as reais têm 4,2 a 7,2 m de altura e copa de 4 a 7 m; a leste de x -235 têm 2,8 a 5,4 m e copa de 3 a 4 m. O modelo (escala 0,8 a 1,2, isto é, 7,2 a 10,8 m de altura e copa de 8,3 a 12,5 m) fica 60 a 150 % grande nesses trechos.\n2. Escola: as 14 árvores estão 7 a 34 m atrás do gradil. O que se vê da rua é outra coisa: mangueira gigante colada ao gradil (x ~435), duas ou três árvores logo atrás do gradil na ponta oeste, uma árvore grande na calçada (fora do gradil) em x ~400 e gramado com palmeiras pequenas no meio. O deslocamento em y aplicado às copas da aérea (+5 m) tem o sinal contrário ao do chão.\n3. Posição transversal: as árvores reais formam uma linha reta logo atrás da calçada (2,2 a 3,0 m da guia, 5,5 a 8,5 m do muro). O modelo as espalha entre 42 e 72 % do vão e as deixa a 2,3 a 4,7 m do muro; a leste do igarapé ficam quase encostadas na sebe.\n4. Sebe de x -440 a -365: no real são arbustos isolados, não sebe contínua. Há arbustos isolados também de x -525 a -440, onde o modelo não tem nada.\n\nEspécie provável da fileira: munguba (Pachira aquatica), pelas folhas compostas digitadas pendentes, flores em pincel na imagem de out/2019 e tronco curto que abre a 1,2 a 1,9 m. Confiança moderada (~75 %). As quatro ou cinco árvores maiores de copa em cúpula (x -332, -305, -266 a -257, -176) parecem cajueiro ou castanholeira; confiança baixa (~50 %).\n\nPARTE B: os 15 achados do laudo anterior aparecem tratados nas fotos e nos blocos. Remedi a mureta e a tela do batalhão em 11 pontos novos (incluindo os três trechos não visitados) e bate com a especificação nova; só o trecho x -544 a -296 pode estar 10 a 20 % alto. Não vi peça flutuando nem atravessando outra, com duas ressalvas vistas apenas nas fotos: o gradil branco encosta ou atravessa a casinha verde de telhado vermelho perto do prédio cinza, e há uma faixa de gramado entre a calçada da planta e esse gradil que no real não existe.",
+ "achados": [
+  {
+   "parte": "vegetacao",
+   "unidade": "arvores_sul.json, grupo batalhao, x -793 a -340 (cerca de 45 arvores)",
+   "gravidade": "grave",
+   "descricao": "Arvores grandes demais no trecho central. As reais sao jovens: 4,2 a 7,2 m de altura e copa de 4 a 7 m. O modelo usa escala 0,8 a 1,2 (7,2 a 10,8 m de altura, copa de 8,3 a 12,5 m): cerca de +60 % na altura e +90 % na copa. Excecoes reais grandes dentro do trecho: x -450 (>= 6,4 m, copa >= 6 m), x -332 e x -305,5 (8,1 m, copa de 10 a 12 m, em cupula).",
+   "evidencia": "Camera a 2,1 m (somar 8 % para 2,27 m). v05: x -786,6 altura 6,6 m, copa 6,8 m; x -782 altura 5,8 m. v01: x -763,7 altura 5,7 m, copa 4,7 m. v06: x -739 altura 4,5 a 4,7 m, copa 5,7 m. v07: fileira x -698 a -655 com topo a 5 a 6 m. v08: x -648 altura 5,0 m, copa 4,6 m; -643: 5,3 m; -638: 5,5 m. v24: x -521 altura 5,5 m, copa 4,8 m; -516: 5,0 m. v10: x -492: 5,25 m. v11: x -445,6: 3,4 m; -437: 5,8 m. v12: x -391: 4,2 m; -387: 5,6 m. v13: x -345 altura 4,9 m, copa 3,9 m; x -332 altura 8,1 m, copa ~12 m. v21: x -305,5 altura 8,1 m, copa ~10 m.",
+   "correcao": "Em monta_arvores_sul.py baixar o piso da escala (hoje 0,8) e fixar por trecho, com o oiti de 10,4 x 9,0 m: x -793 a -600 escala 0,55 a 0,70 (media 0,62: ~5,6 m de altura, copa ~6,4 m); x -545 a -340 escala 0,45 a 0,65 (media 0,57). Manter 1,1 a 1,2 so em x -450 (0,8), -332 e -305 (1,1 a 1,2). Tirar o fator 1,25 de 'copa de hoje' nesses trechos: a copa lida na aerea ja superestima."
+  },
+  {
+   "parte": "vegetacao",
+   "unidade": "arvores_sul.json, grupo batalhao, x -235 a -176 (7 arvores)",
+   "gravidade": "grave",
+   "descricao": "A leste do igarape, depois das duas arvores grandes da margem, as arvores sao mudas jovens de 2,8 a 5,4 m com copa de 3 a 4 m e tronco fino. O modelo poe oitis de escala 0,8 a 1,2 (7,2 a 10,8 m, copa de 8,3 a 12,5 m): 100 a 150 % grandes. A foto da cena r25_so_xm215 mostra copas que cobrem o ceu inteiro; na vista real as copas mal passam da linha do muro.",
+   "evidencia": "v15 (camera em x -226,9): x -224,1 altura 3,3 m, copa 2,9 m; x -219,8 altura 2,8 m; x -215,3 altura 4,4 m; x -206,4 altura 5,35 m. Troncos em x -224, -220, -215, -206, -199, -197, -192, -184 (os quatro ultimos a mais de 28 m, +-3 m). O x do modelo bate (-224,4, -219,4, -214,1, -205,6, -194,4, -181,6).",
+   "correcao": "Escala 0,35 a 0,55 para as arvores de x -234,6 a -194,4 (alvo: 3 a 5 m de altura, copa 3 a 4 m). Manter 1,0 a 1,2 so em x -264,6, -254,5 e -244,4 (reais de 7,8 m, troncos multiplos inclinados) e em x -181,6 (arvore muito grande na divisa, tronco em x ~-176 +-3)."
+  },
+  {
+   "parte": "vegetacao",
+   "unidade": "arvores_sul.json, grupo escola (14 arvores)",
+   "gravidade": "grave",
+   "descricao": "Quantidade e posicao nao batem com o que se ve da rua. O modelo tem 14 arvores espalhadas pelo patio, de 7 a 34 m atras do gradil (y 54 a 81), 13 delas mangueira x 1,25. No real (jan/2025) a vegetacao grande fica na borda da frente: (1) mangueira gigante com tronco 1 a 3 m atras do gradil em x ~435, 14 a 17 m de altura, copa de ~20 m (x 424 a 447) cobrindo a calcada e o abrigo de onibus (pode ser duas arvores juntas); (2) arvore grande NA CALCADA, fora do gradil, em x ~400, 8 a 10 m, copa de 10 a 12 m; (3) duas arvores de 7 a 9 m logo atras do gradil em x ~385 e ~376 e uma pequena em x ~369; (4) entre x 395 e 425 o patio e gramado com duas palmeiras de ~4,3 m e arbustos, sem arvore grande. Causa provavel: as copas da aerea foram levadas ao real com (+7, +5) m, deslocamento medido no canto do TELHADO; o chao da aerea esta deslocado para o SUL (o proprio script do batalhao diz isso), entao o y deveria diminuir, nao aumentar.",
+   "evidencia": "v19 (camera 432,9; 27,5): tronco da mangueira em (435,5; 47,8), gradil em y 45,0 a 46,6, topo a 37 graus -> 13,8 a 17,4 m conforme o ponto da copa; copa de u 130 a 960 = ~22 m. v18 (camera 402,7; 28,1): arvore da calcada com pe em (399,7; 39,0), gradil em y 45,6, guia em 40,4, altura 8,0 m, copa 10 m; palmeiras em (411,7; 48,4) e (409,8; 49,2), 4,3 m; predio visivel atras sem arvore grande na frente. v23 (camera 382,6; 28,3): duas copas grandes logo atras do gradil nas direcoes x ~385 e ~376 (7 a 9 m de altura, 8 a 11 m de copa, supondo 22 a 28 m da camera) e uma menor em x ~369. Aerea: guia em y_img ~48 contra y 37 a 40,6 medido na rua (deslocamento de -8 a -11 m em y, nao +5). Modelo, por janela: x 366 a 395, 6 arvores (y 63 a 81); x 395 a 425, 5; x 425 a 455, 3 (a mais proxima do gradil em y 54,3).",
+   "correcao": "Trocar a lista da escola por posicoes vistas (+-3 m): mangueira em (435,5; 49) com copa de 18 a 20 m e 14 a 16 m de altura (ou duas mangueiras em (430; 50) e (441; 50) com copa de 11 a 12 m); arvore em (385; 52) copa 9 m, altura 8 m; arvore em (376; 52) copa 10 m, altura 8 m; arvore pequena em (369; 50) copa 5 m, altura 4,5 m; duas palmeiras de 4,3 m em (410; 48,5) e (412; 49). Na calcada, fora do gradil, arvore em (400; 39,5 no real, isto e, ~1 m atras da guia da cena) com copa de 10 a 12 m e 8 a 10 m de altura; a cena ja tem uma arvore de calcada perto de x 410 que pode ser levada para x 400. Do fundo do patio manter no maximo 3 ou 4 da ponta oeste (x 372 a 391, y 66 a 81), marcadas como nao conferidas. Se for reler a aerea: y_real = y_aerea - 8 (+-2), x_real = x_aerea + 5 a 7."
+  },
+  {
+   "parte": "vegetacao",
+   "unidade": "arvores_sul.json, grupo batalhao (posicao transversal, todas)",
+   "gravidade": "media",
+   "descricao": "As arvores reais estao em UMA linha reta logo atras da calcada: 2,2 a 3,0 m da guia e 5,5 a 8,5 m do muro, isto e, a 25 a 33 % do vao guia-muro. O modelo usa 42 a 72 % e varia de arvore para arvore; essa variacao vem do centro da mancha escura na aerea, nao e real. Resultado: no modelo as arvores ficam a 2,3 a 4,7 m do muro (1,5 a 4 m perto demais). A leste do igarape ficam a 1 a 2 m da sebe; no real ha ~4 m de gramado entre a fileira e a sebe. Excecao real: em x -925 a -905 ha arvores em duas linhas (y 49,3 e 51 a 51,8). A calcada real tem ~1,5 m de largura; a da cena tem 2,9 m.",
+   "evidencia": "Mesma vista, camera a 2,1 m (guia / tronco / pe do muro, em y): x -880: 46,7 / 49,0 a 50,2 / 54,7 a 55,0. x -787: 46,0 / 48,2 / 55,9 (borda de dentro da calcada em 47,5). x -739: 45,6 / 48,2 / 54,3. x -698: 45,3 / 48,2 / 54,6 (borda da calcada em 46,8). x -521: 43,9 / 46,7 / 55,2. x -492: 43,6 / 46,0 / 53,7. x -450: 43,1 / 45,8 / 54,4. x -391: 43,0 / 45,5 / 52,2. x -345: 42,5 / 45,0 / ~51,5. x -224: 41,5 / 43,7 / ~49,5 (sebe em 47,8 a 48,2). Modelo em x -450: guia 45,7, arvores em y 51,5 a 52,1, gradil 54,4 (2,3 a 2,9 m do muro; real 8,6 m).",
+   "correcao": "Por todas na mesma linha: y = calcada(x) + 1,0 a 1,3 m (tabela 'calcada' de ajuste_linha.json), o que equivale a rel ~0,45 fixo com a calcada atual de 2,9 m; ignorar o 'rel' de copas_aerea.json. Se a calcada da cena for estreitada para 1,5 m, usar y = guia + 2,6 m. So em x -925 a -905 manter duas ou tres arvores 1,5 a 2,5 m mais para dentro."
+  },
+  {
+   "parte": "vegetacao",
+   "unidade": "arvores_sul.json, grupo batalhao (quantidade por trecho)",
+   "gravidade": "media",
+   "descricao": "A fileira real e mais cheia que o modelo: contei cerca de 94 troncos onde o modelo tem 72 (634 m vistos; -23 %). As 'estimadas' se justificam e ainda faltam arvores, principalmente em x -700 a -654 (11 reais a cada ~4,5 m contra 6), x -885 a -838 (8 contra 5), x -612 a -581 (4 contra 2, a fileira vai ate o canto da portaria) e x -496 a -466 (5 contra 3). Sobram duas em x -324,4 ('estimada') e x -315,9 ('aerea'): entre as copas grandes de x -332 e x -305,5 nao ha tronco. O modelo tem duas arvores em x -739,9 e -734,6 onde vi uma so (x -739), seguida de um vao de 17 m ate x -722.",
+   "evidencia": "Troncos reais (camera a 2,1 m; os mais distantes +-3 m). v02: -932, -924, -920,6, -920,4, -913, -907/-904, -896. v03: -880, -873, -869, -860, -853, -850, -847, -840. v04: -835, -832, -828, -823, -814, -807. v05 e v01: -787, -782, -769, -762, -757, -748. v06: -739, -722, -710, -707, -702. v07: -698, -694, -690, -685, -681, -677, -673, -669, -664, -661, -655. v08: -648, -643, -638, -624, -623, -621. v22: -599, -598, -588, -581. v24 e v09 (2019): -541, -532, -527, -521, -516, -512, -508. v10: -492, -486, -483, -478, -473, -470, -468. v11: -450, -446, -437, -433, -424, -420, -416. v12: -391, -387, -383, -371, -370, -368, -361, -351. v13 e v21: -345, -332, -305,5, -301. v14: -264, -259, -245. v15: -224, -220, -215, -206, -199, -197, -192, -184.",
+   "correcao": "Baixar o limiar de preenchimento de 14 m para 9 m e o passo de 9,5 m para ~5,5 m nos trechos x -700 a -618 e x -885 a -838; acrescentar arvores em x -588 e -581 (limite FORA da portaria em -584, nao -586) e em x -483 e -478; retirar x -324,4 e x -315,9; retirar x -734,6. Meta: ~11 arvores em x -700 a -654, 8 em x -885 a -838, 6 em x -651 a -618."
+  },
+  {
+   "parte": "vegetacao",
+   "unidade": "ajuste_linha.json, sebe [-440, -296, 1,2, 0,9]",
+   "gravidade": "media",
+   "descricao": "A sebe a oeste do igarape so e continua de x ~-365 (+-5) ate o fim da mureta em x -299,5. De x -440 a -365 o real (fev/2025) tem arbustos isolados de 0,9 a 1,2 m de altura e 1,5 a 3 m de largura, um a cada 4 a 8 m, com a mureta azul e a tela a vista entre eles. O modelo poe uma caixa continua de 1,2 m que esconde a mureta inteira (foto r25_so_xm390). O mesmo padrao de arbustos isolados continua para oeste ate x ~-525, onde o modelo nao tem nada, e ha arbustos esparsos em x -925 a -915 e x -760 a -750. Na imagem de out/2019 a sebe era continua desde x ~-540: ela rareou depois. A sebe continua mede 0,9 a 1,1 m (modelo 1,2 m).",
+   "evidencia": "v11 (fev/2025): arbustos em x -443, -434, -421 e -414 com mureta visivel entre eles, altura 0,9 m. v12: arbustos em x -398 (1,0 m), -394 (1,1 m), -389, -386, -382, -377, -372; sebe continua a partir de x ~-361. v13: sebe continua em x -346 (1,07 m), -334 (0,9 m), -327 (1,0 m). v21: sebe continua ate o fim da mureta em x -299,5, altura 0,87 m. v10: arbustos em x -499, -487, -485, -480, -474. v24: arbustos em x -514 (1,0 m), -502, -490. v09 (out/2019): sebe continua de x -540 a pelo menos -513.",
+   "correcao": "Trocar por: sebe continua de x -365 a -299,5, altura 1,05 m, espessura 1,2 m; de x -525 a -365, arbustos isolados (caixas de 2 x 1,2 m, altura 1,0 a 1,2 m) a cada 5 a 7 m, cerca de 25 a 30 unidades, deixando a mureta a vista. Opcional: 4 a 6 arbustos esparsos em x -925 a -915 e -760 a -750."
+  },
+  {
+   "parte": "vegetacao",
+   "unidade": "lado sul fora dos dois grupos (x -1135 a -116)",
+   "gravidade": "media",
+   "descricao": "Vegetacao grande que existe e nao esta na cena, sem medidas alem das que tirei. (a) Em frente ao muro azul, x -175 a -116: arvores no gramado entre a calcada e o muro em x ~-165 (5,7 m), ~-156 (7,4 m) e ~-131 (6,9 m, +-4 m em x), na mesma linha da fileira do batalhao (y ~43,5 a 44,5; guia em 40,8; muro em 48,5). A foto r25_sul_xm145 nao tem nenhuma. (b) Em frente ao terreno murado, x -1135 a -1050: arvores entre a calcada e o muro branco em x ~-1113 e ~-1110 (5,3 a 5,8 m), outra em x ~-1089 (+-4) e mais a leste; abrigo de onibus em x -1127,5 a -1124,5. (c) Igarape: arvore de ~6,5 m na margem leste em x ~-276 e capim alto nas margens; a cena mostra chao bege liso no vao (r25_so_xm300). (d) Dentro do batalhao: macico de arvores grandes e um flamboyant visiveis por cima da tela em x ~-405 a -385, 20 a 30 m atras do muro; arvores jovens esparsas em x -745 a -700. (e) Coqueiro alto (~9 a 10 m) junto ao abrigo de onibus em x ~-606; o abrigo (vidro e metal) fica em x ~-612 a -605, na calcada. (f) Atras do muro do terreno em x -1100 a -1060: copas grandes, tendas e telhado de quiosque (ja listados no laudo anterior).",
+   "evidencia": "v25 (camera -175,4; 37,8): troncos em (-165,4; 43,3), (-155,7; 43,7) e (-131,1; 44,6). v26 (camera -1128,7; 46,6): troncos em (-1113,3; 53,3) e (-1109,6; 53,1), guia em y 49,4, muro em 57,3 com 1,63 m; abrigo em x -1127,4 a -1124,4. v14: arvore do canal em (-276,5; 56), 6,5 m. v12: macico atras da tela a direita. v22: coqueiro atras do abrigo; canto do abrigo em (-605,4; 46,4).",
+   "correcao": "Acrescentar, com o mesmo modelo e escala 0,6 a 0,8: tres ou quatro arvores em x -165, -156, -143 (nao vista, interpolada) e -131, y = calcada + 1 m; tres em x -1113, -1110 e -1089, a ~4 m do muro. Uma arvore de escala 0,7 em (-276; 56). Coqueiro em (-606; ~50) se houver modelo de palmeira. O macico interno do batalhao so com medida propria: nao tenho posicao confiavel."
+  },
+  {
+   "parte": "vegetacao",
+   "unidade": "modelo clonado (I_CC_Oiti_A) e aparencia da sebe",
+   "gravidade": "leve",
+   "descricao": "Forma. A arvore real da fileira tem tronco curto e grosso com raizes aparentes, abre em 3 a 5 galhos a 1,2 a 1,9 m do chao e faz copa em guarda-chuva, mais larga que alta nas adultas, com folhas grandes pendentes em tufos. O oiti do mapa abre a ~2,5 a 3,5 m na escala 1,0 a 1,2 e tem copa mais aberta e alta. Com a escala reduzida (0,55 a 0,7) a forquilha cai para 1,5 a 2 m e a diferenca some; nas grandes do trecho oeste ela fica visivel (comparacao bec_xm840). A sebe da cena e uma caixa verde-escura lisa; a real e verde-media com flores amarelas em toda a parte leste e em parte do trecho x -365 a -300.",
+   "evidencia": "Forquilha medida: x -840: 1,2 m; x -873: 1,7 a 1,8 m; x -787: 1,4 m; x -698: 1,25 m; x -648: 1,2 m; x -450: 1,9 m; x -345: 1,5 m. Folhas digitadas e flores em pincel em v09 (out/2019). Flores amarelas da sebe em v15, v14 e v12.",
+   "correcao": "Se houver outro modelo de copa baixa e larga no mapa, usa-lo no trecho x -945 a -800. Senao manter o oiti com escala horizontal 1,15 e vertical 0,9 nesse trecho. Sebe: cor de base ~#4f7a2e com pontos amarelos (~#f2c21a) no terco de cima, sem copiar foto."
+  },
+  {
+   "parte": "vegetacao",
+   "unidade": "so_pm_sebes_h001 e sebe leste [-273, -176, 1,3, 0,9]",
+   "gravidade": "leve",
+   "descricao": "Conferem em posicao e altura (ver confirmados). Diferencas pequenas. (a) Os canteiros da PM sao aneis de sebe aparada em volta de dois bustos sobre pedestal de pedra (topo a 1,55 a 1,85 m), nao blocos cheios; ficam na borda de um estacionamento calcado com guia pintada em y ~57 a 58. (b) A sebe leste e mais espessa (pe ~1,5 a 2 m a frente do muro; modelo 1,35 m) e vai ate x ~-171 (modelo -176); nos primeiros ~10 m (x -273 a -262) e arbusto escuro sem flor.",
+   "evidencia": "v20 (inclinacao 0): canteiros em x -1016,5 a -1010,2 e -1009,6 a -1003,4, frente em y 59,1 (60,2 com camera a 2,27 m), fundo em 62,5 (63,9), altura 0,95 a 1,06 m (1,03 a 1,15). v15: pe da sebe em y 47,8 a 48,2, altura 1,09 a 1,47 m, topo do muro a 1,61 m. v25: fim da sebe em x -170,9.",
+   "correcao": "PM: opcional, vazar o miolo (anel de 0,7 m de espessura) e por dois pedestais de 0,8 x 0,8 x 1,1 m em (-1007; 59,5) e (-1013,5; 59,5), sem reproduzir os bustos. Sebe leste: espessura 1,5 m e fim em x -172."
+  },
+  {
+   "parte": "correcoes_r25",
+   "unidade": "so_bec_b (x -544 a -296)",
+   "gravidade": "leve",
+   "descricao": "Mureta e tela desse trecho podem estar 10 a 20 % altas. A especificacao tem 1,0 m e 1,65 m; medi mureta de 0,83 a 0,99 m e topo da tela de 1,24 a 1,56 m em cinco pontos novos (com camera a 2,27 m: 0,90 a 1,07 m e 1,34 a 1,68 m). Fica dentro da incerteza, mas todos os pontos caem abaixo do valor adotado. Ha concertina sobre a tela em todo o trecho, ainda ausente (ja declarado pelo autor).",
+   "evidencia": "Camera a 2,1 m, mureta / tela: x -519: 0,94 / 1,49. x -495: 0,99 / 1,56. x -448: 0,83 / 1,34. x -396: 0,91 / 1,40. x -308: tela 1,24.",
+   "correcao": "Mureta 0,92 m e topo da tela 1,45 m em so_bec_b (ou manter 1,0 / 1,65 se a camera a 2,27 m for confirmada). Concertina de 0,3 m de diametro no topo de x -545 a -296 e de x -800 a -700."
+  },
+  {
+   "parte": "correcoes_r25",
+   "unidade": "sul_e4_estacionamento / gradil de sul_e5 (fotos r25_cinza_de_cima e r24_sul_x578)",
+   "gravidade": "leve",
+   "descricao": "Dois pontos vistos so nas fotos da cena; nao abri o Unity. (a) Na vista de cima o gradil branco chega dos dois lados a casinha verde de telhado vermelho que ja existia no mapa: ou encosta nas paredes ou atravessa a casa. (b) O gradil esta dentro do gramado da planta, com uma faixa de grama de varios metros (duas arvores e postes) entre a calcada vermelha e o gradil. Na foto ao nivel da rua (x 578) o primeiro plano e gramado, nao asfalto nem calcada. No laudo anterior o gradil real ficava a 9,4 m da camera, na borda da calcada.",
+   "evidencia": "r25_cinza_de_cima.png: linha branca do gradil interrompida exatamente na casa; faixa de grama entre a calcada inferior e o gradil com ~1,5 copa de arvore de largura. r24_sul_x578.png: gramado do pe da imagem ate o gradil.",
+   "correcao": "Conferir no Unity se o gradil cruza a casa; se cruzar, cortar o gradil nas paredes dela (vao do tamanho da casa). A faixa de grama em frente ao gradil e desajuste da planta (pista ao norte da real nesse ponto): trocar o material dessa faixa por calcada ou registrar como pendencia da planta."
+  }
+ ],
+ "arvores_por_trecho": [
+  {
+   "x0": -936,
+   "x1": -890,
+   "contadas_no_real": 7.5,
+   "no_modelo": 5,
+   "observacao": "v02 (jan/2025). Troncos em x -932, -924, -920,6, -920,4, -913, -907/-904 (forquilha ou duas arvores) e -896: 7 a 8. Arvores grandes e velhas (altura > 7 m, copa > 10 m). Em parte, duas linhas. Uma estimada no modelo (-892,2), justificada."
+  },
+  {
+   "x0": -885,
+   "x1": -838,
+   "contadas_no_real": 8,
+   "no_modelo": 5,
+   "observacao": "v03. Troncos em -880 (8,2 a 8,9 m de altura, copa > 9,4 m), -873 (6,9 a 7,5 m), -869, -860, -853, -850, -847, -840. Os tres entre -853 e -847 estao a mais de 33 m (+-3 m; podem ser dois). Faltam ~3 no modelo."
+  },
+  {
+   "x0": -838,
+   "x1": -793,
+   "contadas_no_real": 6,
+   "no_modelo": 5,
+   "observacao": "v04. Troncos em -835, -832, -828, -823, -814, -807. Tres das cinco do modelo sao estimadas e se justificam."
+  },
+  {
+   "x0": -793,
+   "x1": -742,
+   "contadas_no_real": 6,
+   "no_modelo": 6,
+   "observacao": "v05 e v01 (trecho nao visitado na rodada anterior). Troncos em -787 (6,6 m), -782 (5,8 m), -769, -762 (5,7 m, copa 4,7 m), -757, -748. Quantidade bate; porte real menor que o do modelo."
+  },
+  {
+   "x0": -742,
+   "x1": -700,
+   "contadas_no_real": 5,
+   "no_modelo": 5,
+   "observacao": "v06 (trecho nao visitado antes). Troncos em -739 (4,5 m), -722, -710, -707, -702 (os tres ultimos +-3 m). Vao real de 17 m entre -739 e -722, onde o modelo tem -734,6."
+  },
+  {
+   "x0": -700,
+   "x1": -654,
+   "contadas_no_real": 11,
+   "no_modelo": 6,
+   "observacao": "v07. Fileira regular, uma arvore a cada ~4,5 m: -698, -694, -690, -685, -681, -677, -673, -669, -664, -661, -655; 5 a 6 m de altura. Maior falta do modelo (-45 %)."
+  },
+  {
+   "x0": -651,
+   "x1": -618,
+   "contadas_no_real": 5.5,
+   "no_modelo": 4,
+   "observacao": "v08. Troncos em -648 (5,0 m, copa 4,6 m), -643, -638, -624, -623, -621 (os tres ultimos +-3 m; 5 ou 6 no total)."
+  },
+  {
+   "x0": -612,
+   "x1": -580,
+   "contadas_no_real": 4,
+   "no_modelo": 2,
+   "observacao": "v22. Troncos em -599 e -598 (duas arvores, uma mais perto do muro), -588 e -581 (+-2,5 m); a fileira vai ate o canto oeste da portaria. Abrigo de onibus em x -612 a -605 e coqueiro em x ~-606."
+  },
+  {
+   "x0": -542,
+   "x1": -496,
+   "contadas_no_real": 7.5,
+   "no_modelo": 6,
+   "observacao": "v24 (fev/2025) para x -524 a -496: -521 (5,5 m), -516, -512, -508. v09 (out/2019, mais antiga) para x -542 a -524: -541, -532, -527. Total 7 a 8. Trecho nao visitado antes."
+  },
+  {
+   "x0": -496,
+   "x1": -466,
+   "contadas_no_real": 5,
+   "no_modelo": 3,
+   "observacao": "v10 e v24. Troncos em -492 (5,25 m), -486, -483, -478, -473, -470, -468 (os ultimos +-3 m; 5 a 7 no total). Nenhuma estimada do modelo aqui."
+  },
+  {
+   "x0": -452,
+   "x1": -412,
+   "contadas_no_real": 7,
+   "no_modelo": 5,
+   "observacao": "v11 (trecho nao visitado antes). Troncos em -450 (>= 6,4 m), -446 (muda de 3,4 m), -437 (5,8 m), -433, -424, -420, -416."
+  },
+  {
+   "x0": -401,
+   "x1": -351,
+   "contadas_no_real": 7,
+   "no_modelo": 6,
+   "observacao": "v12 (trecho nao visitado antes). Troncos em -391 (4,2 m), -387 (5,6 m), -383, -371, -370, -368, -361, -351 (os tres perto de -370 podem ser dois). Sem arvore de -401 a -391."
+  },
+  {
+   "x0": -350,
+   "x1": -299,
+   "contadas_no_real": 4,
+   "no_modelo": 5,
+   "observacao": "v13 e v21. Troncos em -345 (4,9 m), -332 (8,1 m, copa ~12 m), -305,5 (8,1 m, copa ~10 m, provavel cajueiro) e -301 (5,5 m). No modelo sobram -324,4 (estimada) e -315,9 (aerea): nao ha tronco entre as duas copas grandes."
+  },
+  {
+   "x0": -268,
+   "x1": -240,
+   "contadas_no_real": 3,
+   "no_modelo": 3,
+   "observacao": "v14. Duas arvores grandes de troncos multiplos inclinados em -264 e -259 (7,8 m) e uma em ~-245 (+-4 m). Bate com o modelo (-264,6, -254,5, -244,4)."
+  },
+  {
+   "x0": -227,
+   "x1": -180,
+   "contadas_no_real": 7.5,
+   "no_modelo": 6,
+   "observacao": "v15. Troncos em -224 (3,3 m), -220 (2,8 m), -215 (4,4 m), -206 (5,35 m), -199, -197, -192, -184 (os quatro ultimos +-3 m; 7 ou 8 no total). O x do modelo bate; o porte e 2 a 2,5 vezes maior que o real."
+  },
+  {
+   "x0": 366,
+   "x1": 395,
+   "contadas_no_real": 3,
+   "no_modelo": 6,
+   "observacao": "Escola, v23 e v16. Tres arvores logo atras do gradil: x ~385 e ~376 (7 a 9 m) e ~369 (4 a 5 m). O fundo do patio fica escondido por elas (pode haver mais 1 a 3). As seis do modelo estao em y 63 a 81, de 16 a 34 m atras do gradil."
+  },
+  {
+   "x0": 395,
+   "x1": 425,
+   "contadas_no_real": 1,
+   "no_modelo": 5,
+   "observacao": "Escola, v18. Dentro do patio nenhuma arvore grande: gramado, duas palmeiras de ~4,3 m e arbustos. A unica grande esta FORA do gradil, na calcada, em (400; 39,5), 8 a 10 m, copa de 10 a 12 m."
+  },
+  {
+   "x0": 425,
+   "x1": 455,
+   "contadas_no_real": 1.5,
+   "no_modelo": 3,
+   "observacao": "Escola, v19. Mangueira gigante (uma, talvez duas juntas) com tronco em (435,5; 47,8), 1 a 3 m atras do gradil; 14 a 17 m de altura, copa de ~20 m. As tres do modelo estao 7 a 17 m atras do gradil."
+  }
+ ],
+ "confirmados": [
+  "Posicao em x das copas lidas na aerea: bate com os troncos reais. Melhor caso, a leste do igarape: modelo -264,6, -244,4, -224,4, -219,4, -214,1, -205,6, -194,4, -181,6 contra reais -264, -245, -224, -220, -215, -206, -197/-199, -184 (+-2 m). Tambem bate em x -881,6/-872,1 (reais -880/-873), -781,9 (-782), -739,9 (-739), -649,1/-636,9 (-648/-638), -345,4/-332,9 (-345/-332).",
+  "As intermediarias 'estimadas' se justificam: em 14 das 15 janelas do batalhao o real tem tantas ou mais arvores que o modelo com as estimadas (94 contra 72 no total). So x -324,4 sobra.",
+  "Porte no trecho oeste (x -945 a -800): arvores reais de 7 a 9 m de altura e copa de 10 a 12 m (x -932: > 7 m, copa enche o quadro; x -880: 8,2 a 8,9 m; x -873: 6,9 a 7,5 m). Escala 0,97 a 1,2 do modelo (8,7 a 10,8 m, copa 10 a 12,5 m) esta dentro de 20 %.",
+  "Arvores grandes da margem leste do igarape (modelo -264,6 e -254,5, escala 1,2 e 0,97): reais com 7,8 m de altura e copas unidas de ~15 m.",
+  "Sebe a leste do igarape: continua de x ~-262 (com arbusto escuro desde -273) ate x ~-171; altura 1,09 a 1,47 m (modelo 1,3 m); muro azul cheio atras com topo a 1,46 a 1,61 m (bloco: 1,55 m).",
+  "Sebe a oeste do igarape: termina junto com a mureta em x -299,5 (modelo -296) e e continua de x ~-365 ate ali, com 0,87 a 1,07 m.",
+  "Canteiros de sebe do quartel da PM: x -1016,5 a -1010,2 e -1009,6 a -1003,4 (bloco: -1016,6 a -1003,2 com vao de 0,7 m), frente em y 59,1 a 60,2 e fundo em 62,5 a 63,9 (bloco: 59,5 a 62,0), altura 0,95 a 1,15 m (bloco: 1,0 m).",
+  "Mureta e tela do batalhao por trecho (r25c), remedidas em pontos novos, camera a 2,1 m (mureta / tela). Trecho x < -800 (bloco 0,7 / 1,15): x -930: 0,53 / 1,04; x -882: 0,73 / 1,18; x -875: 0,65 / 1,09; x -838: 0,78. Trecho -800 a -600 (bloco 0,85 / 1,4): x -787: 0,75 / 1,13; x -763: 0,83 / 1,28; x -733: 0,85 / 1,39; x -696: 0,88 / 1,33; x -646: 0,82 / 1,27. Bate dentro de 15 %; inclui o trecho x -780 a -700, nao visitado antes.",
+  "Linha do muro do batalhao pelo pe da mureta (camera a 2,1 m): y 54,7 a 56,1 em x -930 a -875; 55,9 em x -787; 54,3 a 54,7 em x -763 a -696; 55,2 em x -519; 53,7 em x -495; 54,4 em x -448; 52,2 em x -396; 50,5 em x -308. Coerente com o modelo (56,7 ate x -600, depois o desvio) dentro de 2,5 m.",
+  "Portaria: placa branca inclinada do canto oeste em x -583,8 e ultima arvore em x ~-581, coerentes com a mureta oeste em -584; nas fotos da cena a boca tem os 40 m, com as muretas entrando no quartel e o monumento girado sobre base baixa na ilha.",
+  "Muro cheio a leste do igarape (so_bec_a): visto nas fotos r26_so_xm250 e r25_so_xm215 (muro com pilastras atras da sebe) e no real (v14 e v15).",
+  "Muro azul (sul_w1): altura real 1,90 m (bloco 1,85 m); portao bordo em x -170 a -167,5 com topo a 1,76 m (centro do modelo -167,5); predio creme com vidro verde atras, no lado oeste, como na foto r25_sul_xm145. A caixa bege da calcada nao aparece mais.",
+  "Predio cinza de brises: nas fotos r24_sul_x578 e r25_cinza_de_cima esta girado, com ~16 m, bloco branco baixo na frente e sem a caixa branca alta do laudo anterior.",
+  "Escola: nas fotos r25_escola_de_cima, r24_sul_x410 e r24_sul_x452 e um predio unico girado, de cobertura metalica, com o gradil terminando em x ~454. Gradil real medido com 1,65 a 1,8 m e pe em y 45,0 a 46,6 (modelo y 47).",
+  "Lanchonete: nas fotos esta na calcada, amarela com testeira preta e nome em fonte generica; paralela a avenida, como o autor declarou.",
+  "Cinema: foto r25_so_xm1250 mostra a ala com dois janeloes e painel entre eles e o canto oeste descendo em degraus; r25_so_xm1222 mostra o painel do topo com 5 quadros.",
+  "Quartel da PM: marquise branca nas fotos; topo da marquise real a 3,57 a 3,85 m (bloco 3,3 a 3,7 m); fachada em y 67,9 a 69,8 (modelo 68,5); guia do estacionamento em y 57,0 a 57,9.",
+  "Portoes e muros do trecho oeste: vao (50,2 a 51,7) com grade azul no bloco do muro do terreno; portao escuro no muro rosa visivel em r25_so_cine_de_cima; muro do terreno real com 1,63 m e pilastras escuras (bloco 1,6 m); entrada de terra visivel em r25_so_xm1048.",
+  "Nenhuma arvore do batalhao cai dentro da sebe, da boca da portaria ou do vao do igarape (conferido pelas coordenadas do json contra gradil, sebe e os limites FORA)."
+ ],
+ "nao_conferido": [
+  "Cena do Unity: nao abri. Tudo o que digo da cena vem das fotos de 06_unity e das coordenadas dos json e blocos. Tamanho real do modelo I_CC_Mangueira_B nao conferido (usei so o dado do oiti, 10,4 x 9,0 m).",
+  "Especie: munguba (Pachira aquatica) e leitura visual de folhas, flores e tronco, confianca ~75 %; cajueiro ou castanholeira nas arvores grandes em cupula, confianca ~50 %; sebe de flor amarela (alamanda ou ipe-de-jardim) nao identificada.",
+  "Posicao absoluta em y: a camera do Street View tem +-2 a 3 m. A guia real saiu 2 a 3 m ao norte da guia da cena em x -880, -450 e -220, mas isso esta dentro do erro; so as distancias relativas (guia, arvore, muro) sao firmes.",
+  "Trecho x -542 a -524: so tenho imagem de out/2019; em 2025 pode haver menos arvores e a sebe ja nao e continua ali.",
+  "Trechos do batalhao sem vista propria: x -618 a -612, x -580 a -545 (portaria, sem arvores no modelo), x -466 a -452, x -412 a -401, x -240 a -227 (o modelo tem -234,6) e x -180 a -176.",
+  "Fundo do patio da escola (y > 56): escondido pelas arvores da frente. A aerea sugere 3 ou 4 copas na ponta oeste (x 360 a 392), que nao pude confirmar nem negar. Altura da mangueira gigante entre 14 e 17 m conforme o ponto da copa usado.",
+  "Distancia da fachada da escola ao gradil: duas leituras do beiral dao resultados diferentes conforme a altura suposta (7,3 a 10 m), entao nao reconfirmei o giro de 19 graus nem o y da fachada; aceitei o laudo anterior. Na aerea o telhado e o chao tem deslocamentos diferentes (+5 m e -8 m em y), o que deixa duvida sobre a posicao do contorno cadastral.",
+  "Portao do anexo da PM (x -955 a -949,5), portao azul do muro do terreno, telhado do sobrado, altura do gradil branco (1,95 m) e extensao ate x 617,5: conferidos so no bloco ou nas fotos, sem vista propria nova. A foto r25_so_xm990 nao mostra o vao do anexo. Um ponto unico e distante deu 2,1 a 2,3 m para o gradil azul do anexo (bloco 1,85 m): nao e conclusivo.",
+  "Se o gradil branco atravessa a casinha verde perto do predio cinza: visto so na foto de cima.",
+  "Cores so a olho (fim de tarde em jan/2025, nublado em fev/2025).",
+  "Paineis pintados do muro da escola, do abrigo de onibus do terreno murado e os bustos da PM: vistos e deliberadamente nao descritos para reproducao."
+ ],
+ "vistas_consultadas": 26
+}

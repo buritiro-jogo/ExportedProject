@@ -32,6 +32,8 @@ namespace FreeBala
         public readonly Dictionary<string, Person> seen = new();      // último status conhecido por código (amigos e quem está online)
         public readonly List<Invite> invites = new();
         public int version;                                            // muda a cada novidade (as telas se redesenham quando muda)
+        public bool capX2, capRolex, capVoz;                           // r69: o servidor/Host sabe fazer 2 × 2, rolê armado e voz (vem no "hi")
+        public string lastSides;                                       // r69: "A + B  ×  C + D" do último sorteio 2 × 2
         public string toast; public float toastT;                      // aviso curto vindo do servidor ("convite enviado", erros)
         public static event Action<Invite> OnInvite;
 
@@ -45,11 +47,14 @@ namespace FreeBala
         {
             get
             {
+                if (pidArg == null) { var a = System.Environment.GetCommandLineArgs(); int i = Array.IndexOf(a, "-fbpid"); pidArg = i >= 0 && i + 1 < a.Length ? CleanPid(a[i + 1]) : ""; }
+                if (pidArg.Length >= 4 && pidArg.Length <= 10) return pidArg;                   // r68: teste com dois jogos no mesmo PC (PlayerPrefs é o mesmo)
                 var p = PlayerPrefs.GetString("fb_pid", "");
                 if (p.Length != 6) { const string A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; var r = new System.Random(); p = new string(Enumerable.Range(0, 6).Select(_ => A[r.Next(A.Length)]).ToArray()); PlayerPrefs.SetString("fb_pid", p); PlayerPrefs.Save(); }
                 return p;
             }
         }
+        static string pidArg;
         public static List<(string pid, string name)> Friends
         {
             get
@@ -74,6 +79,7 @@ namespace FreeBala
 
         public static FBLobbyNet Ensure()
         {
+            FBVoiceChat.Ensure();   // r69: o chat de voz vive junto com o lobby (menu e partida)
             if (I) return I; var g = new GameObject("FB_LobbyNet"); DontDestroyOnLoad(g); return g.AddComponent<FBLobbyNet>();
         }
         void Awake() { if (I && I != this) { Destroy(gameObject); return; } I = this; }
@@ -86,7 +92,8 @@ namespace FreeBala
         public void LeaveParty() => Send(new() { ["t"] = "pleave" });
         public void Kick(string pid) => Send(new() { ["t"] = "pkick", ["pid"] = pid });
         public void SetReady(bool on) => Send(new() { ["t"] = "pready", ["on"] = on });
-        public void StartParty(string map, string mode) => Send(new() { ["t"] = "pgo", ["map"] = map, ["mode"] = mode });
+        public void StartParty(string map, string mode) => Send(new() { ["t"] = "pgo", ["map"] = map, ["mode"] = mode, ["nm"] = FBSession.netMode });   // r69: nm = modo online do SQUAD
+        public void SendVoice(int q, string d) { if (status == St.On && InParty) Send(new() { ["t"] = "pvc", ["q"] = q, ["d"] = d }); }                   // r69: voz do squad no menu
         void Toast(string s) { toast = s; toastT = Time.unscaledTime; version++; }
 
         // ------------------------------------------------------------ mensagens
@@ -94,7 +101,12 @@ namespace FreeBala
         {
             switch (Json.S(m, "t"))
             {
-                case "hi": status = St.On; lastError = ""; version++; Who(); break;
+                case "hi":
+                    {
+                        status = St.On; lastError = ""; var caps = Json.L(m, "caps") ?? new List<object>();
+                        capX2 = caps.Contains("x2"); capRolex = caps.Contains("rolex"); capVoz = caps.Contains("voz"); version++; Who(); break;
+                    }
+                case "pvc": FBVoiceChat.OnLobbyVoice(Json.S(m, "from"), Json.S(m, "name"), Json.I(m, "q"), Json.S(m, "d")); break;   // r69
                 case "who":
                     foreach (var o in Json.L(m, "list") ?? new List<object>())
                     {
@@ -124,8 +136,19 @@ namespace FreeBala
                 case "pgo":
                     {
                         // o líder iniciou: todos entram na mesma sala do servidor, no mesmo time
-                        FBSession.map = Json.S(m, "map") ?? FBSession.map; FBSession.room = Json.S(m, "room"); FBSession.online = true; FBSession.Save();
-                        Toast("ENTRANDO NA PARTIDA DO SQUAD…"); if (FBMenu.I) FBMenu.I.GoOnline(); break;
+                        FBSession.map = Json.S(m, "map") ?? FBSession.map; FBSession.room = Json.S(m, "room"); FBSession.online = true;
+                        // r69: modo ONLINE do líder ("nm"): rolê (desarmado ou armado) roda o De Rolê; times e 2 × 2 rodam o mata-mata online.
+                        // Servidor antigo não manda "nm": vale o "mode" como na r68.
+                        var nm = Json.S(m, "nm");
+                        if (string.IsNullOrEmpty(nm)) { var md = Json.S(m, "mode"); nm = md == "role" ? "role" : "tdm"; if (md == "role" || md == "classico" || md == "squad" || md == "10x10") FBSession.mode = md; }
+                        FBSession.netMode = nm == "rolex" || nm == "x2" || nm == "tdm" ? nm : "role";
+                        if (FBSession.netMode == "role" || FBSession.netMode == "rolex") FBSession.mode = "role"; else if (FBSession.mode == "role") FBSession.mode = "classico";
+                        if (m.ContainsKey("team")) FBSession.team = Mathf.Clamp(Json.I(m, "team"), 0, 1);
+                        lastSides = null;
+                        if (Json.L(m, "lados") is List<object> ls && ls.Count == 2)
+                            lastSides = string.Join("  ×  ", ls.Select(x => string.Join(" + ", ((x as List<object>) ?? new List<object>()).Select(n => (n ?? "").ToString().ToUpper()))));
+                        FBSession.Save();
+                        Toast(lastSides != null ? "2 × 2 SORTEADO: " + lastSides : "ENTRANDO NA PARTIDA DO SQUAD · " + FBSession.NetModeName(FBSession.netMode)); if (FBMenu.I) FBMenu.I.GoOnline(); break;
                     }
             }
         }
@@ -134,28 +157,31 @@ namespace FreeBala
         readonly ConcurrentQueue<string> inbox = new(); float retryT, whoT;
 #if !UNITY_WEBGL || UNITY_EDITOR
         ClientWebSocket ws; CancellationTokenSource cts; volatile bool closed = true;
+        // r68b: cada conexão tem o seu socket e o seu leitor (w, c). Antes o leitor lia o campo 'ws': depois de um Reconnect (HOSPEDAR,
+        // ENTRAR num Host, SAIR DA REDE) o leitor da conexão VELHA passava a ler a nova e o '_close' dele derrubava a conexão nova.
         async void Connect()
         {
             status = St.Connecting; version++; closed = false;
-            try { ws?.Dispose(); } catch { }
-            ws = new ClientWebSocket(); cts = new CancellationTokenSource(); var url = FBSession.server;
+            try { cts?.Cancel(); ws?.Dispose(); } catch { }
+            var w = new ClientWebSocket(); var c = new CancellationTokenSource(); ws = w; cts = c; var url = FBSession.Server;   // r68: Host da rede local, se houver
             try
             {
-                var t = ws.ConnectAsync(new Uri(url), cts.Token); if (await Task.WhenAny(t, Task.Delay(5000)) != t) throw new Exception("tempo esgotado");
-                await t; inbox.Enqueue("{\"t\":\"_open\"}"); _ = Task.Run(Receive);
+                var t = w.ConnectAsync(new Uri(url), c.Token); if (await Task.WhenAny(t, Task.Delay(5000)) != t) { try { c.Cancel(); } catch { } throw new Exception("tempo esgotado"); }
+                await t; if (w != ws) { try { w.Dispose(); } catch { } return; }
+                inbox.Enqueue("{\"t\":\"_open\"}"); _ = Task.Run(() => Receive(w, c));
             }
-            catch (Exception e) { lastError = e.Message; closed = true; inbox.Enqueue("{\"t\":\"_close\"}"); }
+            catch (Exception e) { if (w != ws) return; lastError = e.Message; closed = true; inbox.Enqueue("{\"t\":\"_close\"}"); }
         }
-        async Task Receive()
+        async Task Receive(ClientWebSocket w, CancellationTokenSource c)
         {
             var buf = new byte[1 << 16]; var sb = new StringBuilder();
-            while (ws != null && ws.State == WebSocketState.Open)
+            while (w.State == WebSocketState.Open)
             {
-                WebSocketReceiveResult r; try { r = await ws.ReceiveAsync(new ArraySegment<byte>(buf), cts.Token); } catch { break; }
+                WebSocketReceiveResult r; try { r = await w.ReceiveAsync(new ArraySegment<byte>(buf), c.Token); } catch { break; }
                 if (r.MessageType == WebSocketMessageType.Close) break;
-                sb.Append(Encoding.UTF8.GetString(buf, 0, r.Count)); if (r.EndOfMessage) { inbox.Enqueue(sb.ToString()); sb.Clear(); }
+                sb.Append(Encoding.UTF8.GetString(buf, 0, r.Count)); if (r.EndOfMessage) { if (w == ws) inbox.Enqueue(sb.ToString()); sb.Clear(); }
             }
-            closed = true; inbox.Enqueue("{\"t\":\"_close\"}");
+            if (w == ws) { closed = true; inbox.Enqueue("{\"t\":\"_close\"}"); }
         }
         void SendRaw(string s) { if (ws == null || ws.State != WebSocketState.Open) return; var b = Encoding.UTF8.GetBytes(s); try { _ = ws.SendAsync(new ArraySegment<byte>(b), WebSocketMessageType.Text, true, cts.Token); } catch { } }
         void OnDestroy() { if (I == this) I = null; try { cts?.Cancel(); ws?.Dispose(); } catch { } }

@@ -1,9 +1,14 @@
 ﻿// POÇAS DA CHUVA (FBRain, 20/10) — ideias do Dyna-Wet (RayznGames; sem licença publicada, então nada copiado: reimplementado aqui):
 // poça que ENCHE com o tempo de chuva (_FBPuddleFill 0..1: a forma por ruído vai crescendo do centro), água escura e lisa que reflete
-// (sonda de reflexo + SSR do URP pelo DepthNormals com suavidade) e ANÉIS de gota animados (células de 0,3 m no mundo, cada uma com o
-// seu tempo; dois níveis desencontrados), borda mais rasa = menos lisa. Uma malha só com todas as poças do mapa (FBRain.Puddles).
-// r63: _Fixo > 0 = poça permanente do mapa (FBMapLook.PocasBatch: barro alaranjado na laterita, escura no asfalto).
-// Opaco com alpha-to-coverage na borda (MSAA) — entra no SSR e no SSAO como o piso.
+// e ANÉIS de gota animados (células de 0,3 m no mundo, cada uma com o seu tempo; dois níveis desencontrados), borda mais rasa = menos lisa.
+// Uma malha só com todas as poças do mapa (FBRain.Puddles). r63: _Fixo > 0 = poça permanente do mapa (Vila Jardim).
+// r65: fila TRANSPARENTE (depois da cópia do opaco da câmera), mistura pela cobertura da forma. Dois caminhos:
+//   · _FBPuddleSSR = 1 (PC com a textura opaca — FBVisual): REFLEXO em espaço de tela (raio refletido marchado no depth da câmera e
+//     refinado por bisseção; volta para a sonda do céu do horário fora da tela) — prédios, postes, árvores e luzes acesas aparecem na
+//     água; REFRAÇÃO do chão embaixo (mais escuro no fundo); água barrenta (_Metal) espalha a cor do barro (_Tinta) iluminada, em vez de
+//     tingir o reflexo (que deixava a poça uma mancha chapada); Fresnel de água (F0 0,02), brilho GGX do sol e dos postes, película de
+//     sujeira (aspereza variando, nunca espelho perfeito) e ondulação de vento leve, além dos anéis de chuva.
+//   · _FBPuddleSSR = 0 (mobile / -fbvisualoff): o PBR antigo (só sonda), mesma forma.
 Shader "FreeBala/Puddle"
 {
     Properties
@@ -21,7 +26,8 @@ Shader "FreeBala/Puddle"
     CBUFFER_START(UnityPerMaterial)
         half4 _Color, _EdgeColor, _Tinta; half _Smooth; half _Fixo; half _Metal;
     CBUFFER_END
-    float _FBPuddleFill, _FBRainK;
+    #define FB_PUDDLE_GLOBALS_DECLARED
+    float _FBPuddleFill, _FBRainK, _FBPuddleSSR; float4 _FBPuddleP;   // r65: P = (aspereza, vento, distância máx. do reflexo, -)
 
     struct Attributes { float4 positionOS : POSITION; float2 uv : TEXCOORD0; float2 uv1 : TEXCOORD1; };
     struct VOut { float4 positionCS : SV_POSITION; float3 positionWS : TEXCOORD0; float2 uv : TEXCOORD1; float2 seed : TEXCOORD2; float fog : TEXCOORD3; };
@@ -61,19 +67,28 @@ Shader "FreeBala/Puddle"
         }
         return normalize(float3(-g.x * 0.35, 1.0, -g.y * 0.35));
     }
+    // r65: ondulação de vento (duas oitavas de ruído rolando; inclinação por diferença finita)
+    float WindH(float2 q, float t) { return PNoise(q * 2.3 + float2(t * 0.31, t * 0.17)) * 0.6 + PNoise(q * 6.1 + float2(-t * 0.43, t * 0.37)) * 0.4; }
+    float2 WindSlope(float2 p, float t, float amp)
+    {
+        const float e = 0.03;
+        float hx = WindH(p + float2(e, 0), t) - WindH(p - float2(e, 0), t), hz = WindH(p + float2(0, e), t) - WindH(p - float2(0, e), t);
+        return float2(hx, hz) / (2.0 * e) * amp;
+    }
     ENDHLSL
 
     SubShader
     {
-        Tags { "RenderType" = "TransparentCutout" "Queue" = "AlphaTest+5" "RenderPipeline" = "UniversalPipeline" "IgnoreProjector" = "True" }
+        Tags { "RenderType" = "Transparent" "Queue" = "Transparent-50" "RenderPipeline" = "UniversalPipeline" "IgnoreProjector" = "True" }
 
         Pass
         {
             Name "ForwardLit"
             Tags { "LightMode" = "UniversalForward" }
-            AlphaToMask On
+            Blend SrcAlpha OneMinusSrcAlpha, One OneMinusSrcAlpha
+            ZWrite Off
             HLSLPROGRAM
-            #pragma target 3.0
+            #pragma target 3.5
             #pragma vertex PuddleVert
             #pragma fragment PuddleFrag
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
@@ -84,11 +99,54 @@ Shader "FreeBala/Puddle"
             #pragma multi_compile_fragment _ _REFLECTION_PROBE_BOX_PROJECTION
             #pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
             #pragma multi_compile _ _CLUSTER_LIGHT_LOOP
+            #pragma multi_compile_fragment _ _LIGHT_COOKIES
             #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Fog.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+            #include "FBScreenRefl.hlsl"                                  // r65: SSR/cena compartilhados com a água (FBWater)
+            #define PuddleSSRTrace FBSSRTrace
+
+            half3 PuddleNew(VOut i, float2 sh)
+            {
+                float3 V = GetWorldSpaceNormalizeViewDir(i.positionWS); float2 suv = GetNormalizedScreenSpaceUV(i.positionCS);
+                float3 nr = Ripples(i.positionWS.xz, _Time.y); float2 ws = WindSlope(i.positionWS.xz, _Time.y, _FBPuddleP.y * 0.012 * sh.y);
+                float3 n = normalize(float3(nr.x - ws.x, 1.0, nr.z - ws.y)); n = normalize(lerp(float3(0, 1, 0), n, sh.y * 0.85 + 0.15));
+                float NoV = saturate(dot(n, V)); half F = 0.02 + 0.98 * pow(1.0 - NoV, 5.0);
+                float film = PNoise(i.positionWS.xz * 1.7 + i.seed * 9.0);
+                float rough = saturate(_FBPuddleP.x + film * 0.07 + (1.0 - sh.y) * 0.28);                 // borda rasa e película = mais fosco
+
+                // corpo: chão refratado (mais escuro no fundo) ou barro em suspensão (_Metal = turbidez) iluminado pelo céu e pelo sol
+                Light L = GetMainLight(TransformWorldToShadowCoord(i.positionWS));
+                half3 lightIn = SampleSH(float3(0, 1, 0)) + L.color * (L.shadowAttenuation * saturate(L.direction.y));
+                half3 ground = SampleSceneColor(suv + n.xz * 0.02 * sh.y) * lerp(0.8, 0.55, sh.y);
+                half3 mud = _Tinta.rgb * lightIn * 0.55;
+                half3 body = lerp(ground, mud, saturate(_Metal * 1.15) * smoothstep(0.0, 0.6, sh.y));
+
+                // reflexo: tela → sonda do céu do horário
+                float3 R = reflect(-V, n);
+                half3 env = GlossyEnvironmentReflection(R, i.positionWS, rough, 1, suv);
+                half4 ssr = PuddleSSRTrace(i.positionWS, R, _FBPuddleP.z);
+                half3 refl = lerp(env, ssr.rgb, ssr.a * saturate(1.0 - rough * 2.2));
+
+                // especular do sol e dos postes (GGX)
+                float a2 = max(rough * rough, 0.0025); a2 *= a2;
+                float3 H = normalize(L.direction + V); float dd = saturate(dot(n, H)); dd = dd * dd * (a2 - 1.0) + 1.0;
+                half3 spec = L.color * (L.shadowAttenuation * L.distanceAttenuation) * (a2 / (PI * dd * dd)) * F * saturate(dot(n, L.direction)) * 0.25;
+                InputData inputData = (InputData)0; inputData.positionWS = i.positionWS; inputData.normalizedScreenSpaceUV = suv;
+                uint cnt = GetAdditionalLightsCount();
+                LIGHT_LOOP_BEGIN(cnt)
+                    Light al = GetAdditionalLight(lightIndex, i.positionWS, half4(1, 1, 1, 1));
+                    float3 H2 = normalize(al.direction + V); float d2 = saturate(dot(n, H2)); d2 = d2 * d2 * (a2 - 1.0) + 1.0;
+                    spec += al.color * (al.distanceAttenuation * al.shadowAttenuation) * (a2 / (PI * d2 * d2)) * F * saturate(dot(n, al.direction)) * 0.25;
+                    body += _Tinta.rgb * al.color * (al.distanceAttenuation * saturate(al.direction.y)) * 0.35 * saturate(_Metal);
+                LIGHT_LOOP_END
+                return lerp(body, refl, F) + min(spec, 40.0);
+            }
+
             half4 PuddleFrag(VOut i) : SV_Target
             {
                 float2 sh = PuddleShape(i.uv, i.seed); clip(sh.x - 0.02);
+                if (_FBPuddleSSR > 0.5) return half4(MixFog(PuddleNew(i, sh), i.fog), sh.x);
+                // caminho antigo (mobile / -fbvisualoff)
                 float3 n = Ripples(i.positionWS.xz, _Time.y);
                 n = normalize(lerp(float3(0, 1, 0), n, sh.y * 0.85 + 0.15));
                 InputData d = (InputData)0;
@@ -96,11 +154,10 @@ Shader "FreeBala/Puddle"
                 d.shadowCoord = TransformWorldToShadowCoord(i.positionWS); d.fogCoord = i.fog; d.bakedGI = SampleSH(n);
                 d.normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(i.positionCS); d.shadowMask = half4(1, 1, 1, 1);
                 SurfaceData s = (SurfaceData)0;
-                s.albedo = lerp(_EdgeColor.rgb, _Color.rgb, sh.y); s.smoothness = lerp(0.55, _Smooth, sh.y); s.metallic = _Metal * sh.y; s.occlusion = 1;   // r63: barro opaco tinge o reflexo do céu de laranja (vídeo b_0642) s.alpha = sh.x;
+                s.albedo = lerp(_EdgeColor.rgb, _Color.rgb, sh.y); s.smoothness = lerp(0.55, _Smooth, sh.y); s.metallic = _Metal * sh.y; s.occlusion = 1;
                 s.specular = half3(0, 0, 0);
                 half4 c = UniversalFragmentPBR(d, s);
-                // r63: água BARRENTA é opaca — o reflexo do céu sai tingido de laranja (vídeo b_0642: 179,123,64), não branco-azulado
-                // mesmo brilho, matiz da água da foto (_Tinta): o céu refletido vira laranja de barro, como no vídeo
+                // r63: água BARRENTA — o reflexo do céu sai tingido de laranja (vídeo b_0642: 179,123,64), não branco-azulado
                 half3 W3 = half3(0.299, 0.587, 0.114); half lt = max(dot(_Tinta.rgb, W3), 1e-3);
                 c.rgb = lerp(c.rgb, dot(c.rgb, W3) * _Tinta.rgb / lt, _Metal * sh.y);
                 c.rgb = MixFog(c.rgb, d.fogCoord);

@@ -92,6 +92,7 @@ namespace FreeBala
         public float FovBase => 55 + FBSession.fov * 40;                                   // fovBase do main.js (padrão .375 = 70°)
         public void OnRespawn(float yawDeg)
         {
+            facing = yawDeg;   // r68d: no rolê desarmado o corpo voltava para o rumo de antes do teleporte/renascer
             camYaw = camYawS = yawDeg; camPitch = camPitchS = 0; prone = crouch = false; proneSt = 0; proneToCrouch = false; ch.ProneK = 0; vault = null; vy = 0; hv = Vector3.zero;
             // [parceiro] fisica 31/10: teleporte de respawn/rodada nao e queda. Sem isto, quem estava no ar (pulo/queda) pousava na base
             // com o fallTop/airT do lugar antigo: baque ie_land e dano de queda na fase de compra.
@@ -250,7 +251,8 @@ namespace FreeBala
                     if (Driving) { ResetMotion(); wasDriving = true; }
                     if (Driving && FBDrive.SysGuard) { if (fp && fp.gameObject.activeSelf) fp.gameObject.SetActive(false); Look(inp, dt); return; }
                 }
-                if (inp.buy) { if (FBEconomy.buying) FBShop.Show(!FBShop.Open); else FBEmoteWheel.Open(); }
+                // r68: B no balcão da loja de armas do De Rolê abre a loja (longe dela continua sendo a roda de emotes)
+                if (inp.buy) { if (FBShop.Open && FBShop.Store) FBShop.Show(false); else if (FBEconomy.buying) FBShop.Show(!FBShop.Open); else if (FBGunShop.Near) FBGunShop.OpenStore(); else FBEmoteWheel.Open(); }
                 if (inp.buyReleased) FBEmoteWheel.Close(true);
                 if (inp.arsenal && mt.mode != null && mt.mode.arsenal) { FBEconomy.buying = true; FBShop.Show(!FBShop.Open); }
                 if (inp.bag) FBBag.Toggle(); if (inp.mark) FBMarks.Mark(cam); if (inp.multimidia) FBMultimidia.Toggle(); if (inp.map) FBMatchMap.Toggle();

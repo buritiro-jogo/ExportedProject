@@ -208,17 +208,27 @@ namespace FreeBala
         public static void Clear() { foreach (var m in marks) if (m.g) Object.Destroy(m.g); marks.Clear(); }
     }
 
-    // GPS do De Rolê (G): mapa grande com a sua posição e a oficina/garagem
+    // GPS do De Rolê (G): mapa grande com a sua posição e as lojas de armas (r68)
     public static class FBGps
     {
         static GameObject big; public static bool BigOn => big;
+        const float S = 620;   // lado do mapa na tela; FBMinimap.UV vai de 0 a 1 nesse quadro (antes multiplicava por 760 e a seta saía do lugar longe do canto)
         public static void ToggleBig()
         {
             if (big) { Object.Destroy(big); big = null; if (!FBInput.Touch) { Cursor.lockState = CursorLockMode.Locked; Cursor.visible = false; } return; }
             var c = FBUI.Canvas("GPS", 28); big = c.gameObject; var bg = FBUI.Panel(c.transform, "fundo", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, new Color(0, 0, 0, .8f));
-            if (FBMinimap.Tex) { var im = FBUI.Panel(bg.transform, "mapa", new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, new Vector2(620, 620), Color.white); im.sprite = Sprite.Create(FBMinimap.Tex, new Rect(0, 0, FBMinimap.Tex.width, FBMinimap.Tex.height), Vector2.one * .5f);
-                var me = FBMatch.Player; if (me) { var uv = FBMinimap.UV(me.Pos); var dot = FBUI.Panel(im.transform, "eu", Vector2.zero, Vector2.zero, new Vector2(uv.x * 760, uv.y * 760), new Vector2(16, 16), FBUI.Gold); dot.sprite = FBUI.ArrowSprite; dot.rectTransform.localRotation = Quaternion.Euler(0, 0, -FBPlayer.CamYawRad * Mathf.Rad2Deg); } }
-            FBUI.Label(bg.transform, "GPS · G FECHA", 18, new Vector2(.5f, 0), new Vector2(.5f, 0), new Vector2(0, 40), new Vector2(400, 30), TextAnchor.MiddleCenter, true, FBUI.Gold);
+            int lojas = 0;
+            if (FBMinimap.Tex) { var im = FBUI.Panel(bg.transform, "mapa", new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, new Vector2(S, S), Color.white); im.sprite = Sprite.Create(FBMinimap.Tex, new Rect(0, 0, FBMinimap.Tex.width, FBMinimap.Tex.height), Vector2.one * .5f);
+                foreach (var s in FBGunShop.shops)
+                {
+                    if (s == null || !s.go) continue; var u = FBMinimap.UV(s.front); if (u.x < 0 || u.x > 1 || u.y < 0 || u.y > 1) continue; lojas++;
+                    var mk = FBUI.Panel(im.transform, "loja", Vector2.zero, Vector2.zero, u * S, new Vector2(28, 28), new Color(.07f, .05f, .02f, .92f)); mk.rectTransform.localRotation = Quaternion.Euler(0, 0, 45);
+                    FBUI.Panel(mk.transform, "loja_ouro", new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, new Vector2(20, 20), FBUI.Gold);
+                    FBUI.Label(im.transform, "$", 17, Vector2.zero, Vector2.zero, u * S, new Vector2(28, 28), TextAnchor.MiddleCenter, true, new Color(.07f, .05f, .02f));
+                    FBUI.Label(im.transform, "LOJA DE ARMAS", 12, Vector2.zero, Vector2.zero, u * S + new Vector2(0, 25), new Vector2(170, 18), TextAnchor.MiddleCenter, true, FBUI.Gold);
+                }
+                var me = FBMatch.Player; if (me) { var uv = FBMinimap.UV(me.Pos); var dot = FBUI.Panel(im.transform, "eu", Vector2.zero, Vector2.zero, uv * S, new Vector2(16, 16), FBUI.Gold); dot.sprite = FBUI.ArrowSprite; dot.rectTransform.localRotation = Quaternion.Euler(0, 0, -FBPlayer.CamYawRad * Mathf.Rad2Deg); } }
+            FBUI.Label(bg.transform, lojas > 0 ? "GPS · $ = LOJA DE ARMAS · G FECHA" : "GPS · G FECHA", 18, new Vector2(.5f, 0), new Vector2(.5f, 0), new Vector2(0, 40), new Vector2(520, 30), TextAnchor.MiddleCenter, true, FBUI.Gold);
         }
     }
 

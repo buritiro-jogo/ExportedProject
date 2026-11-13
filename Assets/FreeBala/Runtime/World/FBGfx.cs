@@ -127,6 +127,7 @@ namespace FreeBala
             var d = cam.GetUniversalAdditionalCameraData(); if (!d || d.renderType != CameraRenderType.Base) return;
             if (d.antialiasing != F.camAA) { d.antialiasing = F.camAA; d.antialiasingQuality = AntialiasingQuality.High; }
             if (!d.renderPostProcessing) d.renderPostProcessing = true;
+            FBVisual.PrepareCamera(cam);                                                   // r65: textura opaca para as poças com reflexo em tela
         }
 
         // vento global da vegetação (FBFoliage.shader): direção XZ (Unity), força 0..2 (chuva/temporal = mais)
